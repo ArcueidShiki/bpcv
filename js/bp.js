@@ -111,19 +111,7 @@ const practices = [
     category: "JavaScript",
     text: "Avoid polluting the global namespace",
     explanation: "Use IIFEs (Immediately Invoked Function Expressions) or modules to encapsulate your code and prevent conflicts with other scripts.",
-  },
-  {
-    id: 19,
-    category: "CSS",
-    text: "Use a CSS preprocessor like SASS or LESS",
-    explanation: "Preprocessors add features like nesting, variables, and mixins, making your CSS more maintainable and easier to write.",
-  },
-  {
-    id: 20,
-    category: "JavaScript",
-    text: "Use debouncing and throttling for event listeners",
-    explanation: "These techniques help optimize performance by limiting the frequency of function execution during high-frequency events like scrolling or resizing.",
-  },
+  }
 ];
 
 function launchConfetti() {
@@ -154,34 +142,37 @@ $(document).ready(function () {
   const practicesList = $("#practices-list");
   const categories = ["HTML", "CSS", "JavaScript"];
   categories.forEach((category) => {
-    practicesList.append(`<h3 id="${category}-section" class="practice-category">${category}</h3>`);
+    let iconUrl;
+    switch (category) {
+      case "HTML": iconUrl = "icons/html.svg"; break;
+      case "CSS": iconUrl = "icons/css.svg"; break;
+      case "JavaScript": iconUrl = "icons/js.svg"; break;
+    }
+    practicesList.append(`<img id="${category}-section" class="practice-category" src="${iconUrl}" width="5%" alt="html icon" ">`);
+    const categoryItem = $('<div class="category"></div>');
+    practicesList.append(categoryItem);
     practices
       .filter((practice) => practice.category === category)
       .forEach((practice) => {
         const practiceItem = $(`
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" id="practice-${practice.id}">
-                    <label class="form-check-label" for="practice-${practice.id}">
-                        ${practice.text} - ${practice.explanation}
-                    </label>
+                <div id="practice-${practice.id}" class="check-card">
+                    <h5 class="practice-title">${practice.text}</h5>
+                    <br>
+                    <p class="explanation" for="practice-${practice.id}">
+                        ${practice.explanation}
+                    </p>
+                    <input class="check-input" type="checkbox" id="check-${practice.id}">
                 </div>
             `);
-        practicesList.append(practiceItem);
+        categoryItem.append(practiceItem);
       });
   });
 
-  // Load selections from local storage
-  practices.forEach((practice) => {
-    const isChecked =
-      localStorage.getItem(`practice-${practice.id}`) === "true";
-    $(`#practice-${practice.id}`).prop("checked", isChecked);
-  });
-
-  $("input[type='checkbox']").change(function () {
-    const id = $(this).attr("id");
-    localStorage.setItem(id, $(this).is(":checked"));
-    updateSummary();
-  });
+  // $(".check-input").change(function () {
+  //   const id = $(this).attr("id");
+  //   localStorage.setItem(id, $(this).is(":checked"));
+  //   updateSummary();
+  // });
 
   function updateSummary() {
     const selectedPractices = $("input[type='checkbox']:checked").length;
@@ -203,11 +194,14 @@ $(document).ready(function () {
         success: function (data) {
           if (data && data.length > 0) {
             const imgUrl = data[0].url;
-            console.log("iamge:", imgUrl);
+            // console.log("iamge:", imgUrl);
             $("#animal-picture").html(
               `<img id="animalImg" src="${imgUrl}" alt="Cute Animal">
-              <img id="close-btn" src="icons/close.svg" alt="Close icon" />`
+               <img id="close-btn" src="icons/close.svg" alt="Close icon" />`
             );
+            $("#animal-picture").css("z-index", "100");
+            $("#animalImg").css("z-index", "101");
+            $("#close-btn").css("z-index", "102");
             launchConfetti();
           } else {
             console.error("No image found");
@@ -222,6 +216,25 @@ $(document).ready(function () {
     }
   }
 
+  $(document).on("click", ".check-card", function (e) {
+    if ($(e.target).is(".check-input")) return;
+
+    const checkbox = $(this).find(".check-input");
+    checkbox.prop("checked", !checkbox.prop("checked"));
+    checkbox.checked = checkbox.prop("checked");
+    $(this).toggleClass("selected", checkbox.prop("checked"));
+    const id = checkbox.attr("id");
+    localStorage.setItem(id, checkbox.prop("checked"));
+    updateSummary();
+  });
+
+  // Load selections from local storage
+  practices.forEach((practice) => {
+    const isChecked =
+      localStorage.getItem(`check-${practice.id}`) === "true";
+    $(`#check-${practice.id}`).prop("checked", isChecked);
+    $(`#practice-${practice.id}`).toggleClass("selected", isChecked);
+  });
   updateSummary();
 });
 
@@ -250,4 +263,5 @@ $(document).ready(function () {
 $(document).on("click", "#close-btn", function () {
   $("#animalImg").remove();
   $("#close-btn").remove();
+  $("#animal-picture").css("z-index", "0");
 });
