@@ -1,5 +1,5 @@
 {
-    "name": "publish-worker",
+    "name": "bpcv",
     "compatibility_date": "2025-03-28",
-    "main": "js/bp.ts"
+    "main": "cloudflare-worker.js"
 }
