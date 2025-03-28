@@ -236,3 +236,24 @@ $(document).ready(function () {
 
   updateSummary();
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+  const sidebar = document.getElementById("sidebar");
+  const toggleButton = document.getElementById("toggle-sidebar-btn");
+  const arrowImage = document.getElementById("arrow");
+
+  toggleButton.addEventListener("click", function () {
+    const isToggled = sidebar.classList.contains("toggle");
+
+    if (isToggled) {
+      sidebar.classList.toggle("toggle");
+      arrowImage.classList.toggle("toggle");
+      arrowImage.style.transform = "rotate(180deg)"; // 恢复箭头初始角度
+    } else {
+      sidebar.classList.toggle("toggle");
+      arrowImage.classList.toggle("toggle");
+      arrowImage.style.transform = "rotate(0deg)"; // 旋转箭头
+    }
+  });
+});

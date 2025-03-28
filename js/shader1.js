@@ -49,7 +49,7 @@ const fragmentShaderSource = `
         vec2 r = iResolution.xy,                              // screen resolution r
              p = (F + F - r ) / r.y / .7,                     // normalized coordinates p
              d = vec2(-1, 1),                                // direction vec d
-             q = 5. * p - d,                                 // scaled coordinates q
+             q = 1. * p - d,                                 // scaled coordinates q
              c = p * mat2(1, 1, d / (.1 + 5. / dot(q, q))),   // rotated coordinates c
              v = c * mat2(cos(.5 * log(j = dot(c, c)) + iTime*.2 + vec4(0, 33, 11, 0))) * 5.,
              s = vec2(0.0);

@@ -38,7 +38,6 @@
     <canvas id="glCanvas"></canvas>
     <!-- Top Navigation Bar -->
     <nav id="topnav">
-      <!-- <a href="#">Best Practices</a> -->
       <ul>
         <li><a href="#html-section">HTML</a></li>
         <li><a href="#css-section">CSS</a></li>
@@ -49,68 +48,64 @@
       </ul>
     </nav>
 
-    <!-- Main Layout -->
-    <div class="main">
-        <!-- Sidebar -->
-        <button id="toggle-sidebar-btn" class="btn btn-dark">
-          &#171;
-          <!-- Left arrow icon -->
-        </button>
-        <nav id="sidebar">
-            <ul id="sidelist">
-              <li><a href="#html-section">HTML</a></li>
-              <li><a href="#css-section">CSS</a></li>
-              <li><a href="#javascript-section">JavaScript</a></li>
-              <li><a href="#additional-section">Additional</a></li>
-            </ul>
-        </nav>
+    <!-- Sidebar -->
+    <nav id="sidebar" class="toggle">
+      <ul id="sidelist">
+        <li><a href="#html-section">HTML</a></li>
+        <li><a href="#css-section">CSS</a></li>
+        <li><a href="#javascript-section">JavaScript</a></li>
+        <li><a href="#additional-section">Additional</a></li>
+        <li><a href="#ref-section">References</a></li>
+      </ul>
+      <button id="toggle-sidebar-btn" class="btn btn-dark">
+        <img id="arrow" class="toggle" src="icons/arrow.svg" alt="Toggle Sidebar"/>
+      </button>
+    </nav>
 
-        <!-- Main Content -->
-        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-          <h1>Best Agile Practices</h1>
-          <section id="html-section">
-            <h2>HTML Section</h2>
-            <p>Content related to HTML goes here.</p>
-          </section>
-          <section id="css-section">
-            <h2>CSS Section</h2>
-            <p>Content related to CSS goes here.</p>
-          </section>
-          <section id="javascript-section">
-            <h2>JavaScript Section</h2>
-            <p>Content related to JavaScript goes here.</p>
-          </section>
-          <section id="additional-section">
-            <h2>Additional Section</h2>
-            <p>Content related to additional topics like shaders goes here.</p>
-          </section>
+    <!-- Main Content -->
+    <main>
+      <h1>Best Agile Practices</h1>
+      <section id="html-section">
+        <h2>HTML Section</h2>
+        <p>Content related to HTML goes here.</p>
+      </section>
+      <section id="css-section">
+        <h2>CSS Section</h2>
+        <p>Content related to CSS goes here.</p>
+      </section>
+      <section id="javascript-section">
+        <h2>JavaScript Section</h2>
+        <p>Content related to JavaScript goes here.</p>
+      </section>
+      <section id="additional-section">
+        <h2>Additional Section</h2>
+        <p>Content related to additional topics like shaders goes here.</p>
+      </section>
 
-          <div class="container">
-            <div id="practices-list">
-              <!-- Best practices will be dynamically added here -->
-            </div>
-            <div id="summary">
-              <h2>Summary</h2>
-              <p id="summary-text"></p>
-              <div id="animal-picture"></div>
-              <div
-                class="progress"
-                role="progressbar"
-                aria-label="Animated striped example"
-                aria-valuenow="75"
-                aria-valuemin="0"
-                aria-valuemax="100"
-              >
-                <div
-                  class="progress-bar progress-bar-striped progress-bar-animated"
-                  style="width: 100%"
-                ></div>
-              </div>
-            </div>
+      <div class="container">
+        <div id="practices-list">
+          <!-- Best practices will be dynamically added here -->
+        </div>
+        <div id="summary">
+          <h2>Summary</h2>
+          <p id="summary-text"></p>
+          <div id="animal-picture"></div>
+          <div
+            class="progress"
+            role="progressbar"
+            aria-label="Animated striped example"
+            aria-valuenow="75"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          >
+            <div
+              class="progress-bar progress-bar-striped progress-bar-animated"
+              style="width: 100%"
+            ></div>
           </div>
-        </main>
+        </div>
       </div>
-    </div>
+    </main>
 
     <script type="text/javascript" src="js/shader1.js"></script>
     <script type="text/javascript" src="js/bp.js"></script>
