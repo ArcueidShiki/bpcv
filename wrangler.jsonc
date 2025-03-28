@@ -1,5 +1,7 @@
 {
     "name": "bpcv",
     "compatibility_date": "2025-03-28",
-    "main": "cloudflare-worker.js"
+    "site": {
+        "bucket": "./"
+    }
 }

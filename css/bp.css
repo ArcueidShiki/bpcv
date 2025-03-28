@@ -188,8 +188,15 @@ main {
   margin-top: 25vh;
   width: 100%;
   height:auto;
+  /* overflow: scroll; */
   z-index: 2;
   color: #fff;
+  overflow-y: scroll; /* 启用垂直滚动 */
+  scrollbar-width: none; /* 适用于 Firefox，隐藏滚动条 */
+}
+
+main::-webkit-scrollbar {
+  display: none; /* 适用于 Webkit 浏览器，隐藏滚动条 */
 }
 
 main p:hover {
