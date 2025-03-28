@@ -1,64 +1,70 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
     <title>边框线条环绕动画</title>
     <style>
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #121212;
-            margin: 0;
-            font-family: Arial, sans-serif;
-        }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #fff5f5;
+        margin: 0;
+        font-family: Arial, sans-serif;
+      }
 
-        .box {
-            position: relative;
-            width: 300px;
-            height: 200px;
-            background: rgba(30, 30, 30, 0.8);
-            border-radius: 10px;
-            overflow: hidden;
-        }
+      .box {
+        position: relative;
+        width: 300px;
+        height: 200px;
+        background: rgba(245, 233, 233, 0.8);
+        border-radius: 10px;
+        overflow: hidden;
+        transition: transform 2s ease-out;
+      }
 
-        .box::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(
-                transparent,
-                transparent,
-                transparent,
-                #00ff00
-            );
-            animation: rotate 4s linear infinite;
-            animation-play-state: running;
-        }
+      .box::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          transparent,
+          #00ff00
+        );
+        animation: rotate 2s linear infinite;
+        animation-play-state: running;
+      }
 
-        .box::after {
-            content: '';
-            position: absolute;
-            inset: 4px;
-            background: rgba(30, 30, 30, 0.8);
-            border-radius: 6px;
-        }
+      .box::after {
+        content: "";
+        position: absolute;
+        inset: 4px;
+        background: rgba(30, 30, 30, 0.8);
+        border-radius: 6px;
+      }
 
-        @keyframes rotate {
-            0% { 
-                transform: rotate(0deg); 
-            }
-            100% { 
-                transform: rotate(360deg); 
-            }
+      .box:hover {
+        transform: scale(1.2, 0.7) skew(30deg) rotateZ(10deg);
+        /* transform-origin: top left; */
+        background-color: #a50f48;
+        transition: transform 1s ease-out, background-color 2s ease;
+      }
+
+      @keyframes rotate {
+        0% {
+          transform: rotate(0deg);
         }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="box"></div>
-</body>
+  </body>
 </html>

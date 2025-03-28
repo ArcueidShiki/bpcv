@@ -16,26 +16,28 @@ html {
   height: 100vh;
   top: 0;
   left: 0;
-  z-index: 1;
 }
 
 #topnav {
-  /* overflow: hidden; */
   position: fixed;
   top: 0;
-  z-index: 3;
+  z-index: 10;
   width: 100vw;
 }
 
 #topnav > ul {
-  padding: 0;
-  margin: 0;
-  background-color: #1b1a1a;
-}
-
-a {
-  text-decoration: none;
-  color: rgb(245, 245, 245);
+  background: linear-gradient(
+    90deg,
+    rgba(50, 70, 255, 1),
+    rgba(255, 68, 43, 1),
+    rgba(50, 70, 255, 1),
+    rgba(255, 68, 43, 1)
+  );
+  background-size: 300% 300%;
+  animation: backgroundFlow 6s linear infinite forwards;
+  border-radius: 1rem 1rem;
+  box-shadow: 0 0 1rem rgb(168, 168, 166), 0 0 2rem rgba(136, 175, 136, 0.8),
+    0 0 3rem rgba(211, 153, 149, 0.8);
 }
 
 #topnav > ul > li a {
@@ -43,9 +45,8 @@ a {
   width: 100%;
   height: 100%;
   padding: 0.5rem 1rem;
-  text-decoration: none; /* remove underline */
+  text-decoration: none;
   color: rgb(245, 245, 245);
-  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #topnav > ul > li {
@@ -57,56 +58,38 @@ a {
   font-size: 2rem;
   font-weight: bold;
   text-align: center;
-  color: rgb(245, 245, 245);
   text-decoration: none;
-  transition: transform 0.5s ease-in-out, color 0.5s ease-in-out;
+  transition: transform 1s ease-out;
   overflow: hidden;
 }
 
-/* RGB 发光动态变化 */
 #topnav > ul > li:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #fff;
   border-radius: 5rem;
-  transform: scale(1.1);
   box-shadow: 0 0 10px rgb(255, 215, 39), 0 0 20px rgba(30, 167, 30, 0.8),
     0 0 30px rgba(231, 53, 40, 0.8);
-}
-
-/* 边框发光和流动特效 */
-#topnav > ul > li::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border-radius: 5rem;
-  border: 2px solid transparent;
   background: linear-gradient(
     90deg,
     rgba(255, 50, 169, 0.8),
-    rgba(255, 198, 43, 0.897),
-    rgba(255, 50, 169, 0.8)
+    rgba(255, 198, 43, 0.9),
+    rgba(255, 50, 169, 0.8),
+    rgba(255, 198, 43, 0.9)
   );
   background-size: 300% 300%;
-  animation: backgroundFlow 5s linear infinite;
-  z-index: -1; /* 放在文字后面 */
+  transform: scale(1.1) skew(-20deg) translate3d(0rem, 1.5rem, 10rem);
+  transition: transform 1s ease, background-color 1s ease;
+  animation: backgroundFlow 5s linear infinite forwards;
 }
 
-#topnav > ul > li:hover::before {
-  filter: blur(0.1rem);
+#topnav > ul > li:not(:hover) {
+  transition: all 1s ease;
 }
 
 @keyframes backgroundFlow {
   0% {
     background-position: 0% 50%;
   }
-  50% {
-    background-position: 100% 50%;
-  }
   100% {
-    background-position: 0% 50%;
+    background-position: 100% 50%;
   }
 }
 
