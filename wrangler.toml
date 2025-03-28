@@ -1,6 +1,0 @@
-name = "bpcv"
-compatibility_date = "2025-03-28"
-
-[site]
-bucket = "./" # static directory
-entry-point = "./cloudflare-worker.js"
