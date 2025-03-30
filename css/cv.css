@@ -5,6 +5,8 @@
   overflow: scroll;
   scrollbar-width: none;
   scroll-behavior: smooth;
+  font-family: italic;
+  color: white;
 }
 
 main {
@@ -13,9 +15,23 @@ main {
   height: 100%;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
 }
+
+hr {
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(13, 8, 96, 1) 0%,
+    rgba(9, 9, 121, 1) 21%,
+    rgba(6, 84, 170, 1) 51%,
+    rgba(0, 255, 113, 1) 100%
+  );
+  transform: scaleY(5);
+}
+
+
 
 main > div {
   position: relative;
@@ -31,7 +47,6 @@ main > div {
   backdrop-filter: blur(1px);
   border: 2px solid red;
   background-color: rgba(93, 87, 87, 0.719);
-  color: white;
   /* border-radius: 3rem; */
   /* overflow: scroll; */
 }
@@ -43,4 +58,13 @@ main > div {
   top: 0;
   left: 0;
   z-index: -5;
+}
+
+h2 {
+  font-family: italic;
+  position: relative;
+  left: 0;
+  margin-left: 1%;
+  text-align: left;
+  background-color: tomato;
 }
