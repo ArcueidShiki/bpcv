@@ -2,53 +2,55 @@
   margin: 0;
   padding: 0;
   border: 0;
-  overflow: scroll;
+  overflow: visiable;
   scrollbar-width: none;
   scroll-behavior: smooth;
   font-family: italic;
-  color: white;
+  color: rgb(1, 1, 1);
+}
+
+hr {
+  margin: 2px auto;
+  width: 100%;
+  background-color: rgb(1, 1, 1);
+  transform: scaleY(3);
 }
 
 main {
   position: relative;
-  width: 100%;
+  width: 800px;
   height: 100%;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: cent;
   justify-content: center;
+  border: 2px solid black;
+  border-radius: 3rem;
+  /* background-color: bisque; */
+  backdrop-filter: blur(1px);
 }
-
-hr {
-  width: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(13, 8, 96, 1) 0%,
-    rgba(9, 9, 121, 1) 21%,
-    rgba(6, 84, 170, 1) 51%,
-    rgba(0, 255, 113, 1) 100%
-  );
-  transform: scaleY(5);
-}
-
-
 
 main > div {
   position: relative;
-  margin: 1rem;
+  margin: 0 auto;
   width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items:
-   center;
-  justify-content: center;
-  /* overflow: hidden; */
   backdrop-filter: blur(1px);
-  border: 2px solid red;
-  background-color: rgba(93, 87, 87, 0.719);
-  /* border-radius: 3rem; */
-  /* overflow: scroll; */
+  border: 2px dotted rgb(84, 96, 192);
+  border-radius: 1.5rem;
+  background-color: rgba(190, 186, 186, 0.369);
+}
+
+h2 {
+  font-family: italic;
+  position: relative;
+  left: 0;
+  text-align: left;
+  margin: 5px 2%;
+  font-weight: bold;
+  font-size: xx-large;
+  /* background-color: tomato; */
 }
 
 #glCanvas {
@@ -60,11 +62,207 @@ main > div {
   z-index: -5;
 }
 
-h2 {
-  font-family: italic;
+.profile-picture {
+  position: absolute;
+  top: 10px;
+  right: 5%;
+  background-color: turquoise;
+}
+
+.name {
   position: relative;
-  left: 0;
-  margin-left: 1%;
+  left: 2%;
+  margin: 0;
+  top: 10px;
+  width: 100%;
   text-align: left;
-  background-color: tomato;
+  /* background-color: rgb(23, 100, 168); */
+}
+
+.position {
+  position: relative;
+  left: 2%;
+  margin: 5px auto;
+  width: 100%;
+  text-align: left;
+  /* background-color: rgb(110, 158, 38); */
+}
+
+.contact-details {
+  position: relative;
+  left: 2%;
+  width: 100%;
+  text-align: left;
+  /* background-color: rgb(114, 24, 114); */
+}
+
+.contact-details * {
+  margin: 1px 5px;
+  color: rgb(0, 0, 0);
+}
+
+.social-links a {
+  margin: 10px 10px;
+}
+
+.profile {
+  margin: 5px;
+}
+
+.experiences * {
+  margin: 5px 5px;
+}
+
+.experience {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  /* background-color: rgb(114, 24, 114); */
+}
+
+.experience h3 {
+  position: relative;
+  display:  inline-block;
+  top: 10px;
+}
+
+.experience h4 {
+  display:  inline-block;
+  right: 5px;
+  position: absolute;
+  top: 10px;
+  /* background-color: royalblue; */
+}
+
+.experience p {
+  position: relative;
+  right: 5px;
+  width: 100%;
+  text-align: left;
+}
+
+.education {
+  position: relative;
+  width: 100%;
+  margin: 5px 5px;
+}
+
+.education h3 {
+  position: relative;
+}
+
+.edu-location {
+  position: absolute;
+  right: 10px;
+  top: 18px;
+}
+
+.edu-degree {
+  position: absolute;
+  right: 10px;
+  top: 18px;
+  margin-top: 2rem;
+}
+
+.edu-year {
+  position: absolute;
+  right: 10px;
+  top: 18px;
+  margin-top: 4rem;
+}
+
+.projects {
+  position: relative;
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.project * {
+  margin: 10px;
+}
+
+.projects h3 {
+  position: relative;
+  /* display: inline-block; */
+  text-align: left;
+  margin: 10px 10px;
+  color: royalblue;
+}
+
+.project {
+  width: 250px;
+  height: 200px;
+  position: relative;
+  margin: 5px 5px;
+  border-radius: 2rem;
+  background-color: rgba(134, 210, 240, 0.132);
+  backdrop-filter: blur(1rem);
+  z-index: 100;
+  overflow: scroll;
+}
+
+.project:hover, .skillset:hover {
+  transform: scale(1.5) skew(0, -10deg) translate3d(-5rem, -5rem, 30rem);
+  transition: transform .5s ease-in-out, background-color 1.5s ease-in-out;
+  background-color: rgba(78, 176, 198, 0.9);
+}
+
+.project:not(:hover), .skillset:not(:hover) {
+  transition: all 0.3s ease-in-out;
+}
+
+.project button {
+  background-color: rgba(194, 196, 198, 0.377);
+  display: inline;
+  border-radius: .5rem;
+}
+
+.project button:hover {
+  background-color: rgb(46, 178, 26);
+  border-radius: 2rem;
+  color: rgb(255, 255, 255);
+  transform: scale(1.5);
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5);
+  transform-origin: left;
+  transition: transform 0.5s ease-in-out, background-color 1.5s ease-in-out;
+}
+
+.languages  *{
+  position: relative;
+  width: 100%;
+  margin: 5px 5px;
+}
+
+.skills {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.skillset {
+  position: relative;
+  width: 250px;
+  height: 200px;
+  margin: 5px 5px;
+  background-color: rgba(146, 185, 205, 0.353);
+  z-index: 100;
+  border-radius: 2rem;
+  overflow: scroll;
+}
+
+.skillset * {
+  margin: 5px;
+}
+
+.skillset button {
+  background-color: rgba(199, 199, 199, 0.333);
+  /* display: inline; */
+  border-radius: .5rem;
 }
