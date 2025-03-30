@@ -1,0 +1,288 @@
+{
+  "contactInfo": {
+    "name": "Jingtong (Jensen Arcueid) Peng",
+    "position": "Software Engineer",
+    "profilePicture": "icons/profile.jpg",
+    "websites": [
+      { "name": "Portfolio", "url": "https://www.arcueidshiki.uk/" },
+      {
+        "name": "Best Agile Practices & CV",
+        "url": "https://cv.arcueidshiki.uk/"
+      }
+    ],
+    "phone": ["+61 413993029", "+86 15776692817"],
+    "email": ["24323312@student.uwa.edu.au", "pengjingtong@pku.edu.cn"],
+    "socialLinks": [
+      {
+        "icon": "icons/email.png",
+        "url": "mailto:24323312@student.uwa.edu.au"
+      },
+      {
+        "icon": "icons/linkedin.svg",
+        "url": "https://www.linkedin.com/in/jingtong-peng-3068672b6/"
+      },
+      {
+        "icon": "icons/github.svg",
+        "url": "https://github.com/ArcueidShiki"
+      },
+      { "icon": "icons/logo.png", "url": "https://www.arcueidshiki.uk/" }
+    ]
+  },
+  "profile": {
+    "title": "Profile",
+    "content": [
+      "Results-driven software engineer with a strong background in C++ development, backend systems, and full-stack applications. ",
+      "Over 1.5 years of experience at Huawei, specializing in performance optimization, debugging tools, and system architecture.",
+      "Currently pursuing a Master of Information Technology at UWA, seeking software engineering roles in Australia. Passionate about building scalable, efficient, and innovative solutions."
+    ]
+  },
+  "workexperience": {
+    "title": "Work Experience",
+    "content": [
+      {
+        "position": "Terminal Software Engineer",
+        "company": "Huawei Technologies Co., Ltd.",
+        "icon": "icons/company/huawei.png",
+        "duration": "09/2022 - 02/2024",
+        "location": "Beijing, China",
+        "description": [
+          "Developed and maintained debugging and performance tuning tools (Hiperf) for HarmonyOS using C++, Python, and Bash. ",
+          "Enhanced crash analysis tools, implementing stack concatenation and Flame Graph visualization, reducing debugging time by 40%. ",
+          "Designed automated testing scripts for CPU/memory performance evaluation, improving system efficiency. ",
+          "Managed Git/Repo-based repositories in a large-scale development environment. "
+        ]
+      },
+      {
+        "position": "Full Stack Developer",
+        "company": "Bytedance",
+        "icon": "icons/company/bytedance.png",
+        "duration": "02/2021 - 04/2022",
+        "location": "Chongqing, China",
+        "description": [
+          "Developing and maintaining web applications for a hospital using Java, Spring Boot, and related backend technologies, ensuring secure and efficient healthcare data management.",
+          "Collaborating with cross-functional teams, including UI/UX designers, product managers, and other developers, to build high-quality, scalable hospital management systems.",
+          "Implementing responsive and user-friendly designs while ensuring cross-browser compatibility and seamless integration with medical databases.",
+          "Participating in code reviews, optimizing backend performance, and providing constructive feedback to improve overall software quality."
+        ]
+      }
+    ]
+  },
+  "projects": {
+    "title": "Projects",
+    "content": [
+      {
+        "name": "Hiperf",
+        "link": "https://gitee.com/openharmony/developtools_hiperf",
+        "description": "A web application that allows users to manage their tasks efficiently.",
+        "technologies": ["React", "Node.js"]
+      },
+      {
+        "name": "Remote Control",
+        "link": "https://github.com/ArcueidShiki/RemoteControl",
+        "description": "A mobile application that helps users track their fitness goals.",
+        "technologies": ["Flutter", "Firebase"]
+      },
+      {
+        "name": "Penni",
+        "link": "https://github.com/codersforcauses/penni",
+        "description": "A mobile application that helps users track their fitness goals.",
+        "technologies": ["Flutter", "Firebase"]
+      },
+      {
+        "name": "IOT Smart Entry System",
+        "link": "https://github.com/ArcueidShiki/SmartEntrySystem",
+        "description": "A mobile application that helps users track their fitness goals.",
+        "technologies": ["Flutter", "Firebase"]
+      },
+      {
+        "name": "Best Agile Practice & CV",
+        "link": "https://github.com/ArcueidShiki/bpcv",
+        "description": "A mobile application that helps users track their fitness goals.",
+        "technologies": ["Flutter", "Firebase"]
+      },
+      {
+        "name": "Portfolio",
+        "link": "https://www.arcueidshiki.uk/",
+        "description": "A mobile application that helps users track their fitness goals.",
+        "technologies": ["Flutter", "Firebase"]
+      },
+      {
+        "name": "MFC VLC Player",
+        "link": "https://github.com/ArcueidShiki/VideoPlay",
+        "description": "A mobile application that helps users track their fitness goals.",
+        "technologies": ["Flutter", "Firebase"]
+      },
+      {
+        "name": "Interpreter",
+        "link": "https://github.com/ArcueidShiki/interpreter",
+        "description": "A mobile application that helps users track their fitness goals.",
+        "technologies": ["Flutter", "Firebase"]
+      }
+    ]
+  },
+  "skills": {
+    "title": "Skills",
+    "content": [
+      {
+        "category": "Programming Languages",
+        "items": [
+          { "name": "C", "iconUrl": "https://skillicons.dev/icons?i=c" },
+          { "name": "C++", "iconUrl": "https://skillicons.dev/icons?i=cpp" },
+          { "name": "Bash", "iconUrl": "https://skillicons.dev/icons?i=bash" },
+          {
+            "name": "JavaScript",
+            "iconUrl": "https://skillicons.dev/icons?i=js"
+          },
+          { "name": "Python", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "Java", "iconUrl": "https://skillicons.dev/icons?i=java" },
+          {
+            "name": "TypeScript",
+            "iconUrl": "https://skillicons.dev/icons?i=ts"
+          }
+        ]
+      },
+      {
+        "category": "Backend Development",
+        "items": [
+          {
+            "name": "Linux Server",
+            "iconUrl": "https://skillicons.dev/icons?i=linux"
+          },
+          {
+            "name": "Windows IOCP",
+            "iconUrl": "https://skillicons.dev/icons?i=windows"
+          },
+          {
+            "name": "Redis",
+            "iconUrl": "https://skillicons.dev/icons?i=redis"
+          },
+          {
+            "name": "SpringBoot",
+            "iconUrl": "https://skillicons.dev/icons?i=spring"
+          },
+          { "name": "Flask", "iconUrl": "https://skillicons.dev/icons?i=flask" }
+        ]
+      },
+      {
+        "category": "Frontend Development",
+        "items": [
+          {
+            "name": "Three.js",
+            "iconUrl": "https://skillicons.dev/icons?i=threejs"
+          },
+          {
+            "name": "React",
+            "iconUrl": "https://skillicons.dev/icons?i=react"
+          },
+          {
+            "name": "Next.js",
+            "iconUrl": "https://skillicons.dev/icons?i=nextjs"
+          },
+          {
+            "name": "Vue.js",
+            "iconUrl": "https://skillicons.dev/icons?i=vuejs"
+          },
+          { "name": "HTML", "iconUrl": "https://skillicons.dev/icons?i=html" },
+          { "name": "CSS", "iconUrl": "https://skillicons.dev/icons?i=css" },
+          {
+            "name": "Bootstrap",
+            "iconUrl": "https://skillicons.dev/icons?i=bootstrap"
+          },
+          { "name": "QT", "iconUrl": "https://skillicons.dev/icons?i=qt" },
+          {
+            "name": "Flutter",
+            "iconUrl": "https://skillicons.dev/icons?i=tailwindcss"
+          }
+        ]
+      },
+      {
+        "category": "Database",
+        "items": [
+          {
+            "name": "MySQL",
+            "iconUrl": "https://skillicons.dev/icons?i=mysql"
+          },
+          {
+            "name": "Sqlite",
+            "iconUrl": "https://skillicons.dev/icons?i=sqlite"
+          },
+          {
+            "name": "MongoDB",
+            "iconUrl": "https://skillicons.dev/icons?i=mongodb"
+          }
+        ]
+      },
+      {
+        "category": "DevOps",
+        "items": [
+          { "name": "Git", "iconUrl": "https://skillicons.dev/icons?i=git" },
+          {
+            "name": "Docker",
+            "iconUrl": "https://skillicons.dev/icons?i=docker"
+          },
+          { "name": "AWS", "iconUrl": "https://skillicons.dev/icons?i=aws" },
+          {
+            "name": "Cloudflare",
+            "iconUrl": "https://skillicons.dev/icons?i=cloudflare"
+          }
+        ]
+      },
+      {
+        "category": "Embedded Systems",
+        "items": [
+          {
+            "name": "Arduino",
+            "iconUrl": "https://skillicons.dev/icons?i=arduino"
+          },
+          {
+            "name": "Raspberry Pi",
+            "iconUrl": "https://skillicons.dev/icons?i=raspberrypi"
+          }
+        ]
+      }
+    ]
+  },
+  "education": {
+    "title": "Education",
+    "content": [
+      {
+        "degree": "Bachelor of Computer Science",
+        "institution": "The University of Western Australia",
+        "logo": "icons/edu/uwa.png",
+        "location": "Perth, Australia",
+        "year": "02/2024 - 12/2025"
+      },
+      {
+        "degree": "dropout",
+        "institution": "Peking University",
+        "logo": "icons/edu/pku.png",
+        "location": "Beijing, China",
+        "year": "2021"
+      },
+      {
+        "degree": "Bachelor of Pharmacy",
+        "institution": "Harbin Medical University",
+        "logo": "icons/edu/hmu.png",
+        "location": "Harbin, China",
+        "year": "09/2015 - 07/2019"
+      }
+    ]
+  },
+  "languages": {
+    "title": "Languages",
+    "content": [
+      {
+        "language": "English",
+        "proficiency": "Fluent"
+      },
+      {
+        "language": "Chinese",
+        "proficiency": "Native"
+      },
+      {
+        "language": "Japanese",
+        "proficiency": "Basic"
+      }
+    ]
+  }
+}

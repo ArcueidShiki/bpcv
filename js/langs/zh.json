@@ -1,0 +1,16 @@
+{
+    "name": "彭景通 (Jensen Arcueid)",
+    "position": "软件工程师",
+    "profilePicture": "icons/profile.jpg",
+    "websites": [
+      { "name": "作品集", "url": "https://portfolio.example.com" },
+      { "name": "博客", "url": "https://blog.example.com" }
+    ],
+    "phone": ["+61 413993029", "+86 15776692817"],
+    "email": ["24323312@student.uwa.edu.au", "pengjingtong@pku.edu.cn"],
+    "socialLinks": [
+      { "icon": "fab fa-linkedin", "url": "https://linkedin.com/in/johndoe" },
+      { "icon": "fab fa-github", "url": "https://github.com/johndoe" },
+      { "icon": "fab fa-twitter", "url": "https://twitter.com/johndoe" }
+    ]
+  }

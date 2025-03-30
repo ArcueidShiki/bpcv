@@ -1,59 +1,46 @@
-body {
+* {
   margin: 0;
   padding: 0;
-  background-color: rgb(0, 0, 0);
+  border: 0;
+  overflow: scroll;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
 }
 
-div ~ *,
-h1,
-h2,
-p {
-  /* position: absolute; */
-  /* background: transparent; */
-  /* top: 0%; */
+main {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+main > div {
+  position: relative;
+  margin: 1rem;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items:
+   center;
+  justify-content: center;
+  /* overflow: hidden; */
+  backdrop-filter: blur(1px);
+  border: 2px solid red;
+  background-color: rgba(93, 87, 87, 0.719);
   color: white;
+  /* border-radius: 3rem; */
+  /* overflow: scroll; */
 }
 
 #glCanvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: -1;
-}
-
-/* Sidebar Styles */
-.sidebar {
-  height: 100vh;
   position: fixed;
+  width: 100vw;
+  height: 100vh;
   top: 0;
   left: 0;
-  z-index: 1000;
-  padding-top: 1rem;
-  overflow-y: auto;
-  transition: transform 0.3s ease-in-out;
-}
-
-.sidebar.collapsed {
-  transform: translateX(-100%);
-}
-
-#toggle-sidebar {
-  position: absolute;
-  top: 10px;
-  right: -25px;
-  z-index: 1100;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  border: 1px solid #ccc;
-  background-color: #f8f9fa;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform 0.3s ease-in-out;
-}
-
-#toggle-sidebar:hover {
-  background-color: #e9ecef;
+  z-index: -5;
 }
