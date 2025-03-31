@@ -399,7 +399,7 @@ h1 {
   justify-content: flex-start;
   align-items: flex-start;
   flex-direction: column;
-  margin: 2 auto;
+  margin: 2px auto;
   left: 0;
   color: white;
   border: 0.1rem solid #fff;
