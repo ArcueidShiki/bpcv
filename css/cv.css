@@ -2,7 +2,7 @@
   margin: 0;
   padding: 0;
   border: 0;
-  overflow: visiable;
+  overflow:visible;
   scrollbar-width: none;
   scroll-behavior: smooth;
   font-family: italic;
@@ -16,6 +16,11 @@ hr {
   transform: scaleY(3);
 }
 
+body {
+  position: relative;
+  background-color: rgb(0, 0, 0);
+}
+
 main {
   position: relative;
   width: 800px;
@@ -23,10 +28,10 @@ main {
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  align-items: cent;
+  align-items: flex-start;
   justify-content: center;
-  border: 2px solid black;
-  border-radius: 3rem;
+  border: 1px solid black;
+  border-radius: 1.5rem;
   /* background-color: bisque; */
   backdrop-filter: blur(1px);
 }
@@ -50,6 +55,7 @@ h2 {
   margin: 5px 2%;
   font-weight: bold;
   font-size: xx-large;
+  color: white;
   /* background-color: tomato; */
 }
 
@@ -59,7 +65,7 @@ h2 {
   height: 100vh;
   top: 0;
   left: 0;
-  z-index: -5;
+  z-index: -10;
 }
 
 .profile-picture {
@@ -144,7 +150,10 @@ h2 {
 .education {
   position: relative;
   width: 100%;
-  margin: 5px 5px;
+  margin: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
 }
 
 .education h3 {
@@ -152,23 +161,21 @@ h2 {
 }
 
 .edu-location {
-  position: absolute;
-  right: 10px;
-  top: 18px;
+  position: relative;
 }
 
-.edu-degree {
-  position: absolute;
+.edu-details {
+  position: relative;
   right: 10px;
-  top: 18px;
-  margin-top: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  text-align: right;
+  margin-top: 5px;
 }
 
 .edu-year {
-  position: absolute;
-  right: 10px;
-  top: 18px;
-  margin-top: 4rem;
+  position: relative;
 }
 
 .projects {
@@ -219,6 +226,7 @@ h2 {
   background-color: rgba(194, 196, 198, 0.377);
   display: inline;
   border-radius: .5rem;
+  padding: 5px;
 }
 
 .project button:hover {
@@ -231,10 +239,29 @@ h2 {
   transition: transform 0.5s ease-in-out, background-color 1.5s ease-in-out;
 }
 
-.languages  *{
+.languages {
+  overflow: visible;
+}
+
+.languages span{
   position: relative;
-  width: 100%;
-  margin: 5px 5px;
+  width: auto;
+  margin: 10px;
+  background-color: rgba(199, 199, 199, 0.333);
+  display: inline-block;
+  border-radius: .5rem;
+  overflow: visible;
+  transform: scale(1);
+  transition: all 0.3s ease-in-out;
+  padding: 5px;
+}
+
+.languages span:hover {
+  transform: scale(1.5);
+  transform-origin: left;
+  background-color: rgb(222, 196, 81);
+  z-index: 5;
+  transition: transform 0.5s ease-in-out, background-color .5s ease-in-out;
 }
 
 .skills {
@@ -253,8 +280,9 @@ h2 {
   margin: 5px 5px;
   background-color: rgba(146, 185, 205, 0.353);
   z-index: 100;
-  border-radius: 2rem;
+  border-radius: 1rem;
   overflow: scroll;
+  padding: 5px;
 }
 
 .skillset * {
@@ -265,4 +293,20 @@ h2 {
   background-color: rgba(199, 199, 199, 0.333);
   /* display: inline; */
   border-radius: .5rem;
+}
+
+
+.references {
+  padding: 5px;
+}
+
+.reference a {
+  text-decoration: none;
+  color: #101010;
+  font-size: large;
+}
+
+li {
+  list-style-type: none;
+  margin-left: 10px;
 }

@@ -390,3 +390,25 @@ h1 {
 .check-card p {
   font-size: 2rem;
 }
+
+#ref-section  {
+  position: relative;
+  width: 90vw;
+  height: auto;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  margin: 2 auto;
+  left: 0;
+  color: white;
+  border: 0.1rem solid #fff;
+  border-radius: 2rem;
+  padding: 5%;
+}
+
+#ref-section a {
+  text-decoration: none;
+  color: #fff;
+  font-size: large;
+}

@@ -303,6 +303,16 @@ const texts = [
   },
 ];
 
+const references = [
+    "https://getbootstrap.com/docs/5.3/getting-started/introduction/",
+    "https://www.w3schools.com/",
+    "https://developer.mozilla.org/en-US/",
+    "https://google.github.io/styleguide/htmlcssguide.html",
+    "https://google.github.io/styleguide/jsguide.html",
+    "https://www.shadertoy.com/view/3csSWB",
+    "github copilot assist with debugging"
+  ]
+
 // Default language
 let currentLanguage = "en";
 
@@ -392,9 +402,11 @@ function LoadEducation(data) {
                 <img src="${edu.logo}" alt="edu logo" width="50px">
                 <span class="edu-institution">${edu.institution}</span>
             </h3>
-             <p class="edu-location">${edu.location}</p>
-             <p class="edu-degree">${edu.degree}</p>
-             <p class="edu-year">${edu.year}</p>
+            <div class="edu-details">
+                <p class="edu-location">${edu.location}</p>
+                <p class="edu-degree">${edu.degree}</p>
+                <p class="edu-year">${edu.year}</p>
+             </div>
           </div>
         `
     )
@@ -455,11 +467,27 @@ function LoadLanguages(data) {
         ${data.languages.content
           .map(
             (lang) => `
-            <li>${lang.language}:${lang.proficiency}</li>`
+            <span>${lang.language}:${lang.proficiency}</span>`
           )
           .join("")}
     </div>`;
   $("main").append(languagesHTML);
+}
+
+function LoadReferences()
+{
+    const referencesHTML = `
+        <h2>References</h2>
+      <div class="references">
+          ${references.map(
+              (reference) => `
+            <li class="reference">
+                <a href="${reference}" target="_blank">${reference}</a>
+            </li>`
+            )
+            .join("")}
+      </div>`;
+  $("main").append(referencesHTML);
 }
 
 function LoadConfig(data) {
@@ -475,4 +503,5 @@ function LoadConfig(data) {
 // Load the default language on page load
 $(document).ready(function () {
   LoadConfig(texts[0].text);
+  LoadReferences();
 });

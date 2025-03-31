@@ -114,6 +114,16 @@ const practices = [
   }
 ];
 
+const references = [
+  "https://getbootstrap.com/docs/5.3/getting-started/introduction/",
+  "https://www.w3schools.com/",
+  "https://developer.mozilla.org/en-US/",
+  "https://google.github.io/styleguide/htmlcssguide.html",
+  "https://google.github.io/styleguide/jsguide.html",
+  "https://www.shadertoy.com/view/3csSWB",
+  "github copilot assist with debugging"
+]
+
 function launchConfetti() {
   const duration = 300; // 0.5 seconds
   const end = Date.now() + duration;
@@ -138,7 +148,7 @@ function launchConfetti() {
   })();
 }
 
-$(document).ready(function () {
+function LoadPractices() {
   const practicesList = $("#practices-list");
   const categories = ["HTML", "CSS", "JavaScript"];
   categories.forEach((category) => {
@@ -167,79 +177,51 @@ $(document).ready(function () {
         categoryItem.append(practiceItem);
       });
   });
+}
 
-  // $(".check-input").change(function () {
-  //   const id = $(this).attr("id");
-  //   localStorage.setItem(id, $(this).is(":checked"));
-  //   updateSummary();
-  // });
+function updateSummary() {
+  const selectedPractices = $("input[type='checkbox']:checked").length;
+  const totalPractices = practices.length;
+  const percentage = Math.round((selectedPractices / totalPractices) * 100);
 
-  function updateSummary() {
-    const selectedPractices = $("input[type='checkbox']:checked").length;
-    const totalPractices = practices.length;
-    const percentage = Math.round((selectedPractices / totalPractices) * 100);
+  $("#summary-text").text(
+    `You have selected ${selectedPractices} out of ${practices.length} best practices.`
+  );
+  $(".progress-bar")
+    .css("width", `${percentage}%`)
+    .attr("aria-valuenow", percentage);
+  $(".progress-bar").text(`${percentage}%`);
 
-    $("#summary-text").text(
-      `You have selected ${selectedPractices} out of ${practices.length} best practices.`
-    );
-    $(".progress-bar")
-      .css("width", `${percentage}%`)
-      .attr("aria-valuenow", percentage);
-    $(".progress-bar").text(`${percentage}%`);
-
-    if (selectedPractices >= practices.length * 0.8) {
-      $.ajax({
-        url: "https://api.thecatapi.com/v1/images/search",
-        method: "GET",
-        success: function (data) {
-          if (data && data.length > 0) {
-            const imgUrl = data[0].url;
-            // console.log("iamge:", imgUrl);
-            $("#animal-picture").html(
-              `<img id="animalImg" src="${imgUrl}" alt="Cute Animal">
-               <img id="close-btn" src="icons/close.svg" alt="Close icon" />`
-            );
-            $("#animal-picture").css("z-index", "100");
-            $("#animalImg").css("z-index", "101");
-            $("#close-btn").css("z-index", "102");
-            launchConfetti();
-          } else {
-            console.error("No image found");
-          }
-        },
-        error: function (xhr, status, error) {
-          console.error("Error fetching image:", error);
-        },
-      });
-    } else {
-      $("#animal-picture").empty();
-    }
+  if (selectedPractices >= 14) {
+    $.ajax({
+      url: "https://api.thecatapi.com/v1/images/search",
+      method: "GET",
+      success: function (data) {
+        if (data && data.length > 0) {
+          const imgUrl = data[0].url;
+          // console.log("iamge:", imgUrl);
+          $("#animal-picture").html(
+            `<img id="animalImg" src="${imgUrl}" alt="Cute Animal">
+             <img id="close-btn" src="icons/close.svg" alt="Close icon" />`
+          );
+          $("#animal-picture").css("z-index", "100");
+          $("#animalImg").css("z-index", "101");
+          $("#close-btn").css("z-index", "102");
+          launchConfetti();
+        } else {
+          console.error("No image found");
+        }
+      },
+      error: function (xhr, status, error) {
+        console.error("Error fetching image:", error);
+      },
+    });
+  } else {
+    $("#animal-picture").empty();
   }
+}
 
-  $(document).on("click", ".check-card", function (e) {
-    if ($(e.target).is(".check-input")) return;
-
-    const checkbox = $(this).find(".check-input");
-    checkbox.prop("checked", !checkbox.prop("checked"));
-    checkbox.checked = checkbox.prop("checked");
-    $(this).toggleClass("selected", checkbox.prop("checked"));
-    const id = checkbox.attr("id");
-    localStorage.setItem(id, checkbox.prop("checked"));
-    updateSummary();
-  });
-
-  // Load selections from local storage
-  practices.forEach((practice) => {
-    const isChecked =
-      localStorage.getItem(`check-${practice.id}`) === "true";
-    $(`#check-${practice.id}`).prop("checked", isChecked);
-    $(`#practice-${practice.id}`).toggleClass("selected", isChecked);
-  });
-  updateSummary();
-});
-
-
-$(document).ready(function () {
+function ToggleSidebar() {
   const sidebar = $("#sidebar");
   const toggleButton = $("#toggle-sidebar-btn");
   const arrowImage = $("#arrow");
@@ -257,8 +239,50 @@ $(document).ready(function () {
       arrowImage.css("transform", "rotate(0deg)");
     }
   });
+}
+
+function LoadLocalStorage() {
+    // Load selections from local storage
+    practices.forEach((practice) => {
+      const isChecked =
+        localStorage.getItem(`check-${practice.id}`) === "true";
+      $(`#check-${practice.id}`).prop("checked", isChecked);
+      $(`#practice-${practice.id}`).toggleClass("selected", isChecked);
+    });
+}
+
+function LoadReferences()
+{
+  const referencesList = $("#ref-section");
+  references.forEach((reference) => {
+    const referenceItem = $(`
+            <li class="reference-item">
+                <a href="${reference}" target="_blank">${reference}</a>
+            </li>
+        `);
+    referencesList.append(referenceItem);
+  });
+}
+
+$(document).ready(function () {
+  LoadPractices();
+  LoadLocalStorage();
+  updateSummary();
+  LoadReferences();
+  ToggleSidebar();
 });
 
+$(document).on("click", ".check-card", function (e) {
+  if ($(e.target).is(".check-input")) return;
+
+  const checkbox = $(this).find(".check-input");
+  checkbox.prop("checked", !checkbox.prop("checked"));
+  checkbox.checked = checkbox.prop("checked");
+  $(this).toggleClass("selected", checkbox.prop("checked"));
+  const id = checkbox.attr("id");
+  localStorage.setItem(id, checkbox.prop("checked"));
+  updateSummary();
+});
 
 $(document).on("click", "#close-btn", function () {
   $("#animalImg").remove();
