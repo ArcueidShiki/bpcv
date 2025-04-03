@@ -34,6 +34,7 @@ main {
   border-radius: 1.5rem;
   /* background-color: bisque; */
   backdrop-filter: blur(1px);
+  z-index: 2;
 }
 
 main > div {
@@ -65,7 +66,7 @@ h2 {
   height: 100vh;
   top: 0;
   left: 0;
-  z-index: -10;
+  z-index: 1;
 }
 
 .profile-picture {
@@ -291,20 +292,4 @@ h2 {
   background-color: rgba(199, 199, 199, 0.333);
   /* display: inline; */
   border-radius: .5rem;
-}
-
-
-.references {
-  padding: 5px;
-}
-
-.reference a {
-  text-decoration: none;
-  color: #101010;
-  font-size: large;
-}
-
-li {
-  list-style-type: none;
-  margin-left: 10px;
 }

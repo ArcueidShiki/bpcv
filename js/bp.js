@@ -7,121 +7,142 @@ const practices = [
   {
     id: 1,
     category: "HTML",
-    text: "Use semantic HTML to structure your content meaningfully",
-    explanation: "Semantic HTML elements like header, footer, and article improve accessibility, SEO, and make your code easier to read and maintain.",
+    text: "Multimedia Fallback",
+    explanation: "For multimedia, such as images, videos, animated objects via canvas, make sure to offer alternative access. For images that means use of meaningful alternative text (alt) and for video and audio transcripts and captions, if available(Google, n.d.).",
   },
   {
     id: 2,
     category: "HTML",
-    text: "Always include alt attributes for images",
-    explanation: "Alt attributes provide alternative text for images, improving accessibility for visually impaired users and ensuring content is understandable even if images fail to load.",
+    text: "Semantics",
+    explanation: "Use elements (sometimes incorrectly called “tags”) for what they have been created for. For example, use heading elements for headings, p elements for paragraphs, a elements for anchors, etc(Google, n.d.).",
   },
   {
     id: 3,
     category: "HTML",
-    text: "Maintain a proper heading hierarchy in your document",
-    explanation: "Using headings like h1, h2, and h3 in a logical order helps screen readers and search engines understand the structure of your content.",
+    text: "type Attributes",
+    explanation: "Omit type attributes for style sheets and scripts. Do not use type attributes for style sheets (unless not using CSS) and scripts (unless not using JavaScript)(Google, n.d.).",
   },
   {
     id: 4,
     category: "HTML",
-    text: "Include meta tags for better SEO and browser compatibility",
-    explanation: "Meta tags like meta charset='UTF-8' and meta name='viewport' ensure your website is optimized for search engines and responsive on all devices.",
+    text: "id Attributes",
+    explanation: "Avoid unnecessary id attributes. Prefer class attributes for styling and data attributes for scripting. Where id attributes are strictly required, always include a hyphen in the value to ensure it does not match the JavaScript identifier syntax, e.g. use user-profile rather than just profile or userProfile(Google, n.d.).",
   },
   {
     id: 5,
     category: "HTML",
-    text: "Use forms correctly with proper labels and input types",
-    explanation: "Adding labels to form inputs improves accessibility, while using appropriate input types like 'email' or 'number' ensures better user experience and validation.",
+    text: "Quotation Marks",
+    explanation: "When quoting attributes values, use double quotation marks. Use double (\"\") rather than single quotation marks ('') around attribute values(Google, n.d.).",
   },
   {
     id: 6,
     category: "CSS",
-    text: "Organize your styles using external stylesheets",
-    explanation: "External stylesheets keep your HTML clean, improve maintainability, and allow for better caching, which speeds up page load times.",
+    text: "Class Naming",
+    explanation: "Use meaningful or generic class names. Instead of presentational or cryptic names, always use class names that reflect the purpose of the element in question, or that are otherwise generic(Google, n.d.).",
   },
   {
     id: 7,
     category: "CSS",
-    text: "Implement responsive design using media queries",
-    explanation: "Media queries allow your website to adapt to different screen sizes, ensuring a consistent user experience across devices like phones, tablets, and desktops.",
+    text: "Class Name Delimiters",
+    explanation: "Separate words in class names by a hyphen. Do not concatenate words and abbreviations in selectors by any characters (including none at all) other than hyphens, in order to improve understanding and scannability(Google, n.d.).",
   },
   {
     id: 8,
     category: "CSS",
-    text: "Leverage CSS variables for consistent theming",
-    explanation: "CSS variables (custom properties) make it easier to manage and update styles globally, especially for colors, fonts, and spacing.",
+    text: "Prefixes",
+    explanation: "Prefix selectors with an application-specific prefix (optional). In large projects as well as for code that gets embedded in other projects or on external sites use prefixes (as namespaces) for class names. Use short, unique identifiers followed by a dash. Using namespaces helps preventing naming conflicts and can make maintenance easier, for example in search and replace operations(Google, n.d.).",
   },
   {
     id: 9,
     category: "CSS",
-    text: "Use flexbox for creating flexible and responsive layouts",
-    explanation: "Flexbox simplifies the process of aligning and distributing space among items in a container, even when their sizes are dynamic or unknown.",
+    text: "Type Selectors",
+    explanation: "Avoid qualifying class names with type selectors. Unless necessary (for example with helper classes), do not use element names in conjunction with classes. Avoiding unnecessary ancestor selectors is useful for performance reasons(Google, n.d.).",
   },
   {
     id: 10,
     category: "CSS",
-    text: "Adopt CSS Grid for complex and two-dimensional layouts",
-    explanation: "CSS Grid provides a powerful layout system that allows you to create intricate designs with rows and columns, making your layouts more robust and easier to maintain.",
+    text: "ID Selectors",
+    explanation: "Avoid ID selectors. ID attributes are expected to be unique across an entire page, which is difficult to guarantee when a page contains many components worked on by many different engineers. Class selectors should be preferred in all situations(Google, n.d.).",
   },
   {
     id: 11,
     category: "JavaScript",
-    text: "Enable strict mode in your JavaScript code",
-    explanation: "Strict mode helps you catch common coding errors, prevents the use of unsafe actions, and ensures better performance by enabling optimizations in JavaScript engines.",
+    text: "File name",
+    explanation: "File names must be all lowercase and may include underscores (_) or dashes (-), but no additional punctuation. Follow the convention that your project uses. Filenames’ extension must be .js(Google, n.d.).",
   },
   {
     id: 12,
     category: "JavaScript",
-    text: "Use event delegation for better performance",
-    explanation: "Instead of adding event listeners to multiple child elements, attach a single listener to a parent element to handle events more efficiently.",
+    text: "Imports",
+    explanation: "ES module files must use the import statement to import other ES module files. Do not goog.require another ES module. The .js file extension is not optional in import paths and must always be included(Google, n.d.).",
   },
   {
     id: 13,
     category: "JavaScript",
-    text: "Write asynchronous code using async/await",
-    explanation: "Async/await syntax makes asynchronous code easier to read and debug, avoiding the complexity of nested callbacks or promise chains.",
+    text: "Exports",
+    explanation: "Symbols are only exported if they are meant to be used outside the module. Non-exported module-local symbols are not declared @private. There is no prescribed ordering for exported and module-local symbols(Google, n.d.).",
   },
   {
     id: 14,
     category: "JavaScript",
-    text: "Understand and use closures effectively",
-    explanation: "Closures allow you to create private variables and functions, enabling better data encapsulation and modular code.",
+    text: "Column limit: 80",
+    explanation: "JavaScript code has a column limit of 80 characters. Except as noted below, any line that would exceed this limit must be line-wrapped(Google, n.d.).",
   },
   {
     id: 15,
     category: "JavaScript",
-    text: "Organize your code using ES6 modules",
-    explanation: "Modules help you split your code into reusable pieces, making it easier to manage dependencies and maintain your application.",
+    text: "Naming",
+    explanation: "Identifiers use only ASCII letters and digits, and, in a small number of cases noted below, underscores and very rarely (when required by frameworks like Angular) dollar signs(Google, n.d.).",
   },
   {
     id: 16,
     category: "HTML",
-    text: "Use ARIA roles to enhance accessibility",
-    explanation: "ARIA roles provide additional context to assistive technologies, ensuring that your website is usable by people with disabilities.",
+    text: "HTML Formatting Rules",
+    explanation: "Use a new line for every block, list, or table element, and indent every such child element. Independent of the styling of an element (as CSS allows elements to assume a different role per display property), put every block, list, or table element on a new line. Also, indent them if they are child elements of a block, list, or table element(Google, n.d.).",
   },
   {
     id: 17,
     category: "CSS",
-    text: "Optimize animations and transitions for performance",
-    explanation: "Use hardware-accelerated properties like transform and opacity to ensure smooth animations without affecting performance.",
+    text: "0 and Units",
+    explanation: "Omit unit specification after “0” values, unless required. Do not use units after 0 values unless they are required(Google, n.d.).",
   },
   {
     id: 18,
     category: "JavaScript",
-    text: "Avoid polluting the global namespace",
-    explanation: "Use IIFEs (Immediately Invoked Function Expressions) or modules to encapsulate your code and prevent conflicts with other scripts.",
+    text: "Nested functions and closures",
+    explanation: "Functions may contain nested function definitions. If it is useful to give the function a name, it should be assigned to a local const(Google, n.d.).",
   }
 ];
 
 const references = [
-  "https://getbootstrap.com/docs/5.3/getting-started/introduction/",
-  "https://www.w3schools.com/",
-  "https://developer.mozilla.org/en-US/",
-  "https://google.github.io/styleguide/htmlcssguide.html",
-  "https://google.github.io/styleguide/jsguide.html",
-  "https://www.shadertoy.com/view/3csSWB",
-  "github copilot assist with debugging"
+  {
+    id: 1,
+    author: "Google",
+    title: "Google HTML/CSS Style Guide",
+    url: "https://google.github.io/styleguide/htmlcssguide.html",
+    date: "(n.d.)"
+  },
+  {
+    id: 2,
+    author: "Google",
+    title: "Google JavaScript Style Guide",
+    url: "https://google.github.io/styleguide/jsguide.html",
+    date: "(n.d.)"
+  },
+  {
+    id: 3,
+    author: "XorDev",
+    title: "Singularity [381]",
+    url: "https://www.shadertoy.com/view/3csSWB",
+    date: "(2025, March, 6)"
+  },
+  {
+    id: 4,
+    author: "OpenAI",
+    title: "ChatGTP (Mar 14 version) [Large language model]",
+    url: "https://chat.openai.com/chat",
+    date: "(2023)"
+  }
 ]
 
 function launchConfetti() {
@@ -257,7 +278,9 @@ function LoadReferences()
   references.forEach((reference) => {
     const referenceItem = $(`
             <li class="reference-item">
-                <a href="${reference}" target="_blank">${reference}</a>
+                <a href="${reference.url}" target="_blank">
+                  ${reference.author}.${reference.date}.<i>${reference.title}</i>.${reference.url}
+                </a>
             </li>
         `);
     referencesList.append(referenceItem);

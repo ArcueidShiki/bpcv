@@ -260,7 +260,7 @@ const texts = [
         title: "Education",
         content: [
           {
-            degree: "Bachelor of Computer Science",
+            degree: "Master of Information Technology",
             institution: "The University of Western Australia",
             logo: "icons/edu/uwa.png",
             location: "Perth, Australia",
@@ -302,16 +302,6 @@ const texts = [
     },
   },
 ];
-
-const references = [
-    "https://getbootstrap.com/docs/5.3/getting-started/introduction/",
-    "https://www.w3schools.com/",
-    "https://developer.mozilla.org/en-US/",
-    "https://google.github.io/styleguide/htmlcssguide.html",
-    "https://google.github.io/styleguide/jsguide.html",
-    "https://www.shadertoy.com/view/3csSWB",
-    "github copilot assist with debugging"
-  ]
 
 // Default language
 let currentLanguage = "en";
@@ -472,22 +462,6 @@ function LoadLanguages(data) {
           .join("")}
     </div>`;
   $("main").append(languagesHTML);
-}
-
-function LoadReferences()
-{
-    const referencesHTML = `
-        <h2>References</h2>
-      <div class="references">
-          ${references.map(
-              (reference) => `
-            <li class="reference">
-                <a href="${reference}" target="_blank">${reference}</a>
-            </li>`
-            )
-            .join("")}
-      </div>`;
-  $("main").append(referencesHTML);
 }
 
 function LoadConfig(data) {
