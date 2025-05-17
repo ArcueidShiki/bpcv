@@ -74,6 +74,13 @@ const texts = [
         title: "Projects",
         content: [
           {
+            name: "Stock PaperTrading",
+            link: "https://github.com/ArcueidShiki/DataAnalyticsApplication",
+            description:
+              "A US stock market paper trading web application",
+            technologies: ["Flask", "Sqlalchemy", "Echarts", "bootstrap", "JWT"],
+          },
+          {
             name: "Hiperf",
             link: "https://gitee.com/openharmony/developtools_hiperf",
             description:
