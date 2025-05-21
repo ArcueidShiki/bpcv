@@ -293,3 +293,46 @@ h2 {
   /* display: inline; */
   border-radius: .5rem;
 }
+
+/* Language Selector Container */
+.language-selector {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: #ffffff; /* White background */
+  border: 1px solid #ddd; /* Light border */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  padding: 5px 10px;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  color: #333; /* Dark text */
+  cursor: pointer;
+}
+
+/* Dropdown Styling */
+.language-selector select {
+  border: none;
+  background: transparent;
+  font-size: 14px;
+  color: #333;
+  outline: none;
+  cursor: pointer;
+}
+
+/* Hover Effect */
+.language-selector:hover {
+  background-color: #f9f9f9; /* Slightly lighter background on hover */
+  box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15); /* Slightly stronger shadow */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .language-selector {
+    top: 10px;
+    right: 10px;
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+}

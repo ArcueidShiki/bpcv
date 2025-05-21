@@ -308,6 +308,327 @@ const texts = [
       },
     },
   },
+  {
+    "lang": "jp",
+    "text": {
+      contactInfo: {
+        name: "ペン・ジントン (ジェンセン・アルクエイド)",
+        position: "ソフトウェアエンジニア",
+        profilePicture: "icons/profile.jpg",
+        websites: [
+          { name: "ポートフォリオ", url: "https://www.arcueidshiki.uk/" },
+          {
+            name: "ベストアジャイルプラクティス＆履歴書",
+            url: "https://cv.arcueidshiki.uk/",
+          },
+        ],
+        phone: ["+61 413993029", "+86 15776692817"],
+        email: ["24323312@student.uwa.edu.au", "pengjingtong@pku.edu.cn"],
+        socialLinks: [
+          {
+            icon: "icons/email.png",
+            url: "mailto:24323312@student.uwa.edu.au",
+          },
+          {
+            icon: "icons/linkedin.svg",
+            url: "https://www.linkedin.com/in/jingtong-peng-3068672b6/",
+          },
+          {
+            icon: "icons/github.svg",
+            url: "https://github.com/ArcueidShiki",
+          },
+          { icon: "icons/logo.png", url: "https://www.arcueidshiki.uk/" },
+        ],
+      },
+      profile: {
+        title: "プロフィール",
+        content: [
+          "C++開発、バックエンドシステム、フルスタックアプリケーションに強いソフトウェアエンジニア。",
+          "Huaweiで1.5年以上の経験を持ち、パフォーマンス最適化、デバッグツール、システムアーキテクチャを専門としています。",
+          "現在、UWAで情報技術の修士課程を追求しており、オーストラリアでのソフトウェアエンジニアリングの役割を探しています。",
+        ],
+      },
+      workexperience: {
+        title: "職務経験",
+        content: [
+          {
+            position: "端末ソフトウェアエンジニア",
+            company: "Huawei Technologies Co., Ltd.",
+            icon: "icons/company/huawei.png",
+            duration: "2022年9月 - 2024年2月",
+            location: "中国 北京",
+            description: [
+              "C++、Python、Bashを使用してHarmonyOSのデバッグおよびパフォーマンス調整ツール（Hiperf）を開発および維持。",
+              "クラッシュ分析ツールを強化し、スタックの連結とフレームグラフの視覚化を実装し、デバッグ時間を40％短縮。",
+              "CPU/メモリパフォーマンス評価のための自動テストスクリプトを設計し、システム効率を向上。",
+              "大規模な開発環境でGit/Repoベースのリポジトリを管理。",
+            ],
+          },
+          {
+            position: "フルスタック開発者",
+            company: "Bytedance",
+            icon: "icons/company/bytedance.png",
+            duration: "2021年2月 - 2022年4月",
+            location: "中国 重慶",
+            description: [
+              "Java、Spring Boot、および関連するバックエンド技術を使用して病院向けのWebアプリケーションを開発および維持し、安全で効率的な医療データ管理を確保。",
+              "UI/UXデザイナー、プロダクトマネージャー、他の開発者などのクロスファンクショナルチームと協力して、高品質でスケーラブルな病院管理システムを構築。",
+              "レスポンシブでユーザーフレンドリーなデザインを実装し、クロスブラウザ互換性と医療データベースとのシームレスな統合を確保。",
+              "コードレビューに参加し、バックエンドパフォーマンスを最適化し、全体的なソフトウェア品質を向上させるために建設的なフィードバックを提供。",
+            ],
+          },
+        ],
+      },
+      projects: {
+        title: "プロジェクト",
+        content: [
+          {
+            name: "株式ペーパートレーディング",
+            link: "https://github.com/ArcueidShiki/DataAnalyticsApplication",
+            description: "米国株式市場のペーパートレーディングWebアプリケーション",
+            technologies: [
+              "Flask",
+              "Sqlalchemy",
+              "Echarts",
+              "bootstrap",
+              "JWT",
+            ],
+          },
+          {
+            name: "Hiperf",
+            link: "https://gitee.com/openharmony/developtools_hiperf",
+            description: "HarmonyOsシステムパフォーマンスデバッグツール。",
+            technologies: ["C/C++", "LinuxPerf", "AOSP", "Python", "ADB"],
+          },
+          {
+            name: "リモートコントロール",
+            link: "https://github.com/ArcueidShiki/RemoteControl",
+            description: "Windowsリモートコントロールアプリケーション、画面監視、キーボードとマウスの制御。",
+            technologies: ["C/C++", "TCP/IP", "MFC", "IOCP", "QT"],
+          },
+          {
+            name: "ペンニ",
+            link: "https://github.com/codersforcauses/penni",
+            description: "退職者がパートタイムの仕事を見つけるのを助けるモバイルアプリケーション。",
+            technologies: ["React", "Nextjs", "TailwindCss", "NPM"],
+          },
+          {
+            name: "IOTスマートエントリーシステム",
+            link: "https://github.com/ArcueidShiki/SmartEntrySystem",
+            description: "エントリー制御のためのIOTベースの顔認識システム。",
+            technologies: [
+              "RaspberryPi",
+              "OpenCV",
+              "Flask",
+              "MQTT",
+              "Tensorflow",
+            ],
+          },
+          {
+            name: "ベストアジャイルプラクティス＆履歴書",
+            link: "https://github.com/ArcueidShiki/bpcv",
+            description: "学生が履歴書を作成するのを支援する大学の個人プロジェクト。",
+            technologies: [
+              "HTML",
+              "CSS",
+              "JavaScript",
+              "jQuery",
+              "WebGL",
+              "OpenGL Shader",
+            ],
+          },
+          {
+            name: "ポートフォリオ",
+            link: "https://www.arcueidshiki.uk/",
+            description:
+              "私のプロジェクトとスキルを紹介する個人ポートフォリオWebサイト。",
+            technologies: ["Threejs", "Vite", "Blender"],
+          },
+          {
+            name: "MFC VLCプレーヤー",
+            link: "https://github.com/ArcueidShiki/VideoPlay",
+            description: "複数のビデオ形式をサポートするMFCベースのVLCプレーヤー。",
+            technologies: ["VLC", "MFC", "C++"],
+          },
+          {
+            name: "インタープリター",
+            link: "https://github.com/ArcueidShiki/interpreter",
+            description:
+              "基本的な算術演算と制御フローをサポートするカスタムプログラミング言語のインタープリター。",
+            technologies: ["C"],
+          },
+        ],
+      },
+      skills: {
+        title: "Skills",
+        content: [
+          {
+            category: "Programming Languages",
+            items: [
+              { name: "C", iconUrl: "https://skillicons.dev/icons?i=c" },
+              { name: "C++", iconUrl: "https://skillicons.dev/icons?i=cpp" },
+              { name: "Bash", iconUrl: "https://skillicons.dev/icons?i=bash" },
+              {
+                name: "JavaScript",
+                iconUrl: "https://skillicons.dev/icons?i=js",
+              },
+              { name: "Python", iconUrl: "https://skillicons.dev/icons?i=py" },
+              { name: "Java", iconUrl: "https://skillicons.dev/icons?i=java" },
+              {
+                name: "TypeScript",
+                iconUrl: "https://skillicons.dev/icons?i=ts",
+              },
+            ],
+          },
+          {
+            category: "Backend Development",
+            items: [
+              {
+                name: "Linux Server",
+                iconUrl: "https://skillicons.dev/icons?i=linux",
+              },
+              {
+                name: "Windows IOCP",
+                iconUrl: "https://skillicons.dev/icons?i=windows",
+              },
+              {
+                name: "Redis",
+                iconUrl: "https://skillicons.dev/icons?i=redis",
+              },
+              {
+                name: "SpringBoot",
+                iconUrl: "https://skillicons.dev/icons?i=spring",
+              },
+              {
+                name: "Flask",
+                iconUrl: "https://skillicons.dev/icons?i=flask",
+              },
+            ],
+          },
+          {
+            category: "Frontend Development",
+            items: [
+              {
+                name: "Three.js",
+                iconUrl: "https://skillicons.dev/icons?i=threejs",
+              },
+              {
+                name: "React",
+                iconUrl: "https://skillicons.dev/icons?i=react",
+              },
+              {
+                name: "Next.js",
+                iconUrl: "https://skillicons.dev/icons?i=nextjs",
+              },
+              {
+                name: "Vue.js",
+                iconUrl: "https://skillicons.dev/icons?i=vuejs",
+              },
+              { name: "HTML", iconUrl: "https://skillicons.dev/icons?i=html" },
+              { name: "CSS", iconUrl: "https://skillicons.dev/icons?i=css" },
+              {
+                name: "Bootstrap",
+                iconUrl: "https://skillicons.dev/icons?i=bootstrap",
+              },
+              { name: "QT", iconUrl: "https://skillicons.dev/icons?i=qt" },
+              {
+                name: "Flutter",
+                iconUrl: "https://skillicons.dev/icons?i=tailwindcss",
+              },
+            ],
+          },
+          {
+            category: "Database",
+            items: [
+              {
+                name: "MySQL",
+                iconUrl: "https://skillicons.dev/icons?i=mysql",
+              },
+              {
+                name: "Sqlite",
+                iconUrl: "https://skillicons.dev/icons?i=sqlite",
+              },
+              {
+                name: "MongoDB",
+                iconUrl: "https://skillicons.dev/icons?i=mongodb",
+              },
+            ],
+          },
+          {
+            category: "DevOps",
+            items: [
+              { name: "Git", iconUrl: "https://skillicons.dev/icons?i=git" },
+              {
+                name: "Docker",
+                iconUrl: "https://skillicons.dev/icons?i=docker",
+              },
+              { name: "AWS", iconUrl: "https://skillicons.dev/icons?i=aws" },
+              {
+                name: "Cloudflare",
+                iconUrl: "https://skillicons.dev/icons?i=cloudflare",
+              },
+            ],
+          },
+          {
+            category: "Embedded Systems",
+            items: [
+              {
+                name: "Arduino",
+                iconUrl: "https://skillicons.dev/icons?i=arduino",
+              },
+              {
+                name: "Raspberry Pi",
+                iconUrl: "https://skillicons.dev/icons?i=raspberrypi",
+              },
+            ],
+          },
+        ],
+      },
+      education: {
+        title: "学歴",
+        content: [
+          {
+            degree: "情報技術修士課程",
+            institution: "西オーストラリア大学",
+            logo: "icons/edu/uwa.png",
+            location: "オーストラリア パース",
+            year: "2024年2月 - 2025年12月",
+          },
+          {
+            degree: "中退",
+            institution: "北京大学",
+            logo: "icons/edu/pku.png",
+            location: "中国 北京",
+            year: "2021年",
+          },
+          {
+            degree: "薬学士",
+            institution: "ハルビン医科大学",
+            logo: "icons/edu/hmu.png",
+            location: "中国 ハルビン",
+            year: "2015年9月 - 2019年7月",
+          },
+        ],
+      },
+      languages: {
+        title: "言語",
+        content: [
+          {
+            language: "英語",
+            proficiency: "流暢",
+          },
+          {
+            language: "中国語",
+            proficiency: "母国語",
+          },
+          {
+            language: "日本語",
+            proficiency: "基礎",
+          }
+        ]
+      },
+    },
+  },
 ];
 
 // Default language
@@ -481,8 +802,22 @@ function LoadConfig(data) {
     LoadLanguages(data);
 }
 
+function switchLanguage(lang) {
+  $("main").empty();
+  const selectedText = texts.find((t) => t.lang === lang);
+  if (selectedText) {
+    LoadConfig(selectedText.text);
+  }
+}
+
+document.getElementById("languageSelector").addEventListener("change", (e) => {
+  const selectedLang = e.target.value;
+  switchLanguage(selectedLang);
+});
+
+
 // Load the default language on page load
 $(document).ready(function () {
-  LoadConfig(texts[0].text);
-  LoadReferences();
+  switchLanguage("jp");
+  // LoadConfig(texts[0].text);
 });
