@@ -18,7 +18,8 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
   background: #e2dada; /* Full black background */
   color: #000000; /* Black text for cards */
   line-height: 1.6;
@@ -50,7 +51,7 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  z-index: 1; /* 确保在内容下方但可交互 */
+  z-index: 0; /* 确保在内容下方但可交互 */
   opacity: 1; /* 正方体可见 */
   pointer-events: auto; /* 允许拖拽交互 */
 }
@@ -224,77 +225,78 @@ main {
 }
 
 .cv-header::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>') repeat;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="50" cy="50" r="1" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>')
+    repeat;
   opacity: 0.3;
   animation: grain-move 20s linear infinite;
 }
 
 /* RGB Neon Border Animation */
 @keyframes rgbBorder {
-  0% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000; }
-  16.66% { border-color: #ff8000; box-shadow: 0 0 20px #ff8000, 0 0 40px #ff8000; }
-  33.33% { border-color: #ffff00; box-shadow: 0 0 20px #ffff00, 0 0 40px #ffff00; }
-  50% { border-color: #00ff00; box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
-  66.66% { border-color: #0080ff; box-shadow: 0 0 20px #0080ff, 0 0 40px #0080ff; }
-  83.33% { border-color: #8000ff; box-shadow: 0 0 20px #8000ff, 0 0 40px #8000ff; }
-  100% { border-color: #ff0000; box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000; }
+  0% {
+    border-color: #ff0000;
+    box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000;
+  }
+  16.66% {
+    border-color: #ff8000;
+    box-shadow: 0 0 20px #ff8000, 0 0 40px #ff8000;
+  }
+  33.33% {
+    border-color: #ffff00;
+    box-shadow: 0 0 20px #ffff00, 0 0 40px #ffff00;
+  }
+  50% {
+    border-color: #00ff00;
+    box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
+  }
+  66.66% {
+    border-color: #0080ff;
+    box-shadow: 0 0 20px #0080ff, 0 0 40px #0080ff;
+  }
+  83.33% {
+    border-color: #8000ff;
+    box-shadow: 0 0 20px #8000ff, 0 0 40px #8000ff;
+  }
+  100% {
+    border-color: #ff0000;
+    box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000;
+  }
 }
 
 @keyframes rgbGlow {
-  0% { 
-    box-shadow: 
-      0 8px 25px rgba(0, 0, 0, 0.15),
-      0 0 0 2px #ff0000,
-      0 0 30px #ff0000,
-      0 0 60px #ff0000;
+  0% {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 2px #ff0000,
+      0 0 30px #ff0000, 0 0 60px #ff0000;
   }
-  16.66% { 
-    box-shadow: 
-      0 8px 25px rgba(0, 0, 0, 0.15),
-      0 0 0 2px #ff8000,
-      0 0 30px #ff8000,
-      0 0 60px #ff8000;
+  16.66% {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 2px #ff8000,
+      0 0 30px #ff8000, 0 0 60px #ff8000;
   }
-  33.33% { 
-    box-shadow: 
-      0 8px 25px rgba(0, 0, 0, 0.15),
-      0 0 0 2px #ffff00,
-      0 0 30px #ffff00,
-      0 0 60px #ffff00;
+  33.33% {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 2px #ffff00,
+      0 0 30px #ffff00, 0 0 60px #ffff00;
   }
-  50% { 
-    box-shadow: 
-      0 8px 25px rgba(0, 0, 0, 0.15),
-      0 0 0 2px #00ff00,
-      0 0 30px #00ff00,
-      0 0 60px #00ff00;
+  50% {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 2px #00ff00,
+      0 0 30px #00ff00, 0 0 60px #00ff00;
   }
-  66.66% { 
-    box-shadow: 
-      0 8px 25px rgba(0, 0, 0, 0.15),
-      0 0 0 2px #0080ff,
-      0 0 30px #0080ff,
-      0 0 60px #0080ff;
+  66.66% {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 2px #0080ff,
+      0 0 30px #0080ff, 0 0 60px #0080ff;
   }
-  83.33% { 
-    box-shadow: 
-      0 8px 25px rgba(0, 0, 0, 0.15),
-      0 0 0 2px #8000ff,
-      0 0 30px #8000ff,
-      0 0 60px #8000ff;
+  83.33% {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 2px #8000ff,
+      0 0 30px #8000ff, 0 0 60px #8000ff;
   }
-  100% { 
-    box-shadow: 
-      0 8px 25px rgba(0, 0, 0, 0.15),
-      0 0 0 2px #ff0000,
-      0 0 30px #ff0000,
-      0 0 60px #ff0000;
+  100% {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 2px #ff0000,
+      0 0 30px #ff0000, 0 0 60px #ff0000;
   }
 }
 
@@ -315,37 +317,6 @@ main {
   100% {
     background-position: 0% 0%;
   }
-}
-
-/* Flowing border class for snake effect */
-.flowing-border {
-  position: relative;
-  overflow: hidden;
-}
-
-.flowing-border::before {
-  content: '';
-  position: absolute;
-  top: -3px;
-  left: -3px;
-  right: -3px;
-  bottom: -3px;
-  background: linear-gradient(45deg, 
-    #ff0096 0%, 
-    #00ffff 25%, 
-    #ffff00 50%, 
-    #ff0096 75%, 
-    #00ffff 100%);
-  background-size: 300% 300%;
-  border-radius: inherit;
-  z-index: -1;
-  animation: snakeFlow 4s linear infinite;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-.flowing-border:hover::before {
-  opacity: 1;
 }
 
 .header-content {
@@ -423,10 +394,14 @@ main {
 }
 
 .section-title::before {
-  content: '';
+  content: "";
   width: 4px;
   height: 24px;
-  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  background: linear-gradient(
+    135deg,
+    var(--primary-color),
+    var(--secondary-color)
+  );
   border-radius: 2px;
 }
 
@@ -446,9 +421,7 @@ main {
 }
 
 .profile-content:hover {
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.15),
-    0 0 0 1px var(--primary-color),
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--primary-color),
     0 0 25px rgba(26, 115, 232, 0.3);
   transform: translateY(-2px);
   border-color: var(--primary-color);
@@ -467,25 +440,27 @@ main {
 }
 
 .experience-item::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   border-radius: 12px;
-  background: linear-gradient(135deg, transparent, rgba(26, 115, 232, 0.1), transparent);
+  background: linear-gradient(
+    135deg,
+    transparent,
+    rgba(26, 115, 232, 0.1),
+    transparent
+  );
   opacity: 1;
   transition: opacity 0.4s ease;
   z-index: -1;
 }
 
 .experience-item:hover {
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.15),
-    0 0 0 1px var(--primary-color),
-    0 0 25px rgba(26, 115, 232, 0.4),
-    0 0 50px rgba(26, 115, 232, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--primary-color),
+    0 0 25px rgba(26, 115, 232, 0.4), 0 0 50px rgba(26, 115, 232, 0.2);
   transform: translateY(-3px);
   border-color: var(--primary-color);
 }
@@ -542,7 +517,7 @@ main {
 }
 
 .experience-description li::before {
-  content: '→';
+  content: "→";
   position: absolute;
   left: 0;
   color: var(--primary-color);
@@ -568,16 +543,17 @@ main {
 }
 
 .project-card::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   border-radius: 12px;
-  background: linear-gradient(135deg, 
-    rgba(52, 168, 83, 0.1), 
-    rgba(26, 115, 232, 0.1), 
+  background: linear-gradient(
+    135deg,
+    rgba(52, 168, 83, 0.1),
+    rgba(26, 115, 232, 0.1),
     rgba(245, 166, 35, 0.1)
   );
   opacity: 0;
@@ -586,11 +562,8 @@ main {
 }
 
 .project-card:hover {
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.15),
-    0 0 0 1px var(--secondary-color),
-    0 0 25px rgba(52, 168, 83, 0.4),
-    0 0 50px rgba(52, 168, 83, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--secondary-color),
+    0 0 25px rgba(52, 168, 83, 0.4), 0 0 50px rgba(52, 168, 83, 0.2);
   transform: translateY(-3px) scale(1.02);
   border-color: var(--secondary-color);
 }
@@ -656,14 +629,15 @@ main {
 }
 
 .skill-category::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   border-radius: 12px;
-  background: linear-gradient(45deg, 
+  background: linear-gradient(
+    45deg,
     rgba(144, 19, 254, 0.1),
     rgba(245, 166, 35, 0.1),
     rgba(208, 2, 27, 0.1),
@@ -675,11 +649,8 @@ main {
 }
 
 .skill-category:hover {
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.15),
-    0 0 0 1px rgba(144, 19, 254, 0.8),
-    0 0 25px rgba(144, 19, 254, 0.4),
-    0 0 50px rgba(144, 19, 254, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(144, 19, 254, 0.8),
+    0 0 25px rgba(144, 19, 254, 0.4), 0 0 50px rgba(144, 19, 254, 0.2);
   transform: translateY(-3px);
   border-color: rgba(144, 19, 254, 0.8);
 }
@@ -736,15 +707,16 @@ main {
 }
 
 .education-item::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
   border-radius: 12px;
-  background: linear-gradient(135deg, 
-    rgba(26, 115, 232, 0.1), 
+  background: linear-gradient(
+    135deg,
+    rgba(26, 115, 232, 0.1),
     rgba(245, 166, 35, 0.1)
   );
   opacity: 0;
@@ -753,11 +725,8 @@ main {
 }
 
 .education-item:hover {
-  box-shadow: 
-    0 8px 25px rgba(0, 0, 0, 0.15),
-    0 0 0 1px var(--primary-color),
-    0 0 25px rgba(245, 166, 35, 0.4),
-    0 0 50px rgba(245, 166, 35, 0.2);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15), 0 0 0 1px var(--primary-color),
+    0 0 25px rgba(245, 166, 35, 0.4), 0 0 50px rgba(245, 166, 35, 0.2);
   transform: translateY(-3px);
   border-color: var(--primary-color);
 }
@@ -1020,12 +989,12 @@ h2 {
 
 .experience h3 {
   position: relative;
-  display:  inline-block;
+  display: inline-block;
   top: 10px;
 }
 
 .experience h4 {
-  display:  inline-block;
+  display: inline-block;
   right: 5px;
   position: absolute;
   top: 10px;
@@ -1104,20 +1073,22 @@ h2 {
   overflow: scroll;
 }
 
-.project:hover, .skillset:hover {
+.project:hover,
+.skillset:hover {
   transform: scale(1.5) skew(0, -10deg) translate3d(-5rem, -5rem, 30rem);
-  transition: transform .5s ease-in-out, background-color 1.5s ease-in-out;
+  transition: transform 0.5s ease-in-out, background-color 1.5s ease-in-out;
   background-color: rgba(78, 176, 198, 0.9);
 }
 
-.project:not(:hover), .skillset:not(:hover) {
+.project:not(:hover),
+.skillset:not(:hover) {
   transition: all 0.3s ease-in-out;
 }
 
 .project button {
   background-color: rgba(194, 196, 198, 0.377);
   display: inline;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   padding: 5px;
 }
 
@@ -1135,13 +1106,13 @@ h2 {
   overflow: visible;
 }
 
-.languages span{
+.languages span {
   position: relative;
   width: auto;
   margin: 10px;
   background-color: rgba(199, 199, 199, 0.333);
   display: inline-block;
-  border-radius: .5rem;
+  border-radius: 0.5rem;
   overflow: visible;
   transform: scale(1);
   transition: all 0.3s ease-in-out;
@@ -1153,7 +1124,7 @@ h2 {
   transform-origin: left;
   background-color: rgb(222, 196, 81);
   z-index: 5;
-  transition: transform 0.5s ease-in-out, background-color .5s ease-in-out;
+  transition: transform 0.5s ease-in-out, background-color 0.5s ease-in-out;
 }
 
 .skills {
@@ -1184,7 +1155,7 @@ h2 {
 .skillset button {
   background-color: rgba(199, 199, 199, 0.333);
   /* display: inline; */
-  border-radius: .5rem;
+  border-radius: 0.5rem;
 }
 
 /* Language Selector Container */
@@ -1228,20 +1199,29 @@ h2 {
     font-size: 12px;
     padding: 3px 8px;
   }
-  
+
   main {
     max-width: 100%;
     padding: 0 16px;
   }
-  
+
   .map-section,
   .chatbot-section {
     max-width: 100%;
     margin: 20px auto;
-    padding: 20px;
-    z-index: 10;
+    padding: 0 16px 20px 16px; /* Match main container mobile padding */
   }
   
+  .map-container,
+  .chatbot-container {
+    padding: 20px 0 0 0; /* Reduced internal padding on mobile */
+  }
+  
+  .chat-messages,
+  .chat-input-container {
+    max-width: 100%; /* Full width on mobile */
+  }
+
   /* Reduce cube complexity on mobile */
   #cubes-background {
     opacity: 0.2;
@@ -1378,20 +1358,31 @@ h2 {
 
 /* Google Maps Section */
 .map-section {
-  max-width: 1200px; /* Match CV width */
+  max-width: 1200px; /* Match main container width */
   margin: 40px auto; /* Center and match CV margins */
-  padding: 30px;
-  background: #ffffff; /* Pure white background */
+  padding: 0 20px 30px 20px; /* Match main container horizontal padding */
+  background: #ffffff !important; /* Force white background */
   backdrop-filter: none; /* Remove blur effect */
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  z-index: 10;
+  z-index: 10000;
+}
+
+/* Ensure map section stays white on hover */
+.map-section:hover {
+  background: #ffffff !important;
+  background-image: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  animation: none !important;
 }
 
 .map-container {
   position: relative;
   overflow: hidden;
   border-radius: 12px;
+  background-color: #ffffff;
+  padding: 30px 0 0 0; /* Internal vertical padding for content */
 }
 
 .map-container iframe {
@@ -1421,23 +1412,36 @@ h2 {
   font-size: 0.95rem;
 }
 
-/* AI Chatbot Section */
+/* AI Chatbot Section - 重新设计 */
 .chatbot-section {
-  max-width: 1200px; /* Match CV width */
+  max-width: 1200px; /* Match main container width */
   margin: 40px auto 20px; /* Center and match CV margins */
-  padding: 30px;
-  background: #ffffff; /* Pure white background */
-  backdrop-filter: none; /* Remove blur effect */
-  border-radius: 16px;
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  z-index: 1;
+  padding: 0 20px 30px 20px; /* Match main container horizontal padding */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1000;
+}
+
+.chatbot-section:hover {
+  background-image: none !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+  transform: none !important;
+  animation: none !important;
 }
 
 .chatbot-container {
-  max-width: 800px;
+  background: #ffffff !important;
+  border-radius: 16px;
+  /* Match main container horizontal padding */
+  max-width: 100%; /* Use full width of parent container */
   margin: 0 auto;
+  position: relative;
+  z-index: 1001;
+  padding: 30px 0 0 0; /* Internal vertical padding for content */
 }
 
+
+/* Chat Messages Area - 重新设计 */
 .chat-messages {
   height: 300px;
   overflow-y: auto;
@@ -1446,13 +1450,23 @@ h2 {
   border-radius: 12px;
   margin-bottom: 20px;
   border: 1px solid rgba(0, 0, 0, 0.1);
+  position: relative;
+  z-index: 1002;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  max-width: 800px; /* Limit message area width */
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.bot-message, .user-message {
+/* Message Styling */
+.bot-message,
+.user-message {
   display: flex;
   gap: 12px;
   margin-bottom: 16px;
   align-items: flex-start;
+  position: relative;
+  z-index: 1003;
 }
 
 .user-message {
@@ -1469,71 +1483,95 @@ h2 {
   justify-content: center;
   font-size: 1.2rem;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1004;
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .user-message .message-avatar {
   background: #fff3e0;
+  border: 1px solid rgba(255, 152, 0, 0.2);
 }
 
 .message-content {
-  background: #e3f2fd;
+  background: #ffffff;
   padding: 12px 16px;
   border-radius: 12px;
-  color: #000000;
+  color: #333333;
   max-width: 70%;
   line-height: 1.5;
-  border: 1px solid rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  position: relative;
+  z-index: 1004;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .user-message .message-content {
-  background: #fff3e0;
-  border-color: rgba(255, 152, 0, 0.3);
-  color: #000000;
+  background: #e3f2fd;
+  border-color: rgba(25, 118, 210, 0.3);
+  color: #333333;
 }
 
+/* Chat Input Area - 重新设计 */
 .chat-input-container {
   display: flex;
   gap: 12px;
   align-items: center;
+  position: relative;
+  z-index: 1003;
+  background: #ffffff;
+  padding: 10px;
+  border-radius: 25px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  max-width: 800px; /* Limit input area width */
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #chatInput {
   flex: 1;
   padding: 12px 16px;
-  background: #ffffff;
-  border: 1px solid rgba(0, 0, 0, 0.2);
-  border-radius: 25px;
-  color: #000000;
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  border-radius: 20px;
+  color: #333333 !important;
   font-size: 0.95rem;
   outline: none;
   transition: all 0.3s ease;
+  position: relative;
+  z-index: 1004;
 }
 
 #chatInput:focus {
-  border-color: #007bff;
-  background: #ffffff;
-  box-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
+  border-color: #007bff !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 10px rgba(0, 123, 255, 0.3) !important;
 }
 
 #chatInput::placeholder {
-  color: #666;
+  color: #999999 !important;
 }
 
 #sendButton {
   padding: 12px 20px;
-  background: linear-gradient(45deg, #007bff, #0056b3);
+  background: #007bff !important;
   border: none;
-  border-radius: 25px;
-  color: #fff;
+  border-radius: 20px;
+  color: #ffffff !important;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
   min-width: 80px;
+  position: relative;
+  z-index: 1004;
+  box-shadow: 0 2px 5px rgba(0, 123, 255, 0.3);
 }
 
 #sendButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+  background: #0056b3 !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4) !important;
 }
 
 #sendButton:active {
@@ -1544,4 +1582,54 @@ h2 {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+}
+
+/* 强制可见性规则 - 确保所有chatbot元素都可见 */
+.chatbot-section,
+.chatbot-section *,
+.chatbot-container,
+.chatbot-container *,
+.chat-messages,
+.chat-messages *,
+.chat-input-container,
+.chat-input-container *,
+#chatInput,
+#sendButton {
+  visibility: visible !important;
+  opacity: 1 !important;
+  display: block !important;
+}
+
+.chat-input-container {
+  display: flex !important;
+}
+
+.bot-message,
+.user-message {
+  display: flex !important;
+}
+
+.message-avatar {
+  display: flex !important;
+}
+
+/* 防止被ocean背景覆盖 */
+.chatbot-section {
+  position: relative !important;
+  z-index: 9999 !important;
+}
+
+.chatbot-container {
+  position: relative !important;
+  z-index: 10000 !important;
+}
+
+.chat-messages {
+  position: relative !important;
+  z-index: 10001 !important;
+}
+
+.chat-input-container {
+  position: relative !important;
+  z-index: 10002 !important;
 }

@@ -919,11 +919,4 @@ function addFlowingBorderEffect() {
     '.map-section',
     '.chatbot-section'
   ];
-  
-  cardSelectors.forEach(selector => {
-    const elements = document.querySelectorAll(selector);
-    elements.forEach(element => {
-      element.classList.add('flowing-border');
-    });
-  });
 }
