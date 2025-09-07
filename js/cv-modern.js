@@ -76,7 +76,7 @@ const texts = [
           {
             position: "Healthcare IT Support Intern",
             company: "St John of God Hospital",
-            icon: "icons/company/sjog.png",
+            icon: "icons/company/sjog.jpg",
             duration: "07/2024 - 09/2024",
             location: "Perth, Australia",
             description: [
@@ -463,7 +463,7 @@ const texts = [
           {
             position: "ヘルスケアITサポートインターン",
             company: "聖ヨハネ病院",
-            icon: "icons/company/sjog.png",
+            icon: "icons/company/sjog.jpg",
             duration: "2024年7月 - 2024年9月",
             location: "オーストラリア パース",
             description: [
@@ -823,6 +823,9 @@ function LoadConfig(data) {
     LoadSkills(data);
     LoadEducation(data);
     LoadLanguages(data);
+    
+    // Add flowing border effect to all cards
+    addFlowingBorderEffect();
 }
 
 function switchLanguage(lang) {
@@ -904,3 +907,24 @@ $(document).ready(async function () {
   setupPrintButton();
   switchLanguage("en");
 });
+
+// Add flowing border effect to cards
+function addFlowingBorderEffect() {
+  const cardSelectors = [
+    '.experience-item',
+    '.project-card',
+    '.skill-category',
+    '.education-item',
+    '.hackathon-item',
+    '.cv-container',
+    '.map-section',
+    '.chatbot-section'
+  ];
+  
+  cardSelectors.forEach(selector => {
+    const elements = document.querySelectorAll(selector);
+    elements.forEach(element => {
+      element.classList.add('flowing-border');
+    });
+  });
+}

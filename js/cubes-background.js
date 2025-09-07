@@ -1,5 +1,14 @@
 class CubesBackground {
     constructor() {
+        console.log('CubesBackground constructor called');
+        
+        // 检查Three.js是否加载
+        if (typeof THREE === 'undefined') {
+            console.error('THREE.js not loaded!');
+            return;
+        }
+        console.log('THREE.js version:', THREE.REVISION);
+        
         this.scene = new THREE.Scene();
         this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         this.renderer = new THREE.WebGLRenderer({ 
@@ -11,117 +20,149 @@ class CubesBackground {
         this.targetPositions = [];
         this.clock = new THREE.Clock();
         this.globalRotation = new THREE.Vector3(0.002, 0.003, 0.001);
+        this.isAggregated = false; // 聚合状态
+        this.controls = null; // OrbitControls
+        this.lastCycle = -1; // 跟踪周期性行为
+        this.cubeGroup = null; // 立方体组用于统一旋转
         
         this.init();
         this.createCubes();
+        this.setupInteraction();
         this.animate();
-        this.startPeriodicShapeChange();
     }
 
     init() {
         const container = document.getElementById('cubes-background');
+        if (!container) {
+            console.error('cubes-background container not found!');
+            return;
+        }
+        console.log('Container found:', container);
+        
         this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setClearColor(0x000000, 0);
+        this.renderer.setClearColor(0x000000, 0); // 透明背景
         this.renderer.shadowMap.enabled = true;
         this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        this.renderer.setPixelRatio(window.devicePixelRatio);
         container.appendChild(this.renderer.domElement);
+        
+        // 设置canvas样式确保可见且可交互
+        this.renderer.domElement.style.position = 'fixed';
+        this.renderer.domElement.style.top = '0';
+        this.renderer.domElement.style.left = '0';
+        this.renderer.domElement.style.width = '100%';
+        this.renderer.domElement.style.height = '100%';
+        this.renderer.domElement.style.zIndex = '1';
+        this.renderer.domElement.style.pointerEvents = 'auto';
+        console.log('Canvas element created:', this.renderer.domElement);
 
-        this.camera.position.set(0, 0, 30);
+        this.camera.position.set(0, 0, 150); // 调整相机位置适应更大的分散范围
 
-        // Add ambient light
-        const ambientLight = new THREE.AmbientLight(0x404040, 0.3);
+        // 添加 OrbitControls - 确保正确绑定
+        if (typeof THREE.OrbitControls !== 'undefined') {
+            this.controls = new THREE.OrbitControls(this.camera, this.renderer.domElement);
+            this.controls.enableDamping = true;
+            this.controls.dampingFactor = 0.1;
+            this.controls.enableZoom = true;
+            this.controls.enableRotate = true;
+            this.controls.enablePan = true;
+            this.controls.autoRotate = false;
+            this.controls.maxDistance = 200;
+            this.controls.minDistance = 10;
+            console.log('OrbitControls initialized with enhanced settings:', !!this.controls);
+        } else {
+            console.warn('OrbitControls not available');
+        }
+
+        // Add ambient light - 增强环境光
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
         this.scene.add(ambientLight);
 
-        // Add directional light
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-        directionalLight.position.set(10, 10, 10);
+        // Add directional light - 主要方向光
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        directionalLight.position.set(20, 20, 20);
         directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
         this.scene.add(directionalLight);
 
-        // Add point light for better illumination
-        const pointLight = new THREE.PointLight(0x4444ff, 0.3, 100);
-        pointLight.position.set(-10, -10, 10);
-        this.scene.add(pointLight);
+        // Add point lights with softer colors for wave effect
+        const pointLight1 = new THREE.PointLight(0xccddff, 0.4, 200);
+        pointLight1.position.set(-40, -40, 40);
+        this.scene.add(pointLight1);
+
+        const pointLight2 = new THREE.PointLight(0xffddcc, 0.4, 200);
+        pointLight2.position.set(40, 40, -40);
+        this.scene.add(pointLight2);
+
+        // Add a rim light for better definition
+        const rimLight = new THREE.DirectionalLight(0xe8e8ff, 0.3);
+        rimLight.position.set(-10, 10, -10);
+        this.scene.add(rimLight);
 
         // Handle window resize
         window.addEventListener('resize', () => this.handleResize());
     }
 
     createCubes() {
-        const gridSize = 5; // Further reduced for larger individual cubes
-        const spacing = 6; // Increased spacing
-        const colors = [0x4a90e2, 0x7ed321, 0xf5a623, 0xd0021b, 0x9013fe, 0x50e3c2];
+        const gridSize = 8; // 8x8网格
+        const cubeSize = 8; // 立方体尺寸
         
-        // Create water ripple shader material
-        const waterVertexShader = `
-            varying vec2 vUv;
-            varying vec3 vPosition;
-            uniform float time;
-            
-            void main() {
-                vUv = uv;
-                vPosition = position;
-                
-                vec3 pos = position;
-                float wave = sin(pos.x * 2.0 + time) * sin(pos.y * 2.0 + time) * 0.05;
-                pos.z += wave;
-                
-                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
-            }
-        `;
+        // 加载纹理
+        const textureLoader = new THREE.TextureLoader();
+        const waterNormalTexture = textureLoader.load('js/textures/waternormals.jpg');
+        waterNormalTexture.wrapS = THREE.RepeatWrapping;
+        waterNormalTexture.wrapT = THREE.RepeatWrapping;
+        waterNormalTexture.repeat.set(2, 2);
         
-        const waterFragmentShader = `
-            uniform float time;
-            uniform vec3 color;
-            varying vec2 vUv;
-            varying vec3 vPosition;
-            
-            void main() {
-                vec2 uv = vUv;
-                
-                // Create ripple effect
-                float ripple1 = sin(uv.x * 20.0 + time * 2.0) * sin(uv.y * 20.0 + time * 2.0);
-                float ripple2 = sin(uv.x * 15.0 - time * 1.5) * sin(uv.y * 15.0 - time * 1.5);
-                float ripple = (ripple1 + ripple2) * 0.1;
-                
-                // Add some interference patterns
-                float interference = sin(distance(uv, vec2(0.5)) * 30.0 - time * 3.0) * 0.2;
-                
-                vec3 finalColor = color + vec3(ripple + interference);
-                finalColor = clamp(finalColor, 0.0, 1.0);
-                
-                gl_FragColor = vec4(finalColor, 0.6);
-            }
-        `;
+        // 立方体贴图纹理
+        const cubeTextureLoader = new THREE.CubeTextureLoader();
+        const cubeTexture = cubeTextureLoader.load([
+            'js/textures/0/px.jpg', 'js/textures/0/nx.jpg',
+            'js/textures/0/py.jpg', 'js/textures/0/ny.jpg',
+            'js/textures/0/pz.jpg', 'js/textures/0/nz.jpg'
+        ]);
         
         for (let x = 0; x < gridSize; x++) {
             for (let y = 0; y < gridSize; y++) {
-                for (let z = 0; z < 2; z++) {
-                    const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5); // Much larger cubes
+                for (let z = 0; z < 2; z++) { // 保持2层
+                    const geometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
                     
-                    const material = new THREE.ShaderMaterial({
-                        uniforms: {
-                            time: { value: 0 },
-                            color: { value: new THREE.Color(colors[Math.floor(Math.random() * colors.length)]) }
-                        },
-                        vertexShader: waterVertexShader,
-                        fragmentShader: waterFragmentShader,
-                        transparent: true,
-                        side: THREE.DoubleSide
+                    // 高级材质 - 金属质感和环境反射
+                    const material = new THREE.MeshStandardMaterial({
+                        color: 0xffffff,
+                        metalness: 0.8, // 高金属度
+                        roughness: 0.3, // 一定粗糙度
+                        normalMap: waterNormalTexture,
+                        normalScale: new THREE.Vector2(0.5, 0.5),
+                        envMap: cubeTexture,
+                        envMapIntensity: 1.0
                     });
                     
                     const cube = new THREE.Mesh(geometry, material);
                     
-                    const xPos = (x - gridSize / 2) * spacing;
-                    const yPos = (y - gridSize / 2) * spacing;
-                    const zPos = (z - 1) * spacing;
+                    // 聚合时的紧密分布
+                    const aggregateSpacing = 9;
+                    const aggregateX = (x - gridSize / 2) * aggregateSpacing;
+                    const aggregateY = (y - gridSize / 2) * aggregateSpacing;
+                    const aggregateZ = (z - 1) * aggregateSpacing;
                     
-                    cube.position.set(xPos, yPos, zPos);
-                    cube.castShadow = true;
-                    cube.receiveShadow = true;
+                    // 分散时扩展到整个窗口
+                    const scatterX = ((x - gridSize / 2) / gridSize) * window.innerWidth * 0.8;
+                    const scatterY = ((y - gridSize / 2) / gridSize) * window.innerHeight * 0.8;
+                    const scatterZ = ((z - 1) * 2) * 100;
                     
-                    // Store original position
-                    this.originalPositions.push(new THREE.Vector3(xPos, yPos, zPos));
+                    // 存储位置信息
+                    cube.userData = {
+                        aggregatePosition: new THREE.Vector3(aggregateX, aggregateY, aggregateZ),
+                        scatterPosition: new THREE.Vector3(scatterX, scatterY, scatterZ),
+                        gridIndex: { x, y, z }
+                    };
+                    
+                    // 初始位置设为聚合状态
+                    cube.position.copy(cube.userData.aggregatePosition);
+                    this.originalPositions.push(cube.userData.scatterPosition);
+                    this.targetPositions.push(cube.userData.aggregatePosition);
                     
                     this.scene.add(cube);
                     this.cubes.push(cube);
@@ -129,81 +170,65 @@ class CubesBackground {
             }
         }
         
-        this.targetPositions = [...this.originalPositions];
-        this.generateGridShape();
-    }
-
-    generateGridShape() {
-        // Simple grid arrangement
-        for (let i = 0; i < this.cubes.length; i++) {
-            this.targetPositions[i].copy(this.originalPositions[i]);
-        }
-    }
-
-    generateTightCube() {
-        const cubeSize = Math.ceil(Math.pow(this.cubes.length, 1/3));
-        const spacing = 1.2;
+        console.log(`Created ${this.cubes.length} cubes with advanced materials`);
         
-        for (let i = 0; i < this.cubes.length; i++) {
-            const x = (i % cubeSize) - cubeSize / 2;
-            const y = Math.floor((i % (cubeSize * cubeSize)) / cubeSize) - cubeSize / 2;
-            const z = Math.floor(i / (cubeSize * cubeSize)) - cubeSize / 2;
-            
-            this.targetPositions[i].set(x * spacing, y * spacing, z * spacing);
-        }
+        // 添加调试信息
+        console.log('Camera position:', this.camera.position);
+        console.log('Scene children count:', this.scene.children.length);
+        console.log('Renderer size:', this.renderer.getSize(new THREE.Vector2()));
     }
 
-    generateSphere() {
-        const radius = 8;
-        for (let i = 0; i < this.cubes.length; i++) {
-            const phi = Math.acos(-1 + (2 * i) / this.cubes.length);
-            const theta = Math.sqrt(this.cubes.length * Math.PI) * phi;
-            
-            const x = radius * Math.cos(theta) * Math.sin(phi);
-            const y = radius * Math.sin(theta) * Math.sin(phi);
-            const z = radius * Math.cos(phi);
-            
-            this.targetPositions[i].set(x, y, z);
-        }
-    }
-
-    generateHelix() {
-        const radius = 6;
-        const height = 15;
+    setupInteraction() {
+        let isPressed = false;
+        let pressTimer = null;
         
-        for (let i = 0; i < this.cubes.length; i++) {
-            const t = (i / this.cubes.length) * Math.PI * 4;
-            const y = (i / this.cubes.length - 0.5) * height;
-            
-            const x = radius * Math.cos(t);
-            const z = radius * Math.sin(t);
-            
-            this.targetPositions[i].set(x, y, z);
-        }
-    }
+        // 鼠标/触摸事件
+        const handleStart = (event) => {
+            isPressed = true;
+            pressTimer = setTimeout(() => {
+                if (isPressed) {
+                    this.toggleAggregation();
+                }
+            }, 500); // 长按500ms触发
+        };
 
-    startPeriodicShapeChange() {
-        const shapes = ['grid', 'tightCube', 'sphere', 'helix'];
-        let currentShapeIndex = 0;
-        
-        setInterval(() => {
-            currentShapeIndex = (currentShapeIndex + 1) % shapes.length;
-            
-            switch (shapes[currentShapeIndex]) {
-                case 'grid':
-                    this.generateGridShape();
-                    break;
-                case 'tightCube':
-                    this.generateTightCube();
-                    break;
-                case 'sphere':
-                    this.generateSphere();
-                    break;
-                case 'helix':
-                    this.generateHelix();
-                    break;
+        const handleEnd = (event) => {
+            if (isPressed && pressTimer) {
+                clearTimeout(pressTimer);
+                if (pressTimer) {
+                    // 短按 - 也触发聚合/分散
+                    this.toggleAggregation();
+                }
             }
-        }, 8000);
+            isPressed = false;
+            pressTimer = null;
+        };
+
+        // 添加事件监听器
+        this.renderer.domElement.addEventListener('mousedown', handleStart);
+        this.renderer.domElement.addEventListener('mouseup', handleEnd);
+        this.renderer.domElement.addEventListener('touchstart', handleStart);
+        this.renderer.domElement.addEventListener('touchend', handleEnd);
+
+        // 键盘事件
+        document.addEventListener('keydown', (event) => {
+            if (event.code === 'Space') {
+                event.preventDefault();
+                this.toggleAggregation();
+            }
+        });
+    }
+
+    toggleAggregation() {
+        this.isAggregated = !this.isAggregated;
+        console.log(`Toggling to: ${this.isAggregated ? 'Aggregated' : 'Dispersed'}`);
+        
+        // 视觉反馈 - 短暂改变相机位置
+        const originalPosition = this.camera.position.clone();
+        this.camera.position.multiplyScalar(1.05);
+        setTimeout(() => {
+            this.camera.position.copy(originalPosition);
+        }, 200);
     }
 
     animate() {
@@ -211,32 +236,51 @@ class CubesBackground {
         
         const time = this.clock.getElapsedTime();
         
-        // Update shader uniforms for water ripple effect
-        for (let i = 0; i < this.cubes.length; i++) {
-            const cube = this.cubes[i];
-            const target = this.targetPositions[i];
-            
-            // Update shader time uniform
-            if (cube.material.uniforms) {
-                cube.material.uniforms.time.value = time;
-            }
-            
-            // Smooth movement to target position
-            cube.position.lerp(target, 0.02);
-            
-            // Global rotation
-            cube.rotation.x += this.globalRotation.x;
-            cube.rotation.y += this.globalRotation.y;
-            cube.rotation.z += this.globalRotation.z;
-            
-            // Subtle floating animation
-            cube.position.y += Math.sin(time + i * 0.1) * 0.01;
+        // 更新OrbitControls
+        if (this.controls) {
+            this.controls.update();
         }
         
-        // Gentle camera rotation
-        this.camera.position.x = Math.cos(time * 0.1) * 40; // Increased distance for larger cubes
-        this.camera.position.z = Math.sin(time * 0.1) * 40;
-        this.camera.lookAt(0, 0, 0);
+        // 周期性行为 - 每20秒自动切换一次聚合/分散
+        const cycleTime = 20; // 20秒周期
+        const cyclePhase = (time % cycleTime) / cycleTime;
+        
+        // 在周期的中间点自动切换状态
+        if (Math.floor(time / cycleTime) !== this.lastCycle) {
+            this.lastCycle = Math.floor(time / cycleTime);
+            this.toggleAggregation();
+        }
+        
+        // 创建整体旋转组
+        if (!this.cubeGroup) {
+            this.cubeGroup = new THREE.Group();
+            this.cubes.forEach(cube => {
+                this.scene.remove(cube);
+                this.cubeGroup.add(cube);
+            });
+            this.scene.add(this.cubeGroup);
+        }
+        
+        // 统一旋转整个立方体组
+        const globalRotationSpeed = 0.005;
+        this.cubeGroup.rotation.x += globalRotationSpeed;
+        this.cubeGroup.rotation.y += globalRotationSpeed * 0.7;
+        this.cubeGroup.rotation.z += globalRotationSpeed * 0.3;
+        
+        // 更新每个正方体位置（不再单独旋转）
+        this.cubes.forEach((cube, index) => {
+            // 根据聚合状态选择目标位置
+            const targetPos = this.isAggregated ? 
+                cube.userData.aggregatePosition : 
+                cube.userData.scatterPosition;
+            
+            // 平滑移动到目标位置
+            cube.position.lerp(targetPos, 0.03);
+            
+            // 轻微的呼吸效果
+            const breathScale = 1 + Math.sin(time * 2 + index * 0.1) * 0.02;
+            cube.scale.setScalar(breathScale);
+        });
         
         this.renderer.render(this.scene, this.camera);
     }
@@ -248,7 +292,7 @@ class CubesBackground {
     }
 }
 
-// Initialize the cubes background when DOM is loaded
+// 初始化背景
 document.addEventListener('DOMContentLoaded', () => {
     new CubesBackground();
 });

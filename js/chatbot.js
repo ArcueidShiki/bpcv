@@ -43,9 +43,8 @@ class CVChatbot {
       console.warn('Failed to load API key securely');
     }
     
-    // Fallback: prompt user for API key (not recommended for production)
-    const userApiKey = prompt('Please enter your DeepSeek API key for the chatbot functionality (this is just for demo):');
-    return userApiKey || null;
+    // No fallback prompt - use mock responses only
+    return null;
   }
 
   setupEventListeners() {

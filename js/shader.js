@@ -45,13 +45,13 @@ const fragmentShaderSource = `
 
     void mainImage(out vec4 O, vec2 F)
     {
-        float i = 0.0, j;
+        float i = 0.2, j;
         vec2 r = iResolution.xy,                              // screen resolution r
              p = (F + F - r ) / r.y / .7,                     // normalized coordinates p
              d = vec2(-1, 1),                                // direction vec d
-             q = 1. * p - d,                                 // scaled coordinates q
-             c = p * mat2(1, 1, d / (.1 + 5. / dot(q, q))),   // rotated coordinates c
-             v = c * mat2(cos(.5 * log(j = dot(c, c)) + iTime*.2 + vec4(0, 33, 11, 0))) * 5.,
+             q = p - i * d,                                 // scaled coordinates q
+             c = p * mat2(1, 1, d / (.1 + i / dot(q, q))),   // rotated coordinates c
+             v = c * mat2(cos(.5 * log(j = dot(c, c)) + iTime * i + vec4(0, 33, 11, 0))) / i,
              s = vec2(0.0);
 
         for(float k = 0.1; k < 9.0; k += .9) {
