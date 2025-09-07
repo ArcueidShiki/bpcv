@@ -70,9 +70,61 @@ const texts = [
           },
         ],
       },
+      internships: {
+        title: "Internship Experience",
+        content: [
+          {
+            position: "Healthcare IT Support Intern",
+            company: "St John of God Hospital",
+            icon: "icons/company/sjog.png",
+            duration: "07/2024 - 09/2024",
+            location: "Perth, Australia",
+            description: [
+              "Provided technical support for hospital IT systems and medical equipment.",
+              "Assisted in maintaining electronic health records and database systems.",
+              "Collaborated with healthcare professionals to troubleshoot system issues.",
+              "Supported implementation of new healthcare technologies and software updates.",
+            ],
+          },
+        ],
+      },
+      hackathons: {
+        title: "Hackathons & Competitions",
+        content: [
+          {
+            event: "Housing Crisis Hackathon 2024",
+            position: "🏆 3rd Place Winner",
+            location: "Perth, Australia",
+            date: "11/2024",
+            project: "Housing Crisis Solution",
+            description: [
+              "Achieved 3rd place out of 50+ teams with innovative data-driven solution addressing housing affordability crisis",
+              "Developed predictive analytics model using Python and Machine Learning to forecast housing market trends",
+              "Created interactive dashboard with Streamlit for real-time housing data visualization and insights",
+              "Collaborated with diverse team to deliver comprehensive solution within 48-hour time constraint",
+            ],
+            links: {
+              github: "https://github.com/SeiKasahara/HousingCrisisSolution",
+              linkedin: "https://www.linkedin.com/posts/your-profile/hackathon-achievement"
+            }
+          },
+        ],
+      },
       projects: {
         title: "Projects",
         content: [
+          {
+            name: "AuraWell Agent",
+            link: "#",
+            description: "AI-powered wellness companion that provides personalized health recommendations and mental wellness support.",
+            technologies: ["Python", "Machine Learning", "NLP", "FastAPI", "React"],
+          },
+          {
+            name: "Housing Crisis Solution",
+            link: "https://github.com/SeiKasahara/HousingCrisisSolution",
+            description: "🏆 3rd Place Winner - Hackathon solution addressing housing affordability crisis with data-driven insights and predictive analytics.",
+            technologies: ["Python", "Data Analytics", "Machine Learning", "Streamlit", "PostgreSQL"],
+          },
           {
             name: "Stock PaperTrading",
             link: "https://github.com/ArcueidShiki/DataAnalyticsApplication",
@@ -187,24 +239,45 @@ const texts = [
         content: [
           {
             degree: "Master of Information Technology",
+            major: "Software Engineering & Data Science",
             institution: "The University of Western Australia",
+            school: "School of Physics, Mathematics and Computing",
             logo: "icons/edu/uwa.png",
             location: "Perth, Australia",
+            startDate: "February 2024",
+            endDate: "December 2025",
             year: "02/2024 - 12/2025",
+            status: "Current",
+            gpa: "Distinction Average",
+            relevantCourses: ["Advanced Algorithms", "Machine Learning", "Software Engineering", "Database Systems", "Cybersecurity"],
           },
           {
-            degree: "dropout",
+            degree: "Bachelor of Medicine (Incomplete)",
+            major: "Clinical Medicine",
             institution: "Peking University",
+            school: "Peking University Health Science Center",
             logo: "icons/edu/pku.png",
             location: "Beijing, China",
-            year: "2021",
+            startDate: "September 2020",
+            endDate: "July 2021",
+            year: "09/2020 - 07/2021",
+            status: "Discontinued",
+            note: "Transferred to pursue technology career",
           },
           {
             degree: "Bachelor of Pharmacy",
+            major: "Pharmaceutical Sciences",
             institution: "Harbin Medical University",
+            school: "College of Pharmacy",
             logo: "icons/edu/hmu.png",
             location: "Harbin, China",
+            startDate: "September 2015",
+            endDate: "July 2019",
             year: "09/2015 - 07/2019",
+            status: "Completed",
+            gpa: "3.6/4.0",
+            honors: ["Dean's List", "Outstanding Graduate"],
+            relevantCourses: ["Pharmaceutical Chemistry", "Pharmacology", "Medicinal Chemistry", "Drug Analysis"],
           },
         ],
       },
@@ -222,7 +295,7 @@ const texts = [
     "lang": "jp",
     "text": {
       contactInfo: {
-        name: "彭景通 (Jensen Arcueid)",
+        name: "彭靖桐 (Jensen Arcueid)",
         position: "ソフトウェアエンジニア",
         profilePicture: "icons/profile.png",
         websites: [
@@ -334,24 +407,45 @@ const texts = [
         content: [
           {
             degree: "情報技術修士",
+            major: "ソフトウェア工学・データサイエンス",
             institution: "西オーストラリア大学",
+            school: "物理学・数学・計算学部",
             logo: "icons/edu/uwa.png",
             location: "オーストラリア パース",
+            startDate: "2024年2月",
+            endDate: "2025年12月",
             year: "2024年02月 - 2025年12月",
+            status: "在学中",
+            gpa: "優秀平均",
+            relevantCourses: ["高度アルゴリズム", "機械学習", "ソフトウェア工学", "データベースシステム", "サイバーセキュリティ"],
           },
           {
-            degree: "中退",
+            degree: "医学士（未完了）",
+            major: "臨床医学",
             institution: "北京大学",
+            school: "北京大学医学部",
             logo: "icons/edu/pku.png",
             location: "中国 北京",
-            year: "2021年",
+            startDate: "2020年9月",
+            endDate: "2021年7月",
+            year: "2020年09月 - 2021年07月",
+            status: "中退",
+            note: "テクノロジーキャリアを追求するため転向",
           },
           {
             degree: "薬学士",
+            major: "薬学",
             institution: "ハルビン医科大学",
+            school: "薬学院",
             logo: "icons/edu/hmu.png",
             location: "中国 ハルビン",
+            startDate: "2015年9月",
+            endDate: "2019年7月",
             year: "2015年09月 - 2019年07月",
+            status: "卒業",
+            gpa: "3.6/4.0",
+            honors: ["学部長賞", "優秀卒業生"],
+            relevantCourses: ["薬化学", "薬理学", "薬用化学", "薬物分析"],
           },
         ],
       },
@@ -361,6 +455,105 @@ const texts = [
           { language: "英語", proficiency: "流暢" },
           { language: "中国語", proficiency: "母国語" },
           { language: "日本語", proficiency: "基礎" },
+        ],
+      },
+      internships: {
+        title: "インターンシップ経験",
+        content: [
+          {
+            position: "ヘルスケアITサポートインターン",
+            company: "聖ヨハネ病院",
+            icon: "icons/company/sjog.png",
+            duration: "2024年7月 - 2024年9月",
+            location: "オーストラリア パース",
+            description: [
+              "病院ITシステムと医療機器の技術サポートを提供。",
+              "電子健康記録とデータベースシステムの維持を支援。",
+              "医療専門家と協力してシステム問題を解決。",
+              "新しい医療技術とソフトウェア更新の実装をサポート。",
+            ],
+          },
+        ],
+      },
+      hackathons: {
+        title: "ハッカソンとコンペティション",
+        content: [
+          {
+            event: "2024年住宅危機ハッカソン",
+            position: "🏆 第3位入賞者",
+            location: "オーストラリア パース",
+            date: "2024年11月",
+            project: "住宅危機解決策",
+            description: [
+              "50以上のチーム中第3位を獲得し、住宅負担可能性危機に対する革新的なデータ駆動型解決策を提供",
+              "PythonとMachine Learningを使用して住宅市場トレンドを予測する予測分析モデルを開発",
+              "Streamlitを使用してリアルタイム住宅データの可視化とインサイトのためのインタラクティブダッシュボードを作成",
+              "48時間の制約内で多様なチームと協力して包括的なソリューションを提供",
+            ],
+            links: {
+              github: "https://github.com/SeiKasahara/HousingCrisisSolution",
+              linkedin: "https://www.linkedin.com/posts/your-profile/hackathon-achievement"
+            }
+          },
+        ],
+      },
+      projects: {
+        title: "プロジェクト",
+        content: [
+          {
+            name: "AuraWell Agent",
+            link: "#",
+            description: "個人化された健康推奨とメンタルウェルネスサポートを提供するAI駆動のウェルネスコンパニオン。",
+            technologies: ["Python", "機械学習", "NLP", "FastAPI", "React"],
+          },
+          {
+            name: "住宅危機解決策",
+            link: "https://github.com/SeiKasahara/HousingCrisisSolution",
+            description: "🏆 第3位入賞者 - データ駆動型インサイトと予測分析を使用して住宅負担可能性危機に対処するハッカソンソリューション。",
+            technologies: ["Python", "データ分析", "機械学習", "Streamlit", "PostgreSQL"],
+          },
+          {
+            name: "株式ペーパートレーディング",
+            link: "https://github.com/ArcueidShiki/DataAnalyticsApplication",
+            description: "米国株式市場ペーパートレーディングWebアプリケーション",
+            technologies: ["Flask", "Sqlalchemy", "Echarts", "bootstrap", "JWT"],
+          },
+          {
+            name: "Hiperf",
+            link: "https://gitee.com/openharmony/developtools_hiperf",
+            description: "HarmonyOSシステムパフォーマンスデバッグツール。",
+            technologies: ["C/C++", "LinuxPerf", "AOSP", "Python", "ADB"],
+          },
+          {
+            name: "リモートコントロール",
+            link: "https://github.com/ArcueidShiki/RemoteControl",
+            description: "Windowsリモートコントロールアプリケーション、画面監視、キーボードとマウスコントロール。",
+            technologies: ["C/C++", "TCP/IP", "MFC", "IOCP", "QT"],
+          },
+          {
+            name: "Penni",
+            link: "https://github.com/codersforcauses/penni",
+            description: "退職者がアルバイトを見つけるのを支援するモバイルアプリケーション。",
+            technologies: ["React", "Nextjs", "TailwindCss", "NPM"],
+          },
+          {
+            name: "IoTスマートエントリーシステム",
+            link: "https://github.com/ArcueidShiki/SmartEntrySystem",
+            description: "エントリーコントロール用のIoTベースの顔認識システム。",
+            technologies: ["RaspberryPi", "OpenCV", "Flask", "MQTT", "Tensorflow"],
+          },
+          {
+            name: "ベストアジャイルプラクティス＆CV",
+            link: "https://github.com/ArcueidShiki/bpcv",
+            description: "学生がCVを作成するのを支援する大学の個人プロジェクト。",
+            technologies: ["HTML", "CSS", "JavaScript", "jQuery", "WebGL", "OpenGL Shader"],
+          },
+          {
+            name: "ポートフォリオ",
+            link: "https://www.arcueidshiki.uk/",
+            description: "私のプロジェクトとスキルを紹介する個人ポートフォリオサイト。",
+            technologies: ["Threejs", "Vite", "Blender"],
+          },
         ],
       },
     },
@@ -441,6 +634,75 @@ function LoadWorkExperience(data) {
     </div>
   `;
   $("main").append(experienceHTML);
+}
+
+function LoadInternships(data) {
+  if (!data.internships) return;
+  
+  const internshipsHTML = `
+    <div class="section">
+      <h2 class="section-title">${data.internships.title}</h2>
+      ${data.internships.content.map(internship => `
+        <div class="experience-item">
+          <div class="experience-header">
+            <img src="${internship.icon || 'icons/company/default.png'}" alt="company logo" class="company-logo">
+            <div>
+              <div class="experience-title">${internship.position}</div>
+              <div class="experience-company">${internship.company}</div>
+            </div>
+            <div class="experience-meta">
+              <div>${internship.duration}</div>
+              <div>${internship.location}</div>
+            </div>
+          </div>
+          <div class="experience-description">
+            <ul>
+              ${internship.description.map(desc => `<li>${desc}</li>`).join('')}
+            </ul>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  $("main").append(internshipsHTML);
+}
+
+function LoadHackathons(data) {
+  if (!data.hackathons) return;
+  
+  const hackathonsHTML = `
+    <div class="section">
+      <h2 class="section-title">${data.hackathons.title}</h2>
+      ${data.hackathons.content.map(hackathon => `
+        <div class="hackathon-item">
+          <div class="hackathon-header">
+            <div class="hackathon-badge">🏆</div>
+            <div>
+              <div class="hackathon-event">${hackathon.event}</div>
+              <div class="hackathon-position">${hackathon.position}</div>
+              <div class="hackathon-project">${hackathon.project}</div>
+            </div>
+            <div class="hackathon-meta">
+              <div>${hackathon.date}</div>
+              <div>${hackathon.location}</div>
+            </div>
+          </div>
+          <div class="hackathon-description">
+            <ul>
+              ${hackathon.description.map(desc => `<li>${desc}</li>`).join('')}
+            </ul>
+            ${hackathon.links ? `
+              <div class="hackathon-links">
+                ${hackathon.links.github ? `<a href="${hackathon.links.github}" target="_blank" class="link-github">GitHub</a>` : ''}
+                ${hackathon.links.linkedin ? `<a href="${hackathon.links.linkedin}" target="_blank" class="link-linkedin">LinkedIn</a>` : ''}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  $("main").append(hackathonsHTML);
 }
 
 function LoadProjects(data) {
@@ -555,6 +817,8 @@ function LoadConfig(data) {
     loadContactInfo(data);
     LoadProfile(data);
     LoadWorkExperience(data);
+    LoadInternships(data);
+    LoadHackathons(data);
     LoadProjects(data);
     LoadSkills(data);
     LoadEducation(data);

@@ -48,19 +48,66 @@ class CubesBackground {
     }
 
     createCubes() {
-        const gridSize = 6; // Reduced grid size for larger cubes
-        const spacing = 4; // Increased spacing
+        const gridSize = 5; // Further reduced for larger individual cubes
+        const spacing = 6; // Increased spacing
         const colors = [0x4a90e2, 0x7ed321, 0xf5a623, 0xd0021b, 0x9013fe, 0x50e3c2];
+        
+        // Create water ripple shader material
+        const waterVertexShader = `
+            varying vec2 vUv;
+            varying vec3 vPosition;
+            uniform float time;
+            
+            void main() {
+                vUv = uv;
+                vPosition = position;
+                
+                vec3 pos = position;
+                float wave = sin(pos.x * 2.0 + time) * sin(pos.y * 2.0 + time) * 0.05;
+                pos.z += wave;
+                
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
+            }
+        `;
+        
+        const waterFragmentShader = `
+            uniform float time;
+            uniform vec3 color;
+            varying vec2 vUv;
+            varying vec3 vPosition;
+            
+            void main() {
+                vec2 uv = vUv;
+                
+                // Create ripple effect
+                float ripple1 = sin(uv.x * 20.0 + time * 2.0) * sin(uv.y * 20.0 + time * 2.0);
+                float ripple2 = sin(uv.x * 15.0 - time * 1.5) * sin(uv.y * 15.0 - time * 1.5);
+                float ripple = (ripple1 + ripple2) * 0.1;
+                
+                // Add some interference patterns
+                float interference = sin(distance(uv, vec2(0.5)) * 30.0 - time * 3.0) * 0.2;
+                
+                vec3 finalColor = color + vec3(ripple + interference);
+                finalColor = clamp(finalColor, 0.0, 1.0);
+                
+                gl_FragColor = vec4(finalColor, 0.6);
+            }
+        `;
         
         for (let x = 0; x < gridSize; x++) {
             for (let y = 0; y < gridSize; y++) {
-                for (let z = 0; z < 2; z++) { // Reduced Z layers for better performance
-                    const geometry = new THREE.BoxGeometry(1.5, 1.5, 1.5); // Larger cubes
-                    const material = new THREE.MeshPhongMaterial({
-                        color: colors[Math.floor(Math.random() * colors.length)],
+                for (let z = 0; z < 2; z++) {
+                    const geometry = new THREE.BoxGeometry(2.5, 2.5, 2.5); // Much larger cubes
+                    
+                    const material = new THREE.ShaderMaterial({
+                        uniforms: {
+                            time: { value: 0 },
+                            color: { value: new THREE.Color(colors[Math.floor(Math.random() * colors.length)]) }
+                        },
+                        vertexShader: waterVertexShader,
+                        fragmentShader: waterFragmentShader,
                         transparent: true,
-                        opacity: 0.4, // Slightly more visible
-                        shininess: 100
+                        side: THREE.DoubleSide
                     });
                     
                     const cube = new THREE.Mesh(geometry, material);
@@ -164,10 +211,15 @@ class CubesBackground {
         
         const time = this.clock.getElapsedTime();
         
-        // Animate cubes to target positions
+        // Update shader uniforms for water ripple effect
         for (let i = 0; i < this.cubes.length; i++) {
             const cube = this.cubes[i];
             const target = this.targetPositions[i];
+            
+            // Update shader time uniform
+            if (cube.material.uniforms) {
+                cube.material.uniforms.time.value = time;
+            }
             
             // Smooth movement to target position
             cube.position.lerp(target, 0.02);
@@ -182,8 +234,8 @@ class CubesBackground {
         }
         
         // Gentle camera rotation
-        this.camera.position.x = Math.cos(time * 0.1) * 35;
-        this.camera.position.z = Math.sin(time * 0.1) * 35;
+        this.camera.position.x = Math.cos(time * 0.1) * 40; // Increased distance for larger cubes
+        this.camera.position.z = Math.sin(time * 0.1) * 40;
         this.camera.lookAt(0, 0, 0);
         
         this.renderer.render(this.scene, this.camera);
