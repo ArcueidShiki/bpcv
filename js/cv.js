@@ -5,7 +5,7 @@ const texts = [
       contactInfo: {
         name: "Jingtong (Jensen Arcueid) Peng",
         position: "Software Engineer",
-        profilePicture: "icons/profile.jpg",
+        profilePicture: "icons/profile.png",
         websites: [
           { name: "Portfolio", url: "https://www.arcueidshiki.uk/" },
           {
@@ -98,6 +98,7 @@ const texts = [
             name: "Penni",
             link: "https://github.com/codersforcauses/penni",
             description:
+            description:
               "A mobile application that helps retirees find part-time jobs.",
             technologies: ["React", "Nextjs", "TailwindCss", "NPM"],
           },
@@ -146,7 +147,7 @@ const texts = [
             items: [
               { name: "C", iconUrl: "https://skillicons.dev/icons?i=c" },
               { name: "C++", iconUrl: "https://skillicons.dev/icons?i=cpp" },
-              { name: "Bash", iconUrl: "https://skillicons.dev/icons?i=bash" },
+              { name: "Bash", iconUrl: "https://skillicons.dev/icons?i=swift" },
               {
                 name: "JavaScript",
                 iconUrl: "https://skillicons.dev/icons?i=js",
@@ -314,7 +315,7 @@ const texts = [
       contactInfo: {
         name: "ペン・ジントン (ジェンセン・アルクエイド)",
         position: "ソフトウェアエンジニア",
-        profilePicture: "icons/profile.jpg",
+        profilePicture: "icons/profile.png",
         websites: [
           { name: "ポートフォリオ", url: "https://www.arcueidshiki.uk/" },
           {
@@ -467,7 +468,7 @@ const texts = [
             items: [
               { name: "C", iconUrl: "https://skillicons.dev/icons?i=c" },
               { name: "C++", iconUrl: "https://skillicons.dev/icons?i=cpp" },
-              { name: "Bash", iconUrl: "https://skillicons.dev/icons?i=bash" },
+              { name: "Bash", iconUrl: "https://skillicons.dev/icons?i=swift" },
               {
                 name: "JavaScript",
                 iconUrl: "https://skillicons.dev/icons?i=js",

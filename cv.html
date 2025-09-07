@@ -4,35 +4,58 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- import libraries threejs orbitcontrols dat.gui for future purpose-->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.137.5/build/three.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/three@0.137.5/examples/js/controls/OrbitControls.min.js"></script> -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/dat.gui@0.7.7/build/dat.gui.min.js"></script> -->
+    <!-- Three.js for 3D cubes background -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
     />
-    <!-- <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/dat.gui@0.7.7/build/dat.gui.min.css"
-    /> -->
     <link rel="stylesheet" href="css/cv.css" />
-    <title>CV</title>
+    <title>CV - Jingtong Peng</title>
   </head>
   <body>
     <!-- Shader background canvas -->
     <canvas id="glCanvas"></canvas>
-    <select id="languageSelector" class="language-selector">
-      <option value="jp">日本語</option>
-      <option value="en">English</option>
-      <!-- <option value="zh">中文</option> -->
-    </select>
+    
+    <!-- 3D Cubes overlay -->
+    <div id="cubes-background"></div>
+    
+    <!-- Language selector button -->
+    <div class="language-selector-container">
+      <button id="languageBtn" class="language-btn">
+        <span class="flag-icon">🌐</span>
+        <span class="lang-text">EN</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div id="languageDropdown" class="language-dropdown">
+        <div class="language-option" data-lang="en">
+          <span class="flag">🇺🇸</span>
+          <span>English</span>
+        </div>
+        <div class="language-option" data-lang="jp">
+          <span class="flag">🇯🇵</span>
+          <span>日本語</span>
+        </div>
+        <div class="language-option" data-lang="zh">
+          <span class="flag">🇨🇳</span>
+          <span>中文</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Print button -->
+    <button id="printBtn" class="print-btn">Print CV</button>
+    
     <main>
-      <!-- cv.js dynmically load infos -->
+      <!-- cv.js dynamically load infos -->
     </main>
+    
     <script type="text/javascript" src="js/shader.js"></script>
-    <script type="text/javascript" src="js/cv.js"></script>
+    <script type="text/javascript" src="js/cubes-background.js"></script>
+    <script type="text/javascript" src="js/cv-modern.js"></script>
   </body>
 </html>

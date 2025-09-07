@@ -1,16 +1,216 @@
 {
+  "contactInfo": {
     "name": "彭景通 (Jensen Arcueid)",
     "position": "软件工程师",
-    "profilePicture": "icons/profile.jpg",
+    "profilePicture": "icons/profile.png",
     "websites": [
-      { "name": "作品集", "url": "https://portfolio.example.com" },
-      { "name": "博客", "url": "https://blog.example.com" }
+      { "name": "作品集", "url": "https://www.arcueidshiki.uk/" },
+      { "name": "最佳敏捷实践与简历", "url": "https://cv.arcueidshiki.uk/" }
     ],
     "phone": ["+61 413993029", "+86 15776692817"],
     "email": ["24323312@student.uwa.edu.au", "pengjingtong@pku.edu.cn"],
     "socialLinks": [
-      { "icon": "fab fa-linkedin", "url": "https://linkedin.com/in/johndoe" },
-      { "icon": "fab fa-github", "url": "https://github.com/johndoe" },
-      { "icon": "fab fa-twitter", "url": "https://twitter.com/johndoe" }
+      { "icon": "icons/email.png", "url": "mailto:24323312@student.uwa.edu.au" },
+      { "icon": "icons/linkedin.svg", "url": "https://www.linkedin.com/in/jingtong-peng-3068672b6/" },
+      { "icon": "icons/github.svg", "url": "https://github.com/ArcueidShiki" },
+      { "icon": "icons/logo.png", "url": "https://www.arcueidshiki.uk/" }
+    ]
+  },
+  "profile": {
+    "title": "个人简介",
+    "content": [
+      "结果导向的软件工程师，具有丰富的C++开发、后端系统和全栈应用经验。",
+      "在华为拥有1.5年以上的工作经验，专注于性能优化、调试工具和系统架构。",
+      "目前在西澳大学攻读信息技术硕士学位，在澳大利亚寻找软件工程师职位。热衷于构建可扩展、高效和创新的解决方案。"
+    ]
+  },
+  "workexperience": {
+    "title": "工作经历",
+    "content": [
+      {
+        "position": "终端软件工程师",
+        "company": "华为技术有限公司",
+        "icon": "icons/company/huawei.png",
+        "duration": "2022年9月 - 2024年2月",
+        "location": "中国北京",
+        "description": [
+          "使用C++、Python和Bash为鸿蒙操作系统开发和维护调试和性能调优工具(Hiperf)。",
+          "增强崩溃分析工具，实现栈连接和火焰图可视化，将调试时间减少40%。",
+          "设计CPU/内存性能评估的自动化测试脚本，提高系统效率。",
+          "在大规模开发环境中管理基于Git/Repo的代码仓库。"
+        ]
+      },
+      {
+        "position": "全栈开发工程师",
+        "company": "字节跳动",
+        "icon": "icons/company/bytedance.png",
+        "duration": "2021年2月 - 2022年4月",
+        "location": "中国重庆",
+        "description": [
+          "使用Java、Spring Boot和相关后端技术为医院开发和维护Web应用程序，确保安全高效的医疗数据管理。",
+          "与跨职能团队协作，包括UI/UX设计师、产品经理和其他开发人员，构建高质量、可扩展的医院管理系统。",
+          "实现响应式和用户友好的设计，同时确保跨浏览器兼容性和与医疗数据库的无缝集成。",
+          "参与代码审查，优化后端性能，并提供建设性反馈以提高整体软件质量。"
+        ]
+      }
+    ]
+  },
+  "projects": {
+    "title": "项目经验",
+    "content": [
+      {
+        "name": "股票模拟交易",
+        "link": "https://github.com/ArcueidShiki/DataAnalyticsApplication",
+        "description": "美股市场模拟交易Web应用程序",
+        "technologies": ["Flask", "Sqlalchemy", "Echarts", "bootstrap", "JWT"]
+      },
+      {
+        "name": "Hiperf",
+        "link": "https://gitee.com/openharmony/developtools_hiperf",
+        "description": "鸿蒙操作系统性能调试工具",
+        "technologies": ["C/C++", "LinuxPerf", "AOSP", "Python", "ADB"]
+      },
+      {
+        "name": "远程控制",
+        "link": "https://github.com/ArcueidShiki/RemoteControl",
+        "description": "Windows远程控制应用程序，屏幕监控、键盘和鼠标控制",
+        "technologies": ["C/C++", "TCP/IP", "MFC", "IOCP", "QT"]
+      },
+      {
+        "name": "Penni",
+        "link": "https://github.com/codersforcauses/penni",
+        "description": "帮助退休人员找到兼职工作的移动应用程序",
+        "technologies": ["React", "Nextjs", "TailwindCss", "NPM"]
+      },
+      {
+        "name": "物联网智能门禁系统",
+        "link": "https://github.com/ArcueidShiki/SmartEntrySystem",
+        "description": "基于物联网的人脸识别门禁控制系统",
+        "technologies": ["RaspberryPi", "OpenCV", "Flask", "MQTT", "Tensorflow"]
+      },
+      {
+        "name": "最佳敏捷实践与简历",
+        "link": "https://github.com/ArcueidShiki/bpcv",
+        "description": "帮助学生制作简历的大学个人项目",
+        "technologies": ["HTML", "CSS", "JavaScript", "jQuery", "WebGL", "OpenGL Shader"]
+      },
+      {
+        "name": "个人作品集",
+        "link": "https://www.arcueidshiki.uk/",
+        "description": "展示我的项目和技能的个人作品集网站",
+        "technologies": ["Threejs", "Vite", "Blender"]
+      },
+      {
+        "name": "MFC VLC播放器",
+        "link": "https://github.com/ArcueidShiki/VideoPlay",
+        "description": "基于MFC的VLC播放器，支持多种视频格式",
+        "technologies": ["VLC", "MFC", "C++"]
+      },
+      {
+        "name": "解释器",
+        "link": "https://github.com/ArcueidShiki/interpreter",
+        "description": "自定义编程语言解释器，支持基本算术和控制流",
+        "technologies": ["C"]
+      }
+    ]
+  },
+  "skills": {
+    "title": "技能",
+    "content": [
+      {
+        "category": "编程语言",
+        "items": [
+          { "name": "C", "iconUrl": "https://skillicons.dev/icons?i=c" },
+          { "name": "C++", "iconUrl": "https://skillicons.dev/icons?i=cpp" },
+          { "name": "Bash", "iconUrl": "https://skillicons.dev/icons?i=bash" },
+          { "name": "JavaScript", "iconUrl": "https://skillicons.dev/icons?i=js" },
+          { "name": "Python", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "Java", "iconUrl": "https://skillicons.dev/icons?i=java" },
+          { "name": "TypeScript", "iconUrl": "https://skillicons.dev/icons?i=ts" }
+        ]
+      },
+      {
+        "category": "后端开发",
+        "items": [
+          { "name": "Linux服务器", "iconUrl": "https://skillicons.dev/icons?i=linux" },
+          { "name": "Windows IOCP", "iconUrl": "https://skillicons.dev/icons?i=windows" },
+          { "name": "Redis", "iconUrl": "https://skillicons.dev/icons?i=redis" },
+          { "name": "SpringBoot", "iconUrl": "https://skillicons.dev/icons?i=spring" },
+          { "name": "Flask", "iconUrl": "https://skillicons.dev/icons?i=flask" }
+        ]
+      },
+      {
+        "category": "前端开发",
+        "items": [
+          { "name": "Three.js", "iconUrl": "https://skillicons.dev/icons?i=threejs" },
+          { "name": "React", "iconUrl": "https://skillicons.dev/icons?i=react" },
+          { "name": "Next.js", "iconUrl": "https://skillicons.dev/icons?i=nextjs" },
+          { "name": "Vue.js", "iconUrl": "https://skillicons.dev/icons?i=vuejs" },
+          { "name": "HTML", "iconUrl": "https://skillicons.dev/icons?i=html" },
+          { "name": "CSS", "iconUrl": "https://skillicons.dev/icons?i=css" },
+          { "name": "Bootstrap", "iconUrl": "https://skillicons.dev/icons?i=bootstrap" },
+          { "name": "QT", "iconUrl": "https://skillicons.dev/icons?i=qt" },
+          { "name": "TailwindCSS", "iconUrl": "https://skillicons.dev/icons?i=tailwindcss" }
+        ]
+      },
+      {
+        "category": "数据库",
+        "items": [
+          { "name": "MySQL", "iconUrl": "https://skillicons.dev/icons?i=mysql" },
+          { "name": "Sqlite", "iconUrl": "https://skillicons.dev/icons?i=sqlite" },
+          { "name": "MongoDB", "iconUrl": "https://skillicons.dev/icons?i=mongodb" }
+        ]
+      },
+      {
+        "category": "DevOps",
+        "items": [
+          { "name": "Git", "iconUrl": "https://skillicons.dev/icons?i=git" },
+          { "name": "Docker", "iconUrl": "https://skillicons.dev/icons?i=docker" },
+          { "name": "AWS", "iconUrl": "https://skillicons.dev/icons?i=aws" },
+          { "name": "Cloudflare", "iconUrl": "https://skillicons.dev/icons?i=cloudflare" }
+        ]
+      },
+      {
+        "category": "嵌入式系统",
+        "items": [
+          { "name": "Arduino", "iconUrl": "https://skillicons.dev/icons?i=arduino" },
+          { "name": "Raspberry Pi", "iconUrl": "https://skillicons.dev/icons?i=raspberrypi" }
+        ]
+      }
+    ]
+  },
+  "education": {
+    "title": "教育背景",
+    "content": [
+      {
+        "degree": "信息技术硕士",
+        "institution": "西澳大利亚大学",
+        "logo": "icons/edu/uwa.png",
+        "location": "澳大利亚珀斯",
+        "year": "2024年2月 - 2025年12月"
+      },
+      {
+        "degree": "退学",
+        "institution": "北京大学",
+        "logo": "icons/edu/pku.png",
+        "location": "中国北京",
+        "year": "2021年"
+      },
+      {
+        "degree": "药学学士",
+        "institution": "哈尔滨医科大学",
+        "logo": "icons/edu/hmu.png",
+        "location": "中国哈尔滨",
+        "year": "2015年9月 - 2019年7月"
+      }
+    ]
+  },
+  "languages": {
+    "title": "语言能力",
+    "content": [
+      { "language": "英语", "proficiency": "流利" },
+      { "language": "中文", "proficiency": "母语" },
+      { "language": "日语", "proficiency": "基础" }
     ]
   }
+}
