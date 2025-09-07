@@ -27,6 +27,22 @@ body {
   font-weight: 400;
 }
 
+/* Ocean Background - 最底层 */
+#ocean-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0; /* 最底层 */
+  pointer-events: none;
+}
+
+#ocean-background canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 /* 3D Background */
 #cubes-background {
   position: fixed;
@@ -385,11 +401,6 @@ main {
   border: 4px solid rgba(255, 255, 255, 0.2);
   object-fit: cover;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-}
-
-/* Content Sections */
-.cv-content {
-  padding: 40px;
 }
 
 .section {
@@ -1228,6 +1239,7 @@ h2 {
     max-width: 100%;
     margin: 20px auto;
     padding: 20px;
+    z-index: 10;
   }
   
   /* Reduce cube complexity on mobile */
@@ -1373,6 +1385,7 @@ h2 {
   backdrop-filter: none; /* Remove blur effect */
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 10;
 }
 
 .map-container {
@@ -1417,6 +1430,7 @@ h2 {
   backdrop-filter: none; /* Remove blur effect */
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.1);
+  z-index: 1;
 }
 
 .chatbot-container {

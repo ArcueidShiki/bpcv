@@ -590,7 +590,6 @@ function loadContactInfo(data) {
           <img src="${data.contactInfo.profilePicture}" alt="Profile Picture" class="profile-picture">
         </div>
       </div>
-      <div class="cv-content">
   `;
   $("main").append(contactHTML);
 }
