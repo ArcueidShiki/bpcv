@@ -66,7 +66,7 @@ body {
 .language-selector-container {
   position: fixed;
   top: 20px;
-  right: 120px;
+  right: 20px;
   z-index: 1000;
 }
 
@@ -165,14 +165,14 @@ body {
   box-shadow: 0 4px 12px var(--shadow);
 }
 
-/* Print Button */
-.print-btn {
+/* PDF Button */
+.pdf-btn {
   position: fixed;
-  top: 20px;
+  top: 75px;
   right: 20px;
   z-index: 1000;
   padding: 10px 20px;
-  background: var(--primary-color);
+  background: var(--secondary-color);
   color: white;
   border: none;
   border-radius: 20px;
@@ -181,11 +181,15 @@ body {
   cursor: pointer;
   box-shadow: 0 2px 8px var(--shadow);
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.print-btn:hover {
-  background: #1557b0;
+.pdf-btn:hover {
+  background: #2d8e47;
   box-shadow: 0 4px 12px var(--shadow);
+  transform: translateY(-2px);
 }
 
 /* Main Container */
@@ -837,10 +841,10 @@ main {
   }
 
   .language-selector {
-    right: 120px;
+    right: 20px;
   }
 
-  .print-btn {
+  .pdf-btn {
     right: 20px;
   }
 }
@@ -855,7 +859,7 @@ main {
   }
 
   .language-selector,
-  .print-btn {
+  .pdf-btn {
     position: relative;
     top: auto;
     right: auto;
@@ -869,7 +873,7 @@ main {
   #cubes-background,
   .language-selector-container,
   .language-selector,
-  .print-btn {
+  .pdf-btn {
     display: none !important;
   }
 
