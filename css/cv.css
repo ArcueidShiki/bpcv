@@ -166,10 +166,11 @@ body {
 }
 
 /* PDF Button */
+/* PDF Button - Left side, vertically aligned with language switch */
 .pdf-btn {
   position: fixed;
-  top: 75px;
-  right: 20px;
+  top: 20px;
+  left: 20px;
   z-index: 1000;
   padding: 10px 20px;
   background: var(--secondary-color);
@@ -845,7 +846,15 @@ main {
   }
 
   .pdf-btn {
-    right: 20px;
+    left: 20px;
+    right: auto;
+    top: 65px;
+    position: fixed;
+    margin: 0;
+    width: auto;
+    min-width: 100px;
+    font-size: 13px;
+    padding: 8px 14px;
   }
 }
 
@@ -858,13 +867,26 @@ main {
     justify-content: center;
   }
 
-  .language-selector,
-  .pdf-btn {
+  .language-selector {
     position: relative;
     top: auto;
     right: auto;
     display: block;
-    margin: 10px auto;
+    margin: 10px auto 0 auto;
+    left: 0;
+  }
+
+  .pdf-btn {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    display: block;
+    margin: 10px auto 0 auto;
+    width: 90%;
+    min-width: unset;
+    font-size: 13px;
+    padding: 8px 10px;
   }
 }
 
