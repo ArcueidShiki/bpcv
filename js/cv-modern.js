@@ -1,3 +1,6 @@
+// Global variable to track current language
+let currentLanguage = "en";
+
 const texts = [
   {
     "lang": "en",
@@ -828,10 +831,27 @@ function LoadConfig(data) {
 }
 
 function switchLanguage(lang) {
+  currentLanguage = lang; // Update current language
   $("main").empty();
   const selectedText = texts.find((t) => t.lang === lang);
   if (selectedText) {
     LoadConfig(selectedText.text);
+  }
+}
+
+// PDF button functionality
+function setupPdfButton() {
+  const pdfBtn = document.getElementById('pdfBtn');
+  if (pdfBtn) {
+    pdfBtn.addEventListener('click', () => {
+      let pdfPath;
+      if (currentLanguage === 'zh') {
+        pdfPath = 'resume/Resume_zh.pdf';
+      } else {
+        pdfPath = 'resume/Resume.pdf'; // Default to English for 'en' and 'jp'
+      }
+      window.location.href = pdfPath;
+    });
   }
 }
 
@@ -888,22 +908,12 @@ function setupFallbackLanguageSelector() {
   }
 }
 
-// Print functionality
-function setupPrintButton() {
-  const printBtn = document.getElementById('printBtn');
-  if (printBtn) {
-    printBtn.addEventListener('click', () => {
-      window.print();
-    });
-  }
-}
-
 // Load the default language on page load
 $(document).ready(async function () {
   await loadChineseText();
   setupLanguageSelector();
   setupFallbackLanguageSelector();
-  setupPrintButton();
+  setupPdfButton();
   switchLanguage("en");
 });
 

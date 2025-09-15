@@ -66,7 +66,7 @@ body {
 .language-selector-container {
   position: fixed;
   top: 20px;
-  right: 120px;
+  right: 20px;
   z-index: 1000;
 }
 
@@ -165,14 +165,15 @@ body {
   box-shadow: 0 4px 12px var(--shadow);
 }
 
-/* Print Button */
-.print-btn {
+/* PDF Button */
+/* PDF Button - Left side, vertically aligned with language switch */
+.pdf-btn {
   position: fixed;
   top: 20px;
-  right: 20px;
+  left: 20px;
   z-index: 1000;
   padding: 10px 20px;
-  background: var(--primary-color);
+  background: var(--secondary-color);
   color: white;
   border: none;
   border-radius: 20px;
@@ -181,11 +182,15 @@ body {
   cursor: pointer;
   box-shadow: 0 2px 8px var(--shadow);
   transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.print-btn:hover {
-  background: #1557b0;
+.pdf-btn:hover {
+  background: #2d8e47;
   box-shadow: 0 4px 12px var(--shadow);
+  transform: translateY(-2px);
 }
 
 /* Main Container */
@@ -837,11 +842,19 @@ main {
   }
 
   .language-selector {
-    right: 120px;
+    right: 20px;
   }
 
-  .print-btn {
-    right: 20px;
+  .pdf-btn {
+    left: 20px;
+    right: auto;
+    top: 65px;
+    position: fixed;
+    margin: 0;
+    width: auto;
+    min-width: 100px;
+    font-size: 13px;
+    padding: 8px 14px;
   }
 }
 
@@ -854,13 +867,26 @@ main {
     justify-content: center;
   }
 
-  .language-selector,
-  .print-btn {
+  .language-selector {
     position: relative;
     top: auto;
     right: auto;
     display: block;
-    margin: 10px auto;
+    margin: 10px auto 0 auto;
+    left: 0;
+  }
+
+  .pdf-btn {
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    display: block;
+    margin: 10px auto 0 auto;
+    width: 90%;
+    min-width: unset;
+    font-size: 13px;
+    padding: 8px 10px;
   }
 }
 
@@ -869,7 +895,7 @@ main {
   #cubes-background,
   .language-selector-container,
   .language-selector,
-  .print-btn {
+  .pdf-btn {
     display: none !important;
   }
 
