@@ -96,15 +96,14 @@ class CubesBackground {
 
     // Handle window resize
     window.addEventListener("resize", () => this.handleResize());
+
     window.addEventListener("mousedown", (e) => {
-      if (e.button === 0)
-      {
+      if (e.button === 0) {
         this.toggleAggregation();
-      } else {
+      } else if (e.button === 2) {
         this.changeGeometryShapes();
       }
     });
-
   }
 
   createCubes() {
@@ -239,12 +238,8 @@ class CubesBackground {
     document.addEventListener("keydown", (event) => {
       if (event.code === "Space") {
         event.preventDefault();
-        this.changeGeometryShapes();   
-        this.toggleAggregation();
-      } else if (event.code === "KeyG") {
-        // 按 G 键立即触发几何体变换
-        event.preventDefault();
         this.changeGeometryShapes();
+        this.toggleAggregation();
       }
     });
   }
@@ -276,7 +271,10 @@ class CubesBackground {
     let randomType;
     let attempts = 0;
     do {
-      randomType = this.geometryTypes[Math.floor(Math.random() * this.geometryTypes.length)];
+      randomType =
+        this.geometryTypes[
+          Math.floor(Math.random() * this.geometryTypes.length)
+        ];
       attempts++;
     } while (randomType === this.currentGeometryType && attempts < 10); // 最多尝试10次避免无限循环
 
@@ -303,11 +301,11 @@ class CubesBackground {
 
       // 保存原始缩放
       cube.userData.originalScale = cube.scale.clone();
-      
+
       // 保存原始颜色并设置目标颜色
       cube.userData.originalColor = cube.material.color.clone();
       cube.userData.targetColor = randomColor.clone();
-      
+
       // 立即应用新颜色
       cube.material.color.copy(cube.userData.targetColor);
     });
@@ -361,12 +359,12 @@ class CubesBackground {
         let scale;
         if (this.transitionProgress < 0.5) {
           // 前半段：缩小到0.5
-          scale = 1.0 - (easedProgress * 0.5);
+          scale = 1.0 - easedProgress * 0.5;
         } else {
           // 后半段：从0.5放大到1.0
-          scale = 0.5 + ((easedProgress - 0.5) * 1.0);
+          scale = 0.5 + (easedProgress - 0.5) * 1.0;
         }
-        
+
         if (cube.userData.originalScale) {
           cube.scale.copy(cube.userData.originalScale);
         } else {

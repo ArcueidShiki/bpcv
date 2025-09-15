@@ -396,6 +396,7 @@ main {
   display: flex;
   align-items: center;
   gap: 12px;
+  color: #e33333;
 }
 
 .section-title::before {
@@ -408,7 +409,6 @@ main {
     var(--secondary-color)
   );
   border-radius: 2px;
-  color: whitesmoke;
 }
 
 /* Profile Section */
