@@ -4,11 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Three.js for 3D cubes background -->
-    <script src="https://unpkg.com/three@0.158.0/build/three.min.js"></script>
-    <script src="https://unpkg.com/three@0.158.0/examples/js/controls/OrbitControls.js"></script>
-    
+    <!-- Three.js core library -->
+    <script type="text/javascript" src="js/Three.iife.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/dat.gui.min.js"></script>
+    <link
+      href="https://cdn.jsdelivr.net/npm/dat.gui@0.7.9/build/dat.gui.min.css"
+      rel="stylesheet"
+    />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <link
       rel="stylesheet"
@@ -20,10 +24,10 @@
   <body>
     <!-- Ocean Background - 最底层 -->
     <div id="ocean-background"></div>
-    
+
     <!-- 3D Cubes overlay -->
     <div id="cubes-background"></div>
-    
+
     <!-- Language selector button -->
     <div class="language-selector-container">
       <button id="languageBtn" class="language-btn">
@@ -46,30 +50,34 @@
         </div>
       </div>
     </div>
-    
+
     <!-- Print button -->
     <button id="printBtn" class="print-btn">Print CV</button>
-    
+
     <main>
       <!-- cv.js dynamically load infos -->
     </main>
-    
+
     <!-- Google Maps Section -->
     <div class="map-section">
       <h2 class="section-title">📍 Current Location</h2>
       <div class="map-container">
-        <iframe 
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387190.27991515207!2d115.7459!3d-31.953512!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2a32966cdb47733d%3A0x304f0b535df55d0!2sPerth%20WA%2C%20Australia!5e0!3m2!1sen!2sau!4v1700000000000!5m2!1sen!2sau" 
-          width="100%" 
-          height="350" 
-          style="border:0; border-radius: 12px;" 
-          allowfullscreen="" 
-          loading="lazy" 
-          referrerpolicy="no-referrer-when-downgrade">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387190.27991515207!2d115.7459!3d-31.953512!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2a32966cdb47733d%3A0x304f0b535df55d0!2sPerth%20WA%2C%20Australia!5e0!3m2!1sen!2sau!4v1700000000000!5m2!1sen!2sau"
+          width="100%"
+          height="350"
+          style="border: 0; border-radius: 12px"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+        >
         </iframe>
         <div class="location-info">
           <h3>📍 Perth, Western Australia</h3>
-          <p>Currently pursuing Master's degree and actively seeking software engineering opportunities in the beautiful city of Perth.</p>
+          <p>
+            Currently pursuing Master's degree and actively seeking software
+            engineering opportunities in the beautiful city of Perth.
+          </p>
         </div>
       </div>
     </div>
@@ -82,19 +90,25 @@
           <div class="bot-message">
             <div class="message-avatar">🤖</div>
             <div class="message-content">
-              Hi! I'm Jensen's AI assistant powered by DeepSeek. Ask me anything about his experience, skills, or projects!
+              Hi! I'm Jensen's AI assistant powered by DeepSeek. Ask me anything
+              about his experience, skills, or projects!
             </div>
           </div>
         </div>
         <div class="chat-input-container">
-          <input type="text" id="chatInput" placeholder="Ask about Jensen's experience..." maxlength="500">
+          <input
+            type="text"
+            id="chatInput"
+            placeholder="Ask about Jensen's experience..."
+            maxlength="500"
+          />
           <button id="sendButton" onclick="sendMessage()">Send</button>
         </div>
       </div>
     </div>
-    
+
+    <!-- <script type="text/javascript" src="js/cubes-background.js"></script> -->
     <script type="text/javascript" src="js/ocean-background.js"></script>
-    <script type="text/javascript" src="js/cubes-background.js"></script>
     <script type="text/javascript" src="js/cv-modern.js"></script>
     <script type="text/javascript" src="js/chatbot.js"></script>
   </body>

@@ -1,177 +1,243 @@
 class OceanBackground {
-    constructor() {
-        // 检查Three.js是否加载
-        if (typeof THREE === 'undefined') {
-            console.error('THREE.js not loaded for ocean!');
-            return;
+  constructor() {
+    console.log("OceanBackground constructor called");
+
+    // Check if Three.js and required addons are loaded
+    if (typeof Three === "undefined") {
+      console.error("Three.js not loaded for ocean!");
+      return;
+    }
+    if (typeof Three.Water === "undefined") {
+      console.error("Three.Water not loaded!");
+      return;
+    } else {
+      console.log("Three.Water loaded successfully:", Three.Water);
+    }
+    if (typeof Three.Sky === "undefined") {
+      console.error("Three.Sky not loaded!");
+      return;
+    } else {
+      console.log("Three.Sky loaded successfully:", Three.Sky);
+    }
+    if (typeof Three.OrbitControls === "undefined") {
+      console.error("Three.OrbitControls not loaded!");
+      return;
+    } else {
+      console.log(
+        "Three.OrbitControls loaded successfully:",
+        Three.OrbitControls
+      );
+    }
+    // if (typeof GUI === "undefined") {
+    //   console.error("dat.GUI not loaded!");
+    //   return;
+    // } else {
+    //   console.log("dat.GUI loaded successfully:", GUI);
+    // }
+
+    this.container = null;
+    this.stats = null;
+    this.camera = null;
+    this.scene = null;
+    this.renderer = null;
+    this.controls = null;
+    this.water = null;
+    this.sun = null;
+    this.sky = null;
+    this.renderTarget = null;
+    this.gui = null;
+    this.init();
+  }
+  init() {
+    console.log("OceanBackground init called");
+    this.container = document.getElementById("ocean-background");
+
+    if (!this.container) {
+      console.error("Ocean background container not found!");
+      return;
+    }
+    console.log("Container found:", this.container);
+
+    //
+
+    this.renderer = new Three.WebGLRenderer();
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+    this.renderer.setAnimationLoop(() => this.animate());
+    this.renderer.toneMapping = Three.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 0.5;
+
+    // Set canvas styles for background
+    this.renderer.domElement.style.position = "fixed";
+    this.renderer.domElement.style.top = "0";
+    this.renderer.domElement.style.left = "0";
+    this.renderer.domElement.style.width = "100%";
+    this.renderer.domElement.style.height = "100%";
+    this.renderer.domElement.style.zIndex = "-10";
+    this.renderer.domElement.style.pointerEvents = "none";
+
+    this.container.appendChild(this.renderer.domElement);
+    console.log("Renderer created and added to container");
+
+    //
+
+    this.scene = new Three.Scene();
+
+    this.camera = new Three.PerspectiveCamera(
+      55,
+      window.innerWidth / window.innerHeight,
+      1,
+      20000
+    );
+    this.camera.position.set(30, 30, 100);
+
+    //
+
+    this.sun = new Three.Vector3();
+
+    // Water
+
+    const waterGeometry = new Three.PlaneGeometry(10000, 10000);
+
+    this.water = new Three.Water(waterGeometry, {
+      textureWidth: 512,
+      textureHeight: 512,
+      waterNormals: new Three.TextureLoader().load(
+        "https://threejs.org/examples/textures/waternormals.jpg",
+        function (texture) {
+          texture.wrapS = texture.wrapT = Three.RepeatWrapping;
+          console.log("Water normals texture loaded");
+        },
+        undefined,
+        function (error) {
+          console.error("Failed to load water normals texture:", error);
         }
-        
-        this.scene = new THREE.Scene();
-        this.camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 2000);
-        this.renderer = new THREE.WebGLRenderer({ 
-            antialias: true,
-            alpha: false
-        });
-        this.clock = new THREE.Clock();
-        this.water = null;
-        
-        this.init();
-        this.createWater();
-        this.animate();
+      ),
+      sunDirection: new Three.Vector3(),
+      sunColor: 0xffffff,
+      waterColor: 0x001e0f,
+      distortionScale: 3.7,
+      fog: this.scene.fog !== undefined,
+    });
+    console.log("Water created");
+
+    this.water.rotation.x = -Math.PI / 2;
+
+    this.scene.add(this.water);
+
+    // Skybox
+
+    this.sky = new Three.Sky();
+    this.sky.scale.setScalar(10000);
+    this.scene.add(this.sky);
+    console.log("Sky created");
+
+    const skyUniforms = this.sky.material.uniforms;
+
+    skyUniforms["turbidity"].value = 10;
+    skyUniforms["rayleigh"].value = 2;
+    skyUniforms["mieCoefficient"].value = 0.005;
+    skyUniforms["mieDirectionalG"].value = 0.8;
+
+    const parameters = {
+      elevation: 2,
+      azimuth: 180,
+    };
+
+    const pmremGenerator = new Three.PMREMGenerator(this.renderer);
+    const sceneEnv = new Three.Scene();
+
+    const updateSun = () => {
+      console.log("updateSun called");
+      const phi = Three.MathUtils.degToRad(90 - parameters.elevation);
+      const theta = Three.MathUtils.degToRad(parameters.azimuth);
+
+      this.sun.setFromSphericalCoords(1, phi, theta);
+
+      this.sky.material.uniforms["sunPosition"].value.copy(this.sun);
+      this.water.material.uniforms["sunDirection"].value
+        .copy(this.sun)
+        .normalize();
+
+      //   if (this.renderTarget !== undefined) this.renderTarget.dispose();
+
+      sceneEnv.add(this.sky);
+      this.renderTarget = pmremGenerator.fromScene(sceneEnv);
+      this.scene.add(this.sky);
+
+      this.scene.environment = this.renderTarget.texture;
+    };
+
+    updateSun();
+    console.log("Sun updated");
+
+
+    this.controls = new Three.OrbitControls(
+      this.camera,
+      this.renderer.domElement
+    );
+    this.controls.maxPolarAngle = Math.PI * 0.495;
+    this.controls.target.set(0, 10, 0);
+    this.controls.minDistance = 40.0;
+    this.controls.maxDistance = 200.0;
+    this.controls.update();
+    console.log("Controls created");
+
+    // Initialize GUI
+ 
+    this.gui = new dat.GUI();
+
+    this.folderSky = this.gui.addFolder("Sky");
+    this.folderSky.add(parameters, "elevation", 0, 90, 0.1).onChange(updateSun);
+    this.folderSky.add(parameters, "azimuth", -180, 180, 0.1).onChange(updateSun);
+    this.folderSky.open();
+
+    this.waterUniforms = this.water.material.uniforms;
+
+    this.folderWater = this.gui.addFolder("Water");
+    this.folderWater
+      .add(this.waterUniforms.distortionScale, "value", 0, 8, 0.1)
+      .name("distortionScale");
+    this.folderWater.add(this.waterUniforms.size, "value", 0.1, 10, 0.1).name("size");
+    this.folderWater.open();
+    if (typeof Stats !== "undefined") {
+      this.stats = new Stats();
+      this.container.appendChild(this.stats.dom);
+      console.log("Stats created");
+    } else {
+      console.warn("Stats not available");
     }
-    
-    init() {
-        const container = document.getElementById('ocean-background');
-        if (!container) {
-            console.error('Ocean background container not found!');
-            return;
-        }
-        
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.renderer.setClearColor(0x87CEEB, 1); // 天空蓝色背景
-        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // 限制像素比以提高性能
-        this.renderer.shadowMap.enabled = true;
-        this.renderer.shadowMap.type = THREE.PCFShadowMap; // 使用性能更好的阴影类型
-        this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-        this.renderer.toneMappingExposure = 1.0;
-        container.appendChild(this.renderer.domElement);
-        
-        // 设置canvas样式
-        this.renderer.domElement.style.position = 'fixed';
-        this.renderer.domElement.style.top = '0';
-        this.renderer.domElement.style.left = '0';
-        this.renderer.domElement.style.width = '100%';
-        this.renderer.domElement.style.height = '100%';
-        this.renderer.domElement.style.zIndex = '-10'; // 最底层
-        this.renderer.domElement.style.pointerEvents = 'none';
-        
-        this.camera.position.set(0, 10, 100);
-        
-        // 优化的光照系统 - 性能友好
-        // 环境光 - 模拟天空散射光
-        const ambientLight = new THREE.AmbientLight(0x87CEEB, 0.4);
-        this.scene.add(ambientLight);
-        
-        // 主太阳光 - 性能优化的设置
-        const sunLight = new THREE.DirectionalLight(0xffffff, 1.0);
-        sunLight.position.set(100, 60, 50);
-        sunLight.castShadow = false; // 关闭阴影以提高性能
-        this.scene.add(sunLight);
-        
-        // 辅助金色阳光 - 营造温暖效果
-        const warmLight = new THREE.DirectionalLight(0xffd700, 0.3);
-        warmLight.position.set(-50, 40, 80);
-        this.scene.add(warmLight);
-        
-        // 添加方向光
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        directionalLight.position.set(100, 100, 50);
-        this.scene.add(directionalLight);
-        
-        // 处理窗口大小变化
-        window.addEventListener('resize', () => this.handleResize());
-    }
-    
-    createWater() {
-        // 性能优化的水面几何体
-        const waterGeometry = new THREE.PlaneGeometry(2000, 2000, 128, 128); // 适中的分辨率
-        
-        // 加载水面法线纹理
-        const textureLoader = new THREE.TextureLoader();
-        const waterNormalTexture = textureLoader.load('js/textures/waternormals.jpg');
-        waterNormalTexture.wrapS = THREE.RepeatWrapping;
-        waterNormalTexture.wrapT = THREE.RepeatWrapping;
-        waterNormalTexture.repeat.set(12, 12);
-        
-        // 优化的水面材质 - 平衡真实感和性能
-        const waterMaterial = new THREE.MeshStandardMaterial({
-            color: 0x006994,
-            roughness: 0.1,
-            metalness: 0.1,
-            transparent: true,
-            opacity: 0.8,
-            normalMap: waterNormalTexture,
-            normalScale: new THREE.Vector2(1.5, 1.5),
-            envMapIntensity: 0.8, // 适度的环境反射
-        });
-        
-        this.water = new THREE.Mesh(waterGeometry, waterMaterial);
-        this.water.rotation.x = -Math.PI / 2;
-        this.water.position.y = -50;
-        this.water.receiveShadow = false; // 关闭阴影接收以提高性能
-        this.scene.add(this.water);
-        
-        // 添加动态波浪效果
-        this.originalPositions = new Float32Array(waterGeometry.attributes.position.array);
-        
-        // 添加简单的太阳反射效果
-        this.createSunReflection();
-    }
-    
-    createSunReflection() {
-        // 简单的太阳反射点 - 使用正确的材质
-        const sunGeometry = new THREE.SphereGeometry(4, 12, 12);
-        const sunMaterial = new THREE.MeshStandardMaterial({
-            color: 0xffd700,
-            emissive: 0xffd700,
-            emissiveIntensity: 0.8,
-            transparent: true,
-            opacity: 0.6
-        });
-        
-        this.sunReflection = new THREE.Mesh(sunGeometry, sunMaterial);
-        this.sunReflection.position.set(50, -45, 30);
-        this.scene.add(this.sunReflection);
-    }
-    
-    animate() {
-        requestAnimationFrame(() => this.animate());
-        
-        const time = this.clock.getElapsedTime();
-        
-        // 优化的动态波浪 - 减少计算复杂度
-        if (this.water && this.originalPositions) {
-            const positions = this.water.geometry.attributes.position.array;
-            
-            // 使用更少但更有效的波浪层
-            for (let i = 0; i < positions.length; i += 3) {
-                const x = this.originalPositions[i];
-                const y = this.originalPositions[i + 1];
-                const z = this.originalPositions[i + 2];
-                
-                // 三层波浪叠加 - 性能优化
-                positions[i + 2] = z + 
-                    Math.sin(x * 0.015 + time * 1.0) * 2.5 + // 主波浪
-                    Math.sin(y * 0.012 + time * 0.8) * 1.8 + // 次要波浪
-                    Math.sin((x + y) * 0.008 + time * 0.6) * 1.2; // 交叉波浪
-            }
-            
-            this.water.geometry.attributes.position.needsUpdate = true;
-            this.water.geometry.computeVertexNormals();
-        }
-        
-        // 简单的太阳反射动画
-        if (this.sunReflection) {
-            this.sunReflection.position.y = -45 + Math.sin(time * 0.5) * 1.5;
-            this.sunReflection.material.emissiveIntensity = 0.8 + Math.sin(time * 2) * 0.2;
-        }
-        
-        // 温和的相机运动
-        this.camera.position.x = Math.sin(time * 0.08) * 12;
-        this.camera.position.z = 100 + Math.cos(time * 0.05) * 15;
-        this.camera.lookAt(0, -20, 0);
-        
-        this.renderer.render(this.scene, this.camera);
-    }
-    
-    handleResize() {
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-    }
+    window.addEventListener("resize", () => this.onWindowResize());
+    console.log("Ocean background initialization complete");
+  }
+
+  onWindowResize() {
+    this.camera.aspect = window.innerWidth / window.innerHeight;
+    this.camera.updateProjectionMatrix();
+
+    this.renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+
+  animate() {
+    this.render();
+    if (this.controls) this.controls.update();
+    if (this.stats) this.stats.update();
+  }
+  render() {
+    const time = performance.now() * 0.001;
+
+    this.water.material.uniforms["time"].value += 1.0 / 60.0;
+
+    this.renderer.render(this.scene, this.camera);
+  }
 }
 
-// 页面加载完成后初始化海洋背景
-window.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM loaded, creating ocean background");
+  try {
     window.oceanBackground = new OceanBackground();
+    console.log("Ocean background created successfully");
+  } catch (error) {
+    console.error("Failed to create ocean background:", error);
+  }
 });
