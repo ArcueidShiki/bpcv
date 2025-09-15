@@ -28,12 +28,6 @@ class OceanBackground {
         Three.OrbitControls
       );
     }
-    // if (typeof GUI === "undefined") {
-    //   console.error("dat.GUI not loaded!");
-    //   return;
-    // } else {
-    //   console.log("dat.GUI loaded successfully:", GUI);
-    // }
 
     this.container = null;
     this.stats = null;
@@ -73,7 +67,7 @@ class OceanBackground {
     this.renderer.domElement.style.left = "0";
     this.renderer.domElement.style.width = "100%";
     this.renderer.domElement.style.height = "100%";
-    this.renderer.domElement.style.zIndex = "-10";
+    this.renderer.domElement.style.zIndex = "-5";
     this.renderer.domElement.style.pointerEvents = "none";
 
     this.container.appendChild(this.renderer.domElement);
@@ -222,6 +216,8 @@ class OceanBackground {
     this.render();
     if (this.controls) this.controls.update();
     if (this.stats) this.stats.update();
+    this.renderer.clearDepth();
+    this.renderer.render(this.scene, this.camera);
   }
   render() {
     const time = performance.now() * 0.001;
@@ -235,7 +231,7 @@ class OceanBackground {
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM loaded, creating ocean background");
   try {
-    window.oceanBackground = new OceanBackground();
+    new OceanBackground();
     console.log("Ocean background created successfully");
   } catch (error) {
     console.error("Failed to create ocean background:", error);

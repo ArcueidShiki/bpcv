@@ -15,7 +15,7 @@ class CubesBackground {
     );
     this.renderer = new Three.WebGLRenderer({
       antialias: true,
-      alpha: false,
+      alpha: true,
     });
     this.cubes = [];
     this.originalPositions = [];
@@ -59,9 +59,9 @@ class CubesBackground {
     this.renderer.domElement.style.position = "fixed";
     this.renderer.domElement.style.top = "0";
     this.renderer.domElement.style.left = "0";
-    this.renderer.domElement.style.width = "100%";
-    this.renderer.domElement.style.height = "100%";
-    this.renderer.domElement.style.zIndex = "1";
+    this.renderer.domElement.style.width = "50%";
+    this.renderer.domElement.style.height = "50%";
+    this.renderer.domElement.style.zIndex = "-1000";
     this.renderer.domElement.style.pointerEvents = "auto";
 
     this.camera.position.set(0, 0, 150); // 调整相机位置适应更大的分散范围
@@ -96,6 +96,15 @@ class CubesBackground {
 
     // Handle window resize
     window.addEventListener("resize", () => this.handleResize());
+    window.addEventListener("mousedown", (e) => {
+      if (e.button === 0)
+      {
+        this.toggleAggregation();
+      } else {
+        this.changeGeometryShapes();
+      }
+    });
+
   }
 
   createCubes() {

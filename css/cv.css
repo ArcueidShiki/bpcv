@@ -390,7 +390,7 @@ main {
 .section-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--primary-color);
+  color: var(--border);
   margin-bottom: 20px;
   position: relative;
   display: flex;
@@ -408,6 +408,7 @@ main {
     var(--secondary-color)
   );
   border-radius: 2px;
+  color: whitesmoke;
 }
 
 /* Profile Section */
@@ -1255,7 +1256,6 @@ h2 {
 }
 
 /* Additional white text enforcement */
-.section-title,
 .experience-title,
 .experience-company,
 .experience-meta,
