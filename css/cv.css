@@ -193,6 +193,36 @@ body {
   transform: translateY(-2px);
 }
 
+/* Game Link Button */
+.game-link-btn {
+  position: fixed;
+  top: 20px;
+  left: 200px; /* Position next to PDF button */
+  z-index: 1000;
+  padding: 10px 20px;
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.game-link-btn:hover {
+  background: linear-gradient(45deg, #5a67d8, #6b46c1);
+  box-shadow: 0 4px 12px var(--shadow);
+  transform: translateY(-2px);
+  color: white;
+  text-decoration: none;
+}
+
 /* Main Container */
 main {
   max-width: 1200px; /* Match map and chatbot width */

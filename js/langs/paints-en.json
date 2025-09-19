@@ -1,0 +1,20 @@
+{
+  "title": "🎨 Flood Fill Game",
+  "ui": {
+    "movesLeft": "Moves Left",
+    "targetColor": "Target Color",
+    "gridSize": "Grid Size",
+    "colorCount": "Color Count",
+    "instruction": "Select a color then click a cell to paint",
+    "colorNames": ["Yellow", "Red", "Blue", "Green"]
+  },
+  "buttons": {
+    "reduceDifficulty": "Reduce Difficulty",
+    "retry": "Try Again", 
+    "newGame": "New Game"
+  },
+  "messages": {
+    "success": "Congratulations! You completed the flood fill puzzle! 🎉",
+    "failure": "Game Over! You ran out of moves, try again! 😔"
+  }
+}
