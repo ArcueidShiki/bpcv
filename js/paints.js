@@ -243,24 +243,32 @@ class FloodFillGame {
 
     checkGameEnd() {
         // 检查是否所有格子都是目标颜色
-        const allSameColor = this.grid.every(row =>
+        const allSameColor = this.grid.every(row => 
             row.every(cell => cell === this.targetColor)
         );
 
         if (allSameColor) {
             this.gameEnded = true;
-            this.showGameStatus('恭喜！你成功完成了溢彩画！🎉', 'status-success');
+            this.showSuccessMessage();
         } else if (this.currentMoves >= this.maxMoves) {
             this.gameEnded = true;
-            this.showGameStatus('游戏结束！步数用完了，再试试看吧！😔', 'status-failure');
+            this.showFailureMessage();
         }
-    }
-
-    showGameStatus(message, className) {
+    }    showGameStatus(message, className) {
         const statusElement = document.getElementById('gameStatus');
         statusElement.textContent = message;
         statusElement.className = `game-status ${className}`;
         statusElement.classList.remove('hidden');
+    }
+
+    showSuccessMessage() {
+        const message = translations.messages?.success || '恭喜！你成功完成了溢彩画！🎉';
+        this.showGameStatus(message, 'status-success');
+    }
+
+    showFailureMessage() {
+        const message = translations.messages?.failure || '游戏结束！步数用完了，再试试看吧！😔';
+        this.showGameStatus(message, 'status-failure');
     }
 
     hideGameStatus() {
@@ -327,13 +335,187 @@ class FloodFillGame {
     }
 }
 
-// 游戏实例
+// 全局变量
 let game;
+let currentLanguage = 'zh';
+let translations = {};
+
+// 加载翻译文件
+async function loadTranslations(lang) {
+    try {
+        console.log('Loading translations for:', lang);
+        const response = await fetch(`js/langs/paints-${lang}.json`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        translations = data;
+        console.log('Translations loaded successfully:', translations);
+        return true;
+    } catch (error) {
+        console.error('Failed to load translations:', error);
+        return false;
+    }
+}
+
+// 更新界面文本
+function updateUITexts() {
+    if (!translations || !translations.title) {
+        console.log('No translations available');
+        return;
+    }
+    
+    console.log('Updating UI texts...');
+    
+    // 更新所有文本元素
+    const elements = {
+        'gameTitle': translations.title,
+        'movesLeftLabel': translations.ui.movesLeft,
+        'targetColorLabel': translations.ui.targetColor,
+        'gridSizeLabel': translations.ui.gridSize,
+        'colorCountLabel': translations.ui.colorCount,
+        'instructionText': translations.ui.instruction,
+        'reduceDifficultyBtn': translations.buttons.reduceDifficulty,
+        'retryBtn': translations.buttons.retry,
+        'newGameBtn': translations.buttons.newGame
+    };
+    
+    for (const [id, text] of Object.entries(elements)) {
+        const element = document.getElementById(id);
+        if (element) {
+            element.textContent = text;
+            console.log(`Updated ${id}:`, text);
+        } else {
+            console.warn(`Element ${id} not found`);
+        }
+    }
+    
+    // 更新颜色提示
+    updateColorTooltips();
+}
+
+// 更新颜色提示
+function updateColorTooltips() {
+    if (!translations.ui || !translations.ui.colorNames) return;
+    
+    const colorSamples = document.querySelectorAll('.color-sample');
+    colorSamples.forEach((sample, index) => {
+        if (translations.ui.colorNames[index]) {
+            sample.title = translations.ui.colorNames[index];
+        }
+    });
+}
+
+// 切换语言
+async function switchLanguage(newLang) {
+    console.log('Switching language to:', newLang);
+    currentLanguage = newLang;
+    
+    const success = await loadTranslations(newLang);
+    if (success) {
+        updateUITexts();
+        
+        // 更新游戏对象的语言
+        if (game) {
+            game.currentLanguage = newLang;
+            game.translations = translations;
+            if (translations.ui && translations.ui.colorNames) {
+                game.colorNames = translations.ui.colorNames;
+            }
+        }
+    }
+}
+
+// 语言切换功能
+function setupLanguageSelector() {
+    console.log('Setting up language selector...');
+    
+    const languageBtn = document.getElementById('languageBtn');
+    const languageDropdown = document.getElementById('languageDropdown');
+    const languageOptions = document.querySelectorAll('.language-option');
+    
+    if (!languageBtn || !languageDropdown) {
+        console.error('Language selector elements not found');
+        return;
+    }
+    
+    // 切换下拉菜单
+    languageBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        console.log('Language button clicked');
+        languageDropdown.classList.toggle('active');
+    });
+    
+    // 点击外部关闭下拉菜单
+    document.addEventListener('click', function() {
+        languageDropdown.classList.remove('active');
+    });
+    
+    // 处理语言选择
+    languageOptions.forEach(function(option) {
+        option.addEventListener('click', async function(e) {
+            e.stopPropagation();
+            
+            const selectedLang = option.getAttribute('data-lang');
+            const flag = option.querySelector('.flag').textContent;
+            const langName = option.querySelector('span:last-child').textContent;
+            
+            console.log('Language selected:', selectedLang);
+            
+            // 更新按钮显示
+            const langText = document.getElementById('langText');
+            const langFlag = document.getElementById('langFlag');
+            
+            if (langText && langFlag) {
+                langText.textContent = selectedLang.toUpperCase();
+                langFlag.textContent = flag;
+            }
+            
+            // 切换语言
+            await switchLanguage(selectedLang);
+            
+            // 关闭下拉菜单
+            languageDropdown.classList.remove('active');
+        });
+    });
+    
+    console.log('Language selector setup complete');
+}
 
 // 初始化游戏
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('DOM loaded, initializing...');
+    
+    // 先加载默认翻译
+    await loadTranslations('zh');
+    
+    // 创建游戏实例
     game = new FloodFillGame();
+    
+    // 设置语言选择器
+    setupLanguageSelector();
+    
+    // 应用初始翻译
+    updateUITexts();
+    
+    console.log('Initialization complete');
 });
+
+function updateLanguageButtonDisplay(lang) {
+    const langText = document.getElementById('langText');
+    const langFlag = document.getElementById('langFlag');
+    
+    if (langText && langFlag) {
+        if (lang === 'zh') {
+            langText.textContent = 'ZH';
+            langFlag.textContent = '🇨🇳';
+        } else {
+            langText.textContent = 'EN';
+            langFlag.textContent = '🇺🇸';
+        }
+        console.log('Updated language display to:', lang);
+    }
+}
 
 // 全局函数供HTML调用
 function reduceDifficulty() {
