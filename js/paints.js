@@ -10,7 +10,7 @@ class FloodFillGame {
         this.colorNames = ['黄', '红', '蓝', '绿'];
 
         this.gridSize = this.getRandomGridSize(); // 随机网格大小
-        this.colorCount = 3;
+        this.colorCount = 4; // 使用所有4种颜色，包括绿色
         this.maxMoves = 8;
         this.currentMoves = 0;
         this.targetColor = 0;
@@ -23,7 +23,18 @@ class FloodFillGame {
     }
 
     getRandomGridSize() {
-        return Math.floor(Math.random() * 7) + 6; // 6-12 的随机大小
+        return Math.floor(Math.random() * 7) + 8; // 8-14 的随机大小
+    }
+
+    // 添加设置网格大小的方法
+    setGridSize(size) {
+        this.gridSize = Math.max(6, Math.min(30, size));
+        this.init();
+        // 更新页面显示
+        const gridSizeDisplay = document.getElementById('grid-size-display');
+        if (gridSizeDisplay) {
+            gridSizeDisplay.textContent = this.gridSize;
+        }
     }
 
     init() {
@@ -153,8 +164,12 @@ class FloodFillGame {
 
     renderGrid() {
         const gridElement = document.getElementById('gameGrid');
-        const cellSize = Math.max(30, Math.min(40, 400 / this.gridSize)); // 根据网格大小调整格子尺寸
+        // 增大格子大小，响应式设计
+        const containerWidth = Math.min(window.innerWidth * 0.9, 800);
+        const cellSize = Math.max(25, Math.min(50, containerWidth / this.gridSize));
+        
         gridElement.style.gridTemplateColumns = `repeat(${this.gridSize}, ${cellSize}px)`;
+        gridElement.style.gridTemplateRows = `repeat(${this.gridSize}, ${cellSize}px)`;
         gridElement.innerHTML = '';
 
         for (let i = 0; i < this.gridSize; i++) {
@@ -378,21 +393,79 @@ let game;
 let currentLanguage = 'zh';
 let translations = {};
 
+// 检查文件是否存在
+async function checkFileExists(url) {
+    try {
+        const response = await fetch(url, { method: 'HEAD' });
+        return response.ok;
+    } catch {
+        return false;
+    }
+}
+
 // 加载翻译文件
 async function loadTranslations(lang) {
     try {
         console.log('Loading translations for:', lang);
-        const response = await fetch(`js/langs/paints-${lang}.json`);
+        const url = `js/langs/paints-${lang}.json`;
+        
+        // 先检查文件是否存在
+        const exists = await checkFileExists(url);
+        if (!exists) {
+            throw new Error(`File not found: ${url}`);
+        }
+        
+        const response = await fetch(url);
+        console.log('Response status:', response.status, response.statusText);
+        
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        const data = await response.json();
+        
+        const text = await response.text();
+        console.log('Response text length:', text.length);
+        
+        if (!text.trim()) {
+            throw new Error('Empty response');
+        }
+        
+        const data = JSON.parse(text);
         translations = data;
         console.log('Translations loaded successfully:', translations);
         return true;
     } catch (error) {
         console.error('Failed to load translations:', error);
-        return false;
+        
+        // 回退到默认中文翻译
+        if (lang !== 'zh') {
+            console.log('Falling back to Chinese translations');
+            return await loadTranslations('zh');
+        }
+        
+        // 如果中文也加载失败，使用硬编码的备用翻译
+        translations = {
+            title: "🎨 溢彩画游戏",
+            ui: {
+                movesLeft: "剩余步数",
+                targetColor: "目标颜色",
+                gridSize: "网格大小",
+                colorCount: "颜色数量",
+                instruction: "选择颜色后点击格子进行染色",
+                gridSizeSlider: "调整网格大小",
+                colorNames: ["黄", "红", "蓝", "绿"]
+            },
+            buttons: {
+                reduceDifficulty: "降低难度",
+                retry: "再来一次",
+                newGame: "新游戏"
+            },
+            messages: {
+                success: "恭喜！你成功完成了溢彩画！🎉",
+                failure: "游戏结束！步数用完了，再试试看吧！😔"
+            }
+        };
+        console.log('Using fallback translations');
+        return true;
     }
 }
 
@@ -413,6 +486,7 @@ function updateUITexts() {
         'gridSizeLabel': translations.ui.gridSize,
         'colorCountLabel': translations.ui.colorCount,
         'instructionText': translations.ui.instruction,
+        'gridSizeSliderLabel': translations.ui.gridSizeSlider,
         'reduceDifficultyBtn': translations.buttons.reduceDifficulty,
         'retryBtn': translations.buttons.retry,
         'newGameBtn': translations.buttons.newGame
@@ -450,18 +524,22 @@ async function switchLanguage(newLang) {
     currentLanguage = newLang;
     
     const success = await loadTranslations(newLang);
-    if (success) {
-        updateUITexts();
-        
-        // 更新游戏对象的语言
-        if (game) {
-            game.currentLanguage = newLang;
-            game.translations = translations;
-            if (translations.ui && translations.ui.colorNames) {
-                game.colorNames = translations.ui.colorNames;
-            }
+    console.log('Language switch success:', success);
+    
+    // 无论加载是否成功，都尝试更新UI
+    updateUITexts();
+    
+    // 更新游戏对象的语言
+    if (game && translations) {
+        game.currentLanguage = newLang;
+        game.translations = translations;
+        if (translations.ui && translations.ui.colorNames) {
+            game.colorNames = translations.ui.colorNames;
         }
     }
+    
+    // 更新语言按钮显示
+    updateLanguageButtonDisplay(newLang);
 }
 
 // 语言切换功能
@@ -524,19 +602,32 @@ function setupLanguageSelector() {
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('DOM loaded, initializing...');
     
-    // 先加载默认翻译
-    await loadTranslations('zh');
-    
-    // 创建游戏实例
-    game = new FloodFillGame();
-    
-    // 设置语言选择器
-    setupLanguageSelector();
-    
-    // 应用初始翻译
-    updateUITexts();
-    
-    console.log('Initialization complete');
+    try {
+        // 先加载默认翻译
+        const success = await loadTranslations('zh');
+        console.log('Initial translation load result:', success);
+        
+        // 创建游戏实例
+        game = new FloodFillGame();
+        
+        // 设置语言选择器
+        setupLanguageSelector();
+        
+        // 应用初始翻译
+        updateUITexts();
+        
+        console.log('Initialization complete');
+    } catch (error) {
+        console.error('Initialization error:', error);
+        
+        // 即使出错也要创建游戏实例
+        try {
+            game = new FloodFillGame();
+            setupLanguageSelector();
+        } catch (gameError) {
+            console.error('Failed to create game:', gameError);
+        }
+    }
 });
 
 function updateLanguageButtonDisplay(lang) {
@@ -571,3 +662,17 @@ function newGame() {
 function selectColor(colorIndex) {
     game.selectColor(colorIndex);
 }
+
+// 添加网格大小调整函数
+function setGridSize(size) {
+    if (game) {
+        game.setGridSize(parseInt(size));
+    }
+}
+
+// 添加窗口大小变化时的响应
+window.addEventListener('resize', function() {
+    if (game) {
+        game.renderGrid();
+    }
+});

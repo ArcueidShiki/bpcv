@@ -6,6 +6,7 @@
     "gridSize": "网格大小",
     "colorCount": "颜色数量",
     "instruction": "选择颜色后点击格子进行染色",
+    "gridSizeSlider": "调整网格大小",
     "colorNames": ["黄", "红", "蓝", "绿"]
   },
   "buttons": {

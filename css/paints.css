@@ -13,11 +13,12 @@ body {
   background: white;
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  padding: 30px;
+  padding: 20px;
   text-align: center;
-  max-width: 600px;
+  max-width: 95vw; /* 全屏宽度 */
   width: 100%;
   position: relative;
+  margin: 0 auto;
 }
 
 .language-selector {
@@ -310,4 +311,122 @@ h1 {
   margin: 10px 0;
   font-size: 0.9em;
   color: #1976d2;
+}
+
+/* 网格大小控制器样式 */
+.grid-controls {
+  margin: 15px 0;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 2px solid #e9ecef;
+}
+
+.grid-controls label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #495057;
+}
+
+.grid-controls input[type="range"] {
+  width: 100%;
+  max-width: 300px;
+  margin: 10px 0;
+  accent-color: #3498db;
+}
+
+.grid-controls span {
+  display: inline-block;
+  margin-left: 10px;
+  font-weight: bold;
+  color: #007bff;
+  padding: 4px 8px;
+  background: #e3f2fd;
+  border-radius: 4px;
+}
+
+/* 手机响应式设计 */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  .game-container {
+    max-width: 98vw;
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  .language-selector {
+    position: static;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .game-info {
+    flex-direction: column;
+    gap: 10px;
+    font-size: 0.9em;
+  }
+  
+  .color-palette {
+    gap: 8px;
+    padding: 10px;
+  }
+  
+  .color-sample {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .game-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .control-btn {
+    width: 100%;
+    max-width: 200px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    font-size: 1.5em;
+    margin: 10px 0;
+  }
+  
+  .grid-controls {
+    padding: 10px;
+  }
+  
+  .grid-controls input[type="range"] {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .game-container {
+    padding: 10px;
+  }
+  
+  .color-sample {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .language-btn {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+  
+  h1 {
+    font-size: 1.3em;
+  }
+  
+  .difficulty-info {
+    font-size: 0.8em;
+    padding: 8px;
+  }
 }
