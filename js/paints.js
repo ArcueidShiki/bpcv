@@ -193,6 +193,7 @@ class FloodFillGame {
         const stack = [{ row: startRow, col: startCol }];
         const animationCells = [];
 
+        // 先收集所有需要染色的格子
         while (stack.length > 0) {
             const { row, col } = stack.pop();
 
@@ -205,7 +206,10 @@ class FloodFillGame {
 
             visited[row][col] = true;
             this.grid[row][col] = newColor;
-            animationCells.push({ row, col });
+            
+            // 计算到起始点的距离
+            const distance = Math.sqrt((row - startRow) ** 2 + (col - startCol) ** 2);
+            animationCells.push({ row, col, distance });
 
             // 添加四个方向的邻居
             stack.push({ row: row + 1, col: col });
@@ -214,30 +218,64 @@ class FloodFillGame {
             stack.push({ row: row, col: col - 1 });
         }
 
+        // 按距离排序，实现圆形扩散效果
+        animationCells.sort((a, b) => a.distance - b.distance);
+
         // 执行动画
-        await this.animateColorChange(animationCells, newColor);
+        await this.animateColorChangeRadial(animationCells, newColor, startRow, startCol);
     }
 
-    async animateColorChange(cells, newColor) {
+    async animateColorChangeRadial(cells, newColor, centerRow, centerCol) {
         return new Promise(resolve => {
-            cells.forEach((cell, index) => {
-                setTimeout(() => {
-                    const cellElement = document.querySelector(
-                        `[data-row="${cell.row}"][data-col="${cell.col}"]`
-                    );
-                    if (cellElement) {
-                        cellElement.classList.add('animating');
-                        cellElement.style.backgroundColor = this.colors[newColor];
-
-                        setTimeout(() => {
-                            cellElement.classList.remove('animating');
-                            if (index === cells.length - 1) {
-                                resolve();
-                            }
-                        }, 300);
-                    }
-                }, index * 50);
+            // 按距离分组，同一距离的格子同时动画
+            const distanceGroups = {};
+            cells.forEach(cell => {
+                const distance = Math.round(cell.distance * 2) / 2; // 保留0.5精度，让扩散更平滑
+                if (!distanceGroups[distance]) {
+                    distanceGroups[distance] = [];
+                }
+                distanceGroups[distance].push(cell);
             });
+
+            const distances = Object.keys(distanceGroups).map(d => parseFloat(d)).sort((a, b) => a - b);
+            let groupIndex = 0;
+            let totalGroups = distances.length;
+
+            const animateNextGroup = () => {
+                if (groupIndex >= distances.length) {
+                    resolve();
+                    return;
+                }
+
+                const distance = distances[groupIndex];
+                const group = distanceGroups[distance];
+                
+                // 同一距离的所有格子同时开始动画，但加入一点随机延迟让效果更自然
+                group.forEach((cell, index) => {
+                    const randomDelay = Math.random() * 30; // 0-30ms的随机延迟
+                    
+                    setTimeout(() => {
+                        const cellElement = document.querySelector(
+                            `[data-row="${cell.row}"][data-col="${cell.col}"]`
+                        );
+                        if (cellElement) {
+                            cellElement.classList.add('animating');
+                            cellElement.style.backgroundColor = this.colors[newColor];
+
+                            setTimeout(() => {
+                                cellElement.classList.remove('animating');
+                            }, 500);
+                        }
+                    }, randomDelay);
+                });
+
+                groupIndex++;
+                // 根据距离动态调整延迟，距离越远延迟越短，营造加速效果
+                const baseDelay = Math.max(30, 120 - groupIndex * 3);
+                setTimeout(animateNextGroup, baseDelay);
+            };
+
+            animateNextGroup();
         });
     }
 
