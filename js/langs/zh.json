@@ -39,18 +39,6 @@
           "设计CPU/内存性能评估的自动化测试脚本，提高系统效率。",
           "在大规模开发环境中管理基于Git/Repo的代码仓库。"
         ]
-      },
-      {
-        "position": "全栈开发工程师",
-        "company": "字节跳动",
-        "icon": "icons/company/bytedance.png",
-        "duration": "2021年2月 - 2022年4月",
-        "location": "中国重庆",
-        "description": [
-          "使用Java、Spring Boot和相关后端技术为医院开发和维护Web应用程序，确保安全高效的医疗数据管理。",
-          "实现用户友好的前端界面，优化工作流程并提高医疗专业人员的生产力。",
-          "与跨职能团队合作，提供及时、高质量的软件解决方案。"
-        ]
       }
     ]
   },
@@ -89,7 +77,7 @@
         ],
         "links": {
           "github": "https://github.com/SeiKasahara/HousingCrisisSolution",
-          "linkedin": "https://www.linkedin.com/posts/your-profile/hackathon-achievement"
+          "linkedin": "https://lnkd.in/p/ervBzHPg"
         }
       }
     ]
@@ -99,7 +87,7 @@
     "content": [
       {
         "name": "AuraWell Agent",
-        "link": "#",
+        "link": "https://github.com/PrescottClub/AuraWell_Agent.git",
         "description": "AI驱动的健康伴侣，提供个性化健康建议和心理健康支持。",
         "technologies": ["Python", "机器学习", "NLP", "FastAPI", "React"]
       },
@@ -110,7 +98,7 @@
         "technologies": ["Python", "数据分析", "机器学习", "Streamlit", "PostgreSQL"]
       },
       {
-        "name": "美股纸交易系统",
+        "name": "美股模拟交易系统",
         "link": "https://github.com/ArcueidShiki/DataAnalyticsApplication",
         "description": "美股市场纸交易Web应用程序",
         "technologies": ["Flask", "Sqlalchemy", "Echarts", "bootstrap", "JWT"]
@@ -222,7 +210,7 @@
     "title": "教育背景",
     "content": [
       {
-        "degree": "信息技术硕士",
+        "degree": "计算机科学技术硕士",
         "major": "软件工程与数据科学",
         "institution": "西澳大利亚大学",
         "school": "物理、数学与计算机学院",
@@ -236,15 +224,15 @@
         "relevantCourses": ["高级算法", "机器学习", "软件工程", "数据库系统", "网络安全"]
       },
       {
-        "degree": "医学学士（未完成）",
-        "major": "临床医学",
+        "degree": "药学硕士（未完成）",
+        "major": "药学",
         "institution": "北京大学",
         "school": "北京大学医学部",
         "logo": "icons/edu/pku.png",
         "location": "中国北京",
-        "startDate": "2020年9月",
-        "endDate": "2021年7月",
-        "year": "2020年9月 - 2021年7月",
+        "startDate": "2019年9月",
+        "endDate": "2021年9月",
+        "year": "2019年9月 - 2021年9月",
         "status": "退学",
         "note": "转向技术职业发展"
       },

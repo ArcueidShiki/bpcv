@@ -31,7 +31,7 @@
   "profile": {
     "title": "Profile",
     "content": [
-      "Results-driven software engineer with a strong background in C++ development, backend systems, and full-stack applications. ",
+      "Results-driven software engineer with a strong background in C++ development, backend systems, and full-stack applications.",
       "Over 1.5 years of experience at Huawei, specializing in performance optimization, debugging tools, and system architecture.",
       "Currently pursuing a Master of Information Technology at UWA, seeking software engineering roles in Australia. Passionate about building scalable, efficient, and innovative solutions."
     ]
@@ -46,24 +46,51 @@
         "duration": "09/2022 - 02/2024",
         "location": "Beijing, China",
         "description": [
-          "Developed and maintained debugging and performance tuning tools (Hiperf) for HarmonyOS using C++, Python, and Bash. ",
-          "Enhanced crash analysis tools, implementing stack concatenation and Flame Graph visualization, reducing debugging time by 40%. ",
-          "Designed automated testing scripts for CPU/memory performance evaluation, improving system efficiency. ",
-          "Managed Git/Repo-based repositories in a large-scale development environment. "
+          "Developed and maintained debugging and performance tuning tools (Hiperf) for HarmonyOS using C++, Python, and Bash.",
+          "Enhanced crash analysis tools, implementing stack concatenation and Flame Graph visualization, reducing debugging time by 40%.",
+          "Designed automated testing scripts for CPU/memory performance evaluation, improving system efficiency.",
+          "Managed Git/Repo-based repositories in a large-scale development environment."
         ]
-      },
+      }
+    ]
+  },
+  "internships": {
+    "title": "Internship Experience",
+    "content": [
       {
-        "position": "Full Stack Developer",
-        "company": "Bytedance",
-        "icon": "icons/company/bytedance.png",
-        "duration": "02/2021 - 04/2022",
-        "location": "Chongqing, China",
+        "position": "Healthcare IT Support Intern",
+        "company": "St John of God Hospital",
+        "icon": "icons/company/sjog.jpg",
+        "duration": "07/2024 - 09/2024",
+        "location": "Perth, Australia",
         "description": [
-          "Developing and maintaining web applications for a hospital using Java, Spring Boot, and related backend technologies, ensuring secure and efficient healthcare data management.",
-          "Collaborating with cross-functional teams, including UI/UX designers, product managers, and other developers, to build high-quality, scalable hospital management systems.",
-          "Implementing responsive and user-friendly designs while ensuring cross-browser compatibility and seamless integration with medical databases.",
-          "Participating in code reviews, optimizing backend performance, and providing constructive feedback to improve overall software quality."
+          "Provided technical support for hospital IT systems and medical equipment.",
+          "Assisted in maintaining electronic health records and database systems.",
+          "Collaborated with healthcare professionals to troubleshoot system issues.",
+          "Supported implementation of new healthcare technologies and software updates."
         ]
+      }
+    ]
+  },
+  "hackathons": {
+    "title": "Hackathons & Competitions",
+    "content": [
+      {
+        "event": "Housing Crisis Hackathon 2024",
+        "position": "🏆 3rd Place Winner",
+        "location": "Perth, Australia",
+        "date": "11/2024",
+        "project": "Housing Crisis Solution",
+        "description": [
+          "Achieved 3rd place out of 50+ teams with innovative data-driven solution addressing housing affordability crisis",
+          "Developed predictive analytics model using Python and Machine Learning to forecast housing market trends",
+          "Created interactive dashboard with Streamlit for real-time housing data visualization and insights",
+          "Collaborated with diverse team to deliver comprehensive solution within 48-hour time constraint"
+        ],
+        "links": {
+          "github": "https://github.com/SeiKasahara/HousingCrisisSolution",
+          "linkedin": "https://lnkd.in/p/ervBzHPg"
+        }
       }
     ]
   },
@@ -71,52 +98,77 @@
     "title": "Projects",
     "content": [
       {
+        "name": "AuraWell Agent",
+        "link": "https://github.com/PrescottClub/AuraWell_Agent.git",
+        "description": "AI-powered wellness companion that provides personalized health recommendations and mental wellness support.",
+        "technologies": [
+          "Python",
+          "Machine Learning",
+          "NLP",
+          "FastAPI",
+          "React"
+        ]
+      },
+      {
+        "name": "Housing Crisis Solution",
+        "link": "https://github.com/SeiKasahara/HousingCrisisSolution",
+        "description": "🏆 3rd Place Winner - Hackathon solution addressing housing affordability crisis with data-driven insights and predictive analytics.",
+        "technologies": [
+          "Python",
+          "Data Analytics",
+          "Machine Learning",
+          "Streamlit",
+          "PostgreSQL"
+        ]
+      },
+      {
+        "name": "Stock PaperTrading",
+        "link": "https://github.com/ArcueidShiki/DataAnalyticsApplication",
+        "description": "A US stock market paper trading web application",
+        "technologies": ["Flask", "Sqlalchemy", "Echarts", "bootstrap", "JWT"]
+      },
+      {
         "name": "Hiperf",
         "link": "https://gitee.com/openharmony/developtools_hiperf",
-        "description": "A web application that allows users to manage their tasks efficiently.",
-        "technologies": ["React", "Node.js"]
+        "description": "A HarmonyOs System Performance Debugging Tool.",
+        "technologies": ["C/C++", "LinuxPerf", "AOSP", "Python", "ADB"]
       },
       {
         "name": "Remote Control",
         "link": "https://github.com/ArcueidShiki/RemoteControl",
-        "description": "A mobile application that helps users track their fitness goals.",
-        "technologies": ["Flutter", "Firebase"]
+        "description": "A Windows Remote Control Application, Screen watch, keyboard and Mouse control.",
+        "technologies": ["C/C++", "TCP/IP", "MFC", "IOCP", "QT"]
       },
       {
         "name": "Penni",
         "link": "https://github.com/codersforcauses/penni",
-        "description": "A mobile application that helps users track their fitness goals.",
-        "technologies": ["Flutter", "Firebase"]
+        "description": "A mobile application that helps retirees find part-time jobs.",
+        "technologies": ["React", "Nextjs", "TailwindCss", "NPM"]
       },
       {
         "name": "IOT Smart Entry System",
         "link": "https://github.com/ArcueidShiki/SmartEntrySystem",
-        "description": "A mobile application that helps users track their fitness goals.",
-        "technologies": ["Flutter", "Firebase"]
+        "description": "A IOT based face recognition system for entry control.",
+        "technologies": ["RaspberryPi", "OpenCV", "Flask", "MQTT", "Tensorflow"]
       },
       {
         "name": "Best Agile Practice & CV",
         "link": "https://github.com/ArcueidShiki/bpcv",
-        "description": "A mobile application that helps users track their fitness goals.",
-        "technologies": ["Flutter", "Firebase"]
+        "description": "An uni individual project that helps students to build their CV.",
+        "technologies": [
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "jQuery",
+          "WebGL",
+          "OpenGL Shader"
+        ]
       },
       {
         "name": "Portfolio",
         "link": "https://www.arcueidshiki.uk/",
-        "description": "A mobile application that helps users track their fitness goals.",
-        "technologies": ["Flutter", "Firebase"]
-      },
-      {
-        "name": "MFC VLC Player",
-        "link": "https://github.com/ArcueidShiki/VideoPlay",
-        "description": "A mobile application that helps users track their fitness goals.",
-        "technologies": ["Flutter", "Firebase"]
-      },
-      {
-        "name": "Interpreter",
-        "link": "https://github.com/ArcueidShiki/interpreter",
-        "description": "A mobile application that helps users track their fitness goals.",
-        "technologies": ["Flutter", "Firebase"]
+        "description": "A personal portfolio website showcasing my projects and skills.",
+        "technologies": ["Threejs", "Vite", "Blender"]
       }
     ]
   },
@@ -190,7 +242,7 @@
           },
           { "name": "QT", "iconUrl": "https://skillicons.dev/icons?i=qt" },
           {
-            "name": "Flutter",
+            "name": "TailwindCSS",
             "iconUrl": "https://skillicons.dev/icons?i=tailwindcss"
           }
         ]
@@ -246,43 +298,66 @@
     "title": "Education",
     "content": [
       {
-        "degree": "Bachelor of Computer Science",
+        "degree": "Master of Information Technology",
+        "major": "Software Engineering & Data Science",
         "institution": "The University of Western Australia",
+        "school": "School of Physics, Mathematics and Computing",
         "logo": "icons/edu/uwa.png",
         "location": "Perth, Australia",
-        "year": "02/2024 - 12/2025"
+        "startDate": "February 2024",
+        "endDate": "December 2025",
+        "year": "02/2024 - 12/2025",
+        "status": "Current",
+        "gpa": "Distinction Average",
+        "relevantCourses": [
+          "Advanced Algorithms",
+          "Machine Learning",
+          "Software Engineering",
+          "Database Systems",
+          "Cybersecurity"
+        ]
       },
       {
-        "degree": "dropout",
+        "degree": "Master of Pharmacy (Incomplete)",
+        "major": "Pharmacy",
         "institution": "Peking University",
+        "school": "Peking University Health Science Center",
         "logo": "icons/edu/pku.png",
         "location": "Beijing, China",
-        "year": "2021"
+        "startDate": "September 2019",
+        "endDate": "Sep 2021",
+        "year": "09/2019 - 09/2021",
+        "status": "Discontinued",
+        "note": "Transferred to pursue technology career"
       },
       {
         "degree": "Bachelor of Pharmacy",
+        "major": "Pharmaceutical Sciences",
         "institution": "Harbin Medical University",
+        "school": "College of Pharmacy",
         "logo": "icons/edu/hmu.png",
         "location": "Harbin, China",
-        "year": "09/2015 - 07/2019"
+        "startDate": "September 2015",
+        "endDate": "July 2019",
+        "year": "09/2015 - 07/2019",
+        "status": "Completed",
+        "gpa": "3.6/4.0",
+        "honors": ["Dean's List", "Outstanding Graduate"],
+        "relevantCourses": [
+          "Pharmaceutical Chemistry",
+          "Pharmacology",
+          "Medicinal Chemistry",
+          "Drug Analysis"
+        ]
       }
     ]
   },
   "languages": {
     "title": "Languages",
     "content": [
-      {
-        "language": "English",
-        "proficiency": "Fluent"
-      },
-      {
-        "language": "Chinese",
-        "proficiency": "Native"
-      },
-      {
-        "language": "Japanese",
-        "proficiency": "Basic"
-      }
+      { "language": "English", "proficiency": "Fluent" },
+      { "language": "Chinese", "proficiency": "Native" },
+      { "language": "Japanese", "proficiency": "Basic" }
     ]
   }
 }
