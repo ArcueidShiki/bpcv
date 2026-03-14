@@ -1,3 +1,82 @@
+// ── Sound Engine (Web Audio API) — Water Drop ────────────────────────────────
+const SoundEngine = (function () {
+  let ctx = null;
+
+  function getCtx() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === 'suspended') ctx.resume();
+    return ctx;
+  }
+
+  // Color base pitches: warm tones per color
+  const BASE_FREQ = [680, 820, 600, 740]; // yellow, red, blue, green
+
+  // Single water-drop: frequency sweeps down quickly (high impact -> resonance decay)
+  function playDrop(t, freq, vol, decay) {
+    try {
+      var c = getCtx();
+
+      var osc = c.createOscillator();
+      var filter = c.createBiquadFilter();
+      var gain = c.createGain();
+
+      osc.type = 'sine';
+      // Sharp high-freq start, sweep down to resonant frequency
+      osc.frequency.setValueAtTime(freq * 2.2, t);
+      osc.frequency.exponentialRampToValueAtTime(freq, t + 0.025);
+      osc.frequency.exponentialRampToValueAtTime(freq * 0.6, t + decay);
+
+      // Resonant lowpass gives the hollow "dong" quality
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(freq * 3, t);
+      filter.frequency.exponentialRampToValueAtTime(freq * 0.9, t + decay * 0.6);
+      filter.Q.value = 8;
+
+      // Fast attack, exponential ring-out
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(vol, t + 0.003);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(c.destination);
+      osc.start(t);
+      osc.stop(t + decay + 0.01);
+    } catch (e) { /* ignore */ }
+  }
+
+  // Progressive water-drop effect: sparse/deep early, dense/crisp as wave expands
+  function playFlip(colorIndex, groupIndex, totalGroups) {
+    try {
+      var c = getCtx();
+      var progress = totalGroups > 1 ? groupIndex / (totalGroups - 1) : 0;
+
+      var baseFreq = BASE_FREQ[colorIndex % BASE_FREQ.length];
+      // Early waves: lower pitch, longer decay, quieter
+      // Late waves: higher pitch, shorter crisp decay, slightly louder
+      var freq  = baseFreq * (0.75 + progress * 0.6);
+      var vol   = 0.06 + progress * 0.05;
+      var decay = 0.22 - progress * 0.14; // 220ms → 80ms
+
+      playDrop(c.currentTime, freq, vol, decay);
+    } catch (e) { /* ignore */ }
+  }
+
+  function playSuccess() {
+    try {
+      var c = getCtx();
+      // Ascending water-drop chime
+      var freqs = [520, 660, 780, 1040];
+      freqs.forEach(function (freq, i) {
+        var t = c.currentTime + i * 0.08;
+        playDrop(t, freq, 0.13, 0.35);
+      });
+    } catch (e) { /* ignore */ }
+  }
+
+  return { playFlip: playFlip, playSuccess: playSuccess };
+})();
+
 // 溢彩画游戏 JavaScript
 class FloodFillGame {
     constructor() {
@@ -264,6 +343,8 @@ class FloodFillGame {
 
                 const distance = distances[groupIndex];
                 const group = distanceGroups[distance];
+                // Progressive water drop: each ring gets its own tonal character
+                SoundEngine.playFlip(newColor, groupIndex, totalGroups);
                 
                 // 同一距离的所有格子同时开始动画，但加入一点随机延迟让效果更自然
                 group.forEach((cell, index) => {
@@ -317,6 +398,7 @@ class FloodFillGame {
     showSuccessMessage() {
         const message = translations.messages?.success || '恭喜！你成功完成了溢彩画！🎉';
         this.showGameStatus(message, 'status-success');
+        SoundEngine.playSuccess();
     }
 
     showFailureMessage() {
@@ -377,7 +459,7 @@ class FloodFillGame {
     }
 
     updateColorSelection() {
-        // 更新颜色面板的选中状态
+        // 更新侧边栏颜色面板的选中状态
         document.querySelectorAll('.color-sample').forEach((sample, index) => {
             if (index === this.selectedColor) {
                 sample.classList.add('selected');
@@ -390,7 +472,7 @@ class FloodFillGame {
 
 // 全局变量
 let game;
-let currentLanguage = 'zh';
+let currentLanguage = 'en';
 let translations = {};
 
 // 检查文件是否存在
@@ -406,7 +488,6 @@ async function checkFileExists(url) {
 // 加载翻译文件
 async function loadTranslations(lang) {
     try {
-        console.log('Loading translations for:', lang);
         const url = `js/langs/paints-${lang}.json`;
         
         // 先检查文件是否存在
@@ -416,14 +497,12 @@ async function loadTranslations(lang) {
         }
         
         const response = await fetch(url);
-        console.log('Response status:', response.status, response.statusText);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const text = await response.text();
-        console.log('Response text length:', text.length);
         
         if (!text.trim()) {
             throw new Error('Empty response');
@@ -431,15 +510,12 @@ async function loadTranslations(lang) {
         
         const data = JSON.parse(text);
         translations = data;
-        console.log('Translations loaded successfully:', translations);
         return true;
     } catch (error) {
-        console.error('Failed to load translations:', error);
         
-        // 回退到默认中文翻译
-        if (lang !== 'zh') {
-            console.log('Falling back to Chinese translations');
-            return await loadTranslations('zh');
+        // Fallback to English translations
+        if (lang !== 'en') {
+            return await loadTranslations('en');
         }
         
         // 如果中文也加载失败，使用硬编码的备用翻译
@@ -464,7 +540,6 @@ async function loadTranslations(lang) {
                 failure: "游戏结束！步数用完了，再试试看吧！😔"
             }
         };
-        console.log('Using fallback translations');
         return true;
     }
 }
@@ -472,11 +547,8 @@ async function loadTranslations(lang) {
 // 更新界面文本
 function updateUITexts() {
     if (!translations || !translations.title) {
-        console.log('No translations available');
         return;
     }
-    
-    console.log('Updating UI texts...');
     
     // 更新所有文本元素
     const elements = {
@@ -496,9 +568,7 @@ function updateUITexts() {
         const element = document.getElementById(id);
         if (element) {
             element.textContent = text;
-            console.log(`Updated ${id}:`, text);
         } else {
-            console.warn(`Element ${id} not found`);
         }
     }
     
@@ -520,11 +590,9 @@ function updateColorTooltips() {
 
 // 切换语言
 async function switchLanguage(newLang) {
-    console.log('Switching language to:', newLang);
     currentLanguage = newLang;
     
     const success = await loadTranslations(newLang);
-    console.log('Language switch success:', success);
     
     // 无论加载是否成功，都尝试更新UI
     updateUITexts();
@@ -544,21 +612,18 @@ async function switchLanguage(newLang) {
 
 // 语言切换功能
 function setupLanguageSelector() {
-    console.log('Setting up language selector...');
     
     const languageBtn = document.getElementById('languageBtn');
     const languageDropdown = document.getElementById('languageDropdown');
     const languageOptions = document.querySelectorAll('.language-option');
     
     if (!languageBtn || !languageDropdown) {
-        console.error('Language selector elements not found');
         return;
     }
     
     // 切换下拉菜单
     languageBtn.addEventListener('click', function(e) {
         e.stopPropagation();
-        console.log('Language button clicked');
         languageDropdown.classList.toggle('active');
     });
     
@@ -576,8 +641,6 @@ function setupLanguageSelector() {
             const flag = option.querySelector('.flag').textContent;
             const langName = option.querySelector('span:last-child').textContent;
             
-            console.log('Language selected:', selectedLang);
-            
             // 更新按钮显示
             const langText = document.getElementById('langText');
             const langFlag = document.getElementById('langFlag');
@@ -594,18 +657,14 @@ function setupLanguageSelector() {
             languageDropdown.classList.remove('active');
         });
     });
-    
-    console.log('Language selector setup complete');
 }
 
 // 初始化游戏
 document.addEventListener('DOMContentLoaded', async function() {
-    console.log('DOM loaded, initializing...');
     
     try {
-        // 先加载默认翻译
-        const success = await loadTranslations('zh');
-        console.log('Initial translation load result:', success);
+        // Load default English translations
+        const success = await loadTranslations('en');
         
         // 创建游戏实例
         game = new FloodFillGame();
@@ -615,17 +674,13 @@ document.addEventListener('DOMContentLoaded', async function() {
         
         // 应用初始翻译
         updateUITexts();
-        
-        console.log('Initialization complete');
     } catch (error) {
-        console.error('Initialization error:', error);
         
         // 即使出错也要创建游戏实例
         try {
             game = new FloodFillGame();
             setupLanguageSelector();
         } catch (gameError) {
-            console.error('Failed to create game:', gameError);
         }
     }
 });
@@ -642,7 +697,6 @@ function updateLanguageButtonDisplay(lang) {
             langText.textContent = 'EN';
             langFlag.textContent = '🇺🇸';
         }
-        console.log('Updated language display to:', lang);
     }
 }
 

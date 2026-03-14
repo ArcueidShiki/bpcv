@@ -31,14 +31,28 @@
   "profile": {
     "title": "Profile",
     "content": [
-      "Results-driven software engineer with a strong background in C++ development, backend systems, and full-stack applications.",
-      "Over 1.5 years of experience at Huawei, specializing in performance optimization, debugging tools, and system architecture.",
-      "Currently pursuing a Master of Information Technology at UWA, seeking software engineering roles in Australia. Passionate about building scalable, efficient, and innovative solutions."
+      "Results-driven full-stack software engineer with expertise in C++ systems, .NET/Angular platforms, and modern AI-powered development workflows.",
+      "Over 1.5 years at Huawei building performance-critical HarmonyOS tools; currently building assistive technology platforms at Indigo Australasia using C# .NET, PostgreSQL, and Angular.",
+      "Holds a Master of Information Technology from UWA (Distinction average), currently working as a Full Stack Developer at Indigo Australasia, building assistive technology platforms for Australia.",
+      "Passionate about the intersection of AI and individual productivity — I believe a single developer armed with the right AI tools (agents, MCP, RAG) can build products that once required an entire team. I live this philosophy daily: from prototyping with Claude Code to deploying production-grade AI features. My goal is to help make powerful software more accessible and to prove that small teams with great tools can change lives."
     ]
   },
   "workexperience": {
     "title": "Work Experience",
     "content": [
+      {
+        "position": "Full Stack Developer",
+        "company": "Indigo Australasia",
+        "icon": "icons/company/indigo.png",
+        "duration": "11/2025 - Present",
+        "location": "Perth, WA, Australia",
+        "description": [
+          "Engineered and maintained the Get2Go and SAH platforms using C# .NET, PostgreSQL, and Angular, facilitating the distribution and sales of Assistive Technology (AT) products across Australia.",
+          "Designed and implemented scalable RESTful APIs and database schemas to support product lifecycle management, order processing, and user authentication for assistive device providers.",
+          "Collaborated in cross-functional Agile sprints to deliver end-to-end features — from Angular component design to .NET backend logic and PostgreSQL query optimization.",
+          "Improved platform reliability by writing integration tests, conducting code reviews, and refactoring legacy modules to reduce technical debt."
+        ]
+      },
       {
         "position": "Terminal Software Engineer",
         "company": "Huawei Technologies Co., Ltd.",
@@ -196,36 +210,20 @@
       {
         "category": "Backend Development",
         "items": [
-          {
-            "name": "Linux Server",
-            "iconUrl": "https://skillicons.dev/icons?i=linux"
-          },
-          {
-            "name": "Windows IOCP",
-            "iconUrl": "https://skillicons.dev/icons?i=windows"
-          },
-          {
-            "name": "Redis",
-            "iconUrl": "https://skillicons.dev/icons?i=redis"
-          },
-          {
-            "name": "SpringBoot",
-            "iconUrl": "https://skillicons.dev/icons?i=spring"
-          },
+          { "name": "C# .NET", "iconUrl": "https://skillicons.dev/icons?i=dotnet" },
+          { "name": "Linux Server", "iconUrl": "https://skillicons.dev/icons?i=linux" },
+          { "name": "Windows IOCP", "iconUrl": "https://skillicons.dev/icons?i=windows" },
+          { "name": "Redis", "iconUrl": "https://skillicons.dev/icons?i=redis" },
+          { "name": "SpringBoot", "iconUrl": "https://skillicons.dev/icons?i=spring" },
           { "name": "Flask", "iconUrl": "https://skillicons.dev/icons?i=flask" }
         ]
       },
       {
         "category": "Frontend Development",
         "items": [
-          {
-            "name": "Three.js",
-            "iconUrl": "https://skillicons.dev/icons?i=threejs"
-          },
-          {
-            "name": "React",
-            "iconUrl": "https://skillicons.dev/icons?i=react"
-          },
+          { "name": "Angular", "iconUrl": "https://skillicons.dev/icons?i=angular" },
+          { "name": "Three.js", "iconUrl": "https://skillicons.dev/icons?i=threejs" },
+          { "name": "React", "iconUrl": "https://skillicons.dev/icons?i=react" },
           {
             "name": "Next.js",
             "iconUrl": "https://skillicons.dev/icons?i=nextjs"
@@ -250,18 +248,10 @@
       {
         "category": "Database",
         "items": [
-          {
-            "name": "MySQL",
-            "iconUrl": "https://skillicons.dev/icons?i=mysql"
-          },
-          {
-            "name": "Sqlite",
-            "iconUrl": "https://skillicons.dev/icons?i=sqlite"
-          },
-          {
-            "name": "MongoDB",
-            "iconUrl": "https://skillicons.dev/icons?i=mongodb"
-          }
+          { "name": "PostgreSQL", "iconUrl": "https://skillicons.dev/icons?i=postgresql" },
+          { "name": "MySQL", "iconUrl": "https://skillicons.dev/icons?i=mysql" },
+          { "name": "Sqlite", "iconUrl": "https://skillicons.dev/icons?i=sqlite" },
+          { "name": "MongoDB", "iconUrl": "https://skillicons.dev/icons?i=mongodb" }
         ]
       },
       {
@@ -290,6 +280,19 @@
             "name": "Raspberry Pi",
             "iconUrl": "https://skillicons.dev/icons?i=raspberrypi"
           }
+        ]
+      },
+      {
+        "category": "AI & Automation",
+        "items": [
+          { "name": "Claude / Anthropic API", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "OpenAI API", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "MCP (Model Context Protocol)", "iconUrl": "https://skillicons.dev/icons?i=nodejs" },
+          { "name": "AI Agents", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "RAG", "iconUrl": "https://skillicons.dev/icons?i=mongodb" },
+          { "name": "LangChain", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "Vector Databases", "iconUrl": "https://skillicons.dev/icons?i=postgresql" },
+          { "name": "Prompt Engineering", "iconUrl": "https://skillicons.dev/icons?i=markdown" }
         ]
       }
     ]

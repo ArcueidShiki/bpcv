@@ -1,12 +1,36 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>溢彩画游戏 - Flood Fill Game</title>
+    <title>Flood Fill Game</title>
     <link rel="stylesheet" href="css/paints.css">
   </head>
   <body>
+    <!-- Left: Color palette sidebar -->
+    <div class="color-sidebar" id="colorSidebar">
+      <div class="sidebar-label">COLOR</div>
+      <div class="sidebar-palette">
+        <div class="color-sample selected" data-color="0" style="background-color: #f1c40f" title="Yellow" onclick="selectColor(0)"></div>
+        <div class="color-sample" data-color="1" style="background-color: #e74c3c" title="Red"    onclick="selectColor(1)"></div>
+        <div class="color-sample" data-color="2" style="background-color: #3498db" title="Blue"   onclick="selectColor(2)"></div>
+        <div class="color-sample" data-color="3" style="background-color: #27ae60" title="Green"  onclick="selectColor(3)"></div>
+      </div>
+    </div>
+
+    <!-- Right: Game info sidebar -->
+    <div class="info-sidebar" id="infoSidebar">
+      <div class="info-block">
+        <div class="info-label" id="movesLeftLabel">Moves Left</div>
+        <div class="info-value" id="movesLeft">0</div>
+      </div>
+      <div class="info-divider"></div>
+      <div class="info-block">
+        <div class="info-label" id="targetColorLabel">Target</div>
+        <div class="target-color-display" id="targetColorDisplay"></div>
+      </div>
+    </div>
+
     <div class="game-container">
       <!-- Language Selector -->
       <div class="language-selector">
@@ -27,59 +51,20 @@
         </div>
       </div>
 
-      <h1 id="gameTitle">🎨 溢彩画游戏</h1>
+      <h1 id="gameTitle">🎨 Flood Fill Game</h1>
 
-      <div class="game-info">
-        <div class="moves-left"><span id="movesLeftLabel">剩余步数</span>: <span id="movesLeft">0</span></div>
-        <div class="target-color">
-          <span id="targetColorLabel">目标颜色</span>:
-          <div class="target-color-display" id="targetColorDisplay"></div>
-        </div>
+      <div class="difficulty-info">
+        <div><span id="gridSizeLabel">Grid Size</span>: <span id="gridSizeInfo">6x6</span></div>
+        <div><span id="colorCountLabel">Colors</span>: <span id="colorCountInfo">3</span></div>
       </div>
 
       <div class="difficulty-info">
-        <div><span id="gridSizeLabel">网格大小</span>: <span id="gridSizeInfo">6x6</span></div>
-        <div><span id="colorCountLabel">颜色数量</span>: <span id="colorCountInfo">3</span></div>
-      </div>
-
-      <div class="color-palette">
-        <div
-          class="color-sample selected"
-          data-color="0"
-          style="background-color: #f1c40f"
-          title="黄色"
-          onclick="selectColor(0)"
-        ></div>
-        <div
-          class="color-sample"
-          data-color="1"
-          style="background-color: #e74c3c"
-          title="红色"
-          onclick="selectColor(1)"
-        ></div>
-        <div
-          class="color-sample"
-          data-color="2"
-          style="background-color: #3498db"
-          title="蓝色"
-          onclick="selectColor(2)"
-        ></div>
-        <div
-          class="color-sample"
-          data-color="3"
-          style="background-color: #27ae60"
-          title="绿色"
-          onclick="selectColor(3)"
-        ></div>
-      </div>
-
-      <div class="difficulty-info">
-        <div id="instructionText">选择颜色后点击格子进行染色</div>
+        <div id="instructionText">Select a color, then click a cell to flood fill</div>
       </div>
 
       <div class="grid-controls">
-        <label for="grid-size-slider" id="gridSizeSliderLabel">调整网格大小:</label>
-        <input type="range" id="grid-size-slider" min="6" max="30" value="12" 
+        <label for="grid-size-slider" id="gridSizeSliderLabel">Grid Size:</label>
+        <input type="range" id="grid-size-slider" min="6" max="30" value="12"
                oninput="setGridSize(this.value)">
         <span id="grid-size-display">12</span>
       </div>
@@ -91,11 +76,9 @@
       <div class="game-status hidden" id="gameStatus"></div>
 
       <div class="controls">
-        <button class="btn reduce-difficulty" onclick="reduceDifficulty()" id="reduceDifficultyBtn">
-          降低难度
-        </button>
-        <button class="btn retry" onclick="retryGame()" id="retryBtn">再来一次</button>
-        <button class="btn new-game" onclick="newGame()" id="newGameBtn">新游戏</button>
+        <button class="btn reduce-difficulty" onclick="reduceDifficulty()" id="reduceDifficultyBtn">Easier</button>
+        <button class="btn retry"    onclick="retryGame()"      id="retryBtn">Retry</button>
+        <button class="btn new-game" onclick="newGame()"        id="newGameBtn">New Game</button>
       </div>
     </div>
 

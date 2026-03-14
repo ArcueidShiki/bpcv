@@ -20,7 +20,7 @@ const texts = [
 function loadContactInfo(data) {
   const contactHTML = `
     <div class="cv-container">
-      <div class="cv-header">
+      <div class="cv-header" id="profile-section">
         <div class="header-content">
           <div class="header-info">
             <h1>${data.contactInfo.name}</h1>
@@ -34,7 +34,7 @@ function loadContactInfo(data) {
   ).join('')}
               ${data.contactInfo.socialLinks.map(link =>
     `<a href="${link.url}" target="_blank">
-                  <img src="${link.icon}" alt="social" width="16" height="16" style="filter: invert(1);">
+                  <img src="${link.icon}" alt="social" width="16" height="16">
                 </a>`
   ).join('')}
             </div>
@@ -42,6 +42,7 @@ function loadContactInfo(data) {
           <img src="${data.contactInfo.profilePicture}" alt="Profile Picture" class="profile-picture">
         </div>
       </div>
+      <div class="cv-content">
   `;
   $("main").append(contactHTML);
 }
@@ -60,7 +61,7 @@ function LoadProfile(data) {
 
 function LoadWorkExperience(data) {
   const experienceHTML = `
-    <div class="section">
+    <div class="section" id="experience-section">
       <h2 class="section-title">${data.workexperience.title}</h2>
       ${data.workexperience.content.map(exp => `
         <div class="experience-item">
@@ -91,7 +92,7 @@ function LoadInternships(data) {
   if (!data.internships) return;
 
   const internshipsHTML = `
-    <div class="section">
+    <div class="section" id="internship-section">
       <h2 class="section-title">${data.internships.title}</h2>
       ${data.internships.content.map(internship => `
         <div class="experience-item">
@@ -122,7 +123,7 @@ function LoadHackathons(data) {
   if (!data.hackathons) return;
 
   const hackathonsHTML = `
-    <div class="section">
+    <div class="section" id="hackathon-section">
       <h2 class="section-title">${data.hackathons.title}</h2>
       ${data.hackathons.content.map(hackathon => `
         <div class="hackathon-item">
@@ -158,7 +159,7 @@ function LoadHackathons(data) {
 
 function LoadProjects(data) {
   const projectsHTML = `
-    <div class="section">
+    <div class="section" id="projects-section">
       <h2 class="section-title">${data.projects.title}</h2>
       <div class="projects-grid">
         ${data.projects.content.map(project => `
@@ -180,7 +181,7 @@ function LoadProjects(data) {
 
 function LoadSkills(data) {
   const skillsHTML = `
-    <div class="section">
+    <div class="section" id="skills-section">
       <h2 class="section-title">${data.skills.title}</h2>
       <div class="skills-grid">
         ${data.skills.content.map(skillset => `
@@ -204,7 +205,7 @@ function LoadSkills(data) {
 
 function LoadEducation(data) {
   const educationHTML = `
-    <div class="section">
+    <div class="section" id="education-section">
       <h2 class="section-title">${data.education.title}</h2>
       ${data.education.content.map(edu => `
         <div class="education-item">
@@ -262,9 +263,8 @@ async function loadAllLanguageTexts() {
           text: langText
         });
       }
-      console.log(`Successfully loaded ${lang} language data`);
     } catch (error) {
-      console.error(`Failed to load ${lang} text:`, error);
+      // silently skip missing language files
     }
   }
 }

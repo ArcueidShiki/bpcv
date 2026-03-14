@@ -4,14 +4,23 @@
     "position": "ソフトウェアエンジニア",
     "profilePicture": "icons/profile.png",
     "websites": [
-      { "name": "ポートフォリオ", "url": "https://www.arcueidshiki.uk/" },
+      {
+        "name": "ポートフォリオ",
+        "url": "https://www.arcueidshiki.uk/"
+      },
       {
         "name": "ベストアジャイルプラクティス&履歴書",
         "url": "https://cv.arcueidshiki.uk/"
       }
     ],
-    "phone": ["+61 413993029", "+86 15776692817"],
-    "email": ["24323312@student.uwa.edu.au", "pengjingtong@pku.edu.cn"],
+    "phone": [
+      "+61 413993029",
+      "+86 15776692817"
+    ],
+    "email": [
+      "24323312@student.uwa.edu.au",
+      "pengjingtong@pku.edu.cn"
+    ],
     "socialLinks": [
       {
         "icon": "icons/email.png",
@@ -25,20 +34,37 @@
         "icon": "icons/github.svg",
         "url": "https://github.com/ArcueidShiki"
       },
-      { "icon": "icons/logo.png", "url": "https://www.arcueidshiki.uk/" }
+      {
+        "icon": "icons/logo.png",
+        "url": "https://www.arcueidshiki.uk/"
+      }
     ]
   },
   "profile": {
     "title": "プロフィール",
     "content": [
-      "C++開発、バックエンドシステム、フルスタックアプリケーションの豊富な経験を持つ結果重視のソフトウェアエンジニア。",
-      "華為で1.5年以上の経験を持ち、パフォーマンス最適化、デバッグツール、システムアーキテクチャを専門とする。",
-      "現在、UWAで情報技術修士課程を履修中で、オーストラリアでソフトウェアエンジニアのポジションを求めている。スケーラブルで効率的で革新的なソリューションの構築に情熱を持っている。"
+      "C++システム開発、.NET/Angularプラットフォーム、最新のAI駆動開発ワークフローを得意とする結果重視のフルスタックソフトウェアエンジニア。",
+      "HarmonyOS向けパフォーマンスツールを開発した華為での1.5年超の経験を持ち、現在Indigo AustralasiaでC# .NET、PostgreSQL、Angularを使用した支援技術プラットフォームを構築中。",
+      "西オーストラリア大学情報技術修士号取得（優秀成績）。現在はIndigo Australasiaにてフルスタックエンジニアとしてオーストラリア向け支援技術プラットフォームを開発中。",
+      "AI×個人生産性の可能性を信じるエンジニア。強力なAIツール（Agent、MCP、RAG）を持つ個人開発者は、かつてチーム全体が必要だったプロダクトを作れると確信しており、日々Claude Codeでの開発から本番AIフィーチャーのデプロイまで実践している。強力なソフトウェアをより身近にすることが目標。"
     ]
   },
   "workexperience": {
     "title": "職歴",
     "content": [
+      {
+        "position": "フルスタックデベロッパー",
+        "company": "Indigo Australasia",
+        "icon": "icons/company/indigo.png",
+        "duration": "2025年11月 - 現在",
+        "location": "オーストラリア パース",
+        "description": [
+          "C# .NET、PostgreSQL、Angularを使用してGet2GoおよびSAHプラットフォームを開発・保守し、オーストラリア全土での支援技術（AT）製品の流通・販売を支援。",
+          "製品ライフサイクル管理、注文処理、ユーザー認証を支えるスケーラブルなRESTful APIとデータベーススキーマを設計・実装。",
+          "クロスファンクショナルなアジャイルスプリントでAngularコンポーネント設計から.NETバックエンドロジック、PostgreSQLクエリ最適化まで一貫したエンドツーエンド機能を提供。",
+          "統合テストの作成、コードレビューの実施、レガシーモジュールのリファクタリングによりプラットフォームの信頼性を向上。"
+        ]
+      },
       {
         "position": "ターミナルソフトウェアエンジニア",
         "company": "華為技術有限公司",
@@ -58,22 +84,110 @@
     "title": "プロジェクト",
     "content": [
       {
+        "name": "AuraWell Agent",
+        "link": "https://github.com/PrescottClub/AuraWell_Agent.git",
+        "description": "個人化された健康推奨とメンタルウェルネスサポートを提供するAI駆動のウェルネスコンパニオン。",
+        "technologies": [
+          "Python",
+          "機械学習",
+          "NLP",
+          "FastAPI",
+          "React"
+        ]
+      },
+      {
+        "name": "住宅危機解決策",
+        "link": "https://github.com/SeiKasahara/HousingCrisisSolution",
+        "description": "🏆 第3位入賞者 - データ駆動型インサイトと予測分析を使用して住宅負担可能性危機に対処するハッカソンソリューション。",
+        "technologies": [
+          "Python",
+          "データ分析",
+          "機械学習",
+          "Streamlit",
+          "PostgreSQL"
+        ]
+      },
+      {
         "name": "株式ペーパートレーディング",
         "link": "https://github.com/ArcueidShiki/DataAnalyticsApplication",
-        "description": "米国株式市場のペーパートレーディングWebアプリケーション",
-        "technologies": ["Flask", "Sqlalchemy", "Echarts", "bootstrap", "JWT"]
+        "description": "米国株式市場ペーパートレーディングWebアプリケーション",
+        "technologies": [
+          "Flask",
+          "Sqlalchemy",
+          "Echarts",
+          "bootstrap",
+          "JWT"
+        ]
       },
       {
         "name": "Hiperf",
         "link": "https://gitee.com/openharmony/developtools_hiperf",
-        "description": "HarmonyOSシステムパフォーマンスデバッグツール",
-        "technologies": ["C/C++", "LinuxPerf", "AOSP", "Python", "ADB"]
+        "description": "HarmonyOSシステムパフォーマンスデバッグツール。",
+        "technologies": [
+          "C/C++",
+          "LinuxPerf",
+          "AOSP",
+          "Python",
+          "ADB"
+        ]
       },
       {
         "name": "リモートコントロール",
         "link": "https://github.com/ArcueidShiki/RemoteControl",
-        "description": "Windowsリモートコントロールアプリケーション、画面監視、キーボードとマウス制御",
-        "technologies": ["C/C++", "TCP/IP", "MFC", "IOCP", "QT"]
+        "description": "Windowsリモートコントロールアプリケーション、画面監視、キーボードとマウスコントロール。",
+        "technologies": [
+          "C/C++",
+          "TCP/IP",
+          "MFC",
+          "IOCP",
+          "QT"
+        ]
+      },
+      {
+        "name": "Penni",
+        "link": "https://github.com/codersforcauses/penni",
+        "description": "退職者がアルバイトを見つけるのを支援するモバイルアプリケーション。",
+        "technologies": [
+          "React",
+          "Nextjs",
+          "TailwindCss",
+          "NPM"
+        ]
+      },
+      {
+        "name": "IoTスマートエントリーシステム",
+        "link": "https://github.com/ArcueidShiki/SmartEntrySystem",
+        "description": "エントリーコントロール用のIoTベースの顔認識システム。",
+        "technologies": [
+          "RaspberryPi",
+          "OpenCV",
+          "Flask",
+          "MQTT",
+          "Tensorflow"
+        ]
+      },
+      {
+        "name": "ベストアジャイルプラクティス＆CV",
+        "link": "https://github.com/ArcueidShiki/bpcv",
+        "description": "学生がCVを作成するのを支援する大学の個人プロジェクト。",
+        "technologies": [
+          "HTML",
+          "CSS",
+          "JavaScript",
+          "jQuery",
+          "WebGL",
+          "OpenGL Shader"
+        ]
+      },
+      {
+        "name": "ポートフォリオ",
+        "link": "https://www.arcueidshiki.uk/",
+        "description": "私のプロジェクトとスキルを紹介する個人ポートフォリオサイト。",
+        "technologies": [
+          "Threejs",
+          "Vite",
+          "Blender"
+        ]
       }
     ]
   },
@@ -83,18 +197,154 @@
       {
         "category": "プログラミング言語",
         "items": [
-          { "name": "C", "iconUrl": "https://skillicons.dev/icons?i=c" },
-          { "name": "C++", "iconUrl": "https://skillicons.dev/icons?i=cpp" },
-          { "name": "Bash", "iconUrl": "https://skillicons.dev/icons?i=bash" },
+          {
+            "name": "C",
+            "iconUrl": "https://skillicons.dev/icons?i=c"
+          },
+          {
+            "name": "C++",
+            "iconUrl": "https://skillicons.dev/icons?i=cpp"
+          },
+          {
+            "name": "Bash",
+            "iconUrl": "https://skillicons.dev/icons?i=bash"
+          },
           {
             "name": "JavaScript",
             "iconUrl": "https://skillicons.dev/icons?i=js"
           },
-          { "name": "Python", "iconUrl": "https://skillicons.dev/icons?i=py" },
-          { "name": "Java", "iconUrl": "https://skillicons.dev/icons?i=java" },
+          {
+            "name": "Python",
+            "iconUrl": "https://skillicons.dev/icons?i=py"
+          },
+          {
+            "name": "Java",
+            "iconUrl": "https://skillicons.dev/icons?i=java"
+          },
           {
             "name": "TypeScript",
             "iconUrl": "https://skillicons.dev/icons?i=ts"
+          }
+        ]
+      },
+      {
+        "category": "バックエンド開発",
+        "items": [
+          {
+            "name": "Linux Server",
+            "iconUrl": "https://skillicons.dev/icons?i=linux"
+          },
+          {
+            "name": "Redis",
+            "iconUrl": "https://skillicons.dev/icons?i=redis"
+          },
+          {
+            "name": "SpringBoot",
+            "iconUrl": "https://skillicons.dev/icons?i=spring"
+          },
+          {
+            "name": "Flask",
+            "iconUrl": "https://skillicons.dev/icons?i=flask"
+          },
+          {
+            "name": "C# .NET",
+            "iconUrl": "https://skillicons.dev/icons?i=dotnet"
+          }
+        ]
+      },
+      {
+        "category": "フロントエンド開発",
+        "items": [
+          {
+            "name": "Angular",
+            "iconUrl": "https://skillicons.dev/icons?i=angular"
+          },
+          {
+            "name": "React",
+            "iconUrl": "https://skillicons.dev/icons?i=react"
+          },
+          {
+            "name": "Three.js",
+            "iconUrl": "https://skillicons.dev/icons?i=threejs"
+          },
+          {
+            "name": "Next.js",
+            "iconUrl": "https://skillicons.dev/icons?i=nextjs"
+          },
+          {
+            "name": "Vue.js",
+            "iconUrl": "https://skillicons.dev/icons?i=vuejs"
+          }
+        ]
+      },
+      {
+        "category": "データベース",
+        "items": [
+          {
+            "name": "PostgreSQL",
+            "iconUrl": "https://skillicons.dev/icons?i=postgresql"
+          },
+          {
+            "name": "MySQL",
+            "iconUrl": "https://skillicons.dev/icons?i=mysql"
+          },
+          {
+            "name": "MongoDB",
+            "iconUrl": "https://skillicons.dev/icons?i=mongodb"
+          }
+        ]
+      },
+      {
+        "category": "DevOps",
+        "items": [
+          {
+            "name": "Git",
+            "iconUrl": "https://skillicons.dev/icons?i=git"
+          },
+          {
+            "name": "Docker",
+            "iconUrl": "https://skillicons.dev/icons?i=docker"
+          },
+          {
+            "name": "AWS",
+            "iconUrl": "https://skillicons.dev/icons?i=aws"
+          }
+        ]
+      },
+      {
+        "category": "AI・自動化",
+        "items": [
+          {
+            "name": "Claude / Anthropic API",
+            "iconUrl": "https://skillicons.dev/icons?i=py"
+          },
+          {
+            "name": "OpenAI API",
+            "iconUrl": "https://skillicons.dev/icons?i=py"
+          },
+          {
+            "name": "MCP（モデルコンテキストプロトコル）",
+            "iconUrl": "https://skillicons.dev/icons?i=nodejs"
+          },
+          {
+            "name": "AIエージェント",
+            "iconUrl": "https://skillicons.dev/icons?i=py"
+          },
+          {
+            "name": "RAG（検索拡張生成）",
+            "iconUrl": "https://skillicons.dev/icons?i=mongodb"
+          },
+          {
+            "name": "LangChain",
+            "iconUrl": "https://skillicons.dev/icons?i=py"
+          },
+          {
+            "name": "ベクターデータベース",
+            "iconUrl": "https://skillicons.dev/icons?i=postgresql"
+          },
+          {
+            "name": "プロンプトエンジニアリング",
+            "iconUrl": "https://skillicons.dev/icons?i=markdown"
           }
         ]
       }
@@ -148,17 +398,34 @@
         "year": "2015年09月 - 2019年07月",
         "status": "卒業",
         "gpa": "3.6/4.0",
-        "honors": ["学部長賞", "優秀卒業生"],
-        "relevantCourses": ["薬化学", "薬理学", "薬用化学", "薬物分析"]
+        "honors": [
+          "学部長賞",
+          "優秀卒業生"
+        ],
+        "relevantCourses": [
+          "薬化学",
+          "薬理学",
+          "薬用化学",
+          "薬物分析"
+        ]
       }
     ]
   },
   "languages": {
     "title": "言語",
     "content": [
-      { "language": "英語", "proficiency": "流暢" },
-      { "language": "中国語", "proficiency": "母国語" },
-      { "language": "日本語", "proficiency": "基礎" }
+      {
+        "language": "英語",
+        "proficiency": "流暢"
+      },
+      {
+        "language": "中国語",
+        "proficiency": "母国語"
+      },
+      {
+        "language": "日本語",
+        "proficiency": "基礎"
+      }
     ]
   },
   "internships": {
@@ -198,78 +465,6 @@
           "github": "https://github.com/SeiKasahara/HousingCrisisSolution",
           "linkedin": "https://lnkd.in/p/ervBzHPg"
         }
-      }
-    ]
-  },
-  "projects": {
-    "title": "プロジェクト",
-    "content": [
-      {
-        "name": "AuraWell Agent",
-        "link": "https://github.com/PrescottClub/AuraWell_Agent.git",
-        "description": "個人化された健康推奨とメンタルウェルネスサポートを提供するAI駆動のウェルネスコンパニオン。",
-        "technologies": ["Python", "機械学習", "NLP", "FastAPI", "React"]
-      },
-      {
-        "name": "住宅危機解決策",
-        "link": "https://github.com/SeiKasahara/HousingCrisisSolution",
-        "description": "🏆 第3位入賞者 - データ駆動型インサイトと予測分析を使用して住宅負担可能性危機に対処するハッカソンソリューション。",
-        "technologies": [
-          "Python",
-          "データ分析",
-          "機械学習",
-          "Streamlit",
-          "PostgreSQL"
-        ]
-      },
-      {
-        "name": "株式ペーパートレーディング",
-        "link": "https://github.com/ArcueidShiki/DataAnalyticsApplication",
-        "description": "米国株式市場ペーパートレーディングWebアプリケーション",
-        "technologies": ["Flask", "Sqlalchemy", "Echarts", "bootstrap", "JWT"]
-      },
-      {
-        "name": "Hiperf",
-        "link": "https://gitee.com/openharmony/developtools_hiperf",
-        "description": "HarmonyOSシステムパフォーマンスデバッグツール。",
-        "technologies": ["C/C++", "LinuxPerf", "AOSP", "Python", "ADB"]
-      },
-      {
-        "name": "リモートコントロール",
-        "link": "https://github.com/ArcueidShiki/RemoteControl",
-        "description": "Windowsリモートコントロールアプリケーション、画面監視、キーボードとマウスコントロール。",
-        "technologies": ["C/C++", "TCP/IP", "MFC", "IOCP", "QT"]
-      },
-      {
-        "name": "Penni",
-        "link": "https://github.com/codersforcauses/penni",
-        "description": "退職者がアルバイトを見つけるのを支援するモバイルアプリケーション。",
-        "technologies": ["React", "Nextjs", "TailwindCss", "NPM"]
-      },
-      {
-        "name": "IoTスマートエントリーシステム",
-        "link": "https://github.com/ArcueidShiki/SmartEntrySystem",
-        "description": "エントリーコントロール用のIoTベースの顔認識システム。",
-        "technologies": ["RaspberryPi", "OpenCV", "Flask", "MQTT", "Tensorflow"]
-      },
-      {
-        "name": "ベストアジャイルプラクティス＆CV",
-        "link": "https://github.com/ArcueidShiki/bpcv",
-        "description": "学生がCVを作成するのを支援する大学の個人プロジェクト。",
-        "technologies": [
-          "HTML",
-          "CSS",
-          "JavaScript",
-          "jQuery",
-          "WebGL",
-          "OpenGL Shader"
-        ]
-      },
-      {
-        "name": "ポートフォリオ",
-        "link": "https://www.arcueidshiki.uk/",
-        "description": "私のプロジェクトとスキルを紹介する個人ポートフォリオサイト。",
-        "technologies": ["Threejs", "Vite", "Blender"]
       }
     ]
   }

@@ -1,3 +1,130 @@
+/* ── Color Sidebar ─────────────────────────────────────────────────────────── */
+.color-sidebar {
+  position: fixed;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 14px 10px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+}
+
+.sidebar-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #888;
+  text-transform: uppercase;
+  writing-mode: horizontal-tb;
+}
+
+.sidebar-palette {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Override inline color-sample for sidebar use */
+.color-sidebar .color-sample {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.4);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.4),
+    inset 0 -2px 0 rgba(0,0,0,0.25),
+    2px 4px 8px rgba(0,0,0,0.3);
+  background-image: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(0,0,0,0.1) 100%);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+}
+
+.color-sidebar .color-sample:hover {
+  transform: scale(1.15) translateX(3px);
+  border-color: rgba(255,255,255,0.9);
+  box-shadow: 4px 6px 16px rgba(0,0,0,0.4);
+}
+
+.color-sidebar .color-sample.selected {
+  transform: scale(1.18) translateX(4px);
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 2px rgba(0,0,0,0.3), 4px 6px 16px rgba(0,0,0,0.4);
+}
+
+.color-sidebar .color-sample::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.9);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.color-sidebar .color-sample.selected::after {
+  opacity: 1;
+}
+
+/* ── Info Sidebar (right) ────────────────────────────────────────────────── */
+.info-sidebar {
+  position: fixed;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 16px;
+  padding: 16px 12px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  min-width: 64px;
+}
+
+.info-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.info-label {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #666;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.info-value {
+  font-size: 32px;
+  font-weight: 900;
+  color: #1a1a2e;
+  line-height: 1;
+}
+
+.info-divider {
+  width: 36px;
+  height: 1px;
+  background: rgba(0,0,0,0.12);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
 body {
   font-family: "Arial", sans-serif;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -147,31 +274,59 @@ h1 {
 .cell {
   width: 40px;
   height: 40px;
-  border: 1px solid #666;
+  border: 1px solid rgba(0,0,0,0.25);
   cursor: pointer;
-  transition: all 0.3s ease;
-  border-radius: 3px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border-radius: 4px;
+  position: relative;
+  /* 3D bevel texture */
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.35),
+    inset 2px 0 0 rgba(255,255,255,0.18),
+    inset 0 -2px 0 rgba(0,0,0,0.25),
+    inset -2px 0 0 rgba(0,0,0,0.15),
+    2px 3px 6px rgba(0,0,0,0.3);
+  background-image: linear-gradient(
+    135deg,
+    rgba(255,255,255,0.28) 0%,
+    rgba(255,255,255,0.06) 45%,
+    rgba(0,0,0,0.08) 100%
+  );
+}
+
+.cell::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 4px;
+  background: linear-gradient(
+    160deg,
+    rgba(255,255,255,0.18) 0%,
+    transparent 50%
+  );
+  pointer-events: none;
 }
 
 .cell:hover {
-  transform: scale(1.1);
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  transform: scale(1.12) translateY(-1px);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,0.4),
+    inset 2px 0 0 rgba(255,255,255,0.2),
+    inset 0 -2px 0 rgba(0,0,0,0.3),
+    inset -2px 0 0 rgba(0,0,0,0.18),
+    4px 6px 12px rgba(0,0,0,0.45);
 }
 
 .cell.animating {
-  animation: colorFlip 0.6s ease-in-out;
+  animation: colorFlip 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes colorFlip {
-  0% {
-    transform: rotateY(0deg);
-  }
-  50% {
-    transform: rotateY(90deg);
-  }
-  100% {
-    transform: rotateY(0deg);
-  }
+  0%   { transform: rotateY(0deg)   scale(1);    box-shadow: 2px 3px 6px rgba(0,0,0,0.3); }
+  30%  { transform: rotateY(50deg)  scale(1.06); box-shadow: 6px 5px 14px rgba(0,0,0,0.5); }
+  50%  { transform: rotateY(90deg)  scaleX(0.05) scale(1.08); }
+  70%  { transform: rotateY(130deg) scale(1.06); box-shadow: 6px 5px 14px rgba(0,0,0,0.5); }
+  100% { transform: rotateY(0deg)   scale(1);    box-shadow: 2px 3px 6px rgba(0,0,0,0.3); }
 }
 
 .controls {

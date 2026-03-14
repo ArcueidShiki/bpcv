@@ -19,14 +19,28 @@
   "profile": {
     "title": "个人简介",
     "content": [
-      "结果导向的软件工程师，具有丰富的C++开发、后端系统和全栈应用经验。",
-      "在华为拥有1.5年以上的工作经验，专注于性能优化、调试工具和系统架构。",
-      "目前在西澳大学攻读信息技术硕士学位，在澳大利亚寻找软件工程师职位。热衷于构建可扩展、高效和创新的解决方案。"
+      "结果导向的全栈软件工程师，精通C++系统开发、.NET/Angular平台以及现代AI驱动的开发工作流。",
+      "在华为积累了超过1.5年的HarmonyOS性能工具开发经验；目前在Indigo Australasia使用C# .NET、PostgreSQL和Angular构建辅助技术平台。",
+      "已取得西澳大利亚大学信息技术硕士学位（优良成绩），现任Indigo Australasia全栈开发工程师，负责构建澳大利亚辅助技术平台。",
+      "我深信，手握强大AI工具的独立开发者（Agent、MCP、RAG等）能够构建出改变生活的产品——这曾经需要整个团队才能做到。我每天身体力行这一理念：从用Claude Code快速原型开发，到在生产环境部署AI功能。我的目标是让强大的软件触手可及，证明小团队同样可以用卓越的工具改变世界。"
     ]
   },
   "workexperience": {
     "title": "工作经历",
     "content": [
+      {
+        "position": "全栈开发工程师",
+        "company": "Indigo Australasia",
+        "icon": "icons/company/indigo.png",
+        "duration": "2025年11月 - 至今",
+        "location": "澳大利亚珀斯",
+        "description": [
+          "使用C# .NET、PostgreSQL和Angular开发并维护Get2Go和SAH平台，支持澳大利亚辅助技术（AT）产品的分发与销售。",
+          "设计并实现可扩展的RESTful API和数据库架构，支撑产品生命周期管理、订单处理及辅助设备供应商的用户认证系统。",
+          "在跨职能敏捷团队中协作交付端到端功能，涵盖Angular组件设计、.NET后端逻辑及PostgreSQL查询优化。",
+          "通过编写集成测试、开展代码审查和重构遗留模块来降低技术债务，提升平台稳定性。"
+        ]
+      },
       {
         "position": "终端软件工程师",
         "company": "华为技术有限公司",
@@ -202,6 +216,19 @@
         "items": [
           { "name": "Arduino", "iconUrl": "https://skillicons.dev/icons?i=arduino" },
           { "name": "Raspberry Pi", "iconUrl": "https://skillicons.dev/icons?i=raspberrypi" }
+        ]
+      },
+      {
+        "category": "AI与自动化",
+        "items": [
+          { "name": "Claude / Anthropic API", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "OpenAI API", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "MCP（模型上下文协议）", "iconUrl": "https://skillicons.dev/icons?i=nodejs" },
+          { "name": "AI 智能体", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "RAG（检索增强生成）", "iconUrl": "https://skillicons.dev/icons?i=mongodb" },
+          { "name": "LangChain", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "向量数据库", "iconUrl": "https://skillicons.dev/icons?i=postgresql" },
+          { "name": "提示词工程", "iconUrl": "https://skillicons.dev/icons?i=markdown" }
         ]
       }
     ]
