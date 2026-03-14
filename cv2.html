@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CV2 — Jensen Arcueid Peng // COMIC EDITION</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Noto+Sans+SC:wght@400;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --black:  #0f0f0f;
+      --white:  #f5f5ef;
+      --yellow: #ffe135;
+      --pink:   #ff4081;
+      --cyan:   #00bcd4;
+      --green:  #4caf50;
+      --shadow: 6px 6px 0px var(--black);
+      --shadow-lg: 10px 10px 0px var(--black);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--white);
+      color: var(--black);
+      font-family: 'Inter', 'Noto Sans SC', sans-serif;
+      overflow-x: hidden;
+    }
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: radial-gradient(var(--black) 1.2px, transparent 1.2px);
+      background-size: 18px 18px;
+      opacity: 0.055;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ── Fixed UI Buttons ── */
+    .ui-btn {
+      position: fixed; z-index: 900;
+      font-family: 'Bangers', cursive;
+      font-size: 15px; letter-spacing: 1.5px;
+      border: 3px solid var(--black);
+      box-shadow: var(--shadow);
+      cursor: pointer; padding: 8px 16px;
+      text-decoration: none; color: var(--black);
+      background: var(--yellow);
+      transition: transform .15s, box-shadow .15s;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .ui-btn:hover { transform: translate(-3px,-3px); box-shadow: var(--shadow-lg); }
+    .ui-btn:active { transform: translate(3px,3px); box-shadow: none; }
+    #pdfBtn   { top: 20px;  left: 20px; background: var(--cyan); }
+    #paintBtn { top: 70px;  left: 20px; background: #b388ff; }
+    #fxBtn    { top: 116px; left: 20px; background: var(--pink); color: #fff; }
+    #cv1Btn   { top: 162px; left: 20px; background: var(--green); color: #fff; }
+
+    /* Language selector */
+    .lang-selector { position: fixed; top: 20px; right: 20px; z-index: 900; }
+    .lang-toggle {
+      font-family: 'Bangers', cursive; letter-spacing: 2px; font-size: 15px;
+      border: 3px solid var(--black); background: var(--white);
+      box-shadow: var(--shadow); padding: 8px 14px; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .lang-toggle:hover { transform: translate(-3px,-3px); box-shadow: var(--shadow-lg); }
+    .lang-dropdown {
+      position: absolute; top: 110%; right: 0;
+      background: var(--white); border: 3px solid var(--black);
+      box-shadow: var(--shadow); display: none; min-width: 130px;
+    }
+    .lang-dropdown.open { display: block; }
+    .lang-opt {
+      padding: 10px 14px; font-weight: 700; cursor: pointer;
+      border-bottom: 2px solid var(--black);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .lang-opt:last-child { border-bottom: none; }
+    .lang-opt:hover { background: var(--yellow); }
+
+    /* ── Layout ── */
+    main {
+      max-width: 960px; margin: 0 auto;
+      padding: 30px 20px 60px;
+      position: relative; z-index: 1;
+    }
+
+    /* ── Header Panel ── */
+    .cv-header {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 24px; align-items: center;
+      border: 4px solid var(--black);
+      background: var(--yellow);
+      box-shadow: var(--shadow-lg);
+      padding: 30px 32px;
+      margin-top: 80px; margin-bottom: 10px;
+      position: relative; overflow: hidden;
+    }
+    .cv-header::after {
+      content: 'VOL.01';
+      position: absolute; bottom: 12px; right: 16px;
+      font-family: 'Bangers', cursive; font-size: 13px;
+      letter-spacing: 2px; opacity: .35;
+    }
+    .header-name {
+      font-family: 'Bangers', cursive;
+      font-size: clamp(2.2rem, 5vw, 3.6rem);
+      letter-spacing: 3px; line-height: 1;
+      -webkit-text-stroke: 1.5px var(--black);
+      text-shadow: 4px 4px 0 rgba(0,0,0,.15);
+    }
+    .header-title {
+      font-family: 'Bangers', cursive; font-size: 1.3rem;
+      letter-spacing: 3px; background: var(--black);
+      color: var(--yellow); display: inline-block;
+      padding: 2px 10px; margin: 8px 0;
+    }
+    .contact-links { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+    .contact-links a {
+      font-size: 11px; font-weight: 700;
+      color: var(--black); text-decoration: none;
+      border: 2px solid var(--black); padding: 3px 8px;
+      background: #fff; display: flex; align-items: center; gap: 4px;
+      transition: background .15s;
+    }
+    .contact-links a:hover { background: var(--cyan); }
+    .contact-links img { width: 14px; height: 14px; }
+    .profile-pic {
+      width: 110px; height: 110px;
+      border-radius: 50%;
+      border: 4px solid var(--black);
+      box-shadow: 5px 5px 0 var(--black);
+      object-fit: cover;
+    }
+
+    /* ── Section ── */
+    .section { margin: 28px 0; }
+    .sec-title {
+      font-family: 'Bangers', cursive; font-size: 2rem;
+      letter-spacing: 3px; display: inline-block;
+      background: var(--black); color: var(--yellow);
+      padding: 4px 18px; margin-bottom: 16px;
+      transform: skewX(-4deg);
+    }
+    .sec-title-inner { transform: skewX(4deg); display: inline-block; }
+
+    /* ── Profile bubble ── */
+    .profile-bubble {
+      background: #fff; border: 3px solid var(--black);
+      border-radius: 16px; box-shadow: var(--shadow);
+      padding: 20px 24px; position: relative;
+    }
+    .profile-bubble::after {
+      content: '';
+      position: absolute; bottom: -20px; left: 40px;
+      width: 0; height: 0;
+      border-left: 16px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 20px solid var(--black);
+    }
+    .profile-bubble::before {
+      content: '';
+      position: absolute; bottom: -15px; left: 42px;
+      width: 0; height: 0;
+      border-left: 14px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 18px solid #fff; z-index: 1;
+    }
+    .profile-bubble p { font-size: 13.5px; line-height: 1.7; margin-bottom: 10px; }
+    .profile-bubble p:last-child { margin-bottom: 0; }
+
+    /* ── Experience items ── */
+    .exp-item {
+      border: 3px solid var(--black); background: #fff;
+      box-shadow: var(--shadow); padding: 18px 20px;
+      margin-bottom: 14px; position: relative;
+    }
+    .exp-header { display: flex; align-items: flex-start; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+    .company-logo { width: 40px; height: 40px; object-fit: contain; border: 2px solid var(--black); flex-shrink: 0; }
+    .exp-title { font-family: 'Bangers', cursive; font-size: 1.25rem; letter-spacing: 1px; }
+    .exp-company { font-size: 13px; font-weight: 700; color: #444; }
+    .exp-meta { margin-left: auto; text-align: right; font-size: 11px; font-weight: 700; color: #666; }
+    .exp-desc ul { padding-left: 18px; }
+    .exp-desc li { font-size: 13px; line-height: 1.65; margin-bottom: 3px; }
+
+    /* ── Hackathon ── */
+    .hack-item {
+      border: 3px solid var(--black); background: #fff8e1;
+      box-shadow: var(--shadow); padding: 18px 20px; margin-bottom: 14px;
+    }
+    .hack-event { font-family: 'Bangers', cursive; font-size: 1.4rem; letter-spacing: 1px; }
+    .hack-pos {
+      display: inline-block; background: var(--yellow);
+      border: 2px solid var(--black); font-weight: 900;
+      font-size: 12px; padding: 1px 8px; margin: 4px 0;
+    }
+    .hack-links { margin-top: 10px; display: flex; gap: 8px; }
+    .hack-links a {
+      font-family: 'Bangers', cursive; font-size: 13px; letter-spacing: 1px;
+      border: 2px solid var(--black); padding: 3px 10px;
+      background: var(--cyan); text-decoration: none; color: var(--black);
+    }
+    .hack-links a:hover { background: var(--yellow); }
+
+    /* ── Projects ── */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 14px;
+    }
+    .proj-card {
+      border: 3px solid var(--black); background: #fff;
+      box-shadow: var(--shadow); padding: 16px 18px;
+      display: flex; flex-direction: column;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .proj-card:hover { transform: translate(-3px,-3px); box-shadow: var(--shadow-lg); }
+    .proj-name { font-family: 'Bangers', cursive; font-size: 1.2rem; letter-spacing: 1px; margin-bottom: 6px; }
+    .proj-name a { color: var(--black); text-decoration: none; }
+    .proj-name a:hover { color: var(--pink); text-decoration: underline; }
+    .proj-desc { font-size: 12px; line-height: 1.6; flex: 1; margin-bottom: 10px; color: #333; }
+    .tech-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .tech-tag {
+      font-size: 10px; font-weight: 700;
+      border: 2px solid var(--black); padding: 1px 6px;
+      background: var(--yellow);
+    }
+
+    /* ── Skills ── */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+    }
+    .skill-cat {
+      border: 3px solid var(--black); background: #fff;
+      box-shadow: var(--shadow); padding: 14px 16px;
+    }
+    .skill-cat-title {
+      font-family: 'Bangers', cursive; font-size: 1rem; letter-spacing: 1.5px;
+      border-bottom: 2px solid var(--black); padding-bottom: 6px; margin-bottom: 10px;
+    }
+    .skill-items { display: flex; flex-wrap: wrap; gap: 5px; }
+    .skill-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 700;
+      border: 2px solid var(--black); padding: 3px 8px;
+      background: #f0f0f0;
+    }
+    .skill-item img { width: 14px; height: 14px; }
+
+    /* ── Education ── */
+    .edu-item {
+      border: 3px solid var(--black); background: #fff;
+      box-shadow: var(--shadow); padding: 16px 20px;
+      display: flex; align-items: flex-start; gap: 16px;
+      margin-bottom: 12px; flex-wrap: wrap;
+    }
+    .edu-logo { width: 48px; height: 48px; object-fit: contain; border: 2px solid var(--black); flex-shrink: 0; }
+    .edu-degree { font-family: 'Bangers', cursive; font-size: 1.15rem; letter-spacing: 1px; }
+    .edu-inst { font-size: 13px; font-weight: 700; color: #333; }
+    .edu-meta { margin-left: auto; text-align: right; font-size: 11px; font-weight: 700; color: #555; }
+
+    /* ── Languages ── */
+    .lang-badges { display: flex; gap: 12px; flex-wrap: wrap; }
+    .lang-badge {
+      border: 3px solid var(--black); box-shadow: var(--shadow);
+      padding: 10px 20px; background: var(--cyan);
+      font-family: 'Bangers', cursive; font-size: 1.1rem;
+      letter-spacing: 2px; display: flex; flex-direction: column; align-items: center;
+    }
+    .lang-badge-sub { font-family: 'Inter', sans-serif; font-size: 10px; font-weight: 700; margin-top: 2px; }
+
+    /* ── Map & Chatbot ── */
+    .map-section, .chatbot-section {
+      max-width: 960px; margin: 0 auto;
+      padding: 0 20px 32px; position: relative; z-index: 1;
+    }
+    .map-container {
+      border: 3px solid var(--black); box-shadow: var(--shadow);
+      overflow: hidden; margin-top: 12px;
+    }
+    .map-container iframe { display: block; }
+    .location-info {
+      padding: 10px 14px; background: var(--yellow);
+      border-top: 3px solid var(--black);
+      font-family: 'Bangers', cursive; font-size: 1.1rem; letter-spacing: 1px;
+    }
+    .chatbot-container {
+      border: 3px solid var(--black); box-shadow: var(--shadow);
+      background: #fff; margin-top: 12px; overflow: hidden;
+    }
+    .chat-messages {
+      padding: 16px; min-height: 180px; max-height: 300px;
+      overflow-y: auto; display: flex; flex-direction: column; gap: 12px;
+      background: #fafafa;
+    }
+    .bot-message, .user-message { display: flex; gap: 10px; align-items: flex-start; }
+    .user-message { flex-direction: row-reverse; }
+    .msg-avatar {
+      width: 32px; height: 32px; border: 2px solid var(--black);
+      border-radius: 50%; background: var(--yellow);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px; flex-shrink: 0;
+    }
+    .msg-content {
+      background: #fff; border: 2px solid var(--black);
+      border-radius: 8px 8px 8px 2px;
+      padding: 8px 12px; font-size: 13px; max-width: 80%;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+    .user-message .msg-content { background: var(--cyan); border-radius: 8px 8px 2px 8px; }
+    .chat-input-row { display: flex; border-top: 3px solid var(--black); }
+    #chatInput2 {
+      flex: 1; border: none; border-right: 3px solid var(--black);
+      padding: 12px 14px; font-family: 'Inter', sans-serif;
+      font-size: 13px; outline: none;
+    }
+    #chatInput2:focus { background: #fffde7; }
+    #sendBtn2 {
+      font-family: 'Bangers', cursive; letter-spacing: 1.5px; font-size: 14px;
+      background: var(--yellow); border: none; padding: 0 20px; cursor: pointer;
+    }
+    #sendBtn2:hover { background: var(--pink); color: #fff; }
+
+    /* ── Footer ── */
+    footer {
+      background: var(--black); color: var(--yellow);
+      text-align: center; padding: 40px 20px;
+      position: relative; z-index: 1;
+    }
+    footer h2 {
+      font-family: 'Bangers', cursive;
+      font-size: 2.5rem; letter-spacing: 6px; margin-bottom: 8px;
+    }
+    footer p { font-size: 12px; opacity: .55; font-family: monospace; }
+
+    /* ── Responsive ── */
+    @media(max-width:640px) {
+      .cv-header { grid-template-columns: 1fr; }
+      .profile-pic { width: 80px; height: 80px; }
+      .edu-meta, .exp-meta { margin-left: 0; text-align: left; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fixed buttons -->
+  <button class="ui-btn" id="pdfBtn">📄 PDF</button>
+  <a href="paints.html" class="ui-btn" id="paintBtn">🎮 Wuwa Paint</a>
+  <a href="text-effect.html" class="ui-btn" id="fxBtn">✨ Text FX</a>
+  <a href="cv.html" class="ui-btn" id="cv1Btn">🖥 Cyber CV</a>
+
+  <!-- Language selector -->
+  <div class="lang-selector">
+    <button class="lang-toggle" id="langToggle">
+      <span id="langFlag">🇺🇸</span>
+      <span id="langText">EN</span>
+      <span>▼</span>
+    </button>
+    <div class="lang-dropdown" id="langDropdown">
+      <div class="lang-opt" data-lang="en"><span>🇺🇸</span> English</div>
+      <div class="lang-opt" data-lang="jp"><span>🇯🇵</span> 日本語</div>
+      <div class="lang-opt" data-lang="zh"><span>🇨🇳</span> 中文</div>
+    </div>
+  </div>
+
+  <main id="cvMain"></main>
+
+  <!-- Map -->
+  <div class="map-section" id="contact-section">
+    <div class="sec-title"><span class="sec-title-inner">📍 CURRENT LOCATION</span></div>
+    <div class="map-container">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d387190.27991515207!2d115.7459!3d-31.953512!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2a32966cdb47733d%3A0x304f0b535df55d0!2sPerth%20WA%2C%20Australia!5e0!3m2!1sen!2sau!4v1700000000000!5m2!1sen!2sau"
+        width="100%" height="280" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+      <div class="location-info">📍 Perth, Western Australia</div>
+    </div>
+  </div>
+
+  <!-- Chatbot -->
+  <div class="chatbot-section">
+    <div class="sec-title"><span class="sec-title-inner">💬 AI ASSISTANT</span></div>
+    <div class="chatbot-container">
+      <div class="chat-messages" id="chatMessages2">
+        <div class="bot-message">
+          <div class="msg-avatar">🤖</div>
+          <div class="msg-content">Hi! I'm Jensen's AI assistant. Ask me anything about his experience, skills, or projects!</div>
+        </div>
+      </div>
+      <div class="chat-input-row">
+        <input type="text" id="chatInput2" placeholder="Ask about Jensen's experience..." maxlength="500"/>
+        <button id="sendBtn2" onclick="sendMsg2()">SEND!</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <h2>TO BE CONTINUED...</h2>
+    <p>© JENSEN ARCUEID PENG // HANDCRAFTED WITH ❤️ AND ☕</p>
+  </footer>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="js/chatbot.js"></script>
+  <script>
+    // ── Helpers ──────────────────────────────────────────────────
+    function esc(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+    // URLs from our own JSON — safe to use as href
+    function safeUrl(url) {
+      if (!url) return '#';
+      const u = String(url).trim();
+      return (u.startsWith('http') || u.startsWith('mailto:') || u.startsWith('tel:') || u.startsWith('#')) ? u : '#';
+    }
+
+    // ── DOM builders ─────────────────────────────────────────────
+    function el(tag, attrs, children) {
+      const node = document.createElement(tag);
+      if (attrs) Object.entries(attrs).forEach(([k, v]) => {
+        if (k === 'class') node.className = v;
+        else if (k === 'style') node.style.cssText = v;
+        else node.setAttribute(k, v);
+      });
+      if (children) {
+        if (typeof children === 'string') node.textContent = children;
+        else if (Array.isArray(children)) children.forEach(c => c && node.appendChild(c));
+        else node.appendChild(children);
+      }
+      return node;
+    }
+    function txt(content) { return document.createTextNode(content); }
+    function secTitle(text) {
+      const d = el('div', {'class': 'sec-title'});
+      const s = el('span', {'class': 'sec-title-inner'}, text);
+      d.appendChild(s);
+      return d;
+    }
+
+    // ── Render functions ─────────────────────────────────────────
+    function renderHeader(d) {
+      const ci = d.contactInfo;
+      const header = el('div', {'class': 'cv-header', 'id': 'profile-section'});
+
+      const info = el('div');
+      info.appendChild(el('div', {'class': 'header-name'}, ci.name));
+      info.appendChild(el('div', {'class': 'header-title'}, ci.position));
+
+      const links = el('div', {'class': 'contact-links'});
+      ci.email.forEach(email => {
+        const a = el('a', {href: 'mailto:' + email});
+        a.appendChild(txt('✉ ' + email));
+        links.appendChild(a);
+      });
+      ci.phone.forEach(phone => {
+        const a = el('a', {href: 'tel:' + phone});
+        a.appendChild(txt('📞 ' + phone));
+        links.appendChild(a);
+      });
+      ci.socialLinks.forEach(link => {
+        const a = el('a', {href: safeUrl(link.url), target: '_blank', rel: 'noopener'});
+        const img = el('img', {src: link.icon, alt: 'social', width: '14', height: '14'});
+        a.appendChild(img);
+        links.appendChild(a);
+      });
+      info.appendChild(links);
+
+      const pic = el('img', {'class': 'profile-pic', src: ci.profilePicture, alt: 'Profile'});
+
+      header.appendChild(info);
+      header.appendChild(pic);
+      return header;
+    }
+
+    function renderProfile(d) {
+      const sec = el('div', {'class': 'section'});
+      sec.appendChild(secTitle(d.profile.title.toUpperCase()));
+      const bubble = el('div', {'class': 'profile-bubble'});
+      d.profile.content.forEach(p => bubble.appendChild(el('p', null, p)));
+      sec.appendChild(bubble);
+      return sec;
+    }
+
+    function renderExpItem(exp, idx) {
+      const item = el('div', {'class': 'exp-item'});
+      const panelLabel = el('div', {'style': 'position:absolute;top:10px;right:12px;font-size:9px;font-weight:900;letter-spacing:2px;background:var(--yellow);border:1.5px solid var(--black);padding:1px 5px;opacity:.75'}, 'PANEL ' + String(idx + 1).padStart(2, '0'));
+      item.appendChild(panelLabel);
+
+      const hdr = el('div', {'class': 'exp-header'});
+      hdr.appendChild(el('img', {'class': 'company-logo', src: exp.icon || 'icons/company/default.png', alt: exp.company}));
+      const titleBlock = el('div');
+      titleBlock.appendChild(el('div', {'class': 'exp-title'}, exp.position));
+      titleBlock.appendChild(el('div', {'class': 'exp-company'}, exp.company));
+      hdr.appendChild(titleBlock);
+      const meta = el('div', {'class': 'exp-meta'});
+      meta.appendChild(el('div', null, exp.duration));
+      meta.appendChild(el('div', null, exp.location));
+      hdr.appendChild(meta);
+      item.appendChild(hdr);
+
+      const desc = el('div', {'class': 'exp-desc'});
+      const ul = el('ul');
+      exp.description.forEach(d => ul.appendChild(el('li', null, d)));
+      desc.appendChild(ul);
+      item.appendChild(desc);
+      return item;
+    }
+
+    function renderExperience(d) {
+      const sec = el('div', {'class': 'section', 'id': 'experience-section'});
+      sec.appendChild(secTitle(d.workexperience.title.toUpperCase()));
+      d.workexperience.content.forEach((exp, i) => sec.appendChild(renderExpItem(exp, i)));
+      return sec;
+    }
+
+    function renderInternships(d) {
+      if (!d.internships) return null;
+      const sec = el('div', {'class': 'section', 'id': 'internship-section'});
+      sec.appendChild(secTitle(d.internships.title.toUpperCase()));
+      d.internships.content.forEach((exp, i) => sec.appendChild(renderExpItem(exp, i)));
+      return sec;
+    }
+
+    function renderHackathons(d) {
+      if (!d.hackathons) return null;
+      const sec = el('div', {'class': 'section', 'id': 'hackathon-section'});
+      sec.appendChild(secTitle(d.hackathons.title.toUpperCase()));
+      d.hackathons.content.forEach(h => {
+        const item = el('div', {'class': 'hack-item'});
+        item.appendChild(el('div', {'class': 'hack-event'}, '🏆 ' + h.event));
+        item.appendChild(el('div', {'class': 'hack-pos'}, h.position));
+        item.appendChild(el('div', {'style': 'font-size:12px;font-weight:700;color:#555;margin:4px 0'}, h.date + ' · ' + h.location));
+        item.appendChild(el('div', {'style': 'font-size:13px;font-weight:700;margin-bottom:8px'}, h.project));
+        const ul = el('ul', {'style': 'padding-left:18px;font-size:13px;line-height:1.65'});
+        h.description.forEach(dd => ul.appendChild(el('li', null, dd)));
+        item.appendChild(ul);
+        if (h.links) {
+          const linkRow = el('div', {'class': 'hack-links'});
+          if (h.links.github) {
+            const a = el('a', {href: safeUrl(h.links.github), target: '_blank', rel: 'noopener'}, 'GitHub');
+            linkRow.appendChild(a);
+          }
+          if (h.links.linkedin) {
+            const a = el('a', {href: safeUrl(h.links.linkedin), target: '_blank', rel: 'noopener'}, 'LinkedIn');
+            linkRow.appendChild(a);
+          }
+          item.appendChild(linkRow);
+        }
+        sec.appendChild(item);
+      });
+      return sec;
+    }
+
+    function renderProjects(d) {
+      const sec = el('div', {'class': 'section', 'id': 'projects-section'});
+      sec.appendChild(secTitle(d.projects.title.toUpperCase()));
+      const grid = el('div', {'class': 'projects-grid'});
+      d.projects.content.forEach(p => {
+        const card = el('div', {'class': 'proj-card'});
+        const nameDiv = el('div', {'class': 'proj-name'});
+        const a = el('a', {href: safeUrl(p.link), target: '_blank', rel: 'noopener'}, p.name);
+        nameDiv.appendChild(a);
+        card.appendChild(nameDiv);
+        card.appendChild(el('p', {'class': 'proj-desc'}, p.description));
+        const tags = el('div', {'class': 'tech-tags'});
+        p.technologies.forEach(t => tags.appendChild(el('span', {'class': 'tech-tag'}, t)));
+        card.appendChild(tags);
+        grid.appendChild(card);
+      });
+      sec.appendChild(grid);
+      return sec;
+    }
+
+    function renderSkills(d) {
+      const sec = el('div', {'class': 'section', 'id': 'skills-section'});
+      sec.appendChild(secTitle(d.skills.title.toUpperCase()));
+      const grid = el('div', {'class': 'skills-grid'});
+      d.skills.content.forEach(s => {
+        const cat = el('div', {'class': 'skill-cat'});
+        cat.appendChild(el('div', {'class': 'skill-cat-title'}, s.category));
+        const items = el('div', {'class': 'skill-items'});
+        s.items.forEach(item => {
+          const chip = el('div', {'class': 'skill-item'});
+          chip.appendChild(el('img', {src: item.iconUrl, alt: item.name, width: '14', height: '14'}));
+          chip.appendChild(el('span', null, item.name));
+          items.appendChild(chip);
+        });
+        cat.appendChild(items);
+        grid.appendChild(cat);
+      });
+      sec.appendChild(grid);
+      return sec;
+    }
+
+    function renderEducation(d) {
+      const sec = el('div', {'class': 'section', 'id': 'education-section'});
+      sec.appendChild(secTitle(d.education.title.toUpperCase()));
+      d.education.content.forEach(e => {
+        const item = el('div', {'class': 'edu-item'});
+        item.appendChild(el('img', {'class': 'edu-logo', src: e.logo, alt: e.institution}));
+        const info = el('div');
+        info.appendChild(el('div', {'class': 'edu-degree'}, e.degree));
+        info.appendChild(el('div', {'class': 'edu-inst'}, e.institution));
+        if (e.major) info.appendChild(el('div', {'style': 'font-size:12px;color:#555'}, e.major));
+        if (e.gpa) info.appendChild(el('div', {'style': 'font-size:12px;font-weight:700'}, 'GPA: ' + e.gpa));
+        item.appendChild(info);
+        const meta = el('div', {'class': 'edu-meta'});
+        meta.appendChild(el('div', null, e.location));
+        meta.appendChild(el('div', null, e.year));
+        meta.appendChild(el('div', null, e.status));
+        item.appendChild(meta);
+        sec.appendChild(item);
+      });
+      return sec;
+    }
+
+    function renderLanguages(d) {
+      const sec = el('div', {'class': 'section'});
+      sec.appendChild(secTitle(d.languages.title.toUpperCase()));
+      const row = el('div', {'class': 'lang-badges'});
+      d.languages.content.forEach(l => {
+        const badge = el('div', {'class': 'lang-badge'});
+        badge.appendChild(txt(l.language));
+        badge.appendChild(el('span', {'class': 'lang-badge-sub'}, l.proficiency));
+        row.appendChild(badge);
+      });
+      sec.appendChild(row);
+      return sec;
+    }
+
+    // ── Main render ───────────────────────────────────────────────
+    function renderCV(d) {
+      const container = document.getElementById('cvMain');
+      container.textContent = '';
+      [
+        renderHeader(d),
+        renderProfile(d),
+        renderExperience(d),
+        renderInternships(d),
+        renderHackathons(d),
+        renderProjects(d),
+        renderSkills(d),
+        renderEducation(d),
+        renderLanguages(d),
+      ].forEach(node => node && container.appendChild(node));
+    }
+
+    // ── Language management ───────────────────────────────────────
+    let cv2Lang = 'en';
+    const cv2Texts = {};
+
+    async function loadAllLangs() {
+      for (const lang of ['en', 'jp', 'zh']) {
+        try {
+          const r = await fetch('js/langs/' + lang + '.json');
+          if (r.ok) cv2Texts[lang] = await r.json();
+        } catch(e) {}
+      }
+    }
+
+    function switchLang(lang) {
+      cv2Lang = lang;
+      if (cv2Texts[lang]) renderCV(cv2Texts[lang]);
+      const flags = { en: '🇺🇸', jp: '🇯🇵', zh: '🇨🇳' };
+      document.getElementById('langFlag').textContent = flags[lang] || '🌐';
+      document.getElementById('langText').textContent = lang.toUpperCase();
+    }
+
+    document.getElementById('langToggle').addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.getElementById('langDropdown').classList.toggle('open');
+    });
+    document.addEventListener('click', () => document.getElementById('langDropdown').classList.remove('open'));
+    document.querySelectorAll('.lang-opt').forEach(opt => {
+      opt.addEventListener('click', function(e) {
+        e.stopPropagation();
+        switchLang(this.dataset.lang);
+        document.getElementById('langDropdown').classList.remove('open');
+      });
+    });
+
+    document.getElementById('pdfBtn').addEventListener('click', () => {
+      window.location.href = cv2Lang === 'zh' ? 'resume/Resume_zh.pdf' : 'resume/Resume.pdf';
+    });
+
+    // ── Chatbot ───────────────────────────────────────────────────
+    function addMsg2(role, text) {
+      const wrap = el('div', {'class': role === 'user' ? 'user-message' : 'bot-message'});
+      wrap.appendChild(el('div', {'class': 'msg-avatar'}, role === 'user' ? '👤' : '🤖'));
+      wrap.appendChild(el('div', {'class': 'msg-content'}, text));
+      const msgs = document.getElementById('chatMessages2');
+      msgs.appendChild(wrap);
+      msgs.scrollTop = msgs.scrollHeight;
+    }
+
+    function sendMsg2() {
+      const input = document.getElementById('chatInput2');
+      const msg = input.value.trim();
+      if (!msg) return;
+      addMsg2('user', msg);
+      input.value = '';
+      if (window.chatbot && typeof chatbot.getBotResponse === 'function') {
+        chatbot.getBotResponse(msg).then(reply => addMsg2('bot', reply));
+      } else {
+        addMsg2('bot', 'Please visit the full CV page for the AI assistant.');
+      }
+    }
+    document.getElementById('chatInput2').addEventListener('keydown', e => {
+      if (e.key === 'Enter') sendMsg2();
+    });
+
+    // ── Init ──────────────────────────────────────────────────────
+    loadAllLangs().then(() => switchLang('en'));
+  </script>
+</body>
+</html>

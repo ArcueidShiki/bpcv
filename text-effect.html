@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cyberpunk Matrix World</title>
+
+    <!-- 字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+KuaiLe&family=Orbitron:wght@500&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #000;
+        user-select: none;
+      }
+      canvas {
+        display: block;
+      }
+
+      /* UI 层 */
+      #ui-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 10;
+      }
+
+      #input-wrapper {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        pointer-events: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: opacity 0.3s;
+      }
+
+      #input-box {
+        background: rgba(0, 0, 0, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 10px 20px;
+        border-radius: 30px;
+        display: flex;
+        gap: 10px;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 0 15px rgba(0, 200, 255, 0.2);
+      }
+
+      input {
+        background: transparent;
+        border: none;
+        color: #fff;
+        font-size: 16px;
+        outline: none;
+        font-family: "Orbitron", sans-serif;
+        width: 200px;
+      }
+
+      button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid #fff;
+        color: #fff;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      button:hover {
+        background: #fff;
+        color: #000;
+      }
+
+      .hint {
+        color: rgba(255, 255, 255, 0.4);
+        font-size: 10px;
+        margin-top: 5px;
+        font-family: sans-serif;
+        letter-spacing: 1px;
+      }
+    </style>
+
+    <!-- Three.js 核心 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <!-- OrbitControls -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  </head>
+  <body>
+    <div id="ui-layer">
+      <div id="input-wrapper">
+        <div id="input-box">
+          <input
+            type="text"
+            id="user-input"
+            placeholder="INJECT DATA..."
+            maxlength="20"
+            autocomplete="off"
+          />
+          <button id="submit-btn">></button>
+        </div>
+        <div class="hint">DRAG TO ROTATE | SCROLL TO ZOOM</div>
+      </div>
+    </div>
+
+    <script>
+      // ==========================================
+      // 1. 全局配置 (Cyberpunk Palette)
+      // ==========================================
+      const COLORS = [
+        "#00FF41", // Classic Matrix Green
+        "#00CCFF", // Cyber Blue
+        "#FF0055", // Neon Red/Pink
+      ];
+
+      const CONFIG = {
+        bgColor: "#020205", // 深黑偏蓝背景
+        density: 50, // 字符串总数
+        worldRadius: 600, // 生成范围半径
+        moveSpeed: 0.5, // 基础移动速度
+        collisionPadding: 20, // 防重叠间距
+      };
+
+      const FONTS = [
+        { name: "Ma Shan Zheng", type: "cursive" }, // 书法
+        { name: "ZCOOL KuaiLe", type: "sans-serif" }, // 可爱
+        { name: "Orbitron", type: "sans-serif" }, // 科技
+      ];
+
+      // 字符集
+      const CHAR_SETS = {
+        cn: { range: [0x4e00, 0x4f00] },
+        jp: { range: [0x3040, 0x309f] },
+        en: { str: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>/\\" },
+        emoji: { range: [0x1f600, 0x1f620] },
+      };
+
+      function getRandomChar(type) {
+        const set = CHAR_SETS[type] || CHAR_SETS.en;
+        if (set.str) return set.str[Math.floor(Math.random() * set.str.length)];
+        const min = set.range[0];
+        const max = set.range[1];
+        return String.fromCodePoint(
+          Math.floor(Math.random() * (max - min) + min),
+        );
+      }
+
+      // ==========================================
+      // 2. 核心类：MatrixString (支持横竖排)
+      // ==========================================
+      class MatrixString {
+        constructor(isVertical = false, customText = null, customColor = null) {
+          this.isVertical = isVertical;
+          this.textStr = customText;
+          this.isCustom = !!customText;
+
+          // 样式选择
+          this.fontConfig = FONTS[Math.floor(Math.random() * FONTS.length)];
+          this.baseColor =
+            customColor || COLORS[Math.floor(Math.random() * COLORS.length)];
+
+          // 长度与语言
+          this.length = this.isCustom
+            ? Math.max(customText.length + 5, 10)
+            : 10 + Math.floor(Math.random() * 20);
+          this.langType =
+            Object.keys(CHAR_SETS)[
+              Math.floor(Math.random() * Object.keys(CHAR_SETS).length)
+            ];
+
+          // 字符数据初始化
+          this.chars = [];
+          this.targetChars = [];
+          this.initChars();
+
+          // 滑窗逻辑
+          this.windowHead = -this.length * 0.5;
+          this.windowWidth = this.length * 0.4;
+          this.scanSpeed = 0.1 + Math.random() * 0.2;
+
+          // 纹理生成
+          this.canvas = document.createElement("canvas");
+          this.ctx = this.canvas.getContext("2d");
+
+          // 根据方向设定 Canvas 尺寸
+          // 字体大小设为 64px
+          const fontSize = 64;
+          const longSide = fontSize * (this.length + 1); // 留点余量
+          const shortSide = fontSize * 1.5;
+
+          if (this.isVertical) {
+            this.canvas.width = shortSide;
+            this.canvas.height = longSide;
+          } else {
+            this.canvas.width = longSide;
+            this.canvas.height = shortSide;
+          }
+
+          this.texture = new THREE.CanvasTexture(this.canvas);
+          // 避免远处闪烁
+          this.texture.minFilter = THREE.LinearMipMapLinearFilter;
+
+          this.lastUpdate = 0;
+        }
+
+        initChars() {
+          for (let i = 0; i < this.length; i++) {
+            this.chars.push(getRandomChar(this.langType));
+
+            let target = getRandomChar(this.langType);
+            if (this.isCustom) {
+              // 简单的居中映射
+              let offset = Math.floor((this.length - this.textStr.length) / 2);
+              let strIdx = i - offset;
+              if (strIdx >= 0 && strIdx < this.textStr.length) {
+                target = this.textStr[strIdx];
+              }
+            }
+            this.targetChars.push(target);
+          }
+        }
+
+        update(time) {
+          this.windowHead += this.scanSpeed;
+
+          // 循环重置
+          if (this.windowHead - this.windowWidth > this.length) {
+            this.windowHead = -this.windowWidth;
+            if (!this.isCustom) {
+              this.langType =
+                Object.keys(CHAR_SETS)[
+                  Math.floor(Math.random() * Object.keys(CHAR_SETS).length)
+                ];
+              this.baseColor =
+                COLORS[Math.floor(Math.random() * COLORS.length)];
+            }
+            // 交换当前和目标，生成新目标
+            this.chars = [...this.targetChars];
+            if (!this.isCustom) {
+              this.targetChars = this.targetChars.map(() =>
+                getRandomChar(this.langType),
+              );
+            }
+          }
+
+          this.draw();
+        }
+
+        draw() {
+          const ctx = this.ctx;
+          const w = this.canvas.width;
+          const h = this.canvas.height;
+          const fontSize = 60;
+
+          ctx.clearRect(0, 0, w, h);
+          ctx.font = `bold ${fontSize}px "${this.fontConfig.name}", sans-serif`;
+          ctx.textBaseline = "middle";
+          ctx.textAlign = "center";
+
+          // 居中基准线
+          const cx = w / 2;
+          const cy = h / 2;
+
+          // 字符间距
+          const spacing = fontSize * 0.9;
+
+          // 计算起始绘制位置，保证整个字符串居中
+          const totalLenPixels = this.length * spacing;
+          const startPos =
+            (this.isVertical ? h : w) / 2 - totalLenPixels / 2 + spacing / 2;
+
+          for (let i = 0; i < this.length; i++) {
+            // 计算当前字符坐标
+            let x, y;
+            if (this.isVertical) {
+              x = cx;
+              y = startPos + i * spacing;
+            } else {
+              x = startPos + i * spacing;
+              y = cy;
+            }
+
+            // 颜色与透明度逻辑
+            let charStr = this.chars[i];
+            let alpha = 0.2;
+            let color = this.baseColor;
+            let blur = 0;
+
+            // 窗口判定
+            if (
+              i >= this.windowHead - this.windowWidth &&
+              i <= this.windowHead
+            ) {
+              // 激活区
+              alpha = 1.0;
+              blur = 10;
+              if (Math.random() > 0.5) {
+                charStr = getRandomChar(this.langType); // 乱码
+                color = "#FFFFFF";
+              }
+            } else if (i < this.windowHead - this.windowWidth) {
+              // 完成区
+              charStr = this.targetChars[i];
+              alpha = 0.8;
+              blur = 5;
+            } else {
+              // 未达区
+              alpha = 0.15;
+            }
+
+            ctx.globalAlpha = alpha;
+            ctx.fillStyle = color;
+            ctx.shadowBlur = blur;
+            ctx.shadowColor = color;
+
+            // 竖排时，如果是非CJK字符，通常需要调整旋转（简单起见这里不旋转字符本身，仅堆叠）
+            ctx.fillText(charStr, x, y);
+          }
+          this.texture.needsUpdate = true;
+        }
+      }
+
+      // ==========================================
+      // 3. 场景与初始化
+      // ==========================================
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(CONFIG.bgColor);
+      scene.fog = new THREE.FogExp2(CONFIG.bgColor, 0.002);
+
+      const camera = new THREE.PerspectiveCamera(
+        60,
+        window.innerWidth / window.innerHeight,
+        1,
+        2000,
+      );
+      camera.position.set(0, 0, 600);
+
+      const renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      // 4. 轨道控制器 (Feature 4)
+      const controls = new THREE.OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.minDistance = 100;
+      controls.maxDistance = 1000;
+      controls.autoRotate = true;
+      controls.autoRotateSpeed = 0.5;
+
+      // ==========================================
+      // 5. 生成实体与碰撞检测 (Feature 2)
+      // ==========================================
+      const textEntities = [];
+      const staticBoxes = []; // 用于碰撞检测的简化包围盒
+
+      function checkCollision(position, sizeRadius) {
+        // 简单球体碰撞检测 (性能较好)
+        for (let box of staticBoxes) {
+          const dist = position.distanceTo(box.pos);
+          if (dist < sizeRadius + box.radius + CONFIG.collisionPadding) {
+            return true; // 撞了
+          }
+        }
+        return false;
+      }
+
+      function createEntity(customText = null) {
+        const isVertical = Math.random() > 0.5; // 50% 概率竖排
+        // 如果是自定义文本，用金色；否则随机红蓝绿
+        const color = customText ? "#FFD700" : null;
+
+        const mStr = new MatrixString(isVertical, customText, color);
+
+        // 计算几何体大小
+        // 根据 Canvas 比例还原
+        const scale = 0.5; // 缩放因子
+        const w = mStr.canvas.width * scale;
+        const h = mStr.canvas.height * scale;
+
+        const geometry = new THREE.PlaneGeometry(w, h);
+        const material = new THREE.MeshBasicMaterial({
+          map: mStr.texture,
+          transparent: true,
+          side: THREE.DoubleSide,
+          blending: THREE.AdditiveBlending,
+          depthWrite: false,
+        });
+
+        const mesh = new THREE.Mesh(geometry, material);
+
+        // 寻找不重叠的位置
+        let pos = new THREE.Vector3();
+        let tries = 0;
+        const maxTries = 50;
+        // 估算半径用于碰撞
+        const radius = Math.max(w, h) / 2;
+
+        if (customText) {
+          pos.set(0, 0, 0); // 自定义文字放在中心
+        } else {
+          do {
+            pos.set(
+              (Math.random() - 0.5) * CONFIG.worldRadius * 2,
+              (Math.random() - 0.5) * CONFIG.worldRadius * 1.5,
+              (Math.random() - 0.5) * CONFIG.worldRadius * 2,
+            );
+            tries++;
+          } while (checkCollision(pos, radius) && tries < maxTries);
+        }
+
+        mesh.position.copy(pos);
+        scene.add(mesh);
+
+        // 记录占位
+        staticBoxes.push({ pos: pos, radius: radius });
+
+        // 运动数据
+        const speed = (0.2 + Math.random() * 0.5) * CONFIG.moveSpeed;
+        const velocity = new THREE.Vector3(
+          (Math.random() - 0.5) * speed,
+          (Math.random() - 0.5) * speed,
+          (Math.random() - 0.5) * speed,
+        );
+        // 竖排倾向于垂直移动，横排倾向于水平移动，但也保留随机性
+        if (isVertical) velocity.y -= speed;
+        else velocity.x += Math.random() > 0.5 ? speed : -speed;
+
+        return { mesh, mStr, velocity, radius };
+      }
+
+      // 初始化生成
+      for (let i = 0; i < CONFIG.density; i++) {
+        textEntities.push(createEntity());
+      }
+
+      // ==========================================
+      // 6. 背景装饰 (Feature 5)
+      // ==========================================
+
+      // A. 底部和顶部网格
+      const gridHelperBottom = new THREE.GridHelper(
+        2000,
+        40,
+        0x003333,
+        0x001111,
+      );
+      gridHelperBottom.position.y = -500;
+      scene.add(gridHelperBottom);
+
+      const gridHelperTop = new THREE.GridHelper(2000, 40, 0x003333, 0x001111);
+      gridHelperTop.position.y = 500;
+      scene.add(gridHelperTop);
+
+      // B. 3D Wireframe 装饰
+      const bgGroup = new THREE.Group();
+      const geoTypes = [
+        new THREE.IcosahedronGeometry(1, 0),
+        new THREE.OctahedronGeometry(1, 0),
+        new THREE.TetrahedronGeometry(1, 0),
+      ];
+      for (let i = 0; i < 20; i++) {
+        const geo = geoTypes[Math.floor(Math.random() * geoTypes.length)];
+        const mat = new THREE.MeshBasicMaterial({
+          color: COLORS[Math.floor(Math.random() * 3)],
+          wireframe: true,
+          transparent: true,
+          opacity: 0.1,
+        });
+        const mesh = new THREE.Mesh(geo, mat);
+        const size = 50 + Math.random() * 100;
+        mesh.scale.set(size, size, size);
+        mesh.position.set(
+          (Math.random() - 0.5) * 1500,
+          (Math.random() - 0.5) * 1000,
+          (Math.random() - 0.5) * 1500,
+        );
+        mesh.userData.rotSpeed = Math.random() * 0.01;
+        bgGroup.add(mesh);
+      }
+      scene.add(bgGroup);
+
+      // C. 动态线条雨 (Lines)
+      const lineGeo = new THREE.BufferGeometry();
+      const lineCount = 200;
+      const linePos = new Float32Array(lineCount * 6); // 2 points per line
+      for (let i = 0; i < lineCount; i++) {
+        const x = (Math.random() - 0.5) * 1200;
+        const y = (Math.random() - 0.5) * 1200;
+        const z = (Math.random() - 0.5) * 1200;
+        const len = 20 + Math.random() * 50;
+        // point 1
+        linePos[i * 6] = x;
+        linePos[i * 6 + 1] = y;
+        linePos[i * 6 + 2] = z;
+        // point 2 (vertical streak)
+        linePos[i * 6 + 3] = x;
+        linePos[i * 6 + 4] = y - len;
+        linePos[i * 6 + 5] = z;
+      }
+      lineGeo.setAttribute("position", new THREE.BufferAttribute(linePos, 3));
+      const lineMat = new THREE.LineBasicMaterial({
+        color: 0x005522,
+        transparent: true,
+        opacity: 0.3,
+      });
+      const rainLines = new THREE.LineSegments(lineGeo, lineMat);
+      scene.add(rainLines);
+
+      // ==========================================
+      // 7. 交互
+      // ==========================================
+      const inputEl = document.getElementById("user-input");
+      const btnEl = document.getElementById("submit-btn");
+
+      function submitText() {
+        const txt = inputEl.value.trim();
+        if (txt) {
+          const ent = createEntity(txt);
+          textEntities.push(ent);
+          inputEl.value = "";
+        }
+      }
+
+      btnEl.addEventListener("click", submitText);
+      inputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") submitText();
+      });
+
+      // 输入框获取焦点时停止自动旋转，方便输入
+      inputEl.addEventListener("focus", () => (controls.autoRotate = false));
+      inputEl.addEventListener("blur", () => (controls.autoRotate = true));
+
+      // ==========================================
+      // 8. 渲染循环
+      // ==========================================
+      const clock = new THREE.Clock();
+
+      function animate() {
+        requestAnimationFrame(animate);
+
+        const time = clock.getElapsedTime();
+        controls.update(); // 更新控制器
+
+        // 更新文字实体
+        textEntities.forEach((ent) => {
+          ent.mStr.update(time);
+          ent.mesh.position.add(ent.velocity);
+
+          // 关键：让文字始终朝向摄像机 (Billboard)
+          // 如果使用 lookAt，文字会跟随摄像机旋转，始终正对用户
+          ent.mesh.lookAt(camera.position);
+
+          // 边界回环
+          const r = CONFIG.worldRadius + 100;
+          if (ent.mesh.position.x > r) ent.mesh.position.x = -r;
+          if (ent.mesh.position.x < -r) ent.mesh.position.x = r;
+          if (ent.mesh.position.y > r) ent.mesh.position.y = -r;
+          if (ent.mesh.position.y < -r) ent.mesh.position.y = r;
+          if (ent.mesh.position.z > r) ent.mesh.position.z = -r;
+          if (ent.mesh.position.z < -r) ent.mesh.position.z = r;
+        });
+
+        // 更新背景装饰
+        bgGroup.children.forEach((m) => {
+          m.rotation.x += m.userData.rotSpeed;
+          m.rotation.y += m.userData.rotSpeed;
+        });
+        rainLines.rotation.y += 0.001; // 整体缓慢旋转线条雨
+
+        renderer.render(scene, camera);
+      }
+
+      window.addEventListener("resize", () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      animate();
+    </script>
+  </body>
+</html>
