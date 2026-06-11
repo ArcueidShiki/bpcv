@@ -84,6 +84,17 @@
     "title": "プロジェクト",
     "content": [
       {
+        "name": "財務予算管理システム",
+        "link": "#",
+        "description": "予算計画・支出トラッキング・レポーティングを備えたフルスタックの財務予算管理プラットフォーム。Claude Codeを活用したエージェントワークフローで最近開発。",
+        "technologies": [
+          "React",
+          "Node.js",
+          "PostgreSQL",
+          "Claude Code"
+        ]
+      },
+      {
         "name": "AuraWell Agent",
         "link": "https://github.com/PrescottClub/AuraWell_Agent.git",
         "description": "個人化された健康推奨とメンタルウェルネスサポートを提供するAI駆動のウェルネスコンパニオン。",
@@ -345,6 +356,18 @@
           {
             "name": "プロンプトエンジニアリング",
             "iconUrl": "https://skillicons.dev/icons?i=markdown"
+          },
+          {
+            "name": "Claude Code · MCP · エージェントスキル",
+            "iconUrl": "https://skillicons.dev/icons?i=nodejs"
+          },
+          {
+            "name": "ComfyUI",
+            "iconUrl": "https://skillicons.dev/icons?i=py"
+          },
+          {
+            "name": "プロダクト分析",
+            "iconUrl": "https://skillicons.dev/icons?i=grafana"
           }
         ]
       }

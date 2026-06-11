@@ -112,6 +112,17 @@
     "title": "Projects",
     "content": [
       {
+        "name": "Financial Budget Management System",
+        "link": "#",
+        "description": "Full-stack budgeting and financial management platform featuring budget planning, expense tracking, and reporting; built recently with Claude Code-driven agentic workflows.",
+        "technologies": [
+          "React",
+          "Node.js",
+          "PostgreSQL",
+          "Claude Code"
+        ]
+      },
+      {
         "name": "AuraWell Agent",
         "link": "https://github.com/PrescottClub/AuraWell_Agent.git",
         "description": "AI-powered wellness companion that provides personalized health recommendations and mental wellness support.",
@@ -292,7 +303,10 @@
           { "name": "RAG", "iconUrl": "https://skillicons.dev/icons?i=mongodb" },
           { "name": "LangChain", "iconUrl": "https://skillicons.dev/icons?i=py" },
           { "name": "Vector Databases", "iconUrl": "https://skillicons.dev/icons?i=postgresql" },
-          { "name": "Prompt Engineering", "iconUrl": "https://skillicons.dev/icons?i=markdown" }
+          { "name": "Prompt Engineering", "iconUrl": "https://skillicons.dev/icons?i=markdown" },
+          { "name": "Claude Code · MCP · Agent Skills", "iconUrl": "https://skillicons.dev/icons?i=nodejs" },
+          { "name": "ComfyUI", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "Product Analytics", "iconUrl": "https://skillicons.dev/icons?i=grafana" }
         ]
       }
     ]

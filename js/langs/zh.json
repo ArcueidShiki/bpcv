@@ -100,6 +100,12 @@
     "title": "项目",
     "content": [
       {
+        "name": "财务预算管理系统",
+        "link": "#",
+        "description": "全栈财务预算管理平台：预算规划、支出跟踪与报表分析；近期使用 Claude Code 智能体工作流构建。",
+        "technologies": ["React", "Node.js", "PostgreSQL", "Claude Code"]
+      },
+      {
         "name": "AuraWell Agent",
         "link": "https://github.com/PrescottClub/AuraWell_Agent.git",
         "description": "AI驱动的健康伴侣，提供个性化健康建议和心理健康支持。",
@@ -228,7 +234,10 @@
           { "name": "RAG（检索增强生成）", "iconUrl": "https://skillicons.dev/icons?i=mongodb" },
           { "name": "LangChain", "iconUrl": "https://skillicons.dev/icons?i=py" },
           { "name": "向量数据库", "iconUrl": "https://skillicons.dev/icons?i=postgresql" },
-          { "name": "提示词工程", "iconUrl": "https://skillicons.dev/icons?i=markdown" }
+          { "name": "提示词工程", "iconUrl": "https://skillicons.dev/icons?i=markdown" },
+          { "name": "Claude Code · MCP · 智能体技能", "iconUrl": "https://skillicons.dev/icons?i=nodejs" },
+          { "name": "ComfyUI", "iconUrl": "https://skillicons.dev/icons?i=py" },
+          { "name": "产品分析", "iconUrl": "https://skillicons.dev/icons?i=grafana" }
         ]
       }
     ]
