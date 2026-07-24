@@ -1,0 +1,8 @@
+# Files in this directory that must NOT be published as public static assets.
+# wrangler.jsonc points the assets directory at the repo root, so without this
+# the whole .git directory (full history, remotes, credentials in the config)
+# is served publicly and the repository can be cloned by anyone.
+.git
+.wrangler
+.gitignore
+.assetsignore
