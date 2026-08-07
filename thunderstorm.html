@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>⛈ 雷暴模拟器 · Thunderstorm</title>
+<link rel="stylesheet" href="css/demo-nav.css">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:100%; height:100%; overflow:hidden; background:#05070c;
+    font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",Segoe UI,Roboto,sans-serif; }
+  canvas#scene { position:fixed; inset:0; display:block; touch-action:none; cursor:crosshair; }
+  #flash { position:fixed; inset:0; pointer-events:none; z-index:5; opacity:0;
+    background:radial-gradient(circle at 50% 28%, #e8f0ff 0%, #b9ccff 55%, #8ea6e8 100%);
+    mix-blend-mode:screen; }
+  #vignette { position:fixed; inset:0; pointer-events:none; z-index:4;
+    background:radial-gradient(ellipse at 50% 45%, transparent 52%, rgba(0,0,5,.55) 100%); }
+  #panel { position:fixed; top:14px; right:14px; z-index:10; width:236px;
+    background:rgba(10,14,22,.62); backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+    border:1px solid rgba(130,160,220,.18); border-radius:14px; color:#c8d4ea;
+    box-shadow:0 8px 32px rgba(0,0,0,.5); font-size:12.5px; user-select:none; }
+  #panel summary { list-style:none; cursor:pointer; padding:12px 14px; display:flex; align-items:center; gap:8px; }
+  #panel summary::-webkit-details-marker { display:none; }
+  #panel summary h1 { font-size:14.5px; font-weight:600; color:#e6eeff; letter-spacing:.5px; flex:1; }
+  #panel summary .caret { transition:transform .25s; opacity:.6; font-size:11px; }
+  #panel[open] summary .caret { transform:rotate(90deg); }
+  #panel .body { padding:2px 14px 13px; display:flex; flex-direction:column; gap:10px; }
+  #panel .hint { font-size:11px; line-height:1.65; color:#8b9ab5; }
+  #panel label { display:flex; flex-direction:column; gap:5px; }
+  #panel label .lr { display:flex; justify-content:space-between; align-items:center; }
+  #panel label .lr b { color:#9fc0ff; font-weight:600; }
+  input[type=range] { width:100%; accent-color:#7fa8ff; height:18px; cursor:pointer; }
+  select { background:rgba(20,28,44,.9); color:#d5e0f5; border:1px solid rgba(130,160,220,.25);
+    border-radius:7px; padding:5px 8px; font-size:12px; outline:none; cursor:pointer; }
+  .row { flex-direction:row !important; align-items:center; gap:8px !important; cursor:pointer; }
+  .row input { accent-color:#7fa8ff; width:15px; height:15px; cursor:pointer; }
+  .btns { display:flex; gap:8px; }
+  .btns button { flex:1; background:linear-gradient(180deg, rgba(70,100,170,.45), rgba(40,60,110,.45));
+    border:1px solid rgba(140,170,235,.3); color:#dbe6ff; border-radius:8px; padding:7px 4px;
+    font-size:12px; cursor:pointer; transition:filter .15s; }
+  .btns button:hover { filter:brightness(1.35); }
+  .stat { font-size:11.5px; color:#8b9ab5; display:flex; justify-content:space-between; }
+  .stat b { color:#ffd27a; font-weight:600; }
+  #audioHint { position:fixed; bottom:14px; left:50%; transform:translateX(-50%); z-index:10;
+    color:#7f8daa; font-size:11.5px; background:rgba(10,14,22,.55); padding:6px 14px; border-radius:20px;
+    backdrop-filter:blur(8px); pointer-events:none; transition:opacity .6s; }
+  #err { position:fixed; inset:0; display:none; z-index:99; color:#dfe6f5; background:#0a0d14;
+    align-items:center; justify-content:center; text-align:center; line-height:2; padding:24px; }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+<div id="vignette"></div>
+<div id="flash"></div>
+
+<details id="panel" open>
+  <summary><h1>⛈ 雷暴模拟器</h1><span class="caret">▶</span></summary>
+  <div class="body">
+    <div class="hint">🖱 点击地面 → 召唤闪电<br>拖动旋转视角 · 滚轮缩放 · 空格随机落雷</div>
+    <label><span class="lr">自动落雷频率 <b><span id="rateV">14</span> 次/分</b></span>
+      <input id="rate" type="range" min="0" max="60" step="1" value="14"></label>
+    <label><span class="lr">闪电强度 <b><span id="powV">1.0</span>×</b></span>
+      <input id="pow" type="range" min="30" max="220" step="5" value="100"></label>
+    <label><span class="lr">闪电颜色</span>
+      <select id="colorMode">
+        <option value="random" selected>🎲 随机</option>
+        <option value="#9fc8ff">蓝白 · 经典</option>
+        <option value="#b48cff">紫电</option>
+        <option value="#7ff3ff">青蓝 · 离子</option>
+        <option value="#ffd27a">金橙</option>
+        <option value="#ff8484">绯红</option>
+        <option value="#9dffb8">翠绿</option>
+      </select></label>
+    <label class="row"><input type="checkbox" id="snd" checked> 雷声与雨声（物理声速延迟）</label>
+    <div class="btns"><button id="strikeBtn">⚡ 随机一击</button><button id="clearBtn">🧹 清除焦痕</button></div>
+    <div class="stat"><span>累计雷击</span><b id="count">0</b></div>
+  </div>
+</details>
+<div id="audioHint">点击页面任意处以开启音效 🔊</div>
+<div id="err"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script id="app">
+'use strict';
+(function(){
+if (!window.THREE) {
+  const e = document.getElementById('err');
+  e.style.display = 'flex';
+  e.innerHTML = '⚠️ Three.js 加载失败。<br>本页面需要联网加载 three.js（cdnjs），请检查网络后刷新。';
+  return;
+}
+
+// ============================================================
+//  基础工具
+// ============================================================
+const rand  = (a, b) => a + Math.random() * (b - a);
+const randi = (a, b) => Math.floor(rand(a, b));
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const lerp  = (a, b, t) => a + (b - a) * t;
+const n1    = x => { const s = Math.sin(x * 127.1) * 43758.5453; return s - Math.floor(s); };
+
+const GROUND_S = 500;      // 地面边长 (米)
+const CLOUD_Y  = 78;       // 云底高度
+const CAN      = 2048;     // 焦痕画布分辨率
+const SOUND_MS = 343;      // 声速 m/s —— 雷声物理延迟
+
+// ============================================================
+//  渲染器 / 场景 / 相机
+// ============================================================
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+renderer.setSize(window.innerWidth, window.innerHeight);
+renderer.outputEncoding = THREE.sRGBEncoding;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.12;
+renderer.setClearColor(0x05070c);
+
+const scene = new THREE.Scene();
+scene.fog = new THREE.FogExp2(0x0a0d15, 0.0036);
+
+const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.5, 1600);
+
+// 自定义轨道相机（阻尼）
+const cam = {
+  target: new THREE.Vector3(0, 9, 0),
+  theta: 0.55, phi: 1.16, r: 66,
+  thetaT: 0.55, phiT: 1.16, rT: 66,
+  shake: 0, shakeT: 0
+};
+function updateCamera(dt, t) {
+  const k = 1 - Math.pow(0.0001, dt);
+  cam.theta += (cam.thetaT - cam.theta) * k;
+  cam.phi   += (cam.phiT   - cam.phi)   * k;
+  cam.r     += (cam.rT     - cam.r)     * k;
+  const sp = Math.sin(cam.phi), cp = Math.cos(cam.phi);
+  camera.position.set(
+    cam.target.x + cam.r * sp * Math.sin(cam.theta),
+    cam.target.y + cam.r * cp,
+    cam.target.z + cam.r * sp * Math.cos(cam.theta)
+  );
+  // 雷击震屏
+  cam.shake *= Math.exp(-4.2 * dt);
+  if (cam.shake > 0.001) {
+    camera.position.x += (n1(t * 41.3) - 0.5) * cam.shake;
+    camera.position.y += (n1(t * 55.7 + 9.1) - 0.5) * cam.shake * 0.7;
+    camera.position.z += (n1(t * 47.9 + 3.7) - 0.5) * cam.shake;
+  }
+  camera.lookAt(cam.target);
+}
+
+// 环境光照（微弱，闪电才是主光源）
+const hemi = new THREE.HemisphereLight(0x3a4a66, 0x0b0d10, 0.22);
+scene.add(hemi);
+scene.add(new THREE.AmbientLight(0x18202e, 0.3));
+
+// ============================================================
+//  GLSL 公共噪声（value noise + fbm）
+// ============================================================
+const NOISE_GLSL = `
+  float hash21(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453123); }
+  float vnoise(vec2 p){
+    vec2 i = floor(p), f = fract(p);
+    f = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash21(i), hash21(i + vec2(1.0, 0.0)), f.x),
+               mix(hash21(i + vec2(0.0, 1.0)), hash21(i + vec2(1.0, 1.0)), f.x), f.y);
+  }
+  float fbm(vec2 p){
+    float v = 0.0, a = 0.5;
+    for (int k = 0; k < 5; k++) { v += a * vnoise(p); p = p * 2.03 + vec2(17.3, 9.1); a *= 0.5; }
+    return v;
+  }
+`;
+
+// 全局闪光状态（供天空/云/雨/烟等 shader 共享）
+const flashState = { i: 0, pos: new THREE.Vector3(0, 40, 0), color: new THREE.Color(0.7, 0.8, 1) };
+
+// ============================================================
+//  天空穹顶 shader —— 风暴云 + 被闪电照亮
+// ============================================================
+const skyMat = new THREE.ShaderMaterial({
+  side: THREE.BackSide, depthWrite: false, fog: false,
+  uniforms: {
+    uTime: { value: 0 },
+    uFlash: { value: 0 },
+    uFlashPos: { value: flashState.pos },
+    uFlashColor: { value: flashState.color }
+  },
+  vertexShader: `
+    varying vec3 vWorld;
+    void main(){
+      vWorld = (modelMatrix * vec4(position, 1.0)).xyz;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    varying vec3 vWorld;
+    uniform float uTime, uFlash;
+    uniform vec3 uFlashPos, uFlashColor;
+    ${NOISE_GLSL}
+    void main(){
+      vec3 d = normalize(vWorld - cameraPosition);
+      float h = clamp(d.y, -0.12, 1.0);
+      // 底色：地平线略亮的阴沉蓝灰
+      vec3 base = mix(vec3(0.085, 0.10, 0.128), vec3(0.016, 0.021, 0.034), smoothstep(-0.06, 0.55, h));
+      // 滚动云层
+      vec2 uv = d.xz / (abs(d.y) + 0.30);
+      float t = uTime;
+      float f = fbm(uv * 1.5 + vec2(t * 0.016, t * 0.008));
+      f = f * 0.72 + 0.28 * fbm(uv * 4.1 - vec2(t * 0.033, t * 0.011));
+      float den = smoothstep(0.30, 0.80, f);
+      vec3 cloudCol = mix(vec3(0.055, 0.066, 0.09), vec3(0.012, 0.015, 0.024), den);
+      vec3 col = mix(base, cloudCol, smoothstep(0.02, 0.28, h));
+      // 闪电照亮云层（方向性 + 全局泛光，云越厚越"透光"）
+      vec3 fd = normalize(uFlashPos - cameraPosition);
+      float ang = max(dot(d, fd), 0.0);
+      float lit = pow(ang, 7.0) * 0.85 + pow(ang, 2.0) * 0.10;
+      col += uFlashColor * uFlash * (0.05 + lit) * (0.30 + den * 1.1);
+      gl_FragColor = vec4(col, 1.0);
+    }
+  `
+});
+const skyDome = new THREE.Mesh(new THREE.SphereGeometry(720, 36, 18), skyMat);
+skyDome.renderOrder = -3;
+scene.add(skyDome);
+
+// ============================================================
+//  低空云盖 shader —— 雷击正上方局部透亮
+// ============================================================
+const cloudMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false, side: THREE.DoubleSide, fog: false,
+  uniforms: {
+    uTime: { value: 0 },
+    uFlash: { value: 0 },
+    uFlashPos: { value: flashState.pos },
+    uFlashColor: { value: flashState.color }
+  },
+  vertexShader: `
+    varying vec2 vUv; varying vec3 vWorld;
+    void main(){
+      vUv = uv;
+      vWorld = (modelMatrix * vec4(position, 1.0)).xyz;
+      gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+    }
+  `,
+  fragmentShader: `
+    varying vec2 vUv; varying vec3 vWorld;
+    uniform float uTime, uFlash;
+    uniform vec3 uFlashPos, uFlashColor;
+    ${NOISE_GLSL}
+    void main(){
+      float t = uTime;
+      vec2 p = vUv * 9.0;
+      float f = fbm(p + vec2(t * 0.045, t * 0.018));
+      f = f * 0.7 + 0.3 * fbm(p * 2.7 - vec2(t * 0.07, 0.0));
+      float den = smoothstep(0.34, 0.78, f);
+      // 边缘淡出
+      vec2 e = abs(vUv - 0.5);
+      float edge = smoothstep(0.5, 0.33, max(e.x, e.y));
+      // 雷击点上方局部照亮
+      float dist = length(vWorld.xz - uFlashPos.xz);
+      float fall = exp(-dist * 0.016);
+      vec3 col = mix(vec3(0.020, 0.026, 0.042), vec3(0.052, 0.062, 0.088), f);
+      col += uFlashColor * uFlash * (fall * (0.25 + den * 1.6) + 0.02);
+      float a = den * 0.9 * edge;
+      gl_FragColor = vec4(col, a);
+    }
+  `
+});
+const cloudDeck = new THREE.Mesh(new THREE.PlaneGeometry(1000, 1000).rotateX(-Math.PI / 2), cloudMat);
+cloudDeck.position.y = 96;
+cloudDeck.renderOrder = -2;
+scene.add(cloudDeck);
+
+// ============================================================
+//  地面 + 焦痕画布（雷击后永久烧焦）
+// ============================================================
+const gCanvas = document.createElement('canvas');
+gCanvas.width = gCanvas.height = CAN;
+const gCtx = gCanvas.getContext('2d');
+
+function paintBaseGround() {
+  gCtx.globalCompositeOperation = 'source-over';
+  gCtx.fillStyle = '#14171d';
+  gCtx.fillRect(0, 0, CAN, CAN);
+  // 泥土斑块
+  const cols = ['#191d24', '#10131a', '#1c2129', '#161b18', '#0d0f13', '#1a1e20'];
+  for (let i = 0; i < 4200; i++) {
+    gCtx.globalAlpha = rand(0.03, 0.09);
+    gCtx.fillStyle = cols[randi(0, cols.length)];
+    gCtx.beginPath();
+    gCtx.ellipse(rand(0, CAN), rand(0, CAN), rand(4, 70), rand(3, 40), rand(0, Math.PI), 0, Math.PI * 2);
+    gCtx.fill();
+  }
+  // 湿润水洼反光感（亮一点的蓝灰斑）
+  for (let i = 0; i < 130; i++) {
+    gCtx.globalAlpha = rand(0.05, 0.14);
+    gCtx.fillStyle = '#232c3d';
+    gCtx.beginPath();
+    gCtx.ellipse(rand(0, CAN), rand(0, CAN), rand(10, 90), rand(6, 45), rand(0, Math.PI), 0, Math.PI * 2);
+    gCtx.fill();
+  }
+  // 细碎噪点
+  for (let i = 0; i < 6000; i++) {
+    gCtx.globalAlpha = rand(0.03, 0.08);
+    gCtx.fillStyle = Math.random() < 0.5 ? '#232a35' : '#0a0c10';
+    gCtx.fillRect(rand(0, CAN), rand(0, CAN), rand(1, 3), rand(1, 3));
+  }
+  // 暗角
+  const vg = gCtx.createRadialGradient(CAN / 2, CAN / 2, CAN * 0.25, CAN / 2, CAN / 2, CAN * 0.72);
+  vg.addColorStop(0, 'rgba(0,0,0,0)');
+  vg.addColorStop(1, 'rgba(0,0,4,0.55)');
+  gCtx.globalAlpha = 1;
+  gCtx.fillStyle = vg;
+  gCtx.fillRect(0, 0, CAN, CAN);
+}
+paintBaseGround();
+
+const groundTex = new THREE.CanvasTexture(gCanvas);
+groundTex.encoding = THREE.sRGBEncoding;
+groundTex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+
+const ground = new THREE.Mesh(
+  new THREE.PlaneGeometry(GROUND_S, GROUND_S).rotateX(-Math.PI / 2),
+  new THREE.MeshStandardMaterial({ map: groundTex, roughness: 0.5, metalness: 0.08 })
+);
+scene.add(ground);
+
+// 世界坐标 → 画布像素（plane rotateX(-90°)：local y = -world z，CanvasTexture flipY）
+function worldToCanvas(x, z) {
+  return [(0.5 + x / GROUND_S) * CAN, (0.5 + z / GROUND_S) * CAN];
+}
+const PXPM = CAN / GROUND_S; // 像素/米
+
+// 烧焦痕迹：炭黑核心 + 焦褐外圈 + 放射状电蚀裂纹
+function scorchAt(x, z, power) {
+  const [cx, cy] = worldToCanvas(x, z);
+  const r = rand(2.6, 4.6) * power * PXPM;
+  gCtx.save();
+  gCtx.translate(cx, cy);
+  // 外圈焦褐
+  let g = gCtx.createRadialGradient(0, 0, r * 0.3, 0, 0, r * 2.1);
+  g.addColorStop(0, 'rgba(38,24,13,0.55)');
+  g.addColorStop(1, 'rgba(38,24,13,0)');
+  gCtx.fillStyle = g;
+  gCtx.beginPath(); gCtx.arc(0, 0, r * 2.1, 0, Math.PI * 2); gCtx.fill();
+  // 炭黑核心
+  g = gCtx.createRadialGradient(0, 0, 0, 0, 0, r);
+  g.addColorStop(0, 'rgba(4,3,3,0.96)');
+  g.addColorStop(0.65, 'rgba(10,7,5,0.8)');
+  g.addColorStop(1, 'rgba(10,7,5,0)');
+  gCtx.fillStyle = g;
+  gCtx.beginPath(); gCtx.arc(0, 0, r, 0, Math.PI * 2); gCtx.fill();
+  // 放射电蚀裂纹（利希滕贝格图样的粗略致敬）
+  const nCracks = randi(6, 11);
+  for (let i = 0; i < nCracks; i++) {
+    let ang = rand(0, Math.PI * 2);
+    let px = Math.cos(ang) * r * 0.2, py = Math.sin(ang) * r * 0.2;
+    let w = rand(1.6, 3.2) * power;
+    const steps = randi(7, 15);
+    for (let s = 0; s < steps; s++) {
+      const len = rand(2, 6) * power;
+      ang += rand(-0.65, 0.65);
+      const nx = px + Math.cos(ang) * len, ny = py + Math.sin(ang) * len;
+      gCtx.strokeStyle = 'rgba(8,6,5,' + (0.85 * (1 - s / steps) + 0.1) + ')';
+      gCtx.lineWidth = Math.max(0.4, w);
+      gCtx.lineCap = 'round';
+      gCtx.beginPath(); gCtx.moveTo(px, py); gCtx.lineTo(nx, ny); gCtx.stroke();
+      // 偶发细分叉
+      if (Math.random() < 0.3) {
+        const ba = ang + rand(-1.2, 1.2);
+        gCtx.lineWidth = Math.max(0.3, w * 0.5);
+        gCtx.beginPath(); gCtx.moveTo(px, py);
+        gCtx.lineTo(px + Math.cos(ba) * len * 0.7, py + Math.sin(ba) * len * 0.7);
+        gCtx.stroke();
+      }
+      px = nx; py = ny; w *= 0.86;
+    }
+  }
+  // 崩溅炭渣
+  for (let i = 0; i < 26; i++) {
+    const a = rand(0, Math.PI * 2), d = rand(r * 0.5, r * 2.4);
+    gCtx.globalAlpha = rand(0.25, 0.7);
+    gCtx.fillStyle = '#070605';
+    gCtx.beginPath();
+    gCtx.arc(Math.cos(a) * d, Math.sin(a) * d, rand(0.5, 2.2), 0, Math.PI * 2);
+    gCtx.fill();
+  }
+  gCtx.restore();
+  gCtx.globalAlpha = 1;
+  groundTex.needsUpdate = true;
+}
+
+function clearScorch() {
+  paintBaseGround();
+  groundTex.needsUpdate = true;
+}
+
+// 闪电点光源池
+const lightPool = [];
+for (let i = 0; i < 5; i++) {
+  const L = new THREE.PointLight(0xffffff, 0, 320, 2);
+  scene.add(L);
+  lightPool.push(L);
+}
+function grabLight() {
+  let best = lightPool[0];
+  for (const L of lightPool) { if (L.intensity <= 0.01) return L; if (L.intensity < best.intensity) best = L; }
+  return best;
+}
+
+// ============================================================
+//  闪电：中点位移分形 + 递归分支 + 屏幕空间 ribbon shader
+// ============================================================
+// 分形折线：模拟阶梯先导的随机电离路径
+function displacePath(a, b, generations, roughness) {
+  let pts = [a.clone(), b.clone()];
+  let off = a.distanceTo(b) * roughness;
+  const dirTmp = new THREE.Vector3(), perp = new THREE.Vector3();
+  for (let g = 0; g < generations; g++) {
+    const out = [pts[0]];
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p0 = pts[i], p1 = pts[i + 1];
+      const mid = p0.clone().add(p1).multiplyScalar(0.5);
+      dirTmp.subVectors(p1, p0).normalize();
+      perp.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+      perp.addScaledVector(dirTmp, -perp.dot(dirTmp)).normalize();
+      mid.addScaledVector(perp, rand(-1, 1) * off);
+      out.push(mid, p1);
+    }
+    pts = out;
+    off *= 0.52;
+  }
+  return pts;
+}
+
+// 生成主干 + 分支折线集合
+function generateBoltPolys(start, end, power) {
+  const polys = [];
+  const main = displacePath(start, end, 7, 0.145);
+  polys.push({ pts: main, w0: 1.9 * power, w1: 1.1 * power, b: 1.0 });
+
+  const addBranches = (parent, depth, bright, wScale) => {
+    if (depth <= 0) return;
+    const count = Math.round(rand(3, 6) * power * (depth === 2 ? 1 : 0.6));
+    for (let i = 0; i < count; i++) {
+      const idx = randi(Math.floor(parent.length * 0.12), Math.floor(parent.length * 0.8));
+      const p = parent[idx];
+      if (p.y < 6) continue;
+      const dir = parent[Math.min(idx + 1, parent.length - 1)].clone().sub(p).normalize();
+      dir.x += rand(-0.9, 0.9); dir.z += rand(-0.9, 0.9); dir.y -= rand(0.25, 0.95);
+      dir.normalize();
+      const len = p.y * rand(0.25, 0.55);
+      const endB = p.clone().addScaledVector(dir, len);
+      if (endB.y < 1.5) endB.y = rand(1.5, 6);
+      const sub = displacePath(p, endB, 5, 0.2);
+      polys.push({ pts: sub, w0: 1.0 * wScale, w1: 0.22 * wScale, b: bright });
+      if (Math.random() < 0.55) addBranches(sub, depth - 1, bright * 0.6, wScale * 0.55);
+    }
+  };
+  addBranches(main, 2, 0.55, power);
+  return polys;
+}
+
+// 折线集合 → ribbon BufferGeometry（顶点着色器中做屏幕空间展宽）
+function buildBoltGeometry(polys) {
+  const pos = [], dirs = [], sides = [], widths = [], alongs = [], brights = [], index = [];
+  let vBase = 0;
+  const d = new THREE.Vector3();
+  for (const poly of polys) {
+    const pts = poly.pts, n = pts.length;
+    for (let i = 0; i < n; i++) {
+      const p = pts[i];
+      d.subVectors(pts[Math.min(i + 1, n - 1)], pts[Math.max(i - 1, 0)]).normalize();
+      const along = i / (n - 1);
+      const w = lerp(poly.w0, poly.w1, along);
+      for (let s = 0; s < 2; s++) {
+        pos.push(p.x, p.y, p.z);
+        dirs.push(d.x, d.y, d.z);
+        sides.push(s === 0 ? -1 : 1);
+        widths.push(w);
+        alongs.push(along);
+        brights.push(poly.b);
+      }
+    }
+    for (let i = 0; i < n - 1; i++) {
+      const k = vBase + i * 2;
+      index.push(k, k + 1, k + 2, k + 1, k + 3, k + 2);
+    }
+    vBase += n * 2;
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+  geo.setAttribute('aDir',     new THREE.Float32BufferAttribute(dirs, 3));
+  geo.setAttribute('aSide',    new THREE.Float32BufferAttribute(sides, 1));
+  geo.setAttribute('aWidth',   new THREE.Float32BufferAttribute(widths, 1));
+  geo.setAttribute('aAlong',   new THREE.Float32BufferAttribute(alongs, 1));
+  geo.setAttribute('aBright',  new THREE.Float32BufferAttribute(brights, 1));
+  geo.setIndex(index);
+  return geo;
+}
+
+const BOLT_VERT = `
+  attribute vec3 aDir;
+  attribute float aSide, aWidth, aAlong, aBright;
+  varying float vSide, vAlong, vBright;
+  uniform float uWidth;
+  void main(){
+    vSide = aSide; vAlong = aAlong; vBright = aBright;
+    vec4 mv = modelViewMatrix * vec4(position, 1.0);
+    vec3 dirV = normalize((modelViewMatrix * vec4(aDir, 0.0)).xyz);
+    vec3 viewDir = normalize(-mv.xyz);
+    vec3 perp = cross(dirV, viewDir);
+    float pl = length(perp);
+    perp = pl > 1e-4 ? perp / pl : vec3(1.0, 0.0, 0.0);
+    mv.xyz += perp * aSide * aWidth * uWidth;
+    gl_Position = projectionMatrix * mv;
+  }
+`;
+const BOLT_FRAG = `
+  varying float vSide, vAlong, vBright;
+  uniform vec3 uColor;
+  uniform float uIntensity, uTime;
+  void main(){
+    float s = abs(vSide);
+    float core = exp(-pow(s * 3.6, 2.0));            // 白热核心
+    float glow = exp(-pow(s * 1.12, 2.0)) * 0.55;    // 彩色辉光
+    // 沿闪电通道的高频闪烁颤动
+    float fl = 0.78 + 0.4 * fract(sin(dot(vec2(floor(vAlong * 46.0), floor(uTime * 85.0)),
+                                          vec2(12.9898, 78.233))) * 43758.5453);
+    vec3 col = (vec3(1.0) * core * 1.4 + uColor * (glow + core * 0.65)) * uIntensity * vBright * fl;
+    float a = clamp(core + glow, 0.0, 1.0) * clamp(uIntensity, 0.0, 1.4) * vBright;
+    gl_FragColor = vec4(col, a);
+  }
+`;
+
+// 强度包络：先导(暗) → 回击(炸亮) → 1~3 次复击，指数衰减
+function makeEnvelope(power) {
+  const spikes = [
+    { t: 0,                a: 0.16,               tau: 0.03 },   // 阶梯先导
+    { t: rand(0.06, 0.1),  a: rand(1.0, 1.3),     tau: rand(0.07, 0.1) } // 主回击
+  ];
+  const nRe = randi(0, 4);
+  let tt = spikes[1].t;
+  for (let i = 0; i < nRe; i++) {
+    tt += rand(0.09, 0.22);
+    spikes.push({ t: tt, a: rand(0.35, 0.8) * power, tau: rand(0.05, 0.08) });
+  }
+  const last = spikes[spikes.length - 1];
+  return { spikes, dur: last.t + last.tau * 6, mainT: spikes[1].t };
+}
+function envelopeAt(env, t) {
+  let I = 0;
+  for (const s of env.spikes) if (t >= s.t) I += s.a * Math.exp(-(t - s.t) / s.tau);
+  return I * (0.8 + 0.4 * n1(t * 90));
+}
+
+const bolts = [];   // 活跃闪电
+
+function spawnBolt(target, color, power) {
+  const start = new THREE.Vector3(
+    target.x + rand(-30, 30), CLOUD_Y + rand(-6, 8), target.z + rand(-30, 30));
+  const geo = buildBoltGeometry(generateBoltPolys(start, target, power));
+  const mat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide, fog: false,
+    uniforms: {
+      uColor: { value: color.clone() },
+      uIntensity: { value: 0 },
+      uTime: { value: 0 },
+      uWidth: { value: 1.0 }
+    },
+    vertexShader: BOLT_VERT, fragmentShader: BOLT_FRAG
+  });
+  const mesh = new THREE.Mesh(geo, mat);
+  mesh.frustumCulled = false;
+  scene.add(mesh);
+  const env = makeEnvelope(power);
+  const light = grabLight();
+  light.color.copy(color).lerp(new THREE.Color(1, 1, 1), 0.35);
+  light.position.set(target.x, 16, target.z);
+  const bolt = { mesh, mat, env, t: 0, light, target: target.clone(), color, power, dead: false };
+  bolts.push(bolt);
+  return bolt;
+}
+
+function updateBolts(dt, t) {
+  for (let i = bolts.length - 1; i >= 0; i--) {
+    const b = bolts[i];
+    b.t += dt;
+    if (b.t >= b.env.dur) {
+      scene.remove(b.mesh);
+      b.mesh.geometry.dispose();
+      b.mat.dispose();
+      b.light.intensity = 0;
+      bolts.splice(i, 1);
+      continue;
+    }
+    const I = envelopeAt(b.env, b.t);
+    b.I = I;
+    b.mat.uniforms.uIntensity.value = I;
+    b.mat.uniforms.uTime.value = t;
+    b.light.intensity = I * 26 * b.power;
+  }
+}
+
+// ============================================================
+//  粒子系统 ① GPU 雨（风倾斜 + 距离衰减 + 被闪电照亮）
+// ============================================================
+const RAIN_N = 14000, RAIN_H = 150, RAIN_R = 260;
+const rainGeo = new THREE.BufferGeometry();
+{
+  const p = new Float32Array(RAIN_N * 3), sp = new Float32Array(RAIN_N), ln = new Float32Array(RAIN_N);
+  for (let i = 0; i < RAIN_N; i++) {
+    p[i * 3] = rand(-RAIN_R, RAIN_R);
+    p[i * 3 + 1] = rand(0, RAIN_H);
+    p[i * 3 + 2] = rand(-RAIN_R, RAIN_R);
+    sp[i] = rand(48, 82);          // 终端速度 m/s（视觉夸张化的雨滴）
+    ln[i] = rand(9, 17);
+  }
+  rainGeo.setAttribute('position', new THREE.BufferAttribute(p, 3));
+  rainGeo.setAttribute('aSpeed', new THREE.BufferAttribute(sp, 1));
+  rainGeo.setAttribute('aLen', new THREE.BufferAttribute(ln, 1));
+}
+const rainMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false, fog: false,
+  uniforms: {
+    uTime: { value: 0 },
+    uWind: { value: new THREE.Vector2(7, 2) },
+    uFlash: { value: 0 },
+    uPixelScale: { value: 300 }
+  },
+  vertexShader: `
+    attribute float aSpeed, aLen;
+    varying float vDist;
+    uniform float uTime, uPixelScale;
+    uniform vec2 uWind;
+    void main(){
+      float y = mod(position.y - uTime * aSpeed, ${RAIN_H.toFixed(1)});
+      vec3 p = vec3(
+        position.x + (${RAIN_H.toFixed(1)} - y) * uWind.x * 0.016,
+        y,
+        position.z + (${RAIN_H.toFixed(1)} - y) * uWind.y * 0.016
+      );
+      vec4 mv = modelViewMatrix * vec4(p, 1.0);
+      vDist = -mv.z;
+      gl_PointSize = aLen * uPixelScale / max(vDist, 1.0);
+      gl_Position = projectionMatrix * mv;
+    }
+  `,
+  fragmentShader: `
+    varying float vDist;
+    uniform float uFlash;
+    uniform vec2 uWind;
+    void main(){
+      vec2 pc = gl_PointCoord - 0.5;
+      pc.x += pc.y * uWind.x * 0.014;   // 与风一致的斜向雨丝
+      float core = 1.0 - smoothstep(0.0, 0.075, abs(pc.x));
+      float len = 1.0 - smoothstep(0.32, 0.5, abs(pc.y));
+      float fade = clamp(exp(-(vDist - 30.0) * 0.010), 0.0, 1.0);
+      float a = core * len * 0.30 * fade;
+      if (a < 0.004) discard;
+      vec3 col = vec3(0.60, 0.70, 0.92) * (0.65 + uFlash * 2.4);
+      gl_FragColor = vec4(col, a);
+    }
+  `
+});
+const rain = new THREE.Points(rainGeo, rainMat);
+rain.frustumCulled = false;
+scene.add(rain);
+
+// ============================================================
+//  粒子系统 ② CPU 火花 —— 真实物理：重力 / 空气阻力 / 地面反弹
+// ============================================================
+const SPARK_N = 640;
+const sparkData = {
+  pos: new Float32Array(SPARK_N * 3),
+  vel: new Float32Array(SPARK_N * 3),
+  life: new Float32Array(SPARK_N),
+  maxLife: new Float32Array(SPARK_N),
+  cursor: 0
+};
+const sparkGeo = new THREE.BufferGeometry();
+sparkGeo.setAttribute('position', new THREE.BufferAttribute(sparkData.pos, 3).setUsage(THREE.DynamicDrawUsage));
+const sparkFrac = new Float32Array(SPARK_N);
+sparkGeo.setAttribute('aFrac', new THREE.BufferAttribute(sparkFrac, 1).setUsage(THREE.DynamicDrawUsage));
+sparkData.pos.fill(-9999);
+const sparkMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+  uniforms: { uTint: { value: new THREE.Color(1, 0.6, 0.3) } },
+  vertexShader: `
+    attribute float aFrac;
+    varying float vFrac;
+    void main(){
+      vFrac = aFrac;
+      vec4 mv = modelViewMatrix * vec4(position, 1.0);
+      gl_PointSize = (2.0 + 3.5 * aFrac) * 260.0 / max(-mv.z, 1.0);
+      gl_Position = projectionMatrix * mv;
+    }
+  `,
+  fragmentShader: `
+    varying float vFrac;
+    uniform vec3 uTint;
+    void main(){
+      if (vFrac <= 0.0) discard;
+      float d = length(gl_PointCoord - 0.5);
+      if (d > 0.5) discard;
+      float m = smoothstep(0.5, 0.1, d);
+      // 高温白 → 橙红 → 熄灭
+      vec3 hot = mix(vec3(1.0, 0.32, 0.06), vec3(1.0, 0.97, 0.85), pow(vFrac, 1.6));
+      vec3 col = mix(hot, uTint, 0.22) * m * (0.4 + vFrac * 2.2);
+      gl_FragColor = vec4(col, m * vFrac);
+    }
+  `
+});
+const sparks = new THREE.Points(sparkGeo, sparkMat);
+sparks.frustumCulled = false;
+scene.add(sparks);
+
+function spawnSparks(x, z, color, power) {
+  sparkMat.uniforms.uTint.value.copy(color);
+  const n = Math.round(rand(70, 130) * power);
+  for (let i = 0; i < n; i++) {
+    const k = sparkData.cursor;
+    sparkData.cursor = (k + 1) % SPARK_N;
+    const a = rand(0, Math.PI * 2);
+    const spd = rand(4, 26) * Math.sqrt(power);
+    const up = rand(0.15, 1.0);
+    sparkData.pos[k * 3] = x + rand(-0.4, 0.4);
+    sparkData.pos[k * 3 + 1] = rand(0.1, 1.6);
+    sparkData.pos[k * 3 + 2] = z + rand(-0.4, 0.4);
+    sparkData.vel[k * 3] = Math.cos(a) * spd * (1 - up * 0.5);
+    sparkData.vel[k * 3 + 1] = spd * up;
+    sparkData.vel[k * 3 + 2] = Math.sin(a) * spd * (1 - up * 0.5);
+    sparkData.maxLife[k] = sparkData.life[k] = rand(0.5, 1.6);
+  }
+}
+
+function updateSparks(dt) {
+  const g = 24, drag = 1.15;             // 重力 & 空气阻力系数
+  const damp = Math.max(0, 1 - drag * dt);
+  let any = false;
+  for (let k = 0; k < SPARK_N; k++) {
+    if (sparkData.life[k] <= 0) { if (sparkFrac[k] !== 0) { sparkFrac[k] = 0; any = true; } continue; }
+    any = true;
+    sparkData.life[k] -= dt;
+    sparkData.vel[k * 3 + 1] -= g * dt;
+    sparkData.vel[k * 3] *= damp;
+    sparkData.vel[k * 3 + 1] *= damp;
+    sparkData.vel[k * 3 + 2] *= damp;
+    sparkData.pos[k * 3] += sparkData.vel[k * 3] * dt;
+    sparkData.pos[k * 3 + 1] += sparkData.vel[k * 3 + 1] * dt;
+    sparkData.pos[k * 3 + 2] += sparkData.vel[k * 3 + 2] * dt;
+    // 地面碰撞：反弹 + 摩擦耗能
+    if (sparkData.pos[k * 3 + 1] < 0.05) {
+      sparkData.pos[k * 3 + 1] = 0.05;
+      sparkData.vel[k * 3 + 1] *= -0.42;
+      sparkData.vel[k * 3] *= 0.6;
+      sparkData.vel[k * 3 + 2] *= 0.6;
+    }
+    sparkFrac[k] = clamp(sparkData.life[k] / sparkData.maxLife[k], 0, 1);
+  }
+  if (any) {
+    sparkGeo.attributes.position.needsUpdate = true;
+    sparkGeo.attributes.aFrac.needsUpdate = true;
+  }
+}
+
+// ============================================================
+//  粒子系统 ③ GPU 烟雾 —— 焦痕上袅袅升起
+// ============================================================
+const SMOKE_N = 256;
+const smokeGeo = new THREE.BufferGeometry();
+const smokeAttr = {
+  pos: new Float32Array(SMOKE_N * 3),
+  birth: new Float32Array(SMOKE_N),
+  life: new Float32Array(SMOKE_N),
+  seed: new Float32Array(SMOKE_N),
+  size: new Float32Array(SMOKE_N),
+  vy: new Float32Array(SMOKE_N),
+  cursor: 0
+};
+smokeAttr.birth.fill(-1e5);
+smokeGeo.setAttribute('position', new THREE.BufferAttribute(smokeAttr.pos, 3));
+smokeGeo.setAttribute('aBirth', new THREE.BufferAttribute(smokeAttr.birth, 1));
+smokeGeo.setAttribute('aLife', new THREE.BufferAttribute(smokeAttr.life, 1));
+smokeGeo.setAttribute('aSeed', new THREE.BufferAttribute(smokeAttr.seed, 1));
+smokeGeo.setAttribute('aSize', new THREE.BufferAttribute(smokeAttr.size, 1));
+smokeGeo.setAttribute('aVy', new THREE.BufferAttribute(smokeAttr.vy, 1));
+const smokeMat = new THREE.ShaderMaterial({
+  transparent: true, depthWrite: false, fog: false,
+  uniforms: {
+    uTime: { value: 0 },
+    uFlash: { value: 0 },
+    uFlashColor: { value: flashState.color }
+  },
+  vertexShader: `
+    attribute float aBirth, aLife, aSeed, aSize, aVy;
+    varying float vA;
+    uniform float uTime;
+    void main(){
+      float age = uTime - aBirth;
+      if (age < 0.0 || age > aLife) { vA = 0.0; gl_Position = vec4(0.0, 0.0, 2.0, 1.0); gl_PointSize = 0.0; return; }
+      float f = age / aLife;
+      vec3 p = position;
+      p.y += aVy * age + 0.35 * age * age * 0.4;                 // 热浮升
+      p.x += sin(age * 0.9 + aSeed * 17.0) * (0.3 + age * 0.4);  // 湍流摆动
+      p.z += cos(age * 0.7 + aSeed * 29.0) * (0.3 + age * 0.35);
+      vA = smoothstep(0.0, 0.12, f) * (1.0 - f);
+      vec4 mv = modelViewMatrix * vec4(p, 1.0);
+      gl_PointSize = aSize * (1.0 + age * 0.9) * 300.0 / max(-mv.z, 1.0);
+      gl_Position = projectionMatrix * mv;
+    }
+  `,
+  fragmentShader: `
+    varying float vA;
+    uniform float uFlash;
+    uniform vec3 uFlashColor;
+    void main(){
+      if (vA <= 0.0) discard;
+      float d = length(gl_PointCoord - 0.5);
+      float m = smoothstep(0.5, 0.06, d);
+      vec3 col = vec3(0.30, 0.33, 0.38) * 0.5 + uFlashColor * uFlash * 0.35;
+      gl_FragColor = vec4(col, m * vA * 0.20);
+    }
+  `
+});
+const smoke = new THREE.Points(smokeGeo, smokeMat);
+smoke.frustumCulled = false;
+scene.add(smoke);
+
+function spawnSmoke(x, z, now, power) {
+  const n = randi(10, 17);
+  for (let i = 0; i < n; i++) {
+    const k = smokeAttr.cursor;
+    smokeAttr.cursor = (k + 1) % SMOKE_N;
+    smokeAttr.pos[k * 3] = x + rand(-1.4, 1.4) * power;
+    smokeAttr.pos[k * 3 + 1] = rand(0.2, 1.2);
+    smokeAttr.pos[k * 3 + 2] = z + rand(-1.4, 1.4) * power;
+    smokeAttr.birth[k] = now + rand(0, 0.8);
+    smokeAttr.life[k] = rand(2.8, 6);
+    smokeAttr.seed[k] = Math.random();
+    smokeAttr.size[k] = rand(2.2, 4.5) * power;
+    smokeAttr.vy[k] = rand(1.1, 2.4);
+  }
+  for (const key of ['position', 'aBirth', 'aLife', 'aSeed', 'aSize', 'aVy'])
+    smokeGeo.attributes[key].needsUpdate = true;
+}
+
+// ============================================================
+//  余烬辉光 + 冲击波环（雷击点地表）
+// ============================================================
+const EMBER_FRAG = `
+  varying vec2 vUv;
+  uniform float uAge, uPow;
+  uniform vec3 uColor;
+  void main(){
+    vec2 p = vUv - 0.5;
+    float d = length(p) * 16.0;   // 平面 16m
+    float glow = exp(-d * d * 0.5) * exp(-uAge * 1.0);                  // 灼热余烬
+    float ring = exp(-pow(d - uAge * 20.0, 2.0) * 0.9) * exp(-uAge * 3.2) * 0.8; // 冲击波
+    vec3 col = mix(vec3(1.0, 0.42, 0.10), uColor, 0.30) * glow * 2.4 + uColor * ring * 1.2;
+    float a = clamp(glow + ring, 0.0, 1.0) * uPow;
+    if (a < 0.004) discard;
+    gl_FragColor = vec4(col * uPow, a);
+  }
+`;
+const emberPool = [];
+for (let i = 0; i < 6; i++) {
+  const mat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, fog: false,
+    uniforms: {
+      uAge: { value: 99 },
+      uPow: { value: 1 },
+      uColor: { value: new THREE.Color(1, 0.6, 0.3) }
+    },
+    vertexShader: `
+      varying vec2 vUv;
+      void main(){ vUv = uv; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }
+    `,
+    fragmentShader: EMBER_FRAG
+  });
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(16, 16).rotateX(-Math.PI / 2), mat);
+  m.position.y = 0.07;
+  m.visible = false;
+  scene.add(m);
+  emberPool.push({ mesh: m, mat, t: 99 });
+}
+function spawnEmber(x, z, color, power) {
+  let e = emberPool.find(e => !e.mesh.visible) || emberPool[0];
+  e.t = 0;
+  e.mesh.visible = true;
+  e.mesh.position.set(x, 0.07, z);
+  e.mat.uniforms.uColor.value.copy(color);
+  e.mat.uniforms.uPow.value = clamp(power, 0.5, 1.8);
+}
+function updateEmbers(dt) {
+  for (const e of emberPool) {
+    if (!e.mesh.visible) continue;
+    e.t += dt;
+    e.mat.uniforms.uAge.value = e.t;
+    if (e.t > 6.5) e.mesh.visible = false;
+  }
+}
+
+// __PART_B_END__
+
+// ============================================================
+//  WebAudio 合成雷声（无音频文件） + 雨声环境
+//  物理：延迟 = 距离 / 343 m/s；音量与低通随距离衰减
+// ============================================================
+const audio = { ctx: null, master: null, on: true, ready: false, brown: null, white: null };
+
+function initAudio() {
+  if (audio.ready) return;
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return;
+  const ctx = new AC();
+  audio.ctx = ctx;
+  const comp = ctx.createDynamicsCompressor();
+  comp.threshold.value = -14; comp.ratio.value = 8; comp.attack.value = 0.002; comp.release.value = 0.3;
+  const master = ctx.createGain();
+  master.gain.value = audio.on ? 1 : 0;
+  master.connect(comp).connect(ctx.destination);
+  audio.master = master;
+  // 噪声缓冲
+  const mkBuf = brown => {
+    const len = ctx.sampleRate * 6;
+    const buf = ctx.createBuffer(1, len, ctx.sampleRate);
+    const d = buf.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < len; i++) {
+      const w = Math.random() * 2 - 1;
+      if (brown) { last = (last + 0.02 * w) / 1.02; d[i] = last * 3.5; }
+      else d[i] = w;
+    }
+    return buf;
+  };
+  audio.brown = mkBuf(true);
+  audio.white = mkBuf(false);
+  // 雨声：白噪声 → 低通
+  const rainSrc = ctx.createBufferSource();
+  rainSrc.buffer = audio.white; rainSrc.loop = true;
+  const rainLp = ctx.createBiquadFilter();
+  rainLp.type = 'lowpass'; rainLp.frequency.value = 950; rainLp.Q.value = 0.3;
+  const rainG = ctx.createGain(); rainG.gain.value = 0.05;
+  rainSrc.connect(rainLp).connect(rainG).connect(master);
+  rainSrc.start();
+  audio.ready = true;
+  const hint = document.getElementById('audioHint');
+  hint.style.opacity = '0';
+  setTimeout(() => hint.remove(), 800);
+}
+
+function playThunder(delaySec, dist, power) {
+  if (!audio.ready || !audio.on) return;
+  const ctx = audio.ctx;
+  if (ctx.state === 'suspended') ctx.resume();
+  const t = ctx.currentTime + Math.max(0.02, delaySec);
+  const v = clamp(power * 95 / (dist + 18), 0.03, 1.0);
+  // —— 低频轰鸣：棕噪声 + 低通扫频 + 随机涌动
+  const dur = rand(2.2, 4.6);
+  const src = ctx.createBufferSource();
+  src.buffer = audio.brown;
+  src.playbackRate.value = rand(0.7, 1.15);
+  const lp = ctx.createBiquadFilter();
+  lp.type = 'lowpass'; lp.Q.value = 0.5;
+  lp.frequency.setValueAtTime(dist < 110 ? 850 : 300, t);
+  lp.frequency.exponentialRampToValueAtTime(52, t + dur);
+  const g = ctx.createGain();
+  g.gain.setValueAtTime(0.0001, t);
+  g.gain.exponentialRampToValueAtTime(Math.max(0.002, v), t + (dist < 110 ? 0.03 : 0.25));
+  let ts = t + 0.35;
+  const swells = randi(2, 4);
+  for (let i = 0; i < swells; i++) {
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, v * rand(0.2, 0.65)), ts);
+    ts += rand(0.3, 0.8);
+    g.gain.exponentialRampToValueAtTime(Math.max(0.001, v * rand(0.5, 0.95)), ts);
+    ts += rand(0.25, 0.6);
+  }
+  g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.connect(lp).connect(g).connect(audio.master);
+  src.start(t, rand(0, 1.2), dur + 0.1);
+  // —— 近距离炸裂声（撕裂空气的高频 crack）
+  if (dist < 85) {
+    const s2 = ctx.createBufferSource();
+    s2.buffer = audio.white;
+    const bp = ctx.createBiquadFilter();
+    bp.type = 'bandpass'; bp.Q.value = 0.7;
+    bp.frequency.setValueAtTime(3400, t);
+    bp.frequency.exponentialRampToValueAtTime(500, t + 0.35);
+    const g2 = ctx.createGain();
+    g2.gain.setValueAtTime(0.0001, t);
+    g2.gain.exponentialRampToValueAtTime(v * 1.1, t + 0.012);
+    g2.gain.exponentialRampToValueAtTime(0.0001, t + rand(0.3, 0.55));
+    s2.connect(bp).connect(g2).connect(audio.master);
+    s2.start(t, rand(0, 2), 0.7);
+  }
+}
+
+// ============================================================
+//  一次完整雷击的编排
+// ============================================================
+const PALETTE = ['#9fc8ff', '#b48cff', '#7ff3ff', '#ffd27a', '#ff8484', '#9dffb8'];
+const ui = {
+  rate: document.getElementById('rate'), rateV: document.getElementById('rateV'),
+  pow: document.getElementById('pow'), powV: document.getElementById('powV'),
+  colorMode: document.getElementById('colorMode'),
+  snd: document.getElementById('snd'),
+  count: document.getElementById('count'),
+  flashDiv: document.getElementById('flash')
+};
+let strikeCount = 0;
+
+function pickColor() {
+  const mode = ui.colorMode.value;
+  const c = new THREE.Color(mode === 'random' ? PALETTE[randi(0, PALETTE.length)] : mode);
+  c.offsetHSL(rand(-0.02, 0.02), rand(-0.08, 0.08), rand(-0.04, 0.05));
+  return c;
+}
+
+function summonStrike(x, z) {
+  const power = parseInt(ui.pow.value, 10) / 100;
+  const color = pickColor();
+  const target = new THREE.Vector3(x, 0, z);
+  const bolt = spawnBolt(target, color, power);
+  // 地面效果
+  scorchAt(x, z, power);
+  spawnSparks(x, z, color, power);
+  spawnSmoke(x, z, simTime, power);
+  spawnEmber(x, z, color, power);
+  // 声音：回击时刻 + 声速传播延迟
+  const dist = camera.position.distanceTo(target);
+  playThunder(bolt.env.mainT + dist / SOUND_MS, dist, power);
+  // 震屏（随距离衰减）
+  cam.shake = Math.min(3, cam.shake + clamp(26 / (12 + dist * 0.5), 0.06, 1.6) * power * 2.4);
+  strikeCount++;
+  ui.count.textContent = strikeCount;
+}
+
+// —— 远处云中闪（sheet lightning）氛围
+const sheets = [];
+let nextSheet = 4;
+function spawnSheet() {
+  const a = rand(0, Math.PI * 2), r = rand(320, 560);
+  sheets.push({
+    t: 0, dur: rand(0.3, 0.7),
+    i: rand(0.25, 0.6),
+    pos: new THREE.Vector3(Math.cos(a) * r, rand(60, 110), Math.sin(a) * r),
+    color: new THREE.Color(PALETTE[randi(0, 3)])
+  });
+  const d = rand(600, 1400);
+  playThunder(d / SOUND_MS, d, 1.6);   // 数秒后传来的遥远闷雷
+}
+function updateSheets(dt) {
+  for (let i = sheets.length - 1; i >= 0; i--) {
+    const s = sheets[i];
+    s.t += dt;
+    if (s.t > s.dur) { sheets.splice(i, 1); continue; }
+    s.I = s.i * (0.5 + 0.5 * n1(s.t * 60)) * (1 - s.t / s.dur);
+  }
+}
+
+// ============================================================
+//  交互：点击召唤 / 拖动旋转 / 滚轮缩放 / 空格随机
+// ============================================================
+const raycaster = new THREE.Raycaster();
+const ptr = { down: false, moved: 0, x: 0, y: 0, id: -1 };
+
+canvas.addEventListener('pointerdown', e => {
+  ptr.down = true; ptr.moved = 0; ptr.x = e.clientX; ptr.y = e.clientY; ptr.id = e.pointerId;
+  canvas.setPointerCapture(e.pointerId);
+});
+canvas.addEventListener('pointermove', e => {
+  if (!ptr.down || e.pointerId !== ptr.id) return;
+  const dx = e.clientX - ptr.x, dy = e.clientY - ptr.y;
+  ptr.moved += Math.abs(dx) + Math.abs(dy);
+  ptr.x = e.clientX; ptr.y = e.clientY;
+  cam.thetaT -= dx * 0.0052;
+  cam.phiT = clamp(cam.phiT - dy * 0.0035, 0.32, 1.5);
+});
+canvas.addEventListener('pointerup', e => {
+  if (e.pointerId !== ptr.id) return;
+  ptr.down = false;
+  if (ptr.moved < 6) {  // 是点击而非拖动 → 召唤闪电
+    const ndc = new THREE.Vector2(
+      (e.clientX / window.innerWidth) * 2 - 1,
+      -(e.clientY / window.innerHeight) * 2 + 1
+    );
+    raycaster.setFromCamera(ndc, camera);
+    const hit = raycaster.intersectObject(ground)[0];
+    if (hit) {
+      const p = hit.point;
+      const rr = Math.hypot(p.x, p.z);
+      if (rr < 235) summonStrike(p.x, p.z);
+    }
+  }
+});
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  cam.rT = clamp(cam.rT * (1 + Math.sign(e.deltaY) * 0.09), 18, 170);
+}, { passive: false });
+window.addEventListener('keydown', e => {
+  if (e.code === 'Space') {
+    e.preventDefault();
+    const a = rand(0, Math.PI * 2), r = rand(15, 130);
+    summonStrike(Math.cos(a) * r, Math.sin(a) * r);
+  }
+});
+window.addEventListener('pointerdown', initAudio, { once: true });
+window.addEventListener('keydown', initAudio, { once: true });
+
+// UI 绑定
+ui.rate.addEventListener('input', () => { ui.rateV.textContent = ui.rate.value; scheduleAuto(true); });
+ui.pow.addEventListener('input', () => { ui.powV.textContent = (parseInt(ui.pow.value, 10) / 100).toFixed(1); });
+ui.snd.addEventListener('change', () => {
+  audio.on = ui.snd.checked;
+  if (audio.ready) audio.master.gain.value = audio.on ? 1 : 0;
+});
+document.getElementById('strikeBtn').addEventListener('click', () => {
+  const a = rand(0, Math.PI * 2), r = rand(15, 130);
+  summonStrike(Math.cos(a) * r, Math.sin(a) * r);
+});
+document.getElementById('clearBtn').addEventListener('click', clearScorch);
+if (window.innerWidth < 700) document.getElementById('panel').removeAttribute('open');
+
+// 自动落雷（泊松过程）
+let nextAuto = 1.4;
+function scheduleAuto(reset) {
+  const rate = parseInt(ui.rate.value, 10);
+  if (rate <= 0) { nextAuto = Infinity; return; }
+  const mean = 60 / rate;
+  nextAuto = simTime + mean * (0.35 + 1.3 * Math.random());
+  if (reset && nextAuto > simTime + mean * 1.65) nextAuto = simTime + mean * Math.random();
+}
+
+// ============================================================
+//  主循环
+// ============================================================
+let simTime = 0, lastT = performance.now();
+
+function frame(now) {
+  const dt = clamp((now - lastT) / 1000, 0.0001, 0.05);
+  lastT = now;
+  simTime += dt;
+  const t = simTime;
+
+  // 自动落雷 & 云中闪
+  if (t >= nextAuto) {
+    const a = rand(0, Math.PI * 2), r = rand(15, 150);
+    summonStrike(Math.cos(a) * r, Math.sin(a) * r);
+    scheduleAuto(false);
+  }
+  if (t >= nextSheet) { spawnSheet(); nextSheet = t + rand(6, 16); }
+
+  updateBolts(dt, t);
+  updateSheets(dt);
+  updateSparks(dt);
+  updateEmbers(dt);
+  updateCamera(dt, t);
+
+  // 汇总全局闪光（供天空 / 云 / 雨 / 烟 / 泛光共享）
+  let fI = 0;
+  let fPos = null, fColor = null, best = 0;
+  for (const b of bolts) {
+    const w = b.I * clamp(70 / (30 + camera.position.distanceTo(b.target)), 0.2, 1);
+    fI += w * 0.85;
+    if (w > best) { best = w; fPos = b.target; fColor = b.color; }
+  }
+  for (const s of sheets) {
+    fI += s.I * 0.5;
+    if (s.I * 0.6 > best) { best = s.I * 0.6; fPos = s.pos; fColor = s.color; }
+  }
+  fI = Math.min(fI, 1.6);
+  flashState.i += (fI - flashState.i) * (fI > flashState.i ? 1 : 1 - Math.pow(0.001, dt));
+  if (fPos) flashState.pos.set(fPos.x, Math.max(fPos.y, 30), fPos.z);
+  if (fColor) flashState.color.lerp(fColor, 0.5);
+
+  const F = flashState.i;
+  skyMat.uniforms.uTime.value = t;
+  skyMat.uniforms.uFlash.value = F;
+  cloudMat.uniforms.uTime.value = t;
+  cloudMat.uniforms.uFlash.value = F;
+  rainMat.uniforms.uTime.value = t;
+  rainMat.uniforms.uFlash.value = F;
+  smokeMat.uniforms.uTime.value = t;
+  smokeMat.uniforms.uFlash.value = F;
+  // 阵风
+  rainMat.uniforms.uWind.value.set(7 + Math.sin(t * 0.25) * 3.5 + Math.sin(t * 0.83) * 1.5,
+                                   2 + Math.cos(t * 0.19) * 2);
+  hemi.intensity = 0.22 + F * 0.5;
+  ui.flashDiv.style.opacity = (Math.min(F, 1.2) * 0.13).toFixed(3);
+
+  renderer.render(scene, camera);
+}
+renderer.setAnimationLoop(frame);
+
+window.addEventListener('resize', () => {
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// 开场：1.5 秒后先来一记近雷
+setTimeout(() => summonStrike(rand(-25, 25), rand(-35, 5)), 1500);
+scheduleAuto(false);
+
+})();
+</script>
+
+<!-- Shared demo launcher: back to the CV, or across to the other demos. -->
+<script src="js/demo-nav.js"></script>
+<script>
+  DemoNav.mount({ theme: "dark", top: 20, showBack: true, active: "storm" });
+</script>
+</body>
+</html>

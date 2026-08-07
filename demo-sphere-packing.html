@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🔮 Sphere Packing — Soft-Body Tank</title>
+
+  <script src="js/Three.iife.min.js"></script>
+  <script>window.THREE = Three;</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700&family=Rajdhani:wght@500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/demo-nav.css" />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle, #ffffff 0%, rgba(0, 0, 0, 0.5) 200%);
+      font-family: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    #webgl {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+    }
+
+    #webgl[data-webgl-failed="true"]::after {
+      content: "WebGL is unavailable in this browser.";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #555;
+      font-size: 15px;
+    }
+
+    .hero {
+      position: relative;
+      z-index: 2;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      text-align: center;
+    }
+
+    .hero h1, .hero h2 {
+      color: #000;
+      text-transform: uppercase;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 1);
+      line-height: 1;
+      user-select: none;
+    }
+
+    .hero h1 { font-size: clamp(46px, 11vw, 108px); font-weight: 700; }
+    .hero h2 { font-size: clamp(36px, 8.6vw, 84px); font-weight: 500; }
+
+    .hero p {
+      margin-top: 18px;
+      font-family: "Rajdhani", sans-serif;
+      font-size: 15px;
+      letter-spacing: 1px;
+      color: #333;
+      text-shadow: 0 0 14px #fff;
+    }
+
+    .controls {
+      position: fixed;
+      bottom: 18px;
+      left: 0;
+      width: 100%;
+      z-index: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding: 0 16px;
+    }
+
+    .controls button {
+      font-family: "Montserrat", sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: #000;
+      background: rgba(255, 255, 255, 0.72);
+      border: 1px solid #8a8a8a;
+      border-radius: 6px;
+      padding: 7px 14px;
+      cursor: pointer;
+      backdrop-filter: blur(6px);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .controls button:hover {
+      background: #fff;
+      transform: translateY(-2px);
+    }
+
+    .controls .state {
+      font-family: "Rajdhani", sans-serif;
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: #444;
+      background: rgba(255, 255, 255, 0.6);
+      border-radius: 6px;
+      padding: 6px 12px;
+    }
+
+    /* The launcher sits on a light page here, so darken its default styling. */
+    .demo-nav[data-demo-theme="dark"] .demo-nav__toggle,
+    .demo-nav[data-demo-theme="dark"] .demo-nav__back {
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+    }
+  </style>
+</head>
+<body>
+  <div id="webgl"></div>
+
+  <div class="hero">
+    <h1>Sphere</h1>
+    <h2>Packing</h2>
+    <p>MOVE THE CURSOR TO PUSH THE PACK APART</p>
+  </div>
+
+  <div class="controls">
+    <button type="button" id="gravityBtn">Toggle gravity</button>
+    <button type="button" id="colorsBtn">Random colors</button>
+    <span class="state" id="stateLabel">GRAVITY: ON</span>
+  </div>
+
+  <script src="js/sphere-packing.js"></script>
+  <script src="js/demo-nav.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      DemoNav.mount({ theme: "dark", top: 20, showBack: true, active: "spheres" });
+
+      var sim = SpherePacking.create({
+        container: document.getElementById("webgl"),
+        count: 260,
+        background: null
+      });
+
+      var label = document.getElementById("stateLabel");
+      var gravityBtn = document.getElementById("gravityBtn");
+      var colorsBtn = document.getElementById("colorsBtn");
+
+      if (!sim) {
+        gravityBtn.disabled = true;
+        colorsBtn.disabled = true;
+        label.textContent = "SIMULATION UNAVAILABLE";
+        return;
+      }
+
+      gravityBtn.addEventListener("click", function () {
+        var g = sim.toggleGravity();
+        label.textContent = g === 0 ? "GRAVITY: OFF — ZERO-G DRIFT" : "GRAVITY: ON";
+      });
+
+      colorsBtn.addEventListener("click", function () {
+        sim.randomizeColors();
+      });
+    })();
+  </script>
+</body>
+</html>

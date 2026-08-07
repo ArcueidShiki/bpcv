@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🧊 Cube Tunnel — Figure-8 Scroll Flight</title>
+
+  <!-- Vendored Three.js r113. The build exports a global named `Three`. -->
+  <script src="js/Three.iife.min.js"></script>
+  <script>window.THREE = Three;</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/demo-nav.css" />
+
+  <style>
+    :root {
+      --ink: #e8f0ff;
+      --dim: #8fa3c8;
+      --accent: #00e676;
+      --violet: #b478ff;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: #05060d;
+      color: var(--ink);
+      font-family: "Rajdhani", "Helvetica Neue", Arial, sans-serif;
+      /* The tunnel reads window.scrollY, so the document must be tall. */
+      min-height: 760vh;
+    }
+
+    /* Fixed WebGL layer behind everything. */
+    #tunnel {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    #tunnel[data-webgl-failed="true"]::after {
+      content: "WebGL is unavailable in this browser.";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--dim);
+      font-size: 15px;
+    }
+
+    /* Scroll-pinned copy. */
+    .stage {
+      position: relative;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .panel {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 0 8vw;
+    }
+
+    .panel:nth-child(even) { justify-content: flex-end; text-align: right; }
+
+    .panel__inner {
+      max-width: 420px;
+      padding: 26px 28px;
+      background: rgba(8, 12, 26, 0.62);
+      border: 1px solid rgba(0, 180, 255, 0.20);
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 14px 44px rgba(0, 0, 0, 0.55);
+      pointer-events: auto;
+    }
+
+    .panel__tag {
+      font-family: "Orbitron", sans-serif;
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    .panel h2 {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(22px, 3.4vw, 34px);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .panel p {
+      font-size: 16px;
+      line-height: 1.7;
+      color: var(--dim);
+      font-weight: 300;
+    }
+
+    .panel code {
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 13px;
+      color: var(--violet);
+      background: rgba(112, 0, 255, 0.14);
+      padding: 1px 6px;
+      border-radius: 5px;
+    }
+
+    /* ── Hero ─────────────────────────────────────────────────────── */
+
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      text-align: center;
+      padding: 0 6vw;
+    }
+
+    #hero-cube {
+      width: min(340px, 62vw);
+      height: min(340px, 62vw);
+      pointer-events: auto;
+      cursor: grab;
+    }
+
+    .hero h1 {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(28px, 5.4vw, 54px);
+      letter-spacing: 2px;
+      text-shadow: 0 0 26px rgba(0, 230, 118, 0.35);
+    }
+
+    .hero p { color: var(--dim); font-size: 17px; max-width: 560px; }
+
+    .hero__hint {
+      margin-top: 6px;
+      font-size: 13px;
+      letter-spacing: 2px;
+      color: var(--accent);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+
+    @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
+
+    /* ── Scroll progress ──────────────────────────────────────────── */
+
+    #progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0;
+      background: linear-gradient(90deg, var(--accent), var(--violet));
+      box-shadow: 0 0 12px rgba(0, 230, 118, 0.6);
+      z-index: 1002;
+    }
+
+    #readout {
+      position: fixed;
+      right: 18px;
+      bottom: 16px;
+      z-index: 1002;
+      font-family: ui-monospace, "SF Mono", Menlo, monospace;
+      font-size: 12px;
+      color: var(--dim);
+      background: rgba(8, 12, 26, 0.7);
+      border: 1px solid rgba(0, 180, 255, 0.2);
+      border-radius: 10px;
+      padding: 7px 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    #readout b { color: var(--accent); font-weight: 600; }
+
+    @media (max-width: 640px) {
+      .panel { padding: 0 5vw; }
+      .panel:nth-child(even) { justify-content: flex-start; text-align: left; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero__hint { animation: none; opacity: 0.8; }
+    }
+  </style>
+</head>
+<body>
+  <div id="progress"></div>
+  <div id="tunnel"></div>
+
+  <div class="stage">
+    <section class="hero">
+      <div id="hero-cube"></div>
+      <h1>CUBE TUNNEL</h1>
+      <p>Six stock tickers on six faces. Scroll to fly the figure-8.</p>
+      <div class="hero__hint">▼ SCROLL — OR DRAG THE CUBE ▼</div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__inner">
+        <div class="panel__tag">01 — THE PATH</div>
+        <h2>A Lissajous 8</h2>
+        <p>
+          The corridor is a 1:2 Lissajous curve — <code>x = A·sin(θ)</code> against
+          <code>y = B·sin(2θ)</code> — which traces a figure-8. Z marches steadily
+          from far to near, so the 8 stretches into a receding serpentine.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__inner">
+        <div class="panel__tag">02 — THE FRAME</div>
+        <h2>Flying without clipping</h2>
+        <p>
+          At every sample the tangent is crossed with world-up to build a
+          perpendicular frame. Cubes are pushed out along that frame, spiralling
+          around the flight line — so the camera travels a hollow corridor instead
+          of straight through solid geometry.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__inner">
+        <div class="panel__tag">03 — THE FACES</div>
+        <h2>Drawn, not downloaded</h2>
+        <p>
+          NVIDIA, SpaceX, Tesla, Apple, Amazon and Micron are painted straight onto
+          a <code>&lt;canvas&gt;</code> and handed to the GPU as a
+          <code>CanvasTexture</code>. No network round-trip, no CORS, no missing
+          textures on a cold load.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__inner">
+        <div class="panel__tag">04 — THE SCROLL</div>
+        <h2>Eased, not snapped</h2>
+        <p>
+          Scroll position sets a <em>target</em> along the curve; the camera eases
+          toward it each frame. The flight keeps gliding for a beat after the wheel
+          stops, which is what makes the 8 read as a path rather than a jump cut.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel__inner">
+        <div class="panel__tag">05 — END OF THE LINE</div>
+        <h2>Same effect, on the CV</h2>
+        <p>
+          This exact module runs behind both CV pages as a live background. Open
+          the launcher on the left to jump between demos, or head back to the CV.
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <div id="readout">FLIGHT <b id="pct">0%</b></div>
+
+  <script src="js/stock-logos.js"></script>
+  <script src="js/logo-cube-hero.js"></script>
+  <script src="js/logo-cube-tunnel.js"></script>
+  <script src="js/demo-nav.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      DemoNav.mount({ theme: "dark", top: 20, showBack: true, active: "cubes" });
+
+      var tunnel = LogoCubeTunnel.create({
+        container: document.getElementById("tunnel"),
+        background: 0x05060d,
+        cubeCount: 84,
+        loops: 2
+      });
+      if (!tunnel) console.warn("[demo-cube-tunnel] tunnel failed to start.");
+
+      var hero = LogoCubeHero.create({ container: document.getElementById("hero-cube") });
+      if (!hero) console.warn("[demo-cube-tunnel] hero cube failed to start.");
+
+      // Scroll readout — kept out of the render loop so it only runs on scroll.
+      var bar = document.getElementById("progress");
+      var pct = document.getElementById("pct");
+
+      function updateProgress() {
+        var doc = document.documentElement;
+        var max = doc.scrollHeight - window.innerHeight;
+        var p = max > 0 ? Math.min(Math.max((window.scrollY || doc.scrollTop) / max, 0), 1) : 0;
+        bar.style.width = (p * 100).toFixed(2) + "%";
+        pct.textContent = Math.round(p * 100) + "%";
+      }
+
+      window.addEventListener("scroll", updateProgress, { passive: true });
+      window.addEventListener("resize", updateProgress);
+      updateProgress();
+    })();
+  </script>
+</body>
+</html>

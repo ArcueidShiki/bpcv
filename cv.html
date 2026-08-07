@@ -24,12 +24,18 @@
     />
 
     <link rel="stylesheet" href="css/cv.css" />
+    <link rel="stylesheet" href="css/demo-nav.css" />
     <title>CV — Jensen Arcueid Peng</title>
   </head>
   <body>
     <!-- Cursor elements (demo1 style) -->
     <div id="cursor"></div>
     <div id="cursor-dot"></div>
+
+    <!-- Logo-cube tunnel — scroll-driven figure-8 flight.
+         Must precede #solar-background: both sit at z-index 0, so DOM order
+         is what keeps the tunnel behind the solar system. -->
+    <div id="cube-tunnel-bg"></div>
 
     <!-- Solar System Background — replaces ocean + cubes -->
     <div id="solar-background"></div>
@@ -135,5 +141,31 @@
     <script type="text/javascript" src="js/chatbot.js"></script>
     <script type="text/javascript" src="js/cyber-effects.js"></script>
     <script type="text/javascript" src="js/serpent-mouse.js"></script>
+
+    <!-- Logo-cube tunnel + demo launcher -->
+    <script type="text/javascript" src="js/stock-logos.js"></script>
+    <script type="text/javascript" src="js/logo-cube-tunnel.js"></script>
+    <script type="text/javascript" src="js/demo-nav.js"></script>
+    <script type="text/javascript">
+      (function () {
+        "use strict";
+
+        // Transparent renderer so the page background and the solar system
+        // still composite over it. Fewer cubes than the standalone demo — this
+        // is a backdrop for the CV, not the subject.
+        LogoCubeTunnel.create({
+          container: document.getElementById("cube-tunnel-bg"),
+          background: null,
+          cubeCount: 48,
+          // Wider corridor than the demo: keeps cubes off the reading area
+          // instead of filling the frame as the camera passes them.
+          corridorRadius: 7,
+          opacity: 0.85
+        });
+
+        // Four peer buttons below the existing stack, which ends at top: 254px.
+        DemoNav.mount({ theme: "cyber", top: 300, layout: "stack" });
+      })();
+    </script>
   </body>
 </html>

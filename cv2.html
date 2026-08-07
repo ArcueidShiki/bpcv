@@ -9,6 +9,12 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Noto+Sans+SC:wght@400;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
 
+  <link rel="stylesheet" href="css/demo-nav.css"/>
+
+  <!-- Vendored Three.js r113. The build exports a global named `Three`. -->
+  <script src="js/Three.iife.min.js"></script>
+  <script>window.THREE = Three;</script>
+
   <style>
     :root {
       --black:  #0f0f0f;
@@ -34,6 +40,13 @@
       background-size: 18px 18px;
       opacity: 0.055;
       pointer-events: none; z-index: 0;
+    }
+
+    /* Logo-cube tunnel — sits above the halftone dots but below <main>,
+       which is position:relative; z-index:1. */
+    #cube-tunnel-bg {
+      position: fixed; inset: 0;
+      z-index: 0; pointer-events: none;
     }
 
     /* ── Fixed UI Buttons ── */
@@ -348,6 +361,9 @@
   </style>
 </head>
 <body>
+
+  <!-- Logo-cube tunnel — scroll-driven figure-8 flight -->
+  <div id="cube-tunnel-bg"></div>
 
   <!-- Fixed buttons -->
   <button class="ui-btn" id="pdfBtn">📄 PDF</button>
@@ -722,6 +738,32 @@
 
     // ── Init ──────────────────────────────────────────────────────
     loadAllLangs().then(() => switchLang('en'));
+  </script>
+
+  <!-- Logo-cube tunnel + demo launcher -->
+  <script src="js/stock-logos.js"></script>
+  <script src="js/logo-cube-tunnel.js"></script>
+  <script src="js/demo-nav.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // The comic page is light, so the fog fades cubes into the paper colour
+      // instead of into the demo page's near-black.
+      LogoCubeTunnel.create({
+        container: document.getElementById('cube-tunnel-bg'),
+        background: null,
+        fogColor: 0xf5f5ef,
+        cubeCount: 46,
+        // Wider corridor than the demo: keeps cubes off the reading area
+        // instead of filling the frame as the camera passes them.
+        corridorRadius: 8,
+        opacity: 0.42
+      });
+
+      // Four peer buttons below the existing stack, which ends at top: 300px.
+      DemoNav.mount({ theme: 'comic', top: 346, layout: 'stack' });
+    })();
   </script>
 </body>
 </html>

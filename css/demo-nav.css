@@ -1,0 +1,244 @@
+/**
+ * demo-nav.css — styling for the shared demo launcher (js/demo-nav.js).
+ *
+ * One collapsible group rather than four more stacked buttons: cv.html already
+ * stacks to 254px and cv2.html to 300px, so four more fixed buttons would run
+ * off a short viewport.
+ *
+ * Themed via [data-demo-theme] on the root element: cyber | comic | dark.
+ */
+
+.demo-nav {
+  position: fixed;
+  left: 20px;
+  z-index: 1001;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  font-family: "Rajdhani", "Helvetica Neue", Arial, sans-serif;
+}
+
+.demo-nav__toggle,
+.demo-nav__back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  border-radius: 20px;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.demo-nav__caret {
+  font-size: 10px;
+  transition: transform 0.25s ease;
+}
+
+.demo-nav[data-open="true"] .demo-nav__caret {
+  transform: rotate(90deg);
+}
+
+.demo-nav__panel {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  border-radius: 14px;
+  max-height: 52vh;
+  overflow-y: auto;
+}
+
+.demo-nav[data-open="true"] .demo-nav__panel {
+  display: flex;
+}
+
+.demo-nav__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: transform 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.demo-nav__item:hover {
+  transform: translateX(3px);
+  text-decoration: none;
+}
+
+/* ── Stack layout: four always-visible peer buttons ──────────────── */
+
+.demo-nav[data-layout="stack"] {
+  gap: 8px;
+}
+
+.demo-nav[data-layout="stack"] .demo-nav__item {
+  padding: 9px 18px;
+  border-radius: 20px;
+  font-size: 13px;
+}
+
+/* Distinct accent per demo, so the four read as four buttons rather than a
+   repeated list. Matches how the existing CV stack colours each entry. */
+.demo-nav[data-layout="stack"][data-demo-theme="cyber"] .demo-nav__item[data-demo-id="cubes"] {
+  background: rgba(0, 60, 120, 0.82);
+  color: rgba(120, 200, 255, 0.96);
+  border-color: rgba(0, 180, 255, 0.4);
+}
+
+.demo-nav[data-layout="stack"][data-demo-theme="cyber"] .demo-nav__item[data-demo-id="spheres"] {
+  background: rgba(120, 20, 70, 0.82);
+  color: rgba(255, 150, 200, 0.96);
+  border-color: rgba(255, 90, 160, 0.4);
+}
+
+.demo-nav[data-layout="stack"][data-demo-theme="cyber"] .demo-nav__item[data-demo-id="shatter"] {
+  background: rgba(90, 55, 0, 0.82);
+  color: rgba(255, 200, 110, 0.96);
+  border-color: rgba(255, 175, 60, 0.4);
+}
+
+.demo-nav[data-layout="stack"][data-demo-theme="cyber"] .demo-nav__item[data-demo-id="storm"] {
+  background: rgba(20, 45, 100, 0.82);
+  color: rgba(160, 195, 255, 0.96);
+  border-color: rgba(130, 170, 255, 0.4);
+}
+
+.demo-nav[data-layout="stack"][data-demo-theme="comic"] .demo-nav__item[data-demo-id="cubes"] { background: #4dd0e1; }
+.demo-nav[data-layout="stack"][data-demo-theme="comic"] .demo-nav__item[data-demo-id="spheres"] { background: #ff8fab; }
+.demo-nav[data-layout="stack"][data-demo-theme="comic"] .demo-nav__item[data-demo-id="shatter"] { background: #ffd166; }
+.demo-nav[data-layout="stack"][data-demo-theme="comic"] .demo-nav__item[data-demo-id="storm"] { background: #a5b4fc; }
+
+/* ── Cyber theme (cv.html and the demo pages) ────────────────────── */
+
+.demo-nav[data-demo-theme="cyber"] .demo-nav__toggle,
+.demo-nav[data-demo-theme="dark"] .demo-nav__toggle {
+  background: rgba(0, 60, 120, 0.82);
+  color: rgba(120, 200, 255, 0.96);
+  border: 1px solid rgba(0, 180, 255, 0.38);
+  backdrop-filter: blur(12px);
+}
+
+.demo-nav[data-demo-theme="cyber"] .demo-nav__toggle:hover,
+.demo-nav[data-demo-theme="dark"] .demo-nav__toggle:hover {
+  background: rgba(0, 85, 165, 0.92);
+  box-shadow: 0 0 16px rgba(0, 180, 255, 0.35);
+  transform: translateY(-2px);
+}
+
+.demo-nav[data-demo-theme="cyber"] .demo-nav__back,
+.demo-nav[data-demo-theme="dark"] .demo-nav__back {
+  background: rgba(0, 100, 40, 0.82);
+  color: rgba(0, 230, 118, 0.96);
+  border: 1px solid rgba(0, 230, 118, 0.38);
+  backdrop-filter: blur(12px);
+}
+
+.demo-nav[data-demo-theme="cyber"] .demo-nav__back:hover,
+.demo-nav[data-demo-theme="dark"] .demo-nav__back:hover {
+  background: rgba(0, 125, 52, 0.92);
+  box-shadow: 0 0 16px rgba(0, 230, 118, 0.35);
+  transform: translateY(-2px);
+}
+
+.demo-nav[data-demo-theme="cyber"] .demo-nav__panel,
+.demo-nav[data-demo-theme="dark"] .demo-nav__panel {
+  background: rgba(8, 12, 26, 0.86);
+  border: 1px solid rgba(0, 180, 255, 0.22);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 32px rgba(0, 0, 0, 0.55);
+}
+
+.demo-nav[data-demo-theme="cyber"] .demo-nav__item,
+.demo-nav[data-demo-theme="dark"] .demo-nav__item {
+  background: rgba(40, 0, 90, 0.55);
+  color: rgba(190, 145, 255, 0.95);
+  border: 1px solid rgba(112, 0, 255, 0.28);
+}
+
+.demo-nav[data-demo-theme="cyber"] .demo-nav__item:hover,
+.demo-nav[data-demo-theme="dark"] .demo-nav__item:hover {
+  background: rgba(70, 0, 145, 0.8);
+  color: #fff;
+}
+
+.demo-nav[data-demo-theme="cyber"] .demo-nav__item[aria-current="page"],
+.demo-nav[data-demo-theme="dark"] .demo-nav__item[aria-current="page"] {
+  background: rgba(0, 230, 118, 0.18);
+  color: rgba(0, 230, 118, 0.98);
+  border-color: rgba(0, 230, 118, 0.5);
+}
+
+/* ── Comic theme (cv2.html) ──────────────────────────────────────── */
+
+.demo-nav[data-demo-theme="comic"] {
+  font-family: "Bangers", "Helvetica Neue", Arial, sans-serif;
+}
+
+.demo-nav[data-demo-theme="comic"] .demo-nav__toggle,
+.demo-nav[data-demo-theme="comic"] .demo-nav__back,
+.demo-nav[data-demo-theme="comic"] .demo-nav__item {
+  border-radius: 0;
+  border: 3px solid #000;
+  box-shadow: 4px 4px 0 #000;
+  letter-spacing: 1.5px;
+  font-size: 15px;
+  color: #000;
+}
+
+.demo-nav[data-demo-theme="comic"] .demo-nav__toggle { background: #4dd0e1; }
+.demo-nav[data-demo-theme="comic"] .demo-nav__back { background: #69f0ae; }
+.demo-nav[data-demo-theme="comic"] .demo-nav__item { background: #fff; }
+
+.demo-nav[data-demo-theme="comic"] .demo-nav__toggle:hover,
+.demo-nav[data-demo-theme="comic"] .demo-nav__back:hover,
+.demo-nav[data-demo-theme="comic"] .demo-nav__item:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 7px 7px 0 #000;
+}
+
+.demo-nav[data-demo-theme="comic"] .demo-nav__panel {
+  background: #ffe066;
+  border: 3px solid #000;
+  border-radius: 0;
+  box-shadow: 6px 6px 0 #000;
+}
+
+.demo-nav[data-demo-theme="comic"] .demo-nav__item[aria-current="page"] {
+  background: #ff5252;
+  color: #fff;
+}
+
+/* ── Small screens: keep the launcher from covering the content ──── */
+
+@media (max-width: 640px) {
+  .demo-nav {
+    left: 12px;
+  }
+
+  .demo-nav__toggle,
+  .demo-nav__back {
+    padding: 7px 13px;
+    font-size: 12px;
+  }
+
+  .demo-nav__panel {
+    max-height: 44vh;
+  }
+}
+
+@media print {
+  .demo-nav {
+    display: none !important;
+  }
+}

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>🌊 Image Shatter — Bezier Triangle Transition</title>
+
+  <script src="js/Three.iife.min.js"></script>
+  <script>window.THREE = Three;</script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Rajdhani:wght@300;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/demo-nav.css" />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 45%, #6a6a72, #2a2a30 75%, #16161a 100%);
+      font-family: "Rajdhani", "Helvetica Neue", Arial, sans-serif;
+      color: #eef2fb;
+    }
+
+    #stage {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+    }
+
+    #stage[data-webgl-failed="true"]::after,
+    #stage[data-image-failed="true"]::after {
+      content: "Could not start the transition.";
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #cfd6e6;
+      font-size: 15px;
+    }
+
+    .titles {
+      position: fixed;
+      top: 26px;
+      left: 0;
+      width: 100%;
+      z-index: 2;
+      text-align: center;
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .titles h1 {
+      font-family: "Orbitron", sans-serif;
+      font-size: clamp(20px, 3.6vw, 38px);
+      letter-spacing: 4px;
+      text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .titles p {
+      margin-top: 6px;
+      font-size: 14px;
+      letter-spacing: 2px;
+      opacity: 0.75;
+    }
+
+    .titles .caption {
+      margin-top: 10px;
+      font-family: "Orbitron", sans-serif;
+      font-size: 13px;
+      letter-spacing: 3px;
+      color: #9fd8ff;
+      opacity: 1;
+    }
+
+    .hud {
+      position: fixed;
+      bottom: 20px;
+      left: 0;
+      width: 100%;
+      z-index: 3;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 0 16px;
+      pointer-events: none;
+    }
+
+    .hud__row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      pointer-events: auto;
+    }
+
+    .hud button {
+      font-family: "Rajdhani", sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 1px;
+      color: #d8e4ff;
+      background: rgba(12, 16, 30, 0.62);
+      border: 1px solid rgba(150, 180, 240, 0.28);
+      border-radius: 20px;
+      padding: 8px 18px;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: background 0.2s ease, transform 0.2s ease;
+    }
+
+    .hud button:hover {
+      background: rgba(30, 42, 72, 0.85);
+      transform: translateY(-2px);
+    }
+
+    #scrub {
+      width: min(460px, 78vw);
+      accent-color: #7fa8ff;
+      cursor: pointer;
+      pointer-events: auto;
+    }
+
+    .hint {
+      font-size: 12.5px;
+      letter-spacing: 2px;
+      color: rgba(232, 240, 255, 0.62);
+      text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+    }
+  </style>
+</head>
+<body>
+  <div id="stage"></div>
+
+  <div class="titles">
+    <h1>IMAGE SHATTER</h1>
+    <p>CUBIC-BEZIER TRIANGLE TRANSITION</p>
+    <p class="caption" id="caption">LOADING…</p>
+  </div>
+
+  <div class="hud">
+    <div class="hint">CLICK AND DRAG ACROSS THE IMAGE TO SCRUB</div>
+    <input type="range" id="scrub" min="0" max="1000" value="0" aria-label="Transition progress" />
+    <div class="hud__row">
+      <button type="button" id="playBtn">⏸ Pause</button>
+      <button type="button" id="swapBtn">⏭ Next planet</button>
+      <span class="hint" id="tris">—</span>
+    </div>
+  </div>
+
+  <script src="js/image-shatter.js"></script>
+  <script src="js/demo-nav.js"></script>
+  <script>
+    (function () {
+      "use strict";
+
+      DemoNav.mount({ theme: "dark", top: 20, showBack: true, active: "shatter" });
+
+      // The planet maps are 2:1 equirectangular, so the plane matches that
+      // ratio and the segment counts keep each triangle roughly square.
+      var SEG_X = 140;
+      var SEG_Y = 70;
+
+      var PLANETS = [
+        "sun", "mercury", "venus", "earth", "mars",
+        "jupiter", "saturn", "uranus", "neptune"
+      ].map(function (name) { return "icons/planets/" + name + ".jpg"; });
+
+      var scrub = document.getElementById("scrub");
+      var playBtn = document.getElementById("playBtn");
+      var swapBtn = document.getElementById("swapBtn");
+      var tris = document.getElementById("tris");
+      var caption = document.getElementById("caption");
+
+      var fx = ImageShatter.create({
+        container: document.getElementById("stage"),
+        images: PLANETS,
+        width: 100,
+        height: 50,
+        segmentsX: SEG_X,
+        segmentsY: SEG_Y,
+        duration: 3.0,
+        onChange: function (from, to) {
+          caption.textContent = from.label + "  →  " + to.label;
+        }
+      });
+
+      if (!fx) {
+        [scrub, playBtn, swapBtn].forEach(function (n) { n.disabled = true; });
+        tris.textContent = "UNAVAILABLE";
+        return;
+      }
+
+      tris.textContent = (SEG_X * SEG_Y * 2).toLocaleString() +
+        " TRIANGLES × " + PLANETS.length + " PLANETS";
+
+      // Slider follows the timeline; dragging it takes over.
+      var draggingSlider = false;
+      scrub.addEventListener("input", function () {
+        draggingSlider = true;
+        fx.setProgress(Number(scrub.value) / 1000);
+      });
+      scrub.addEventListener("change", function () { draggingSlider = false; });
+
+      (function syncSlider() {
+        if (!draggingSlider) scrub.value = String(Math.round(fx.getProgress() * 1000));
+        requestAnimationFrame(syncSlider);
+      })();
+
+      playBtn.addEventListener("click", function () {
+        playBtn.textContent = fx.togglePlay() ? "⏸ Pause" : "▶ Play";
+      });
+
+      swapBtn.addEventListener("click", function () {
+        fx.next();
+      });
+    })();
+  </script>
+</body>
+</html>
