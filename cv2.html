@@ -9,12 +9,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Noto+Sans+SC:wght@400;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
 
-  <link rel="stylesheet" href="css/demo-nav.css"/>
-
-  <!-- Vendored Three.js r113. The build exports a global named `Three`. -->
-  <script src="js/Three.iife.min.js"></script>
-  <script>window.THREE = Three;</script>
-
   <style>
     :root {
       --black:  #0f0f0f;
@@ -42,13 +36,6 @@
       pointer-events: none; z-index: 0;
     }
 
-    /* Logo-cube tunnel — sits above the halftone dots but below <main>,
-       which is position:relative; z-index:1. */
-    #cube-tunnel-bg {
-      position: fixed; inset: 0;
-      z-index: 0; pointer-events: none;
-    }
-
     /* ── Fixed UI Buttons ── */
     .ui-btn {
       position: fixed; z-index: 900;
@@ -64,13 +51,31 @@
     }
     .ui-btn:hover { transform: translate(-3px,-3px); box-shadow: var(--shadow-lg); }
     .ui-btn:active { transform: translate(3px,3px); box-shadow: none; }
-    #pdfBtn   { top: 20px;  left: 20px; background: var(--cyan); }
-    #indicatorsBtn { top: 70px; left: 20px; background: #4dabf7; }
-    #optionsBtn { top: 116px; left: 20px; background: #ff7a00; color: #fff; }
-    #paintBtn { top: 162px; left: 20px; background: #b388ff; }
-    #reportsBtn { top: 208px; left: 20px; background: #ff9800; }
-    #fxBtn    { top: 254px; left: 20px; background: var(--pink); color: #fff; }
-    #cv1Btn   { top: 300px; left: 20px; background: var(--green); color: #fff; }
+    /* Site menu — everything that used to stack down the left edge */
+    .nav-menu { position: fixed; top: 20px; left: 20px; z-index: 900; }
+    .nav-toggle {
+      font-family: 'Bangers', cursive; letter-spacing: 2px; font-size: 15px;
+      border: 3px solid var(--black); background: var(--cyan);
+      box-shadow: var(--shadow); padding: 8px 14px; cursor: pointer;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .nav-toggle:hover { transform: translate(-3px,-3px); box-shadow: var(--shadow-lg); }
+    .nav-dropdown {
+      position: absolute; top: 110%; left: 0;
+      background: var(--white); border: 3px solid var(--black);
+      box-shadow: var(--shadow); display: none; min-width: 210px;
+    }
+    .nav-dropdown.open { display: block; }
+    .nav-opt {
+      padding: 10px 14px; font-weight: 700; cursor: pointer;
+      border-bottom: 2px solid var(--black); color: var(--black);
+      display: flex; align-items: center; gap: 8px;
+      text-decoration: none; font-family: inherit; font-size: 14px;
+      background: none; border-left: none; border-right: none; border-top: none;
+      width: 100%; text-align: left;
+    }
+    .nav-opt:last-child { border-bottom: none; }
+    .nav-opt:hover { background: var(--yellow); text-decoration: none; color: var(--black); }
 
     /* Language selector */
     .lang-selector { position: fixed; top: 20px; right: 20px; z-index: 900; }
@@ -362,17 +367,24 @@
 </head>
 <body>
 
-  <!-- Logo-cube tunnel — scroll-driven figure-8 flight -->
-  <div id="cube-tunnel-bg"></div>
-
-  <!-- Fixed buttons -->
-  <button class="ui-btn" id="pdfBtn">📄 PDF</button>
-  <a href="indicators.html" class="ui-btn" id="indicatorsBtn">📈 Indicators</a>
-  <a href="options.html" class="ui-btn" id="optionsBtn">⚖️ Options</a>
-  <a href="paints.html" class="ui-btn" id="paintBtn">🎮 Wuwa Paint</a>
-  <a href="https://blog.arcueidshiki.uk" class="ui-btn" id="reportsBtn" target="_blank" rel="noopener">📊 Reports</a>
-  <a href="text-effect.html" class="ui-btn" id="fxBtn">✨ Text FX</a>
-  <a href="cv.html" class="ui-btn" id="cv1Btn">🖥 Cyber CV</a>
+  <!-- Site menu -->
+  <div class="nav-menu">
+    <button class="nav-toggle" id="navToggle">
+      <span>☰</span>
+      <span data-nav-i18n="menu">MENU</span>
+      <span>▼</span>
+    </button>
+    <div class="nav-dropdown" id="navDropdown">
+      <button class="nav-opt" id="pdfBtn"><span>📄</span> <span data-nav-i18n="pdf">PDF Resume</span></button>
+      <a href="indicators.html" class="nav-opt"><span>📈</span> <span data-nav-i18n="indicators">Stock Indicators</span></a>
+      <a href="options.html" class="nav-opt"><span>⚖️</span> <span data-nav-i18n="options">Options Handbook</span></a>
+      <a href="orders.html" class="nav-opt"><span>📋</span> <span data-nav-i18n="orders">Order Types</span></a>
+      <a href="cv.html" class="nav-opt"><span>🖥</span> <span data-nav-i18n="cyberCv">Cyber CV</span></a>
+      <a href="paints.html" class="nav-opt"><span>🎮</span> <span data-nav-i18n="paint">Wuwa Paint</span></a>
+      <a href="text-effect.html" class="nav-opt"><span>✨</span> <span data-nav-i18n="textfx">Text FX</span></a>
+      <a href="https://blog.arcueidshiki.uk" class="nav-opt" target="_blank" rel="noopener"><span>📊</span> <span data-nav-i18n="reports">Reports</span></a>
+    </div>
+  </div>
 
   <!-- Language selector -->
   <div class="lang-selector">
@@ -691,7 +703,32 @@
       const flags = { en: '🇺🇸', jp: '🇯🇵', zh: '🇨🇳' };
       document.getElementById('langFlag').textContent = flags[lang] || '🌐';
       document.getElementById('langText').textContent = lang.toUpperCase();
+      applyNavLabels2(lang);
     }
+
+    // Site menu — same dropdown behaviour as the language selector
+    const NAV_LABELS2 = {
+      en: { menu: 'MENU', pdf: 'PDF Resume', indicators: 'Stock Indicators', options: 'Options Handbook',
+            orders: 'Order Types', cyberCv: 'Cyber CV', paint: 'Wuwa Paint', textfx: 'Text FX', reports: 'Reports' },
+      zh: { menu: '菜单', pdf: 'PDF 简历', indicators: '股票指标手册', options: '期权教学手册',
+            orders: '订单类型手册', cyberCv: '赛博版简历', paint: '鸣潮涂鸦', textfx: '文字特效', reports: '技术博客' },
+      jp: { menu: 'メニュー', pdf: 'PDF 履歴書', indicators: '株式指標ハンドブック', options: 'オプション・ハンドブック',
+            orders: '注文タイプ', cyberCv: 'サイバー履歴書', paint: '鳴潮ペイント', textfx: 'テキストFX', reports: 'レポート' }
+    };
+    function applyNavLabels2(lang) {
+      const map = NAV_LABELS2[lang] || NAV_LABELS2.en;
+      document.querySelectorAll('[data-nav-i18n]').forEach(function (n) {
+        const k = n.getAttribute('data-nav-i18n');
+        if (map[k]) n.textContent = map[k];
+      });
+    }
+    document.getElementById('navToggle').addEventListener('click', function(e) {
+      e.stopPropagation();
+      document.getElementById('navDropdown').classList.toggle('open');
+    });
+    document.addEventListener('click', () => document.getElementById('navDropdown').classList.remove('open'));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') document.getElementById('navDropdown').classList.remove('open'); });
+    document.getElementById('pdfBtn').addEventListener('click', (e) => e.stopPropagation());
 
     document.getElementById('langToggle').addEventListener('click', function(e) {
       e.stopPropagation();
@@ -738,32 +775,6 @@
 
     // ── Init ──────────────────────────────────────────────────────
     loadAllLangs().then(() => switchLang('en'));
-  </script>
-
-  <!-- Logo-cube tunnel + demo launcher -->
-  <script src="js/stock-logos.js"></script>
-  <script src="js/logo-cube-tunnel.js"></script>
-  <script src="js/demo-nav.js"></script>
-  <script>
-    (function () {
-      'use strict';
-
-      // The comic page is light, so the fog fades cubes into the paper colour
-      // instead of into the demo page's near-black.
-      LogoCubeTunnel.create({
-        container: document.getElementById('cube-tunnel-bg'),
-        background: null,
-        fogColor: 0xf5f5ef,
-        cubeCount: 46,
-        // Wider corridor than the demo: keeps cubes off the reading area
-        // instead of filling the frame as the camera passes them.
-        corridorRadius: 8,
-        opacity: 0.42
-      });
-
-      // Four peer buttons below the existing stack, which ends at top: 300px.
-      DemoNav.mount({ theme: 'comic', top: 346, layout: 'stack' });
-    })();
   </script>
 </body>
 </html>

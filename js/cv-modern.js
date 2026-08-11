@@ -286,6 +286,7 @@ function LoadConfig(data) {
 
 function switchLanguage(lang) {
   currentLanguage = lang; // Update current language
+  applyNavLabels(lang);
   $("main").empty();
   const selectedText = texts.find((t) => t.lang === lang);
   if (selectedText) {
@@ -362,12 +363,74 @@ function setupFallbackLanguageSelector() {
   }
 }
 
+
+// Site navigation menu — the six buttons that used to stack down the left edge
+// now live in one dropdown, mirroring the language selector on the right.
+const NAV_LABELS = {
+  en: { menu: 'Menu', pdf: 'PDF Resume', indicators: 'Stock Indicators', options: 'Options Handbook',
+        orders: 'Order Types', comicsCv: 'Comics CV', paint: 'Wuwa Paint', textfx: 'Text FX' },
+  zh: { menu: '菜单', pdf: 'PDF 简历', indicators: '股票指标手册', options: '期权教学手册',
+        orders: '订单类型手册', comicsCv: '漫画版简历', paint: '鸣潮涂鸦', textfx: '文字特效' },
+  jp: { menu: 'メニュー', pdf: 'PDF 履歴書', indicators: '株式指標ハンドブック', options: 'オプション・ハンドブック',
+        orders: '注文タイプ', comicsCv: 'コミック履歴書', paint: '鳴潮ペイント', textfx: 'テキストFX' }
+};
+
+function applyNavLabels(lang) {
+  const map = NAV_LABELS[lang] || NAV_LABELS.en;
+  document.querySelectorAll('[data-nav-i18n]').forEach((n) => {
+    const k = n.getAttribute('data-nav-i18n');
+    if (map[k]) n.textContent = map[k];
+  });
+}
+
+let navMenuReady = false;
+function setupNavMenu() {
+  const btn = document.getElementById('navMenuBtn');
+  const dropdown = document.getElementById('navMenuDropdown');
+  if (!btn || !dropdown || navMenuReady) return;
+  navMenuReady = true;
+
+  const close = () => {
+    btn.classList.remove('active');
+    dropdown.classList.remove('active');
+    btn.setAttribute('aria-expanded', 'false');
+  };
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const open = !dropdown.classList.contains('active');
+    btn.classList.toggle('active', open);
+    dropdown.classList.toggle('active', open);
+    btn.setAttribute('aria-expanded', String(open));
+  });
+
+  // clicking a link should navigate, not just close, so only stop propagation
+  // on the PDF button, which is handled by setupPdfButton()
+  dropdown.addEventListener('click', (e) => {
+    if (e.target.closest('#pdfBtn')) e.stopPropagation();
+  });
+
+  document.addEventListener('click', close);
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+  applyNavLabels(currentLanguage);
+}
+
+// Bootstrap the menu without waiting for jQuery. The rest of the page is
+// jQuery-driven, but navigation must keep working even if that CDN fails.
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupNavMenu);
+} else {
+  setupNavMenu();
+}
+
 // Load the default language on page load
 $(document).ready(async function () {
   await loadAllLanguageTexts();
   setupLanguageSelector();
   setupFallbackLanguageSelector();
   setupPdfButton();
+  setupNavMenu();
   switchLanguage("en");
 });
 

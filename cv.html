@@ -24,18 +24,12 @@
     />
 
     <link rel="stylesheet" href="css/cv.css" />
-    <link rel="stylesheet" href="css/demo-nav.css" />
     <title>CV — Jensen Arcueid Peng</title>
   </head>
   <body>
     <!-- Cursor elements (demo1 style) -->
     <div id="cursor"></div>
     <div id="cursor-dot"></div>
-
-    <!-- Logo-cube tunnel — scroll-driven figure-8 flight.
-         Must precede #solar-background: both sit at z-index 0, so DOM order
-         is what keeps the tunnel behind the solar system. -->
-    <div id="cube-tunnel-bg"></div>
 
     <!-- Solar System Background — replaces ocean + cubes -->
     <div id="solar-background"></div>
@@ -69,17 +63,39 @@
       </div>
     </div>
 
-    <!-- PDF button -->
-    <button id="pdfBtn" class="pdf-btn hover-trigger">📄 PDF Resume</button>
-
-    <!-- Market handbooks -->
-    <a href="indicators.html" class="game-link-btn hover-trigger">📈 Indicators</a>
-    <a href="options.html" class="game-link-btn hover-trigger" style="top:116px;">⚖️ Options</a>
-
-    <!-- Game link button -->
-    <a href="paints.html" class="game-link-btn hover-trigger" style="top:162px;">🎮 Wuwa Paint</a>
-    <a href="text-effect.html" class="game-link-btn hover-trigger" style="top:208px;">✨ Text FX</a>
-    <a href="cv2.html" class="game-link-btn hover-trigger" style="top:254px;">📄 Comics CV</a>
+    <!-- Site menu — everything that used to stack down the left edge -->
+    <div class="nav-menu-container">
+      <button id="navMenuBtn" class="nav-menu-btn hover-trigger" aria-haspopup="true" aria-expanded="false">
+        <span class="nav-icon">☰</span>
+        <span data-nav-i18n="menu">Menu</span>
+        <span class="arrow">▼</span>
+      </button>
+      <div id="navMenuDropdown" class="nav-menu-dropdown" role="menu">
+        <button id="pdfBtn" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">📄</span><span data-nav-i18n="pdf">PDF Resume</span>
+        </button>
+        <div class="nav-menu-sep"></div>
+        <a href="indicators.html" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">📈</span><span data-nav-i18n="indicators">Stock Indicators</span>
+        </a>
+        <a href="options.html" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">⚖️</span><span data-nav-i18n="options">Options Handbook</span>
+        </a>
+        <a href="orders.html" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">📋</span><span data-nav-i18n="orders">Order Types</span>
+        </a>
+        <div class="nav-menu-sep"></div>
+        <a href="cv2.html" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">📄</span><span data-nav-i18n="comicsCv">Comics CV</span>
+        </a>
+        <a href="paints.html" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">🎮</span><span data-nav-i18n="paint">Wuwa Paint</span>
+        </a>
+        <a href="text-effect.html" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">✨</span><span data-nav-i18n="textfx">Text FX</span>
+        </a>
+      </div>
+    </div>
 
 
     <!-- Main CV content — section IDs used by solar system planet navigation -->
@@ -141,31 +157,5 @@
     <script type="text/javascript" src="js/chatbot.js"></script>
     <script type="text/javascript" src="js/cyber-effects.js"></script>
     <script type="text/javascript" src="js/serpent-mouse.js"></script>
-
-    <!-- Logo-cube tunnel + demo launcher -->
-    <script type="text/javascript" src="js/stock-logos.js"></script>
-    <script type="text/javascript" src="js/logo-cube-tunnel.js"></script>
-    <script type="text/javascript" src="js/demo-nav.js"></script>
-    <script type="text/javascript">
-      (function () {
-        "use strict";
-
-        // Transparent renderer so the page background and the solar system
-        // still composite over it. Fewer cubes than the standalone demo — this
-        // is a backdrop for the CV, not the subject.
-        LogoCubeTunnel.create({
-          container: document.getElementById("cube-tunnel-bg"),
-          background: null,
-          cubeCount: 48,
-          // Wider corridor than the demo: keeps cubes off the reading area
-          // instead of filling the frame as the camera passes them.
-          corridorRadius: 7,
-          opacity: 0.85
-        });
-
-        // Four peer buttons below the existing stack, which ends at top: 254px.
-        DemoNav.mount({ theme: "cyber", top: 300, layout: "stack" });
-      })();
-    </script>
   </body>
 </html>

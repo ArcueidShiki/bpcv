@@ -90,18 +90,6 @@ body.hovering #cursor {
 }
 
 /* Solar System Background */
-/* Logo-cube tunnel — shares z-index 0 with the solar system but is placed
-   earlier in the DOM, so it paints behind it within the same stacking level. */
-#cube-tunnel-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 0;
-  pointer-events: none;
-}
-
 #solar-background {
   position: fixed;
   top: 0;
@@ -271,6 +259,103 @@ body.hovering #cursor {
   box-shadow: 0 0 16px rgba(0, 230, 118, 0.3);
   transform: translateY(-2px);
   border-color: rgba(0, 230, 118, 0.6);
+}
+
+
+/* Site navigation menu — mirrors the language selector, anchored top-left */
+.nav-menu-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+}
+
+.nav-menu-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(8, 8, 24, 0.85);
+  border: 1px solid rgba(112, 0, 255, 0.3);
+  border-radius: 25px;
+  color: var(--text-color);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: all 0.3s ease;
+  outline: none;
+  backdrop-filter: blur(12px);
+  font-family: "Rajdhani", sans-serif;
+}
+
+.nav-menu-btn:hover {
+  box-shadow: 0 0 16px rgba(112, 0, 255, 0.35);
+  border-color: rgba(112, 0, 255, 0.6);
+  transform: translateY(-2px);
+}
+
+.nav-menu-btn .arrow { transition: transform 0.3s ease; }
+.nav-menu-btn.active .arrow { transform: rotate(180deg); }
+
+.nav-menu-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 8px;
+  background: rgba(8, 8, 24, 0.95);
+  border: 1px solid rgba(112, 0, 255, 0.22);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 0 20px rgba(112, 0, 255, 0.1);
+  backdrop-filter: blur(16px);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: all 0.3s ease;
+  min-width: 208px;
+  padding: 4px 0;
+}
+
+.nav-menu-dropdown.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.nav-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 16px;
+  margin: 2px 4px;
+  cursor: pointer;
+  border-radius: 8px;
+  color: var(--text-color);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  font-family: "Rajdhani", sans-serif;
+  transition: all 0.3s ease;
+  background: none;
+  border: none;
+  width: calc(100% - 8px);
+  text-align: left;
+}
+
+.nav-menu-item:hover {
+  background: rgba(112, 0, 255, 0.1);
+  box-shadow: 0 0 12px rgba(112, 0, 255, 0.18);
+  transform: translateX(4px);
+  color: var(--c-accent);
+  text-decoration: none;
+}
+
+.nav-menu-item .nav-icon { font-size: 16px; width: 20px; text-align: center; }
+
+.nav-menu-sep {
+  height: 1px;
+  margin: 5px 12px;
+  background: rgba(112, 0, 255, 0.18);
 }
 
 /* Game Link Button */
@@ -1044,7 +1129,6 @@ main {
 
 /* Print Styles */
 @media print {
-  #cube-tunnel-bg,
   #solar-background,
   #scanlines,
   #cursor,
@@ -1055,6 +1139,7 @@ main {
   #scroll-line,
   .planet-label,
   .language-selector-container,
+  .nav-menu-container,
   .pdf-btn,
   .game-link-btn {
     display: none !important;
