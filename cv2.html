@@ -9,6 +9,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Noto+Sans+SC:wght@400;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
 
+  <!-- Vendored Three.js r113. The build exports a global named `Three`. -->
+  <script src="js/Three.iife.min.js"></script>
+  <script>window.THREE = Three;</script>
+
   <style>
     :root {
       --black:  #0f0f0f;
@@ -34,6 +38,13 @@
       background-size: 18px 18px;
       opacity: 0.055;
       pointer-events: none; z-index: 0;
+    }
+
+    /* Logo-cube tunnel — sits above the halftone dots but below <main>,
+       which is position:relative; z-index:1. */
+    #cube-tunnel-bg {
+      position: fixed; inset: 0;
+      z-index: 0; pointer-events: none;
     }
 
     /* ── Fixed UI Buttons ── */
@@ -367,6 +378,9 @@
 </head>
 <body>
 
+  <!-- Logo-cube tunnel — scroll-driven figure-8 flight -->
+  <div id="cube-tunnel-bg"></div>
+
   <!-- Site menu -->
   <div class="nav-menu">
     <button class="nav-toggle" id="navToggle">
@@ -383,6 +397,12 @@
       <a href="paints.html" class="nav-opt"><span>🎮</span> <span data-nav-i18n="paint">Wuwa Paint</span></a>
       <a href="text-effect.html" class="nav-opt"><span>✨</span> <span data-nav-i18n="textfx">Text FX</span></a>
       <a href="https://blog.arcueidshiki.uk" class="nav-opt" target="_blank" rel="noopener"><span>📊</span> <span data-nav-i18n="reports">Reports</span></a>
+      <!-- WebGL demos — these used to be mounted by DemoNav as a floating
+           button stack; they are plain menu items now that the stack is gone. -->
+      <a href="demo-cube-tunnel.html" class="nav-opt"><span>🧊</span> <span data-nav-i18n="demoCubes">Cube Tunnel</span></a>
+      <a href="demo-sphere-packing.html" class="nav-opt"><span>🔮</span> <span data-nav-i18n="demoSpheres">Sphere Packing</span></a>
+      <a href="demo-image-shatter.html" class="nav-opt"><span>🌊</span> <span data-nav-i18n="demoShatter">Image Shatter</span></a>
+      <a href="thunderstorm.html" class="nav-opt"><span>⛈</span> <span data-nav-i18n="demoStorm">Thunderstorm</span></a>
     </div>
   </div>
 
@@ -709,11 +729,17 @@
     // Site menu — same dropdown behaviour as the language selector
     const NAV_LABELS2 = {
       en: { menu: 'MENU', pdf: 'PDF Resume', indicators: 'Stock Indicators', options: 'Options Handbook',
-            orders: 'Order Types', cyberCv: 'Cyber CV', paint: 'Wuwa Paint', textfx: 'Text FX', reports: 'Reports' },
+            orders: 'Order Types', cyberCv: 'Cyber CV', paint: 'Wuwa Paint', textfx: 'Text FX', reports: 'Reports',
+            demoCubes: 'Cube Tunnel', demoSpheres: 'Sphere Packing', demoShatter: 'Image Shatter',
+            demoStorm: 'Thunderstorm' },
       zh: { menu: '菜单', pdf: 'PDF 简历', indicators: '股票指标手册', options: '期权教学手册',
-            orders: '订单类型手册', cyberCv: '赛博版简历', paint: '鸣潮涂鸦', textfx: '文字特效', reports: '技术博客' },
+            orders: '订单类型手册', cyberCv: '赛博版简历', paint: '鸣潮涂鸦', textfx: '文字特效', reports: '技术博客',
+            demoCubes: '立方体隧道', demoSpheres: '小球堆积', demoShatter: '图像碎裂',
+            demoStorm: '雷暴天气' },
       jp: { menu: 'メニュー', pdf: 'PDF 履歴書', indicators: '株式指標ハンドブック', options: 'オプション・ハンドブック',
-            orders: '注文タイプ', cyberCv: 'サイバー履歴書', paint: '鳴潮ペイント', textfx: 'テキストFX', reports: 'レポート' }
+            orders: '注文タイプ', cyberCv: 'サイバー履歴書', paint: '鳴潮ペイント', textfx: 'テキストFX', reports: 'レポート',
+            demoCubes: 'キューブトンネル', demoSpheres: 'スフィアパッキング', demoShatter: 'イメージシャッター',
+            demoStorm: '雷雨' }
     };
     function applyNavLabels2(lang) {
       const map = NAV_LABELS2[lang] || NAV_LABELS2.en;
@@ -775,6 +801,28 @@
 
     // ── Init ──────────────────────────────────────────────────────
     loadAllLangs().then(() => switchLang('en'));
+  </script>
+
+  <!-- Logo-cube tunnel background -->
+  <script src="js/stock-logos.js"></script>
+  <script src="js/logo-cube-tunnel.js"></script>
+  <script>
+    (function () {
+      'use strict';
+
+      // The comic page is light, so the fog fades cubes into the paper colour
+      // instead of into the demo page's near-black.
+      LogoCubeTunnel.create({
+        container: document.getElementById('cube-tunnel-bg'),
+        background: null,
+        fogColor: 0xf5f5ef,
+        cubeCount: 46,
+        // Wider corridor than the demo: keeps cubes off the reading area
+        // instead of filling the frame as the camera passes them.
+        corridorRadius: 8,
+        opacity: 0.42
+      });
+    })();
   </script>
 </body>
 </html>

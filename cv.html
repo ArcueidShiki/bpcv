@@ -31,6 +31,11 @@
     <div id="cursor"></div>
     <div id="cursor-dot"></div>
 
+    <!-- Logo-cube tunnel — scroll-driven figure-8 flight.
+         Must precede #solar-background: both sit at z-index 0, so DOM order
+         is what keeps the tunnel behind the solar system. -->
+    <div id="cube-tunnel-bg"></div>
+
     <!-- Solar System Background — replaces ocean + cubes -->
     <div id="solar-background"></div>
 
@@ -93,6 +98,21 @@
         </a>
         <a href="text-effect.html" class="nav-menu-item hover-trigger" role="menuitem">
           <span class="nav-icon">✨</span><span data-nav-i18n="textfx">Text FX</span>
+        </a>
+        <div class="nav-menu-sep"></div>
+        <!-- WebGL demos — these used to be mounted by DemoNav as a floating
+             button stack; they are plain menu items now that the stack is gone. -->
+        <a href="demo-cube-tunnel.html" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">🧊</span><span data-nav-i18n="demoCubes">Cube Tunnel</span>
+        </a>
+        <a href="demo-sphere-packing.html" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">🔮</span><span data-nav-i18n="demoSpheres">Sphere Packing</span>
+        </a>
+        <a href="demo-image-shatter.html" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">🌊</span><span data-nav-i18n="demoShatter">Image Shatter</span>
+        </a>
+        <a href="thunderstorm.html" class="nav-menu-item hover-trigger" role="menuitem">
+          <span class="nav-icon">⛈</span><span data-nav-i18n="demoStorm">Thunderstorm</span>
         </a>
       </div>
     </div>
@@ -157,5 +177,27 @@
     <script type="text/javascript" src="js/chatbot.js"></script>
     <script type="text/javascript" src="js/cyber-effects.js"></script>
     <script type="text/javascript" src="js/serpent-mouse.js"></script>
+
+    <!-- Logo-cube tunnel background -->
+    <script type="text/javascript" src="js/stock-logos.js"></script>
+    <script type="text/javascript" src="js/logo-cube-tunnel.js"></script>
+    <script type="text/javascript">
+      (function () {
+        "use strict";
+
+        // Transparent renderer so the page background and the solar system
+        // still composite over it. Fewer cubes than the standalone demo — this
+        // is a backdrop for the CV, not the subject.
+        LogoCubeTunnel.create({
+          container: document.getElementById("cube-tunnel-bg"),
+          background: null,
+          cubeCount: 48,
+          // Wider corridor than the demo: keeps cubes off the reading area
+          // instead of filling the frame as the camera passes them.
+          corridorRadius: 7,
+          opacity: 0.85
+        });
+      })();
+    </script>
   </body>
 </html>
