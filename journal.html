@@ -1,0 +1,1892 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Trade journal — every position with its buy reason, sell reason, and the price three months later, so the quality of the exit can be judged rather than remembered.">
+<title>Trade Journal · 交易日志</title>
+<style>/* =============================================================================
+   app.css — moomoo-inspired flat trading-terminal theme.
+
+   Fourth in the family, after the indicator, options and order-type handbooks:
+   flat (NO gradients), moomoo orange as the brand, green-up / red-down, tabular
+   numerals everywhere, tight radii, disciplined 1px borders.
+
+   This one is a dashboard rather than a handbook, so the accent stays fixed and
+   the colour work is carried by the data: green is your money, red is your
+   money leaving. No external assets, no webfonts, no requests.
+   ============================================================================= */
+:root {
+  --brand: #FF7A00;
+  --brand-press: #E86E00;
+  --info: #2E9BFF;
+  --violet: #8C6EFF;
+  --accent-active: var(--brand);
+
+  --bg: #0E0F13;
+  --surface: #16181E;
+  --surface-2: #1C1F27;
+  --surface-3: #232733;
+  --line: #262A33;
+  --line-2: #333A46;
+
+  --text: #EAECEF;
+  --text-2: #99A1AD;
+  --text-3: #626A78;
+
+  --up: #00B96B;
+  --down: #FA4D56;
+  --warn: #FFA53D;
+  --gold: #FFC53D;
+
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 10px;
+  --mono: "SF Mono", SFMono-Regular, ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px; line-height: 1.62;
+}
+
+body.lang-zh { line-height: 1.78; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.02em; }
+:focus-visible { outline: 2px solid var(--accent-active); outline-offset: 2px; }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 24px; }
+
+/* ---------------- top bar ---------------- */
+.topbar {
+  position: sticky; top: 0; z-index: 60;
+  border-bottom: 1px solid var(--line);
+  background: rgba(14, 15, 19, 0.92);
+  backdrop-filter: blur(12px);
+}
+.topbar .wrap { display: flex; align-items: center; gap: 20px; height: 56px; }
+.brand { display: flex; align-items: center; gap: 8px; font-size: 16px; }
+.brand .logo {
+  display: grid; place-items: center; width: 26px; height: 26px;
+  border-radius: 7px; background: var(--brand); color: #17110A;
+  font-size: 15px; font-weight: 800;
+}
+.brand-text { font-weight: 600; }
+.brand-text b { font-weight: 800; }
+.spacer { flex: 1; }
+.tb-link { font-size: 13.5px; font-weight: 500; color: var(--text-2); }
+.tb-link:hover { color: var(--text); }
+.tb-ext { color: var(--text-3); }
+.lang-btn {
+  border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text);
+  border-radius: var(--r-sm); padding: 6px 12px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+.lang-btn:hover { border-color: var(--accent-active); color: var(--accent-active); }
+
+/* ---------------- hero ---------------- */
+.hero { padding: 52px 0 30px; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px;
+  font-size: 13px; font-weight: 600; color: var(--text-2);
+}
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+.dot-m { background: var(--brand); }
+.dot-s { background: var(--violet); }
+.hero-x { color: var(--text-3); }
+.hero h1 { font-size: clamp(32px, 5vw, 54px); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; }
+.hero p { margin: 16px 0 0; max-width: 78ch; font-size: 15.5px; color: var(--text-2); }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.stat {
+  border: 1px solid var(--line); background: var(--surface);
+  border-radius: var(--r-sm); padding: 6px 13px; font-size: 12.5px;
+  font-weight: 500; color: var(--text-2);
+}
+.stat b { color: var(--text); font-weight: 700; margin-right: 3px; }
+.stat-m b { color: var(--brand); }
+.stat-s b { color: var(--violet); }
+.fam-switch {
+  display: inline-flex; margin-top: 26px; overflow: hidden;
+  border: 1px solid var(--line-2); border-radius: var(--r-md); background: var(--surface);
+}
+.fam-seg {
+  border: 0; border-right: 1px solid var(--line); background: transparent;
+  color: var(--text-2); font-family: inherit; font-size: 13.5px; font-weight: 600;
+  padding: 10px 20px; cursor: pointer; transition: background .15s, color .15s;
+}
+.fam-seg:last-child { border-right: 0; }
+.fam-seg:hover { color: var(--text); }
+.fam-seg.on { color: #17110A; }
+.fam-seg[data-fam=""].on { background: var(--text); }
+.fam-seg[data-fam="metric"].on { background: var(--brand); }
+.fam-seg[data-fam="strategy"].on { background: var(--violet); color: #0B0616; }
+
+/* ---------------- section chrome ---------------- */
+.sec { margin-top: 56px; scroll-margin-top: 72px; }
+.card { scroll-margin-top: 72px; }
+.sec-head { margin-bottom: 18px; }
+.sec-head h2 { font-size: 22px; }
+.sec-head p { margin: 8px 0 0; max-width: 84ch; font-size: 13.6px; color: var(--text-2); }
+.eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--accent-active); margin-bottom: 7px;
+}
+
+/* ---------------- strategy lab ---------------- */
+.lab { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }
+.bias-tabs { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.bias-tab {
+  border: 0; background: transparent; color: var(--text-2); cursor: pointer;
+  font-family: inherit; font-size: 13px; font-weight: 600; padding: 12px 18px;
+  border-bottom: 2px solid transparent; transition: color .15s;
+}
+.bias-tab:hover { color: var(--text); }
+.bias-tab.on { color: var(--accent-active); border-bottom-color: var(--accent-active); }
+.strat-chips { display: flex; flex-wrap: wrap; gap: 7px; padding: 14px 16px; border-bottom: 1px solid var(--line); }
+.chip {
+  border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-2);
+  border-radius: var(--r-sm); padding: 6px 12px; font-size: 12.5px; font-weight: 600;
+  cursor: pointer; font-family: inherit; white-space: nowrap;
+}
+.chip:hover { border-color: var(--accent-active); color: var(--text); }
+.chip.on { background: var(--accent-active); border-color: var(--accent-active); color: #0B0616; }
+
+.lab-body { display: grid; grid-template-columns: 1fr 340px; }
+.lab-chart { padding: 16px; border-right: 1px solid var(--line); min-width: 0; display: flex; flex-direction: column; }
+.lab-title { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-bottom: 4px; }
+.lab-title h3 { font-size: 17px; }
+.lab-title .zh { font-size: 13px; color: var(--text-3); }
+.lab-ticket { font-family: var(--mono); font-size: 12.4px; color: var(--gold); margin-bottom: 12px; }
+.pl-canvas { width: 100%; flex: 1; min-height: 340px; display: block; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-md); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 9px; font-size: 11.5px; color: var(--text-3); }
+.legend i { display: inline-block; width: 14px; height: 2px; margin-right: 5px; vertical-align: middle; }
+
+.lab-side { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.ctrl { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px; }
+.ctrl label { font-size: 11.5px; font-weight: 600; color: var(--text-2); }
+.ctrl output { font-family: var(--mono); font-size: 12.5px; color: var(--text); }
+.ctrl input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent-active); height: 18px; }
+.toggles { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--text-2); }
+.toggles label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.toggles input { accent-color: var(--accent-active); }
+
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.kpi { border: 1px solid var(--line); background: var(--surface-2); border-radius: var(--r-sm); padding: 8px 10px; }
+.kpi .k { font-size: 10.5px; font-weight: 600; letter-spacing: .03em; color: var(--text-3); text-transform: uppercase; }
+.kpi .v { font-family: var(--mono); font-size: 15px; font-weight: 700; margin-top: 2px; }
+.kpi.wide { grid-column: 1 / -1; }
+.v-up { color: var(--up); } .v-dn { color: var(--down); } .v-gold { color: var(--gold); } .v-acc { color: var(--accent-active); }
+.tagline { font-size: 10.5px; font-weight: 700; border-radius: 3px; padding: 1px 6px; }
+.tag-credit { color: var(--up); background: rgba(0,185,107,.14); }
+.tag-debit { color: var(--info); background: rgba(46,155,255,.14); }
+.greek-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; }
+.greek { border: 1px solid var(--line); background: var(--surface-2); border-radius: var(--r-sm); padding: 6px 4px; text-align: center; }
+.greek .k { font-size: 10px; color: var(--text-3); }
+.greek .v { font-family: var(--mono); font-size: 11.5px; font-weight: 700; }
+.model-note { font-size: 10.8px; color: var(--text-3); line-height: 1.5; border-top: 1px solid var(--line); padding-top: 10px; }
+.lab-cta { display: flex; gap: 7px; }
+.btn {
+  border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-2);
+  border-radius: var(--r-sm); padding: 7px 13px; font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+.btn:hover { border-color: var(--accent-active); color: var(--text); }
+.btn.primary { background: var(--accent-active); border-color: var(--accent-active); color: #0B0616; }
+
+/* ---------------- comparison table ---------------- */
+.cmp-wrap { border: 1px solid var(--line); border-radius: var(--r-lg); overflow: auto; background: var(--surface); max-height: 520px; }
+table.cmp { width: 100%; border-collapse: collapse; font-size: 12.4px; }
+table.cmp th {
+  position: sticky; top: 0; z-index: 2; background: var(--surface-2);
+  border-bottom: 1px solid var(--line-2); padding: 9px 12px; text-align: right;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--text-3); white-space: nowrap; cursor: pointer; user-select: none;
+}
+table.cmp th:first-child, table.cmp td:first-child { text-align: left; }
+table.cmp th.on { color: var(--accent-active); }
+table.cmp td { border-bottom: 1px solid var(--line); padding: 8px 12px; text-align: right; font-family: var(--mono); white-space: nowrap; }
+table.cmp td:first-child { font-family: inherit; font-weight: 600; }
+table.cmp tr:hover td { background: var(--surface-2); }
+table.cmp tr.on td { background: rgba(140,110,255,.09); }
+.cmp-name { cursor: pointer; }
+.cmp-name:hover { color: var(--accent-active); }
+.cmp-bias { font-size: 10px; font-weight: 700; color: var(--text-3); margin-left: 6px; }
+
+/* ---------------- analysis lab ---------------- */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.panel { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }
+.panel-h {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 11px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2);
+}
+.panel-h h3 { font-size: 13.5px; }
+.panel-h .sub { font-size: 11px; color: var(--text-3); }
+.panel-b { padding: 12px; }
+.panel canvas { width: 100%; display: block; background: var(--bg); border-radius: var(--r-sm); }
+.sim-badge {
+  font-size: 9.5px; font-weight: 700; color: var(--warn);
+  background: rgba(255,165,61,.13); border-radius: 3px; padding: 2px 6px;
+}
+.sim-note {
+  font-size: 11px; color: var(--warn); background: rgba(255,165,61,.07);
+  border-top: 1px solid rgba(255,165,61,.2); padding: 8px 12px; line-height: 1.5;
+}
+.seg-mini { display: inline-flex; border: 1px solid var(--line-2); border-radius: var(--r-sm); overflow: hidden; }
+.seg-mini button {
+  border: 0; border-right: 1px solid var(--line); background: var(--surface-3);
+  color: var(--text-2); font-family: inherit; font-size: 11px; font-weight: 600;
+  padding: 4px 10px; cursor: pointer;
+}
+.seg-mini button:last-child { border-right: 0; }
+.seg-mini button.on { background: var(--accent-active); color: #0B0616; }
+.readouts { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 10px; }
+.readout { border: 1px solid var(--line); background: var(--surface-2); border-radius: var(--r-sm); padding: 5px 10px; font-size: 11.5px; color: var(--text-2); }
+.readout b { font-family: var(--mono); color: var(--text); margin-left: 5px; }
+.regime { border-radius: var(--r-sm); padding: 7px 11px; font-size: 12px; font-weight: 600; margin-top: 10px; }
+.regime.pos { color: var(--up); background: rgba(0,185,107,.09); border: 1px solid rgba(0,185,107,.26); }
+.regime.neg { color: var(--down); background: rgba(250,77,86,.09); border: 1px solid rgba(250,77,86,.26); }
+.ivbar { height: 8px; border-radius: 4px; background: var(--surface-3); position: relative; overflow: hidden; margin-top: 5px; }
+.ivbar span { position: absolute; inset: 0 auto 0 0; background: var(--accent-active); }
+
+/* ---------------- learning paths ---------------- */
+.paths { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 12px; }
+.path { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-md); padding: 14px; }
+.path h4 { font-size: 13.5px; color: var(--accent-active); }
+.path p { margin: 6px 0 10px; font-size: 12.3px; color: var(--text-2); }
+.path-ids { display: flex; flex-wrap: wrap; gap: 5px; }
+.pid {
+  font-family: var(--mono); font-size: 11px; font-weight: 600; color: var(--text-2);
+  border: 1px solid var(--line-2); background: var(--surface-2);
+  border-radius: var(--r-sm); padding: 3px 8px; cursor: pointer;
+}
+.pid:hover { border-color: var(--accent-active); color: var(--accent-active); }
+
+/* ---------------- filters ---------------- */
+.filters { display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 9px; margin-bottom: 14px; }
+.filters input, .filters select {
+  width: 100%; border: 1px solid var(--line-2); background: var(--surface);
+  color: var(--text); border-radius: var(--r-sm); padding: 9px 12px;
+  font-family: inherit; font-size: 13px;
+}
+.filters input::placeholder { color: var(--text-3); }
+.filters input:focus, .filters select:focus { outline: none; border-color: var(--accent-active); }
+.cat-nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.cat-btn {
+  border: 1px solid var(--line); background: var(--surface); color: var(--text-2);
+  border-radius: var(--r-sm); padding: 6px 12px; font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+.cat-btn:hover { border-color: var(--line-2); color: var(--text); }
+.cat-btn.on { border-color: var(--accent-active); color: var(--accent-active); }
+.cat-btn i { font-style: normal; color: var(--text-3); margin-left: 5px; font-size: 11px; }
+
+/* ---------------- cards ---------------- */
+#grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(430px, 1fr)); gap: 12px; align-items: start; }
+/* Grid items default to min-width:auto, so a wide <pre> or table inside an
+   expanded card would blow the track out and overflow the page horizontally. */
+#grid > .card, .detail, .det-sec, .lab-body > * { min-width: 0; }
+.card {
+  border: 1px solid var(--line); background: var(--surface);
+  border-radius: var(--r-md); padding: 16px;
+}
+.card:hover { border-color: var(--line-2); }
+.card.open { grid-column: 1 / -1; border-color: var(--accent-active); }
+.card-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.card-id { font-family: var(--mono); font-size: 16.5px; font-weight: 700; letter-spacing: -0.02em; color: var(--accent-active); }
+.card-names { display: flex; flex-direction: column; min-width: 0; }
+.card-full { font-size: 13px; font-weight: 500; }
+.card-zh { font-size: 12px; color: var(--text-3); }
+.card-hl { display: flex; align-items: baseline; gap: 11px; min-width: 0; }
+.card-meta { display: flex; align-items: center; gap: 7px; flex-shrink: 0; }
+.cat-chip {
+  font-size: 9.5px; font-weight: 700; letter-spacing: .3px; border-radius: 3px;
+  padding: 2px 6px; white-space: nowrap;
+}
+.score {
+  font-family: var(--mono); font-size: 14px; font-weight: 700;
+  border-radius: var(--r-sm); padding: 2px 8px; letter-spacing: -.3px;
+}
+.score i { font-size: 9.5px; font-style: normal; opacity: .55; }
+.score.hi { color: var(--up); background: rgba(0,185,107,.14); }
+.score.mid { color: var(--gold); background: rgba(255,197,61,.13); }
+.score.lo { color: var(--warn); background: rgba(255,165,61,.13); }
+.score.vlo { color: var(--down); background: rgba(250,77,86,.14); }
+.score.inline { font-size: 12px; margin-left: 6px; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 5px; margin: 10px 0; }
+.tag {
+  font-size: 10.5px; font-weight: 550; padding: 2px 8px; border-radius: 4px;
+  cursor: pointer; border: 1px solid transparent; white-space: nowrap;
+}
+.tag:hover { filter: brightness(1.35); }
+.tone-blue { color: #6FB7FF; background: rgba(46,155,255,.12); border-color: rgba(46,155,255,.24); }
+.tone-purple { color: #B79CFF; background: rgba(140,110,255,.12); border-color: rgba(140,110,255,.24); }
+.tone-amber { color: #FFC53D; background: rgba(255,197,61,.11); border-color: rgba(255,197,61,.22); }
+.tone-rose { color: #FF8A8A; background: rgba(250,77,86,.11); border-color: rgba(250,77,86,.22); }
+.tone-teal { color: #34D6B4; background: rgba(0,185,107,.12); border-color: rgba(0,185,107,.24); }
+.tone-cyan { color: #45C8DB; background: rgba(69,200,219,.11); border-color: rgba(69,200,219,.22); }
+.tone-green { color: #34D399; background: rgba(0,185,107,.12); border-color: rgba(0,185,107,.24); }
+.tone-indigo { color: #93A5FF; background: rgba(120,140,255,.11); border-color: rgba(120,140,255,.22); }
+.tone-lime { color: #A6E24B; background: rgba(166,226,75,.11); border-color: rgba(166,226,75,.22); }
+.tone-slate { color: #A7AEBA; background: rgba(167,174,186,.10); border-color: rgba(167,174,186,.2); }
+.tone-orange { color: #FF9A47; background: rgba(255,122,0,.12); border-color: rgba(255,122,0,.24); }
+.tone-gold { color: #FFCE5C; background: rgba(255,197,61,.11); border-color: rgba(255,197,61,.22); }
+.tone-red { color: #FF7A7A; background: rgba(250,77,86,.12); border-color: rgba(250,77,86,.26); }
+
+.card-meaning { font-size: 13.4px; color: var(--text-2); margin: 0 0 12px; }
+.card.open .card-meaning { color: var(--text); }
+.card-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.detail { margin-top: 16px; border-top: 1px solid var(--line); padding-top: 16px; }
+.det-sec { margin-bottom: 18px; }
+.det-h {
+  font-size: 11.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  color: var(--accent-active); margin-bottom: 9px;
+}
+.formula {
+  font-family: var(--mono); font-size: 12.4px; line-height: 1.7; color: #CFE3FF;
+  background: var(--bg); border: 1px solid var(--line);
+  border-left: 3px solid var(--accent-active); border-radius: var(--r-sm);
+  padding: 12px 14px; margin: 0; overflow-x: auto; white-space: pre;
+}
+.bullets { margin: 0; padding-left: 18px; color: var(--text-2); font-size: 13.2px; }
+.bullets li { margin-bottom: 5px; }
+.sigs { display: flex; flex-direction: column; gap: 6px; }
+.sig {
+  display: grid; grid-template-columns: 92px 1fr; gap: 10px; align-items: start;
+  border-radius: var(--r-sm); padding: 8px 10px; font-size: 13px; border: 1px solid transparent;
+}
+.sig-dir { font-size: 10.5px; font-weight: 700; letter-spacing: .2px; padding-top: 2px; }
+.sig-txt { color: var(--text-2); }
+.sig-bull { background: rgba(0,185,107,.07); border-color: rgba(0,185,107,.24); }
+.sig-bull .sig-dir { color: var(--up); }
+.sig-bear { background: rgba(250,77,86,.07); border-color: rgba(250,77,86,.24); }
+.sig-bear .sig-dir { color: var(--down); }
+.sig-neutral { background: var(--surface-2); border-color: var(--line); }
+.sig-neutral .sig-dir { color: var(--text-3); }
+.sig-warn { background: rgba(255,165,61,.07); border-color: rgba(255,165,61,.24); }
+.sig-warn .sig-dir { color: var(--warn); }
+
+.example { border-radius: var(--r-sm); padding: 11px 13px; margin-bottom: 9px; border: 1px solid transparent; }
+.example p { margin: 0; font-size: 13.2px; color: var(--text-2); }
+.example.good { background: rgba(0,185,107,.06); border-color: rgba(0,185,107,.22); }
+.example.bad { background: rgba(250,77,86,.06); border-color: rgba(250,77,86,.22); }
+.ex-h { font-size: 11.5px; font-weight: 700; letter-spacing: .3px; margin-bottom: 6px; }
+.example.good .ex-h { color: var(--up); }
+.example.bad .ex-h { color: var(--down); }
+.ex-h.neutral { color: var(--accent-active); }
+.case-tbl { width: 100%; border-collapse: collapse; font-size: 12.8px; table-layout: fixed; }
+.case-tbl td { overflow-wrap: anywhere; }
+.case-tbl td { border: 1px solid var(--line); padding: 8px 11px; vertical-align: top; }
+.case-tbl td.when { width: 33%; color: var(--text); background: var(--surface-2); font-weight: 600; }
+.case-tbl td.act { color: var(--text-2); }
+.verdict {
+  border: 1px solid rgba(255,197,61,.26); background: rgba(255,197,61,.05);
+  border-radius: var(--r-md); padding: 12px 14px; margin-bottom: 18px;
+}
+.verdict .det-h { color: var(--gold); }
+.verdict p { margin: 0; font-size: 13.3px; color: var(--text-2); }
+.combos { display: flex; flex-direction: column; gap: 6px; }
+.combo { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 9px; font-size: 12.8px; }
+.combo span { color: var(--text-2); }
+.combo-id {
+  font-family: var(--mono); font-size: 11.5px; font-weight: 600; color: var(--accent-active);
+  border: 1px solid var(--line-2); background: var(--surface-2);
+  border-radius: var(--r-sm); padding: 3px 8px; cursor: pointer; white-space: nowrap;
+}
+.combo-id:hover { border-color: var(--accent-active); }
+.aka { font-size: 11.5px; color: var(--text-3); margin: -4px 0 10px; }
+.aka b { color: var(--text-2); font-weight: 600; }
+.mini-pl { width: 100%; height: 190px; display: block; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-sm); margin-bottom: 14px; }
+
+.empty { text-align: center; padding: 60px 20px; color: var(--text-3); }
+
+/* ---------------- FAQ callout ---------------- */
+.faq {
+  border: 1px solid var(--line-2); background: var(--surface);
+  border-left: 3px solid var(--accent-active); border-radius: var(--r-md); padding: 18px 20px;
+}
+.faq h3 { font-size: 16px; margin-bottom: 10px; }
+.faq p { margin: 0 0 10px; font-size: 13.4px; color: var(--text-2); max-width: 90ch; }
+.faq p:last-child { margin-bottom: 0; }
+.faq b { color: var(--text); }
+
+/* ---------------- footer ---------------- */
+footer { border-top: 1px solid var(--line); margin-top: 64px; padding: 26px 0 48px; color: var(--text-3); font-size: 12.5px; }
+footer p { margin: 0 0 8px; max-width: 100ch; }
+#toTop {
+  position: fixed; right: 22px; bottom: 22px; z-index: 70;
+  opacity: 0; pointer-events: none;
+  border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-2);
+  border-radius: var(--r-sm); padding: 8px 13px; font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: inherit; transition: opacity .2s, color .2s, border-color .2s;
+}
+#toTop.show { opacity: 1; pointer-events: auto; }
+#toTop:hover { color: var(--accent-active); border-color: var(--accent-active); }
+
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } html { scroll-behavior: auto; } }
+
+/* ---------------- responsive ---------------- */
+@media (max-width: 1180px) {
+  .lab-body { grid-template-columns: 1fr; }
+  .lab-chart { border-right: 0; border-bottom: 1px solid var(--line); }
+  .grid-2 { grid-template-columns: 1fr; }
+  #grid { grid-template-columns: 1fr; }
+  .filters { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 700px) {
+  .wrap { padding: 0 15px; }
+  .hero { padding: 34px 0 20px; }
+  .topbar .wrap { gap: 12px; }
+  .tb-link { display: none; }
+  .tb-cv { display: inline; }
+  .filters { grid-template-columns: 1fr; }
+  .fam-switch { display: flex; width: 100%; }
+  .fam-seg { flex: 1; padding: 10px 8px; }
+  .card-h { flex-direction: column; }
+  .sig { grid-template-columns: 1fr; gap: 3px; }
+  .kpis { grid-template-columns: 1fr; }
+  .greek-row { grid-template-columns: repeat(3, 1fr); }
+  .case-tbl, .case-tbl tbody, .case-tbl tr, .case-tbl td { display: block; width: 100%; }
+  .case-tbl td.when { border-bottom: none; }
+  .case-tbl tr { margin-bottom: 8px; }
+  .pl-canvas { min-height: 260px; flex: none; height: 260px; }
+}
+
+
+/* ---------------- journal-specific ---------------- */
+.kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(158px, 100%), 1fr)); gap: 10px; }
+.kpi-row .kpi { padding: 12px 14px; }
+.kpi-row .kpi .v { font-size: 21px; }
+.kpi-row .kpi .note { font-size: 10.5px; color: var(--text-3); margin-top: 3px; }
+
+.panel-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(400px, 100%), 1fr)); gap: 14px; }
+.panel canvas.j { width: 100%; display: block; background: var(--bg); border-radius: var(--r-sm); }
+
+.queue { display: flex; flex-direction: column; gap: 7px; }
+.queue-row {
+  display: grid; grid-template-columns: 74px 1fr auto; gap: 12px; align-items: center;
+  border: 1px solid color-mix(in srgb, var(--warn) 30%, transparent);
+  background: color-mix(in srgb, var(--warn) 7%, transparent);
+  border-radius: var(--r-sm); padding: 9px 12px; font-size: 12.8px;
+}
+.queue-row b { font-family: var(--mono); font-size: 13px; }
+.queue-row .due { font-family: var(--mono); font-size: 11.5px; color: var(--warn); }
+.queue-row .hint { color: var(--text-3); font-size: 11.5px; }
+.queue-empty { color: var(--text-3); font-size: 12.8px; padding: 10px 2px; }
+
+table.trades { width: 100%; border-collapse: collapse; font-size: 12.6px; }
+table.trades th {
+  position: sticky; top: 0; z-index: 2; background: var(--surface-2);
+  border-bottom: 1px solid var(--line-2); padding: 9px 11px; text-align: right;
+  font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+  color: var(--text-3); white-space: nowrap; cursor: pointer; user-select: none;
+}
+table.trades th:first-child, table.trades td:first-child { text-align: left; }
+table.trades th.on { color: var(--accent-active); }
+table.trades td { border-bottom: 1px solid var(--line); padding: 9px 11px; text-align: right; font-family: var(--mono); white-space: nowrap; }
+table.trades td:first-child { font-family: inherit; font-weight: 600; }
+table.trades tr.head:hover td { background: var(--surface-2); cursor: pointer; }
+table.trades tr.det td { text-align: left; white-space: normal; font-family: inherit; background: var(--surface-2); }
+.pill { font-size: 9.5px; font-weight: 700; border-radius: 3px; padding: 2px 6px; margin-left: 6px; white-space: nowrap; }
+.pill.open { color: var(--info); background: rgba(46,155,255,.14); }
+.pill.ex { color: var(--warn); background: rgba(255,165,61,.14); }
+.pill.imp { color: var(--down); background: rgba(250,77,86,.14); }
+
+.det-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr)); gap: 14px; padding: 4px 0 10px; }
+.det-block h5 { font-size: 10.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--accent-active); margin-bottom: 6px; }
+.det-block p { margin: 0; font-size: 13px; color: var(--text-2); }
+.det-kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 12.4px; }
+.det-kv dt { color: var(--text-3); }
+.det-kv dd { margin: 0; font-family: var(--mono); color: var(--text-2); }
+
+.form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 11px; }
+.field { display: flex; flex-direction: column; gap: 4px; }
+.field label { font-size: 11px; font-weight: 600; color: var(--text-2); }
+.field input, .field select, .field textarea {
+  border: 1px solid var(--line-2); background: var(--bg); color: var(--text);
+  border-radius: var(--r-sm); padding: 8px 10px; font-family: inherit; font-size: 13px;
+}
+.field textarea { min-height: 74px; resize: vertical; font-size: 12.6px; line-height: 1.55; }
+.field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--accent-active); }
+.field.wide { grid-column: 1 / -1; }
+.field .hint { font-size: 10.5px; color: var(--text-3); }
+.out-json {
+  font-family: var(--mono); font-size: 11.8px; line-height: 1.6; color: #CFE3FF;
+  background: var(--bg); border: 1px solid var(--line); border-left: 3px solid var(--accent-active);
+  border-radius: var(--r-sm); padding: 12px 14px; margin: 12px 0 0; overflow-x: auto;
+  white-space: pre; max-height: 340px; overflow-y: auto;
+}
+.copied { color: var(--up); font-size: 11.5px; margin-left: 8px; }
+.warnbox {
+  border: 1px solid color-mix(in srgb, var(--warn) 30%, transparent);
+  background: color-mix(in srgb, var(--warn) 7%, transparent);
+  color: var(--warn); border-radius: var(--r-sm); padding: 10px 13px; font-size: 12.5px;
+}
+.sample-note { font-size: 11px; color: var(--warn); margin-top: 4px; }
+@media (max-width: 700px) {
+  .queue-row { grid-template-columns: 1fr; gap: 4px; }
+  table.trades { font-size: 11.6px; }
+  table.trades th, table.trades td { padding: 7px 6px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="logo">✎</span><span class="brand-text">Trade<b>Journal</b></span></a>
+    <div class="spacer"></div>
+    <a class="tb-link" href="#exits"><span data-t="navExits">Exit quality</span></a>
+    <a class="tb-link" href="#discipline"><span data-t="navDiscipline">Discipline</span></a>
+    <a class="tb-link" href="#trades"><span data-t="navTrades">Trades</span></a>
+    <a class="tb-link" href="#new"><span data-t="navNew">New entry</span></a>
+    <a class="tb-link tb-ext" href="indicators.html">↔ <span data-t="indicatorsLink">Indicators</span></a>
+    <a class="tb-link tb-ext" href="options.html">↔ <span data-t="optionsLink">Options</span></a>
+    <a class="tb-link tb-ext" href="orders.html">↔ <span data-t="ordersLink">Orders</span></a>
+    <a class="tb-link tb-cv" href="cv.html">← <span data-t="backToCv">Back to CV</span></a>
+    <button class="lang-btn" id="langBtn"><span id="langLabel">EN</span></button>
+  </div>
+</div>
+
+<div class="wrap" id="top">
+
+  <header class="hero">
+    <div class="hero-eyebrow"><span class="dot dot-m"></span><span id="genLine"></span></div>
+    <h1 data-t="title">Trade Journal</h1>
+    <p data-t="subtitle"></p>
+    <div id="exampleWarn"></div>
+  </header>
+
+  <!-- ------------------------------------------------------------- KPIs --- -->
+  <section class="sec" id="overview">
+    <div class="sec-head">
+      <div class="eyebrow">01</div>
+      <h2 data-t="overviewTitle">Overview</h2>
+      <p data-t="overviewSub"></p>
+    </div>
+    <div class="kpi-row" id="kpis"></div>
+    <div class="panel-grid" style="margin-top:14px">
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="equityTitle">Cumulative P/L</h3><span class="sub" id="equitySub"></span></div>
+        <div class="panel-b"><canvas class="j" id="equityCanvas" style="height:210px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="rDistTitle">R-multiple distribution</h3><span class="sub" data-t="rDistSub"></span></div>
+        <div class="panel-b"><canvas class="j" id="rCanvas" style="height:210px"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- --------------------------------------------------------- follow-up --- -->
+  <section class="sec" id="followup">
+    <div class="sec-head">
+      <div class="eyebrow">02</div>
+      <h2 data-t="queueTitle">Due for a three-month follow-up</h2>
+      <p data-t="queueSub"></p>
+    </div>
+    <div class="queue" id="queue"></div>
+    <div id="upcoming" style="margin-top:12px"></div>
+  </section>
+
+  <!-- ------------------------------------------------------- exit quality --- -->
+  <section class="sec" id="exits">
+    <div class="sec-head">
+      <div class="eyebrow">03</div>
+      <h2 data-t="exitTitle">Exit quality</h2>
+      <p data-t="exitSub"></p>
+    </div>
+    <div class="kpi-row" id="exitKpis" style="margin-bottom:14px"></div>
+    <div class="panel">
+      <div class="panel-h"><h3 data-t="exitChartTitle">Where it went after you sold</h3><span class="sub" data-t="exitChartSub"></span></div>
+      <div class="panel-b"><canvas class="j" id="exitCanvas" style="height:260px"></canvas></div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------- discipline --- -->
+  <section class="sec" id="discipline">
+    <div class="sec-head">
+      <div class="eyebrow">04</div>
+      <h2 data-t="discTitle">Discipline &amp; calibration</h2>
+      <p data-t="discSub"></p>
+    </div>
+    <div class="panel-grid">
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="plannedTitle">Planned vs impulse</h3></div>
+        <div class="panel-b"><canvas class="j" id="plannedCanvas" style="height:200px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="followedTitle">Did you follow the plan</h3></div>
+        <div class="panel-b"><canvas class="j" id="followedCanvas" style="height:200px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="emotionTitle">By emotion at entry</h3></div>
+        <div class="panel-b"><canvas class="j" id="emotionCanvas" style="height:200px"></canvas></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="calibTitle">Confidence calibration</h3><span class="sub" data-t="calibSub"></span></div>
+        <div class="panel-b"><canvas class="j" id="calibCanvas" style="height:200px"></canvas></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- -------------------------------------------------------------- trades --- -->
+  <section class="sec" id="trades">
+    <div class="sec-head">
+      <div class="eyebrow">05</div>
+      <h2 data-t="tradesTitle">Every trade</h2>
+      <p data-t="tradesSub"></p>
+    </div>
+    <div class="filters" style="grid-template-columns:2fr 1fr 1fr auto">
+      <input type="search" id="q" data-tp="searchTrades" placeholder="Search ticker, reason, tag…">
+      <select id="statusSel"></select>
+      <select id="sortSel"></select>
+      <button class="btn" id="clearBtn" data-t="clearFilters">Clear</button>
+    </div>
+    <div class="cmp-wrap" style="max-height:none"><table class="trades" id="tradeTable"></table></div>
+    <div class="empty" id="emptyMsg" style="display:none" data-t="noMatch"></div>
+  </section>
+
+  <!-- ----------------------------------------------------------- new entry --- -->
+  <section class="sec" id="new">
+    <div class="sec-head">
+      <div class="eyebrow">06</div>
+      <h2 data-t="newTitle">Log a trade</h2>
+      <p data-t="newSub"></p>
+    </div>
+    <div class="panel">
+      <div class="panel-b">
+        <div class="form-grid" id="formGrid"></div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap">
+          <button class="btn primary" id="genBtn" data-t="genJson">Generate JSON</button>
+          <button class="btn" id="copyBtn" data-t="copyJson">Copy</button>
+          <button class="btn" id="clearFormBtn" data-t="clearForm">Clear form</button>
+          <span class="copied" id="copiedMsg" style="display:none" data-t="copiedOk">copied</span>
+        </div>
+        <pre class="out-json" id="outJson" style="display:none"></pre>
+        <p class="model-note" style="margin-top:12px" data-t="newNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ---------------------------------------------------------- AI review --- -->
+  <section class="sec" id="review">
+    <div class="sec-head">
+      <div class="eyebrow">07</div>
+      <h2 data-t="reviewTitle">AI review</h2>
+      <p data-t="reviewSub"></p>
+    </div>
+    <div class="panel">
+      <div class="panel-b">
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <div class="seg-mini" id="reviewPeriod">
+            <button class="on" data-p="week" data-t="periodWeek">Week</button>
+            <button data-p="month" data-t="periodMonth">Month</button>
+            <button data-p="all" data-t="periodAll">All time</button>
+          </div>
+          <button class="btn primary" id="copyPromptBtn" data-t="copyPrompt">Copy review prompt</button>
+          <span class="copied" id="promptCopied" style="display:none" data-t="copiedOk">copied</span>
+        </div>
+        <pre class="out-json" id="promptOut" style="max-height:300px"></pre>
+        <p class="model-note" style="margin-top:12px" data-t="reviewNote"></p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p data-t="disclaimer"></p>
+    <p style="opacity:.72">Built from <code>domain-knowledge/journal/trades.json</code> · the JSON file is the source of truth, this page is a generated view · companion to the <a href="indicators.html" style="color:var(--accent-active)">Indicator</a>, <a href="options.html" style="color:var(--accent-active)">Options</a> and <a href="orders.html" style="color:var(--accent-active)">Order Types</a> handbooks.</p>
+  </footer>
+</div>
+
+<button id="toTop" data-t="jumpTop">↑ Top</button>
+
+<script>globalThis.TJ_DATA={"version":1,"settings":{"baseCurrency":"$","followUpMonths":3},"_readme":"This file is the single source of truth for the trade journal. The dashboard at bpcv/journal.html is BUILT from it — edit here, run `node build.js`, commit. Entries marked \"example\": true are seed data to show the shape; delete them once you have your own. Run `node validate.js` before committing.","trades":[{"id":"2026-06-02-MU","example":true,"ticker":"MU","market":"US","side":"long","status":"closed","entry":{"date":"2026-06-02","price":640,"qty":30,"fees":1.2},"exit":{"date":"2026-07-18","price":812,"qty":30,"fees":1.2},"sizing":{"portfolioPct":6.4,"plannedStop":592,"plannedTarget":760},"buyReason":"IV rank 18, the quietest premium of the year, into an expected supply-agreement announcement before the September quarter. HBM pricing commentary from two suppliers already pointed the same way. Sized so the stop at 592 costs 0.5% of the portfolio.","sellReason":"Announcement landed, stock gapped to 812, which is 6.8% past my 760 target. Sold the whole position into strength rather than trailing it, because the catalyst I bought had already happened and I had no second thesis.","followUp":{"dueDate":"2026-10-18","price":905,"note":"Kept running on the AI capex cycle I had not modelled."},"discipline":{"planned":true,"followedPlan":true,"confidence":4,"emotion":"calm","note":"Wrote the thesis and the stop before entering. Exit was earlier than planned but for a stated reason."},"context":{"index":"SPX 6120, +1.2% that week","vixOrIv":"MU IV rank 18, VIX 14.2","sector":"SOX +3.4% over the holding period","note":"Semis were strong throughout — some of this was beta, not selection."},"tags":["catalyst","semis"]},{"id":"2026-07-09-SNDK","example":true,"ticker":"SNDK","market":"US","side":"long","status":"closed","entry":{"date":"2026-07-09","price":88.5,"qty":200,"fees":1},"exit":{"date":"2026-07-11","price":79.2,"qty":200,"fees":1},"sizing":{"portfolioPct":9.1,"plannedStop":84,"plannedTarget":99},"buyReason":"Saw it running on a forum post about memory pricing and bought without checking earnings date. No written thesis.","sellReason":"Reported two days later, gapped down through my stop at 84 and filled at 79.2. The stop did not protect the price, only triggered the exit.","followUp":{"dueDate":"2026-10-11","price":71.4,"note":"Kept falling. The exit was correct even though it felt terrible."},"discipline":{"planned":false,"followedPlan":false,"confidence":5,"emotion":"fomo","note":"Impulse entry, oversized, and I was most confident on the trade I understood least. Did not check the earnings calendar."},"context":{"index":"SPX 6180, flat that week","vixOrIv":"SNDK IV rank 74 into earnings","sector":"Memory names mixed","note":"IV rank was screaming that an event was priced in and I ignored it."},"tags":["impulse","earnings"]},{"id":"2026-08-04-NVDA","example":true,"ticker":"NVDA","market":"US","side":"long","status":"open","entry":{"date":"2026-08-04","price":182.3,"qty":60,"fees":1},"exit":{"date":null,"price":null,"qty":null,"fees":0},"sizing":{"portfolioPct":5,"plannedStop":171,"plannedTarget":210},"buyReason":"Pullback to the 50-day after three weeks of consolidation, with the next earnings date outside my intended holding period. Planned stop below the consolidation low at 171; target 210 is the prior high. Planned R:R is roughly 2.5.","sellReason":"","followUp":{"dueDate":null,"price":null,"note":""},"discipline":{"planned":true,"followedPlan":true,"confidence":3,"emotion":"calm","note":"Deliberately sized smaller than the MU trade because the catalyst is weaker — this is a technical setup, not an event."},"context":{"index":"SPX 6240","vixOrIv":"VIX 13.1, NVDA IV rank 31","sector":"SOX consolidating","note":""},"tags":["technical"]}]};globalThis.TJ_BUILT="2026-08-13";</script>
+<script>/* =============================================================================
+   lib.js — the analytics engine.
+
+   Loaded identically by the Node CLI (validate.js, report.js) and by the built
+   web page, so the dashboard and the AI review can never disagree about what
+   your numbers are. One implementation, two consumers.
+
+   The organising question of this journal is not "did I make money" — your
+   broker already tells you that. It is:
+
+     1. Was the SIZE right?      → R-multiple, planned stop, portfolio %
+     2. Was the EXIT right?      → the price three months later
+     3. Was the PROCESS right?   → planned vs impulse, followed plan, emotion
+     4. Was it ME or the MARKET? → index and sector context at the time
+
+   Everything below computes one of those four.
+   ============================================================================= */
+(function (root, factory) {
+  if (typeof module === 'object' && module.exports) module.exports = factory();
+  else root.TJ = factory();
+})(typeof globalThis !== 'undefined' ? globalThis : this, function () {
+  'use strict';
+
+  var TJ = {};
+
+  /* ------------------------------------------------------------------ dates */
+
+  function d(x) { return x ? new Date(x + 'T00:00:00Z') : null; }
+  function days(a, b) { return a && b ? Math.round((b - a) / 86400000) : null; }
+  function iso(dt) { return dt.toISOString().slice(0, 10); }
+  function addMonths(dateStr, n) {
+    var dt = d(dateStr); if (!dt) return null;
+    var day = dt.getUTCDate();
+    dt.setUTCMonth(dt.getUTCMonth() + n);
+    // clamp for month-end (31 Jan + 3 months should not spill into May)
+    if (dt.getUTCDate() < day) dt.setUTCDate(0);
+    return iso(dt);
+  }
+  TJ.addMonths = addMonths;
+  TJ.iso = iso;
+  TJ.today = function () { return iso(new Date()); };
+
+  /* --------------------------------------------------------------- one trade */
+  /*
+     Everything derived from a raw trade record. `dir` is +1 for a long and −1
+     for a short, so every P/L, R and exit-quality figure below has the same
+     sign convention on both sides: positive is good for you.
+  */
+  TJ.derive = function (t, opts) {
+    opts = opts || {};
+    var followUpMonths = opts.followUpMonths == null ? 3 : opts.followUpMonths;
+    var dir = t.side === 'short' ? -1 : 1;
+    var e = t.entry || {}, x = t.exit || {}, s = t.sizing || {};
+    var qty = x.qty != null ? x.qty : e.qty;
+    var fees = (e.fees || 0) + (x.fees || 0);
+    var closed = t.status === 'closed' && x.price != null;
+
+    var grossPerShare = closed ? dir * (x.price - e.price) : null;
+    var pnl = closed ? grossPerShare * qty - fees : null;
+    var pnlPct = closed && e.price ? grossPerShare / e.price : null;
+    var cost = e.price != null && qty != null ? e.price * qty : null;
+
+    // R — the only honest way to compare a 3% position with a 12% one.
+    // Risk per share is the distance from entry to the stop you PLANNED before
+    // you entered. No planned stop means no R, and that itself is a finding.
+    var riskPerShare = s.plannedStop != null && e.price != null
+      ? dir * (e.price - s.plannedStop) : null;
+    var rMultiple = closed && riskPerShare > 0 ? grossPerShare / riskPerShare : null;
+    var riskAmount = riskPerShare > 0 && qty != null ? riskPerShare * qty : null;
+
+    // Planned reward:risk, decided at entry — compare against what you took.
+    var plannedR = s.plannedTarget != null && riskPerShare > 0
+      ? dir * (s.plannedTarget - e.price) / riskPerShare : null;
+
+    var holdDays = closed ? days(d(e.date), d(x.date)) : days(d(e.date), new Date());
+
+    // ---- exit quality: the point of the three-month follow-up ---------------
+    // Did the thing keep going after you sold? For a long, a higher price later
+    // means you left money on the table; for a short, a lower price later does.
+    var fu = t.followUp || {};
+    var dueDate = fu.dueDate || (closed && x.date ? addMonths(x.date, followUpMonths) : null);
+    var fuPrice = fu.price == null ? null : fu.price;
+    var exitAlpha = null, exitAlphaPct = null, leftOnTable = null;
+    if (closed && fuPrice != null && x.price) {
+      // positive = your exit BEAT the later price = you sold well
+      exitAlphaPct = dir * (x.price - fuPrice) / x.price;
+      exitAlpha = dir * (x.price - fuPrice);
+      leftOnTable = -exitAlpha * qty;   // positive = money you gave up by selling
+    }
+    var followUpDue = closed && fuPrice == null && dueDate != null && dueDate <= TJ.today();
+
+    return {
+      id: t.id, ticker: t.ticker, side: t.side || 'long', dir: dir,
+      status: t.status, example: !!t.example,
+      entryDate: e.date, exitDate: x.date, qty: qty, entryPrice: e.price, exitPrice: x.price,
+      fees: fees, cost: cost, closed: closed,
+      pnl: pnl, pnlPct: pnlPct, win: closed ? pnl > 0 : null,
+      riskPerShare: riskPerShare, riskAmount: riskAmount,
+      rMultiple: rMultiple, plannedR: plannedR,
+      portfolioPct: s.portfolioPct == null ? null : s.portfolioPct,
+      holdDays: holdDays,
+      dueDate: dueDate, followUpPrice: fuPrice, followUpDue: followUpDue,
+      exitAlpha: exitAlpha, exitAlphaPct: exitAlphaPct, leftOnTable: leftOnTable,
+      discipline: t.discipline || {}, context: t.context || {},
+      buyReason: t.buyReason || '', sellReason: t.sellReason || '',
+      tags: t.tags || []
+    };
+  };
+
+  /* ------------------------------------------------------------- aggregation */
+
+  function mean(a) { return a.length ? a.reduce(function (x, y) { return x + y; }, 0) / a.length : null; }
+  function sum(a) { return a.reduce(function (x, y) { return x + y; }, 0); }
+  function median(a) {
+    if (!a.length) return null;
+    var s = a.slice().sort(function (x, y) { return x - y; });
+    var m = Math.floor(s.length / 2);
+    return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2;
+  }
+  TJ.mean = mean; TJ.sum = sum; TJ.median = median;
+
+  // Win rate with a small-sample warning. Eleven trades is not evidence, and a
+  // journal that pretends otherwise teaches you to trust noise.
+  function rate(wins, n) { return n ? wins / n : null; }
+  TJ.confidenceNote = function (n) {
+    if (n < 20) return 'too-few';
+    if (n < 50) return 'thin';
+    return 'ok';
+  };
+
+  TJ.summarise = function (rows) {
+    var closed = rows.filter(function (r) { return r.closed; });
+    var wins = closed.filter(function (r) { return r.win; });
+    var losses = closed.filter(function (r) { return !r.win; });
+    var Rs = closed.map(function (r) { return r.rMultiple; }).filter(function (v) { return v != null; });
+
+    var grossWin = sum(wins.map(function (r) { return r.pnl; }));
+    var grossLoss = Math.abs(sum(losses.map(function (r) { return r.pnl; })));
+
+    var withFu = closed.filter(function (r) { return r.exitAlphaPct != null; });
+
+    return {
+      n: rows.length,
+      nOpen: rows.filter(function (r) { return !r.closed; }).length,
+      nClosed: closed.length,
+      winRate: rate(wins.length, closed.length),
+      sample: TJ.confidenceNote(closed.length),
+      pnl: sum(closed.map(function (r) { return r.pnl; })),
+      avgWin: mean(wins.map(function (r) { return r.pnl; })),
+      avgLoss: mean(losses.map(function (r) { return r.pnl; })),
+      // Expectancy per trade in R is the single most useful number here: it is
+      // size-independent, so it survives you changing position size.
+      expectancyR: Rs.length ? mean(Rs) : null,
+      medianR: median(Rs),
+      bestR: Rs.length ? Math.max.apply(null, Rs) : null,
+      worstR: Rs.length ? Math.min.apply(null, Rs) : null,
+      profitFactor: grossLoss > 0 ? grossWin / grossLoss : null,
+      avgHoldWin: mean(wins.map(function (r) { return r.holdDays; }).filter(function (v) { return v != null; })),
+      avgHoldLoss: mean(losses.map(function (r) { return r.holdDays; }).filter(function (v) { return v != null; })),
+      noStopCount: closed.filter(function (r) { return r.rMultiple == null; }).length,
+      // exit quality
+      nFollowUp: withFu.length,
+      exitAlphaPct: mean(withFu.map(function (r) { return r.exitAlphaPct; })),
+      leftOnTable: sum(withFu.map(function (r) { return r.leftOnTable; })),
+      soldTooEarly: withFu.filter(function (r) { return r.exitAlphaPct < -0.02; }).length,
+      soldWell: withFu.filter(function (r) { return r.exitAlphaPct > 0.02; }).length,
+      exitNeutral: withFu.filter(function (r) { return Math.abs(r.exitAlphaPct) <= 0.02; }).length
+    };
+  };
+
+  /* Split by any key function, summarising each bucket. This is what turns a
+     list of trades into "you only lose money when you break your own rules". */
+  TJ.groupBy = function (rows, keyFn, labelFn) {
+    var buckets = {};
+    rows.forEach(function (r) {
+      var k = keyFn(r);
+      if (k == null || k === '') k = '—';
+      (buckets[k] = buckets[k] || []).push(r);
+    });
+    return Object.keys(buckets).map(function (k) {
+      var s = TJ.summarise(buckets[k]);
+      s.key = k;
+      s.label = labelFn ? labelFn(k) : k;
+      s.rows = buckets[k];
+      return s;
+    }).sort(function (a, b) { return b.nClosed - a.nClosed; });
+  };
+
+  /* Confidence calibration — were you right when you felt sure? A trader whose
+     5/5 trades win less often than their 2/5 trades has a self-knowledge
+     problem, and it is invisible without this table. */
+  TJ.calibration = function (rows) {
+    return TJ.groupBy(
+      rows.filter(function (r) { return r.closed && r.discipline.confidence != null; }),
+      function (r) { return String(r.discipline.confidence); }
+    ).sort(function (a, b) { return (+a.key) - (+b.key); });
+  };
+
+  /* Cumulative P/L in dollars and in R, ordered by exit date. */
+  TJ.equityCurve = function (rows) {
+    var closed = rows.filter(function (r) { return r.closed && r.exitDate; })
+      .sort(function (a, b) { return a.exitDate < b.exitDate ? -1 : 1; });
+    var cum = 0, cumR = 0;
+    return closed.map(function (r) {
+      cum += r.pnl || 0;
+      if (r.rMultiple != null) cumR += r.rMultiple;
+      return { date: r.exitDate, pnl: cum, r: cumR, ticker: r.ticker, trade: r };
+    });
+  };
+
+  /* The follow-up queue — closed trades past their three-month mark with no
+     price recorded yet. This is the only thing in the journal that expires. */
+  TJ.followUpQueue = function (rows) {
+    return rows.filter(function (r) { return r.followUpDue; })
+      .sort(function (a, b) { return a.dueDate < b.dueDate ? -1 : 1; });
+  };
+
+  /* Everything upcoming, whether or not it is due yet — useful for planning. */
+  TJ.followUpUpcoming = function (rows) {
+    var today = TJ.today();
+    return rows.filter(function (r) {
+      return r.closed && r.followUpPrice == null && r.dueDate && r.dueDate > today;
+    }).sort(function (a, b) { return a.dueDate < b.dueDate ? -1 : 1; });
+  };
+
+  /* --------------------------------------------------------- period slicing */
+
+  TJ.inPeriod = function (rows, fromDate, toDate) {
+    return rows.filter(function (r) {
+      var dt = r.exitDate || r.entryDate;
+      return dt && dt >= fromDate && dt <= toDate;
+    });
+  };
+
+  TJ.periodBounds = function (kind, todayStr) {
+    var today = todayStr || TJ.today();
+    var dt = d(today);
+    if (kind === 'week') {
+      var back = new Date(dt); back.setUTCDate(back.getUTCDate() - 6);
+      return { from: iso(back), to: today, label: 'week' };
+    }
+    if (kind === 'month') {
+      var m = new Date(dt); m.setUTCMonth(m.getUTCMonth() - 1); m.setUTCDate(m.getUTCDate() + 1);
+      return { from: iso(m), to: today, label: 'month' };
+    }
+    return { from: '1970-01-01', to: today, label: 'all' };
+  };
+
+  /* ------------------------------------------------------------- validation */
+
+  var EMOTIONS = ['calm', 'fomo', 'fear', 'greed', 'revenge', 'bored', 'confident', 'uncertain'];
+  TJ.EMOTIONS = EMOTIONS;
+
+  TJ.validate = function (data) {
+    var errs = [], warns = [];
+    var E = function (id, m) { errs.push(id + ': ' + m); };
+    var W = function (id, m) { warns.push(id + ': ' + m); };
+
+    if (!data || !Array.isArray(data.trades)) return { errors: ['trades.json must have a "trades" array'], warnings: [] };
+
+    var seen = {};
+    data.trades.forEach(function (t, i) {
+      var id = t.id || ('#' + i);
+      if (!t.id) E(id, 'missing id');
+      else if (seen[t.id]) E(id, 'duplicate id'); else seen[t.id] = 1;
+      if (!t.ticker) E(id, 'missing ticker');
+      if (t.side && ['long', 'short'].indexOf(t.side) < 0) E(id, 'side must be long or short');
+      if (['open', 'closed'].indexOf(t.status) < 0) E(id, 'status must be open or closed');
+
+      var e = t.entry || {};
+      if (!e.date) E(id, 'missing entry.date');
+      if (typeof e.price !== 'number' || !(e.price > 0)) E(id, 'entry.price must be a positive number');
+      if (typeof e.qty !== 'number' || !(e.qty > 0)) E(id, 'entry.qty must be a positive number');
+
+      if (t.status === 'closed') {
+        var x = t.exit || {};
+        if (!x.date) E(id, 'closed trade missing exit.date');
+        if (typeof x.price !== 'number' || !(x.price > 0)) E(id, 'closed trade needs a numeric exit.price');
+        if (x.date && e.date && x.date < e.date) E(id, 'exit.date is before entry.date');
+        if (!t.sellReason) W(id, 'closed with no sellReason — the review cannot say anything about your exits');
+      }
+      if (!t.buyReason) W(id, 'no buyReason — this is the field the whole journal exists for');
+
+      var s = t.sizing || {};
+      if (s.plannedStop == null) W(id, 'no sizing.plannedStop — R-multiple cannot be computed for this trade');
+      else {
+        var dir = t.side === 'short' ? -1 : 1;
+        if (dir * (e.price - s.plannedStop) <= 0) E(id, 'plannedStop is on the wrong side of entry for a ' + (t.side || 'long'));
+      }
+      if (s.portfolioPct != null && (s.portfolioPct <= 0 || s.portfolioPct > 100)) E(id, 'sizing.portfolioPct must be 0–100');
+
+      var dis = t.discipline || {};
+      if (dis.confidence != null && (dis.confidence < 1 || dis.confidence > 5)) E(id, 'discipline.confidence must be 1–5');
+      if (dis.emotion && EMOTIONS.indexOf(dis.emotion) < 0) W(id, 'unknown emotion "' + dis.emotion + '" (known: ' + EMOTIONS.join(', ') + ')');
+
+      var fu = t.followUp || {};
+      if (fu.price != null && !(fu.price > 0)) E(id, 'followUp.price must be a positive number or null');
+    });
+    return { errors: errs, warnings: warns };
+  };
+
+  /* ---------------------------------------------------------------- loading */
+
+  TJ.load = function (data, opts) {
+    opts = opts || {};
+    var trades = (data.trades || []).filter(function (t) {
+      return opts.includeExamples === false ? !t.example : true;
+    });
+    return trades.map(function (t) { return TJ.derive(t, data.settings || {}); });
+  };
+
+  /* -------------------------------------------------------------- formatting */
+
+  TJ.money = function (x, cur) {
+    if (x == null || !isFinite(x)) return '—';
+    var sign = x < 0 ? '−' : '';
+    return sign + (cur || '$') + Math.abs(x).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+  TJ.pct = function (x, dp) {
+    if (x == null || !isFinite(x)) return '—';
+    return (x >= 0 ? '+' : '') + (x * 100).toFixed(dp == null ? 1 : dp) + '%';
+  };
+  TJ.r = function (x) {
+    if (x == null || !isFinite(x)) return '—';
+    return (x >= 0 ? '+' : '') + x.toFixed(2) + 'R';
+  };
+  TJ.num = function (x, dp) {
+    if (x == null || !isFinite(x)) return '—';
+    return x.toLocaleString('en-US', { minimumFractionDigits: dp == null ? 2 : dp, maximumFractionDigits: dp == null ? 2 : dp });
+  };
+
+  return TJ;
+});
+</script>
+<script>/* =============================================================================
+   chart.js — four small canvas renderers for the journal.
+
+     Chart.line(cv, o)     cumulative P/L or R over time, with a zero line
+     Chart.diverge(cv, o)  one horizontal bar per trade, signed left/right —
+                           used for exit quality, where the sign IS the message
+     Chart.groups(cv, o)   win rate and expectancy side by side per bucket
+     Chart.hist(cv, o)     R-multiple distribution
+
+   Same flat moomoo-derived palette as the three handbooks. No external deps.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var C = root.TJC = {};
+
+  var CL = C.colors = {
+    grid: '#1E2229', axis: '#333A46', text2: '#626A78', text1: '#EAECEF',
+    up: '#00B96B', down: '#FA4D56', brand: '#FF7A00', info: '#2E9BFF',
+    gold: '#FFC53D', violet: '#8C6EFF', teal: '#34D6B4', warn: '#FFA53D'
+  };
+
+  function setup(cv) {
+    var dpr = Math.min(root.devicePixelRatio || 1, 2);
+    var r = cv.getBoundingClientRect();
+    var w = Math.max(60, Math.round(r.width || cv.clientWidth || 600));
+    var h = Math.max(50, Math.round(r.height || cv.clientHeight || 200));
+    if (cv.width !== w * dpr || cv.height !== h * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+    var x = cv.getContext('2d');
+    x.setTransform(dpr, 0, 0, dpr, 0, 0);
+    x.clearRect(0, 0, w, h);
+    x.font = '10.5px ui-monospace, SFMono-Regular, Menlo, monospace';
+    x.textBaseline = 'middle';
+    return { x: x, w: w, h: h };
+  }
+
+  function ticks(lo, hi, n) {
+    if (!(hi > lo)) return [lo];
+    var raw = (hi - lo) / n, mag = Math.pow(10, Math.floor(Math.log10(Math.abs(raw) || 1)));
+    var norm = raw / mag, step = mag * (norm >= 5 ? 5 : norm >= 2 ? 2 : 1);
+    var out = [], t = Math.ceil(lo / step) * step;
+    for (; t <= hi + step * 0.001 && out.length < 40; t += step) out.push(t);
+    return out;
+  }
+
+  function plot(w, h, pad) {
+    var l = pad.l, r = w - pad.r, t = pad.t, b = h - pad.b;
+    return {
+      l: l, r: r, t: t, b: b,
+      set: function (x0, x1, y0, y1) { this.x0 = x0; this.x1 = x1; this.y0 = y0; this.y1 = y1; return this; },
+      px: function (v) { return this.x1 === this.x0 ? (l + r) / 2 : l + (v - this.x0) / (this.x1 - this.x0) * (r - l); },
+      py: function (v) { return this.y1 === this.y0 ? (t + b) / 2 : b - (v - this.y0) / (this.y1 - this.y0) * (b - t); }
+    };
+  }
+
+  function empty(s, msg) {
+    s.x.fillStyle = CL.text2; s.x.textAlign = 'center';
+    s.x.fillText(msg || 'not enough data yet', s.w / 2, s.h / 2);
+  }
+
+  function grid(x, P, ys, fmtY) {
+    x.strokeStyle = CL.grid; x.lineWidth = 1; x.fillStyle = CL.text2; x.textAlign = 'right';
+    ys.forEach(function (t) {
+      var py = P.py(t);
+      if (py < P.t - 1 || py > P.b + 1) return;
+      x.beginPath(); x.moveTo(P.l, Math.round(py) + 0.5); x.lineTo(P.r, Math.round(py) + 0.5); x.stroke();
+      x.fillText(fmtY(t), P.l - 6, py);
+    });
+  }
+
+  /* ------------------------------------------------------------------- line */
+  /* o = { points:[{date,value}], fmtY, label } */
+  C.line = function (cv, o) {
+    var s = setup(cv), x = s.x, pts = o.points || [];
+    if (pts.length < 1) return empty(s, o.emptyLabel);
+    var P = plot(s.w, s.h, { l: 56, r: 12, t: 12, b: 22 });
+    var lo = 0, hi = 0;
+    pts.forEach(function (p) { lo = Math.min(lo, p.value); hi = Math.max(hi, p.value); });
+    var pad = (hi - lo) * 0.15 || 1;
+    P.set(0, Math.max(1, pts.length - 1), lo - pad, hi + pad);
+    grid(x, P, ticks(P.y0, P.y1, 4), o.fmtY || function (t) { return t.toFixed(0); });
+
+    // zero line — the only reference that matters on a P/L curve
+    if (P.y0 < 0 && P.y1 > 0) {
+      x.strokeStyle = CL.axis; x.lineWidth = 1;
+      x.beginPath(); x.moveTo(P.l, Math.round(P.py(0)) + 0.5); x.lineTo(P.r, Math.round(P.py(0)) + 0.5); x.stroke();
+    }
+
+    // fill under the curve, coloured by final sign
+    var last = pts[pts.length - 1].value;
+    var col = last >= 0 ? CL.up : CL.down;
+    x.beginPath();
+    x.moveTo(P.px(0), P.py(0));
+    pts.forEach(function (p, i) { x.lineTo(P.px(i), P.py(p.value)); });
+    x.lineTo(P.px(pts.length - 1), P.py(0));
+    x.closePath();
+    x.fillStyle = last >= 0 ? 'rgba(0,185,107,0.12)' : 'rgba(250,77,86,0.12)';
+    x.fill();
+
+    x.strokeStyle = col; x.lineWidth = 1.8; x.beginPath();
+    pts.forEach(function (p, i) { (i ? x.lineTo : x.moveTo).call(x, P.px(i), P.py(p.value)); });
+    x.stroke();
+
+    pts.forEach(function (p, i) {
+      x.beginPath(); x.arc(P.px(i), P.py(p.value), 3, 0, 6.2832);
+      x.fillStyle = col; x.fill();
+    });
+
+    x.save(); x.fillStyle = CL.text2; x.textAlign = 'left'; x.font = '9.5px ui-monospace, Menlo, monospace';
+    if (pts.length) {
+      x.fillText(pts[0].date || '', P.l, P.b + 11);
+      x.textAlign = 'right';
+      x.fillText(pts[pts.length - 1].date || '', P.r, P.b + 11);
+    }
+    x.restore();
+  };
+
+  /* --------------------------------------------------------------- diverge */
+  /* o = { items:[{label, value, sub}], fmt } — signed horizontal bars.
+     Used for exit quality: right/green = you sold above where it later went. */
+  C.diverge = function (cv, o) {
+    var s = setup(cv), x = s.x, items = o.items || [];
+    if (!items.length) return empty(s, o.emptyLabel);
+    // The label column holds the ticker at its left edge and the price detail at
+    // its right edge, so a long detail string can never collide with the name.
+    var labW = Math.min(230, Math.max(120, s.w * 0.26)), valW = 68;
+    var footer = 16;
+    var rowH = Math.min(30, Math.max(16, (s.h - footer - 8) / items.length));
+    var blockH = items.length * rowH;
+    // centre the block vertically — a two-row chart in a 260px panel should not
+    // sit in the top corner with a void underneath it
+    var top = Math.max(4, (s.h - footer - blockH) / 2);
+    var l = labW, r = s.w - valW, mid = (l + r) / 2;
+    var maxAbs = 0;
+    items.forEach(function (i) { maxAbs = Math.max(maxAbs, Math.abs(i.value)); });
+    maxAbs = maxAbs || 1;
+
+    x.strokeStyle = CL.axis; x.lineWidth = 1;
+    x.beginPath(); x.moveTo(Math.round(mid) + 0.5, top - 2); x.lineTo(Math.round(mid) + 0.5, top + blockH + 2); x.stroke();
+
+    items.forEach(function (it, i) {
+      var y = top + i * rowH, cy = y + rowH / 2;
+      var w = Math.abs(it.value) / maxAbs * (r - l) / 2 * 0.94;
+      var pos = it.value >= 0;
+      x.fillStyle = pos ? 'rgba(0,185,107,0.7)' : 'rgba(250,77,86,0.7)';
+      x.fillRect(pos ? mid : mid - w, y + 3, w, rowH - 6);
+
+      x.fillStyle = CL.text1; x.textAlign = 'left'; x.font = '11.5px Inter, system-ui, sans-serif';
+      x.fillText(it.label, 6, cy);
+      if (it.sub) {
+        x.fillStyle = CL.text2; x.textAlign = 'right'; x.font = '9px ui-monospace, Menlo, monospace';
+        x.fillText(it.sub, labW - 10, cy);
+      }
+      x.fillStyle = pos ? CL.up : CL.down; x.textAlign = 'left';
+      x.font = '10.5px ui-monospace, Menlo, monospace';
+      x.fillText(o.fmt ? o.fmt(it.value) : it.value.toFixed(1), r + 8, cy);
+    });
+
+    x.save(); x.fillStyle = CL.text2; x.font = '9.5px Inter, system-ui, sans-serif';
+    x.textAlign = 'center';
+    x.fillText(o.leftLabel || '', (l + mid) / 2, top + blockH + 11);
+    x.fillText(o.rightLabel || '', (mid + r) / 2, top + blockH + 11);
+    x.restore();
+  };
+
+  /* ---------------------------------------------------------------- groups */
+  /* o = { items:[{label, winRate, expectancyR, n}] } */
+  C.groups = function (cv, o) {
+    var s = setup(cv), x = s.x, items = o.items || [];
+    if (!items.length) return empty(s, o.emptyLabel);
+    var P = plot(s.w, s.h, { l: 40, r: 44, t: 10, b: 30 });
+    var colW = (P.r - P.l) / items.length;
+
+    // win rate on the left axis 0–100
+    P.set(0, items.length, 0, 1);
+    grid(x, P, [0, 0.25, 0.5, 0.75, 1], function (t) { return (t * 100).toFixed(0) + '%'; });
+
+    var expMax = 0;
+    items.forEach(function (i) { expMax = Math.max(expMax, Math.abs(i.expectancyR || 0)); });
+    expMax = expMax || 1;
+
+    items.forEach(function (it, i) {
+      var cx = P.l + colW * (i + 0.5);
+      var bw = Math.min(26, colW * 0.34);
+
+      // win rate bar
+      if (it.winRate != null) {
+        var h = (P.b - P.py(it.winRate));
+        x.fillStyle = 'rgba(46,155,255,0.65)';
+        x.fillRect(cx - bw - 2, P.py(it.winRate), bw, h);
+      }
+      // expectancy bar, own scale, signed
+      if (it.expectancyR != null) {
+        var zero = P.py(0.5);
+        var eh = (it.expectancyR / expMax) * (P.b - P.t) * 0.42;
+        x.fillStyle = it.expectancyR >= 0 ? 'rgba(0,185,107,0.7)' : 'rgba(250,77,86,0.7)';
+        x.fillRect(cx + 2, Math.min(zero, zero - eh), bw, Math.abs(eh));
+      }
+      x.fillStyle = CL.text2; x.textAlign = 'center'; x.font = '10px Inter, system-ui, sans-serif';
+      var lbl = it.label.length > 13 ? it.label.slice(0, 12) + '…' : it.label;
+      x.fillText(lbl, cx, P.b + 11);
+      x.fillStyle = CL.text2; x.font = '9px ui-monospace, Menlo, monospace';
+      x.fillText('n=' + it.n, cx, P.b + 22);
+    });
+
+    x.save(); x.textAlign = 'left'; x.font = '9px Inter, system-ui, sans-serif';
+    x.fillStyle = CL.info; x.fillText('win%', P.r + 6, P.t + 6);
+    x.fillStyle = CL.up; x.fillText('exp R', P.r + 6, P.t + 18);
+    x.restore();
+  };
+
+  /* ------------------------------------------------------------------ hist */
+  /* o = { values:[R...] } */
+  C.hist = function (cv, o) {
+    var s = setup(cv), x = s.x, vals = (o.values || []).filter(function (v) { return v != null && isFinite(v); });
+    if (!vals.length) return empty(s, o.emptyLabel);
+    var P = plot(s.w, s.h, { l: 34, r: 10, t: 10, b: 22 });
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    lo = Math.min(-1, Math.floor(lo)); hi = Math.max(1, Math.ceil(hi));
+    var nb = Math.min(14, Math.max(5, Math.round(hi - lo)));
+    var w = (hi - lo) / nb, bins = new Array(nb).fill(0);
+    vals.forEach(function (v) {
+      var k = Math.min(nb - 1, Math.max(0, Math.floor((v - lo) / w)));
+      bins[k]++;
+    });
+    var maxN = Math.max.apply(null, bins);
+    P.set(lo, hi, 0, maxN * 1.15);
+    grid(x, P, ticks(0, maxN * 1.15, 3), function (t) { return t.toFixed(0); });
+
+    var bw = (P.r - P.l) / nb;
+    bins.forEach(function (n, i) {
+      if (!n) return;
+      var x0 = P.px(lo + i * w), mid = lo + (i + 0.5) * w;
+      x.fillStyle = mid >= 0 ? 'rgba(0,185,107,0.7)' : 'rgba(250,77,86,0.7)';
+      x.fillRect(x0 + 1, P.py(n), bw - 2, P.b - P.py(n));
+    });
+    // the 0R line — left of it you lost more than you planned to risk
+    x.save(); x.setLineDash([3, 3]); x.strokeStyle = CL.gold; x.lineWidth = 1;
+    x.beginPath(); x.moveTo(P.px(0), P.t); x.lineTo(P.px(0), P.b); x.stroke(); x.restore();
+    x.fillStyle = CL.text2; x.textAlign = 'center'; x.font = '9.5px ui-monospace, Menlo, monospace';
+    x.fillText(lo + 'R', P.l + 10, P.b + 11);
+    x.fillText(hi + 'R', P.r - 10, P.b + 11);
+  };
+
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+</script>
+<script>/* =============================================================================
+   app.js — the journal dashboard.
+
+   Reads TJ_DATA (trades.json, inlined at build time) and TJ (the same analytics
+   engine the CLI uses), and renders the overview, the follow-up queue, the exit
+   quality view, the discipline panels, the trade table, an entry composer and
+   an AI review prompt.
+
+   The page is READ-ONLY over the data. trades.json in the repo is the source of
+   truth; the composer emits a JSON block for you to paste into it. That is a
+   deliberate choice — a journal you can silently lose to a cleared browser
+   cache is not a journal.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var TJ = root.TJ, C = root.TJC, DATA = root.TJ_DATA || { trades: [] };
+
+  /* ------------------------------------------------------------------ i18n */
+
+  var T = {
+    title: { en: 'Trade Journal', zh: '交易日志' },
+    subtitle: {
+      en: 'Every position with the reason you bought it, the reason you sold it, and — three months later — where it actually went. The last of those is the only one that can tell you whether your exits are any good, and it is the one almost nobody records.',
+      zh: '每一笔仓位，记录买入的理由、卖出的理由，以及三个月之后它到底走到了哪里。只有最后这一项能告诉你「你的卖点到底好不好」，而它恰恰是几乎没有人会记录的那一项。'
+    },
+    generated: { en: 'Generated', zh: '生成于' },
+    fromFile: { en: 'from trades.json', zh: '数据来自 trades.json' },
+    navExits: { en: 'Exit quality', zh: '卖点质量' },
+    navDiscipline: { en: 'Discipline', zh: '纪律' },
+    navTrades: { en: 'Trades', zh: '交易记录' },
+    navNew: { en: 'New entry', zh: '新增记录' },
+    indicatorsLink: { en: 'Indicators', zh: '股票指标' },
+    optionsLink: { en: 'Options', zh: '期权手册' },
+    ordersLink: { en: 'Orders', zh: '订单类型' },
+    backToCv: { en: 'Back to CV', zh: '返回主页' },
+    jumpTop: { en: '↑ Top', zh: '↑ 顶部' },
+
+    overviewTitle: { en: 'Overview', zh: '总览' },
+    overviewSub: {
+      en: 'Expectancy in R is the number to watch. It is size-independent, so it still means something after you change position size — unlike win rate, which can be 80% and still lose money.',
+      zh: '真正要盯的是以 R 为单位的期望值。它与仓位大小无关，所以在你改变仓位之后依然有意义——胜率则不然，胜率 80% 照样可以是亏钱的。'
+    },
+    equityTitle: { en: 'Cumulative P/L', zh: '累计盈亏' },
+    rDistTitle: { en: 'R-multiple distribution', zh: 'R 倍数分布' },
+    rDistSub: { en: 'left of 0R = lost more than planned', zh: '0R 左侧 = 亏损超过计划' },
+
+    queueTitle: { en: 'Due for a three-month follow-up', zh: '待补三个月后价格' },
+    queueSub: {
+      en: 'These closed at least three months ago and still have no follow-up price. Look each one up, put it in trades.json, and the exit-quality section below starts working.',
+      zh: '这些交易平仓已满三个月，但还没有填写三个月后的价格。把价格查出来写进 trades.json，下面的「卖点质量」就能开始工作了。'
+    },
+    queueEmpty: { en: 'Nothing due. Every closed trade past its three-month mark has a follow-up price.', zh: '没有待补项。所有已满三个月的平仓交易都已填写后续价格。' },
+    upcomingLabel: { en: 'Coming up', zh: '即将到期' },
+
+    exitTitle: { en: 'Exit quality', zh: '卖点质量' },
+    exitSub: {
+      en: 'For each closed trade, your exit price against the price three months later. Positive means you sold above where it went and the exit was good; negative means it kept running without you.',
+      zh: '每一笔平仓交易，把你的卖出价和三个月后的价格放在一起比。正值表示你卖在了后来价格的上方，卖点是好的；负值表示它在你走之后继续涨，而你不在场上。'
+    },
+    exitChartTitle: { en: 'Where it went after you sold', zh: '卖出之后它去了哪里' },
+    exitChartSub: { en: 'exit price vs price three months later', zh: '卖出价 vs 三个月后价格' },
+    soldWell: { en: 'sold well', zh: '卖得好' },
+    soldEarly: { en: 'sold too early', zh: '卖早了' },
+    exitNone: {
+      en: 'No follow-up prices recorded yet, so nothing can be said about your exits. Fill the queue above first — this section is the reason the journal has that field at all.',
+      zh: '还没有任何三个月后价格，因此无法评价你的卖点。先把上面的待补队列填掉——这一节正是这个字段存在的理由。'
+    },
+
+    discTitle: { en: 'Discipline & calibration', zh: '纪律与自我校准' },
+    discSub: {
+      en: 'The uncomfortable panels. If your impulse trades and your planned trades have the same expectancy, your plan is not adding anything; if your most confident trades lose the most, your confidence is an inverse indicator.',
+      zh: '这几张图会让人不太舒服。如果冲动交易和计划交易的期望值一样，说明你的计划没有起到任何作用；如果你最有把握的交易亏得最多，那你的「把握」就是一个反向指标。'
+    },
+    plannedTitle: { en: 'Planned vs impulse', zh: '计划 vs 冲动' },
+    followedTitle: { en: 'Did you follow the plan', zh: '是否执行了计划' },
+    emotionTitle: { en: 'By emotion at entry', zh: '按入场时的情绪' },
+    calibTitle: { en: 'Confidence calibration', zh: '信心校准' },
+    calibSub: { en: 'should slope up', zh: '理应是向上倾斜的' },
+
+    tradesTitle: { en: 'Every trade', zh: '全部交易' },
+    tradesSub: {
+      en: 'Click any row for the full entry — the reasons, the sizing, the state you were in, and what the market was doing at the time.',
+      zh: '点击任意一行展开完整记录——买卖理由、仓位与风险、当时的状态，以及那时候市场在做什么。'
+    },
+    searchTrades: { en: 'Search ticker, reason, tag…', zh: '搜索代码、理由、标签…' },
+    clearFilters: { en: 'Clear', zh: '清除' },
+    noMatch: { en: 'No trades match those filters.', zh: '没有符合条件的交易。' },
+    allStatus: { en: 'All', zh: '全部' },
+    open: { en: 'Open', zh: '持仓中' },
+    closed: { en: 'Closed', zh: '已平仓' },
+    sortDate: { en: 'By date', zh: '按日期' },
+    sortR: { en: 'By R', zh: '按 R' },
+    sortPnl: { en: 'By P/L', zh: '按盈亏' },
+
+    newTitle: { en: 'Log a trade', zh: '记录一笔交易' },
+    newSub: {
+      en: 'Fill this in, press Generate, then paste the block into the trades array in trades.json and commit. The page cannot write the file — that is what keeps the record in git rather than in a browser.',
+      zh: '填好之后点「生成 JSON」，把生成的内容粘贴到 trades.json 的 trades 数组里并提交。页面不能直接写文件——正因为如此，你的记录才留在 git 里，而不是留在浏览器里。'
+    },
+    genJson: { en: 'Generate JSON', zh: '生成 JSON' },
+    copyJson: { en: 'Copy', zh: '复制' },
+    clearForm: { en: 'Clear form', zh: '清空表单' },
+    copiedOk: { en: '✓ copied', zh: '✓ 已复制' },
+    newNote: {
+      en: 'Write the buy reason as if explaining it to someone who will judge it in three months — because that is exactly what happens. "It looked strong" is not a reason you can learn from; "IV rank 18 into a dated catalyst, stop at 592 costing 0.5% of the book" is.',
+      zh: '写买入理由时，就当是在向一个三个月后会来评判它的人解释——因为事实就是如此。「看起来很强」不是一个能从中学到东西的理由；「IV 排名 18，有明确日期的催化剂，止损 592、占组合 0.5%」才是。'
+    },
+
+    reviewTitle: { en: 'AI review', zh: 'AI 复盘' },
+    reviewSub: {
+      en: 'The full review runs as a Claude Code skill against trades.json — richer, and it writes a dated markdown into the repo. This button is the mobile fallback: it builds the same prompt with your data already in it, ready to paste anywhere.',
+      zh: '完整的复盘由 Claude Code 技能直接跑在 trades.json 上——内容更深，并且会把带日期的 markdown 写回仓库。这个按钮是手机上的备用方案：它会生成同样的提示词，数据已经嵌好，粘到任何地方都能用。'
+    },
+    periodWeek: { en: 'Week', zh: '本周' },
+    periodMonth: { en: 'Month', zh: '本月' },
+    periodAll: { en: 'All time', zh: '全部' },
+    copyPrompt: { en: 'Copy review prompt', zh: '复制复盘提示词' },
+    reviewNote: {
+      en: 'The prompt asks for patterns across trades rather than commentary on each one, and explicitly tells the model to say when the sample is too small to support a conclusion. A review that finds a pattern in six trades is telling you about noise.',
+      zh: '这段提示词要求模型找出跨交易的规律，而不是逐笔点评，并且明确要求它在样本不足时直说。一个能从六笔交易里「找出规律」的复盘，讲的是噪声。'
+    },
+
+    kTrades: { en: 'Trades', zh: '交易笔数' },
+    kWin: { en: 'Win rate', zh: '胜率' },
+    kPnl: { en: 'Net P/L', zh: '净盈亏' },
+    kExp: { en: 'Expectancy', zh: '期望值' },
+    kPf: { en: 'Profit factor', zh: '盈亏比' },
+    kHold: { en: 'Avg hold W/L', zh: '平均持有 盈/亏' },
+    kFollowed: { en: 'Followed up', zh: '已回访' },
+    kAlpha: { en: 'Avg exit alpha', zh: '平均卖点超额' },
+    kLeft: { en: 'Left on table', zh: '少赚的钱' },
+    kSplit: { en: 'Well / early', zh: '卖得好 / 卖早了' },
+
+    sampleTooFew: { en: 'under 20 closed trades — treat every number here as a hint, not a finding', zh: '平仓交易不足 20 笔——这里所有数字都只能当提示，不能当结论' },
+    sampleThin: { en: 'under 50 closed trades — patterns are suggestive, not established', zh: '平仓交易不足 50 笔——这些规律只是苗头，还谈不上成立' },
+    noStops: { en: 'closed trade(s) with no planned stop, so no R', zh: '笔平仓交易没有预设止损，无法计算 R' },
+    exampleData: {
+      en: 'This journal still contains example trades, marked with a badge below. They are there to show the shape of a good entry — delete them from trades.json once you have your own.',
+      zh: '当前日志里还有示例交易（下方带标记）。它们只是用来展示一条好记录长什么样——等你有了自己的记录，就把它们从 trades.json 里删掉。'
+    },
+    disclaimer: {
+      en: 'A personal record, not investment advice. Every figure is computed from what you entered, so it is only as honest as the entry — and the fields that hurt to fill in are the ones worth the most.',
+      zh: '这是个人记录，不构成投资建议。所有数字都由你填写的内容算出，因此它的诚实程度取决于你的记录——而那些填起来让人不舒服的字段，恰恰是最有价值的。'
+    }
+  };
+
+  var lang = 'en';
+  try { var s0 = localStorage.getItem('tj.lang'); if (s0 === 'en' || s0 === 'zh') lang = s0; } catch (e) { /* private mode */ }
+  function t(k) { var e = T[k]; return e ? (e[lang] || e.en) : k; }
+  function esc(x) { return String(x == null ? '' : x).replace(/[&<>"]/g, function (c) { return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]; }); }
+  function $(id) { return document.getElementById(id); }
+  function el(tag, cls, html) { var n = document.createElement(tag); if (cls) n.className = cls; if (html != null) n.innerHTML = html; return n; }
+
+  var CUR = (DATA.settings && DATA.settings.baseCurrency) || '$';
+  var ROWS = TJ.load(DATA);
+  var SUM = TJ.summarise(ROWS);
+
+  /* ------------------------------------------------------------------ KPIs */
+
+  function kpi(k, v, cls, note) {
+    return '<div class="kpi"><div class="k">' + esc(k) + '</div><div class="v ' + (cls || '') + '">' + esc(v) + '</div>'
+      + (note ? '<div class="note">' + esc(note) + '</div>' : '') + '</div>';
+  }
+
+  function renderKpis() {
+    var S = SUM;
+    var sampleNote = S.sample === 'too-few' ? t('sampleTooFew') : S.sample === 'thin' ? t('sampleThin') : '';
+    $('kpis').innerHTML = [
+      kpi(t('kTrades'), S.nClosed + ' / ' + S.n, '', S.nOpen + ' ' + t('open').toLowerCase()),
+      kpi(t('kWin'), S.winRate == null ? '—' : (S.winRate * 100).toFixed(0) + '%', '', sampleNote),
+      kpi(t('kPnl'), TJ.money(S.pnl, CUR), S.pnl >= 0 ? 'v-up' : 'v-dn'),
+      kpi(t('kExp'), TJ.r(S.expectancyR), S.expectancyR >= 0 ? 'v-up' : 'v-dn',
+        S.noStopCount ? S.noStopCount + ' ' + t('noStops') : ''),
+      kpi(t('kPf'), S.profitFactor == null ? '—' : S.profitFactor.toFixed(2), S.profitFactor >= 1 ? 'v-up' : 'v-dn'),
+      kpi(t('kHold'), (S.avgHoldWin == null ? '—' : Math.round(S.avgHoldWin) + 'd') + ' / ' + (S.avgHoldLoss == null ? '—' : Math.round(S.avgHoldLoss) + 'd'))
+    ].join('');
+
+    var hasFu = SUM.nFollowUp > 0;
+    $('exitKpis').innerHTML = hasFu ? [
+      kpi(t('kFollowed'), SUM.nFollowUp + ' / ' + SUM.nClosed),
+      kpi(t('kAlpha'), TJ.pct(SUM.exitAlphaPct), SUM.exitAlphaPct >= 0 ? 'v-up' : 'v-dn'),
+      kpi(t('kLeft'), TJ.money(SUM.leftOnTable, CUR), SUM.leftOnTable > 0 ? 'v-dn' : 'v-up'),
+      kpi(t('kSplit'), SUM.soldWell + ' / ' + SUM.soldTooEarly)
+    ].join('') : '<div class="warnbox" style="grid-column:1/-1">' + esc(t('exitNone')) + '</div>';
+  }
+
+  /* ---------------------------------------------------------------- charts */
+
+  function renderCharts() {
+    var curve = TJ.equityCurve(ROWS);
+    C.line($('equityCanvas'), {
+      points: curve.map(function (p) { return { date: p.date, value: p.pnl }; }),
+      fmtY: function (v) { return (v < 0 ? '−' : '') + CUR + Math.abs(v).toFixed(0); },
+      emptyLabel: lang === 'zh' ? '还没有已平仓的交易' : 'no closed trades yet'
+    });
+    $('equitySub').textContent = curve.length ? curve.length + (lang === 'zh' ? ' 笔已平仓' : ' closed') : '';
+
+    C.hist($('rCanvas'), {
+      values: ROWS.filter(function (r) { return r.closed; }).map(function (r) { return r.rMultiple; }),
+      emptyLabel: lang === 'zh' ? '需要预设止损才能算 R' : 'needs planned stops to compute R'
+    });
+
+    var fu = ROWS.filter(function (r) { return r.exitAlphaPct != null; })
+      .sort(function (a, b) { return a.exitAlphaPct - b.exitAlphaPct; });
+    C.diverge($('exitCanvas'), {
+      items: fu.map(function (r) {
+        return {
+          label: r.ticker, value: r.exitAlphaPct * 100,
+          sub: r.exitDate + ' · ' + TJ.num(r.exitPrice) + ' → ' + TJ.num(r.followUpPrice)
+        };
+      }),
+      fmt: function (v) { return (v >= 0 ? '+' : '') + v.toFixed(1) + '%'; },
+      leftLabel: t('soldEarly'), rightLabel: t('soldWell'),
+      emptyLabel: lang === 'zh' ? '还没有三个月后价格' : 'no follow-up prices yet'
+    });
+
+    var closed = ROWS.filter(function (r) { return r.closed; });
+    var mk = function (gs) {
+      return gs.map(function (g) { return { label: g.label, winRate: g.winRate, expectancyR: g.expectancyR, n: g.nClosed }; });
+    };
+    var L = function (en, zh) { return lang === 'zh' ? zh : en; };
+
+    C.groups($('plannedCanvas'), {
+      items: mk(TJ.groupBy(closed, function (r) {
+        return r.discipline.planned === false ? L('impulse', '冲动') : r.discipline.planned === true ? L('planned', '有计划') : null;
+      }))
+    });
+    C.groups($('followedCanvas'), {
+      items: mk(TJ.groupBy(closed, function (r) {
+        return r.discipline.followedPlan === false ? L('broke it', '没执行') : r.discipline.followedPlan === true ? L('followed', '执行了') : null;
+      }))
+    });
+    var EMO_ZH = { calm: '平静', fomo: '怕错过', fear: '恐惧', greed: '贪婪', revenge: '报复性', bored: '无聊', confident: '自信', uncertain: '犹豫' };
+    C.groups($('emotionCanvas'), {
+      items: mk(TJ.groupBy(closed, function (r) { return r.discipline.emotion; },
+        function (k) { return lang === 'zh' ? (EMO_ZH[k] || k) : k; }))
+    });
+    C.groups($('calibCanvas'), {
+      items: mk(TJ.calibration(ROWS)).map(function (i) { return { label: i.label + '/5', winRate: i.winRate, expectancyR: i.expectancyR, n: i.n }; })
+    });
+  }
+
+  /* ------------------------------------------------------------ follow-ups */
+
+  function renderQueue() {
+    var due = TJ.followUpQueue(ROWS), up = TJ.followUpUpcoming(ROWS);
+    var q = $('queue');
+    if (!due.length) {
+      q.innerHTML = '<div class="queue-empty">✓ ' + esc(t('queueEmpty')) + '</div>';
+    } else {
+      q.innerHTML = due.map(function (r) {
+        return '<div class="queue-row"><b>' + esc(r.ticker) + '</b>'
+          + '<span class="hint">' + esc(lang === 'zh' ? '卖于 ' : 'sold ') + r.exitDate + ' @ ' + TJ.num(r.exitPrice)
+          + ' · ' + esc((r.sellReason || '').slice(0, 90)) + (r.sellReason && r.sellReason.length > 90 ? '…' : '') + '</span>'
+          + '<span class="due">' + esc(lang === 'zh' ? '应于 ' : 'due ') + r.dueDate + '</span></div>';
+      }).join('');
+    }
+    $('upcoming').innerHTML = up.length
+      ? '<div class="queue-empty">' + esc(t('upcomingLabel')) + ': ' + up.slice(0, 6).map(function (r) {
+          return esc(r.ticker) + ' (' + r.dueDate + ')';
+        }).join(' · ') + '</div>'
+      : '';
+  }
+
+  /* ------------------------------------------------------------ trade table */
+
+  var filt = { q: '', status: '', sort: 'date' };
+  var openRow = null;
+
+  function visible() {
+    var q = filt.q.trim().toLowerCase();
+    return ROWS.filter(function (r) {
+      if (filt.status === 'open' && r.closed) return false;
+      if (filt.status === 'closed' && !r.closed) return false;
+      if (q) {
+        var hay = (r.ticker + ' ' + r.buyReason + ' ' + r.sellReason + ' ' + (r.tags || []).join(' ') + ' '
+          + (r.discipline.emotion || '') + ' ' + (r.context.note || '')).toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    });
+  }
+
+  function renderTable() {
+    var list = visible().slice();
+    if (filt.sort === 'date') list.sort(function (a, b) { return (b.exitDate || b.entryDate) < (a.exitDate || a.entryDate) ? -1 : 1; });
+    else if (filt.sort === 'r') list.sort(function (a, b) { return (b.rMultiple == null ? -99 : b.rMultiple) - (a.rMultiple == null ? -99 : a.rMultiple); });
+    else list.sort(function (a, b) { return (b.pnl || 0) - (a.pnl || 0); });
+
+    $('emptyMsg').style.display = list.length ? 'none' : '';
+    var L = function (en, zh) { return lang === 'zh' ? zh : en; };
+    var cols = [L('Ticker', '代码'), L('Entry', '买入'), L('Exit', '卖出'), L('Qty', '数量'),
+                L('% book', '仓位'), L('P/L', '盈亏'), L('R', 'R'), L('Hold', '持有'), L('+3mo', '三月后')];
+    var html = '<thead><tr>' + cols.map(function (c) { return '<th>' + esc(c) + '</th>'; }).join('') + '</tr></thead><tbody>';
+
+    list.forEach(function (r) {
+      var pills = (r.closed ? '' : '<span class="pill open">' + esc(t('open')) + '</span>')
+        + (r.example ? '<span class="pill ex">example</span>' : '')
+        + (r.discipline.planned === false ? '<span class="pill imp">' + esc(L('impulse', '冲动')) + '</span>' : '');
+      html += '<tr class="head" data-id="' + esc(r.id) + '">'
+        + '<td>' + esc(r.ticker) + pills + '</td>'
+        + '<td>' + TJ.num(r.entryPrice) + '</td>'
+        + '<td>' + (r.exitPrice == null ? '—' : TJ.num(r.exitPrice)) + '</td>'
+        + '<td>' + (r.qty == null ? '—' : r.qty) + '</td>'
+        + '<td>' + (r.portfolioPct == null ? '—' : r.portfolioPct.toFixed(1) + '%') + '</td>'
+        + '<td class="' + (r.pnl == null ? '' : r.pnl >= 0 ? 'v-up' : 'v-dn') + '">' + (r.pnl == null ? '—' : TJ.money(r.pnl, CUR)) + '</td>'
+        + '<td class="' + (r.rMultiple == null ? '' : r.rMultiple >= 0 ? 'v-up' : 'v-dn') + '">' + TJ.r(r.rMultiple) + '</td>'
+        + '<td>' + (r.holdDays == null ? '—' : r.holdDays + 'd') + '</td>'
+        + '<td class="' + (r.exitAlphaPct == null ? '' : r.exitAlphaPct >= 0 ? 'v-up' : 'v-dn') + '">'
+        + (r.followUpPrice == null ? (r.followUpDue ? '<span style="color:var(--warn)">' + esc(L('due', '待补')) + '</span>' : '—') : TJ.num(r.followUpPrice)) + '</td>'
+        + '</tr>';
+      if (openRow === r.id) html += '<tr class="det"><td colspan="9">' + detail(r) + '</td></tr>';
+    });
+    var tb = $('tradeTable');
+    tb.innerHTML = html + '</tbody>';
+    [].forEach.call(tb.querySelectorAll('tr.head'), function (tr) {
+      tr.onclick = function () {
+        var id = tr.getAttribute('data-id');
+        openRow = openRow === id ? null : id;
+        renderTable();
+      };
+    });
+  }
+
+  function detail(r) {
+    var L = function (en, zh) { return lang === 'zh' ? zh : en; };
+    var d = r.discipline, c = r.context;
+    var kv = function (k, v) { return v == null || v === '' ? '' : '<dt>' + esc(k) + '</dt><dd>' + esc(v) + '</dd>'; };
+    return '<div class="det-grid">'
+      + '<div class="det-block"><h5>' + esc(L('Why I bought', '买入理由')) + '</h5><p>' + esc(r.buyReason || '—') + '</p></div>'
+      + '<div class="det-block"><h5>' + esc(L('Why I sold', '卖出理由')) + '</h5><p>' + esc(r.sellReason || '—') + '</p></div>'
+      + '<div class="det-block"><h5>' + esc(L('Sizing & risk', '仓位与风险')) + '</h5><dl class="det-kv">'
+        + kv(L('Risk / share', '每股风险'), r.riskPerShare == null ? null : TJ.num(r.riskPerShare))
+        + kv(L('Risk amount', '风险金额'), r.riskAmount == null ? null : TJ.money(r.riskAmount, CUR))
+        + kv(L('Planned R:R', '计划盈亏比'), r.plannedR == null ? null : r.plannedR.toFixed(2))
+        + kv(L('Achieved R', '实际 R'), TJ.r(r.rMultiple))
+        + kv(L('% of book', '占组合'), r.portfolioPct == null ? null : r.portfolioPct.toFixed(1) + '%')
+      + '</dl></div>'
+      + '<div class="det-block"><h5>' + esc(L('State of mind', '当时状态')) + '</h5><dl class="det-kv">'
+        + kv(L('Planned', '是否计划内'), d.planned == null ? null : (d.planned ? L('yes', '是') : L('no — impulse', '否，冲动')))
+        + kv(L('Followed plan', '是否执行计划'), d.followedPlan == null ? null : (d.followedPlan ? L('yes', '是') : L('no', '否')))
+        + kv(L('Confidence', '信心'), d.confidence == null ? null : d.confidence + '/5')
+        + kv(L('Emotion', '情绪'), d.emotion)
+      + '</dl>' + (d.note ? '<p style="margin-top:7px">' + esc(d.note) + '</p>' : '') + '</div>'
+      + '<div class="det-block"><h5>' + esc(L('Market that day', '当时的市场')) + '</h5><dl class="det-kv">'
+        + kv(L('Index', '指数'), c.index) + kv(L('Vol', '波动率'), c.vixOrIv) + kv(L('Sector', '板块'), c.sector)
+      + '</dl>' + (c.note ? '<p style="margin-top:7px">' + esc(c.note) + '</p>' : '') + '</div>'
+      + (r.followUpPrice != null ? '<div class="det-block"><h5>' + esc(L('Three months later', '三个月之后')) + '</h5><dl class="det-kv">'
+        + kv(L('Price', '价格'), TJ.num(r.followUpPrice))
+        + kv(L('Exit alpha', '卖点超额'), TJ.pct(r.exitAlphaPct))
+        + kv(L('Left on table', '少赚'), TJ.money(r.leftOnTable, CUR))
+      + '</dl></div>' : '')
+      + '</div>';
+  }
+
+  /* --------------------------------------------------------- entry composer */
+
+  var FIELDS = [
+    { k: 'ticker', label: ['Ticker', '代码'], type: 'text', ph: 'MU' },
+    { k: 'side', label: ['Side', '方向'], type: 'select', opts: [['long', 'Long / 做多'], ['short', 'Short / 做空']] },
+    { k: 'status', label: ['Status', '状态'], type: 'select', opts: [['open', 'Open / 持仓中'], ['closed', 'Closed / 已平仓']] },
+    { k: 'entryDate', label: ['Entry date', '买入日期'], type: 'date' },
+    { k: 'entryPrice', label: ['Entry price', '买入价'], type: 'number' },
+    { k: 'qty', label: ['Quantity', '数量'], type: 'number' },
+    { k: 'exitDate', label: ['Exit date', '卖出日期'], type: 'date' },
+    { k: 'exitPrice', label: ['Exit price', '卖出价'], type: 'number' },
+    { k: 'fees', label: ['Fees total', '手续费合计'], type: 'number' },
+    { k: 'portfolioPct', label: ['% of portfolio', '占组合 %'], type: 'number' },
+    { k: 'plannedStop', label: ['Planned stop', '计划止损'], type: 'number', hint: ['decided before entry — no stop, no R', '进场前就要定好——没有止损就算不出 R'] },
+    { k: 'plannedTarget', label: ['Planned target', '计划目标'], type: 'number' },
+    { k: 'buyReason', label: ['Why I bought', '买入理由'], type: 'textarea', wide: true },
+    { k: 'sellReason', label: ['Why I sold', '卖出理由'], type: 'textarea', wide: true },
+    { k: 'planned', label: ['Planned entry?', '是否计划内'], type: 'select', opts: [['true', 'Planned / 有计划'], ['false', 'Impulse / 冲动']] },
+    { k: 'followedPlan', label: ['Followed the plan?', '是否执行计划'], type: 'select', opts: [['true', 'Yes / 是'], ['false', 'No / 否']] },
+    { k: 'confidence', label: ['Confidence 1–5', '信心 1–5'], type: 'select', opts: [['', '—'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5']] },
+    { k: 'emotion', label: ['Emotion', '情绪'], type: 'select', opts: [['', '—']].concat(TJ.EMOTIONS.map(function (e) { return [e, e]; })) },
+    { k: 'disciplineNote', label: ['Honest note to self', '给自己的实话'], type: 'textarea', wide: true },
+    { k: 'index', label: ['Index level', '指数点位'], type: 'text', ph: 'SPX 6120, +1.2% this week' },
+    { k: 'vixOrIv', label: ['VIX / IV rank', 'VIX / IV 排名'], type: 'text', ph: 'VIX 14.2, IV rank 18' },
+    { k: 'sector', label: ['Sector move', '板块表现'], type: 'text', ph: 'SOX +3.4%' },
+    { k: 'tags', label: ['Tags (comma separated)', '标签（逗号分隔）'], type: 'text', ph: 'catalyst, semis' }
+  ];
+
+  function buildForm() {
+    var g = $('formGrid'); g.innerHTML = '';
+    FIELDS.forEach(function (f) {
+      var w = el('div', 'field' + (f.wide ? ' wide' : ''));
+      var lbl = el('label', null, esc(f.label[lang === 'zh' ? 1 : 0]));
+      w.appendChild(lbl);
+      var inp;
+      if (f.type === 'textarea') { inp = el('textarea'); }
+      else if (f.type === 'select') {
+        inp = el('select');
+        f.opts.forEach(function (o) {
+          var op = el('option', null, esc(o[1])); op.value = o[0]; inp.appendChild(op);
+        });
+      } else { inp = el('input'); inp.type = f.type; if (f.ph) inp.placeholder = f.ph; }
+      inp.id = 'f_' + f.k;
+      w.appendChild(inp);
+      if (f.hint) w.appendChild(el('div', 'hint', esc(f.hint[lang === 'zh' ? 1 : 0])));
+      g.appendChild(w);
+    });
+  }
+
+  function fv(k) { var n = $('f_' + k); return n ? n.value.trim() : ''; }
+  function fnum(k) { var v = fv(k); return v === '' ? null : Number(v); }
+
+  function buildEntry() {
+    var ticker = (fv('ticker') || 'TICKER').toUpperCase();
+    var entryDate = fv('entryDate') || TJ.today();
+    var status = fv('status') || 'open';
+    var exitDate = fv('exitDate') || null;
+    var tags = fv('tags') ? fv('tags').split(',').map(function (s) { return s.trim(); }).filter(Boolean) : [];
+    var o = {
+      id: entryDate + '-' + ticker,
+      ticker: ticker,
+      market: 'US',
+      side: fv('side') || 'long',
+      status: status,
+      entry: { date: entryDate, price: fnum('entryPrice'), qty: fnum('qty'), fees: fnum('fees') || 0 },
+      exit: { date: exitDate, price: fnum('exitPrice'), qty: status === 'closed' ? fnum('qty') : null, fees: 0 },
+      sizing: { portfolioPct: fnum('portfolioPct'), plannedStop: fnum('plannedStop'), plannedTarget: fnum('plannedTarget') },
+      buyReason: fv('buyReason'),
+      sellReason: fv('sellReason'),
+      followUp: {
+        dueDate: status === 'closed' && exitDate ? TJ.addMonths(exitDate, (DATA.settings && DATA.settings.followUpMonths) || 3) : null,
+        price: null, note: ''
+      },
+      discipline: {
+        planned: fv('planned') === '' ? null : fv('planned') === 'true',
+        followedPlan: fv('followedPlan') === '' ? null : fv('followedPlan') === 'true',
+        confidence: fnum('confidence'),
+        emotion: fv('emotion') || null,
+        note: fv('disciplineNote')
+      },
+      context: { index: fv('index'), vixOrIv: fv('vixOrIv'), sector: fv('sector'), note: '' },
+      tags: tags
+    };
+    return o;
+  }
+
+  /* ------------------------------------------------------------- AI prompt */
+
+  var promptPeriod = 'week';
+
+  function buildPrompt() {
+    var b = TJ.periodBounds(promptPeriod);
+    var rows = promptPeriod === 'all' ? ROWS : TJ.inPeriod(ROWS, b.from, b.to);
+    var S = TJ.summarise(rows);
+    var closed = rows.filter(function (r) { return r.closed; });
+
+    var lines = [];
+    lines.push('You are reviewing my trading journal for the period ' + b.from + ' to ' + b.to + '.');
+    lines.push('');
+    lines.push('Rules for this review:');
+    lines.push('- Look for PATTERNS ACROSS trades, not commentary on each one. I can read a single trade myself.');
+    lines.push('- ' + closed.length + ' closed trades is the entire sample. If that is too few to support a claim, say so instead of making the claim.');
+    lines.push('- Separate what I controlled (entry timing, size, stop placement, whether I followed my plan) from what I did not (the market direction that week).');
+    lines.push('- Judge my EXITS using the three-month follow-up price where it exists. Selling into strength that kept going is a different mistake from selling into weakness that kept falling.');
+    lines.push('- Be blunt. A review that tells me I am doing well is only useful if it is true.');
+    lines.push('- End with at most three concrete changes for next period, each tied to evidence in the data.');
+    lines.push('');
+    lines.push('AGGREGATE');
+    lines.push('  closed: ' + S.nClosed + ', open: ' + S.nOpen);
+    lines.push('  win rate: ' + (S.winRate == null ? 'n/a' : (S.winRate * 100).toFixed(0) + '%') + ' [sample quality: ' + S.sample + ']');
+    lines.push('  net P/L: ' + TJ.money(S.pnl, CUR));
+    lines.push('  expectancy: ' + TJ.r(S.expectancyR) + ' per trade, median ' + TJ.r(S.medianR));
+    lines.push('  best/worst: ' + TJ.r(S.bestR) + ' / ' + TJ.r(S.worstR));
+    lines.push('  profit factor: ' + (S.profitFactor == null ? 'n/a' : S.profitFactor.toFixed(2)));
+    lines.push('  avg hold: ' + (S.avgHoldWin == null ? 'n/a' : Math.round(S.avgHoldWin) + 'd') + ' winners, '
+      + (S.avgHoldLoss == null ? 'n/a' : Math.round(S.avgHoldLoss) + 'd') + ' losers');
+    if (S.nFollowUp) {
+      lines.push('  EXIT QUALITY: ' + S.nFollowUp + ' followed up, avg exit alpha ' + TJ.pct(S.exitAlphaPct)
+        + ', left on table ' + TJ.money(S.leftOnTable, CUR) + ' (sold well ' + S.soldWell + ' / too early ' + S.soldTooEarly + ')');
+    } else {
+      lines.push('  EXIT QUALITY: no three-month follow-up prices recorded — do not speculate about exit quality.');
+    }
+    lines.push('');
+    lines.push('TRADES');
+    rows.forEach(function (r) {
+      lines.push('- ' + r.ticker + ' ' + r.side + ' ' + r.entryDate + (r.exitDate ? ' → ' + r.exitDate : ' (still open)'));
+      lines.push('    entry ' + TJ.num(r.entryPrice) + (r.exitPrice ? ', exit ' + TJ.num(r.exitPrice) : '')
+        + ', qty ' + r.qty + (r.portfolioPct != null ? ', ' + r.portfolioPct + '% of book' : ''));
+      lines.push('    P/L ' + (r.pnl == null ? 'open' : TJ.money(r.pnl, CUR) + ' (' + TJ.r(r.rMultiple) + ')')
+        + (r.plannedR != null ? ', planned R:R was ' + r.plannedR.toFixed(2) : ''));
+      if (r.followUpPrice != null) lines.push('    3 months later: ' + TJ.num(r.followUpPrice) + ' → exit alpha ' + TJ.pct(r.exitAlphaPct));
+      else if (r.closed) lines.push('    3 months later: not yet recorded');
+      lines.push('    BUY: ' + (r.buyReason || '(blank — note this)'));
+      if (r.closed) lines.push('    SELL: ' + (r.sellReason || '(blank — note this)'));
+      lines.push('    state: ' + (r.discipline.planned === false ? 'IMPULSE' : r.discipline.planned === true ? 'planned' : 'unrecorded')
+        + ', ' + (r.discipline.followedPlan === false ? 'BROKE THE PLAN' : r.discipline.followedPlan === true ? 'followed plan' : 'unrecorded')
+        + ', confidence ' + (r.discipline.confidence == null ? '?' : r.discipline.confidence + '/5')
+        + ', felt ' + (r.discipline.emotion || '?'));
+      if (r.discipline.note) lines.push('    self-note: ' + r.discipline.note);
+      var ctx = [r.context.index, r.context.vixOrIv, r.context.sector].filter(Boolean).join(' | ');
+      if (ctx) lines.push('    market: ' + ctx);
+    });
+    return lines.join('\n');
+  }
+
+  function renderPrompt() { $('promptOut').textContent = buildPrompt(); }
+
+  /* ------------------------------------------------------------------ boot */
+
+  function applyStatic() {
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.body.classList.toggle('lang-zh', lang === 'zh');
+    $('langLabel').textContent = lang === 'zh' ? '中文' : 'EN';
+    [].forEach.call(document.querySelectorAll('[data-t]'), function (n) { n.textContent = t(n.getAttribute('data-t')); });
+    [].forEach.call(document.querySelectorAll('[data-tp]'), function (n) { n.placeholder = t(n.getAttribute('data-tp')); });
+    $('genLine').textContent = t('generated') + ' ' + (root.TJ_BUILT || TJ.today()) + ' · ' + t('fromFile');
+
+    var ex = ROWS.filter(function (r) { return r.example; }).length;
+    $('exampleWarn').innerHTML = ex
+      ? '<div class="warnbox" style="margin-top:18px">⚠ ' + esc(t('exampleData')) + '</div>' : '';
+
+    var L = function (en, zh) { return lang === 'zh' ? zh : en; };
+    $('statusSel').innerHTML = [['', t('allStatus')], ['open', t('open')], ['closed', t('closed')]]
+      .map(function (o) { return '<option value="' + o[0] + '">' + esc(o[1]) + '</option>'; }).join('');
+    $('statusSel').value = filt.status;
+    $('sortSel').innerHTML = [['date', t('sortDate')], ['r', t('sortR')], ['pnl', t('sortPnl')]]
+      .map(function (o) { return '<option value="' + o[0] + '">' + esc(o[1]) + '</option>'; }).join('');
+    $('sortSel').value = filt.sort;
+  }
+
+  function renderAll() {
+    applyStatic(); renderKpis(); renderQueue(); renderCharts(); buildForm(); renderTable(); renderPrompt();
+  }
+
+  function copyText(txt, msgEl) {
+    var done = function () { msgEl.style.display = ''; setTimeout(function () { msgEl.style.display = 'none'; }, 1600); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(txt).then(done, fallback);
+    } else fallback();
+    function fallback() {
+      var ta = document.createElement('textarea');
+      ta.value = txt; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); done(); } catch (e) { /* nothing more we can do */ }
+      document.body.removeChild(ta);
+    }
+  }
+
+  function init() {
+    $('langBtn').onclick = function () {
+      lang = lang === 'en' ? 'zh' : 'en';
+      try { localStorage.setItem('tj.lang', lang); } catch (e) { /* ignore */ }
+      renderAll();
+    };
+    $('q').oninput = function () { filt.q = this.value; renderTable(); };
+    $('statusSel').onchange = function () { filt.status = this.value; renderTable(); };
+    $('sortSel').onchange = function () { filt.sort = this.value; renderTable(); };
+    $('clearBtn').onclick = function () {
+      filt = { q: '', status: '', sort: 'date' };
+      $('q').value = ''; $('statusSel').value = ''; $('sortSel').value = 'date';
+      renderTable();
+    };
+    $('genBtn').onclick = function () {
+      var o = buildEntry();
+      $('outJson').style.display = '';
+      $('outJson').textContent = JSON.stringify(o, null, 2) + ',';
+    };
+    $('copyBtn').onclick = function () {
+      if ($('outJson').style.display === 'none') $('genBtn').click();
+      copyText($('outJson').textContent, $('copiedMsg'));
+    };
+    $('clearFormBtn').onclick = function () {
+      FIELDS.forEach(function (f) { var n = $('f_' + f.k); if (n) n.value = ''; });
+      $('outJson').style.display = 'none';
+    };
+    [].forEach.call($('reviewPeriod').children, function (b) {
+      b.onclick = function () {
+        promptPeriod = b.getAttribute('data-p');
+        [].forEach.call($('reviewPeriod').children, function (x) { x.classList.toggle('on', x === b); });
+        renderPrompt();
+      };
+    });
+    $('copyPromptBtn').onclick = function () { copyText(buildPrompt(), $('promptCopied')); };
+
+    var toTop = $('toTop');
+    toTop.onclick = function () { window.scrollTo({ top: 0, behavior: 'smooth' }); };
+    window.addEventListener('scroll', function () { toTop.classList.toggle('show', window.scrollY > 700); }, { passive: true });
+
+    var rt;
+    window.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(renderCharts, 160); });
+
+    renderAll();
+
+    var v = TJ.validate(DATA);
+    v.errors.forEach(function (e) { console.error('[journal] ' + e); });
+    v.warnings.forEach(function (w) { console.warn('[journal] ' + w); });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+
+})(typeof globalThis !== 'undefined' ? globalThis : this);
+</script>
+</body>
+</html>
