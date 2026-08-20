@@ -1,0 +1,2460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Interactive bilingual mathematics handbook for quantitative finance — derivatives, calculus, function shapes, Taylor series, linear algebra, trigonometry, Fourier analysis, probability and the Kelly criterion, each plotted and tied back to options and portfolio construction.">
+<title>Math for Finance · 金融数学手册</title>
+<style>/* =============================================================================
+   math.css — same moomoo-inspired flat terminal theme as the options and
+   indicator handbooks. Flat (NO gradients), orange brand, tabular numerals,
+   tight radii, disciplined 1px borders. No external assets, no requests:
+   the page must work from file://.
+   ============================================================================= */
+:root {
+  --brand: #FF7A00;
+  --brand-press: #E86E00;
+  --info: #2E9BFF;
+  --violet: #8C6EFF;
+  --accent-active: var(--brand);
+
+  --bg: #0E0F13;
+  --surface: #16181E;
+  --surface-2: #1C1F27;
+  --surface-3: #232733;
+  --line: #262A33;
+  --line-2: #333A46;
+
+  --text: #EAECEF;
+  --text-2: #99A1AD;
+  --text-3: #626A78;
+
+  --up: #00B96B;
+  --down: #FA4D56;
+  --warn: #FFA53D;
+  --gold: #FFC53D;
+
+  /* curve palette — f / f' / f'' keep these colours on every chart so the
+     reader learns "blue = first derivative" once and it holds page-wide. */
+  --c-f:   #EAECEF;
+  --c-d1:  #2E9BFF;
+  --c-d2:  #FF7A00;
+  --c-d3:  #8C6EFF;
+  --c-aux: #00B96B;
+
+  --r-sm: 6px;
+  --r-md: 8px;
+  --r-lg: 10px;
+  --mono: "SF Mono", SFMono-Regular, ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+  --math: "Latin Modern Math", "STIX Two Math", Cambria Math, Georgia, serif;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  font-size: 14px; line-height: 1.62;
+}
+body.lang-zh { line-height: 1.78; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.02em; }
+:focus-visible { outline: 2px solid var(--accent-active); outline-offset: 2px; }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 6px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-3); }
+
+.wrap { max-width: 1440px; margin: 0 auto; padding: 0 24px; }
+.mono { font-family: var(--mono); }
+
+/* ---------------- top bar ---------------- */
+.topbar {
+  position: sticky; top: 0; z-index: 60;
+  border-bottom: 1px solid var(--line);
+  background: rgba(14, 15, 19, 0.92);
+  backdrop-filter: blur(12px);
+}
+.topbar .wrap { display: flex; align-items: center; gap: 18px; height: 56px; }
+.brand { display: flex; align-items: center; gap: 8px; font-size: 16px; }
+.brand .logo {
+  display: grid; place-items: center; width: 26px; height: 26px;
+  border-radius: 7px; background: var(--brand); color: #17110A;
+  font-size: 15px; font-weight: 800;
+}
+.brand-text { font-weight: 600; }
+.brand-text b { font-weight: 800; }
+.spacer { flex: 1; }
+.tb-link { font-size: 13.5px; font-weight: 500; color: var(--text-2); white-space: nowrap; }
+.tb-link:hover { color: var(--text); }
+.tb-ext { color: var(--text-3); }
+.lang-btn {
+  border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text);
+  border-radius: var(--r-sm); padding: 6px 12px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+.lang-btn:hover { border-color: var(--accent-active); color: var(--accent-active); }
+
+/* ---------------- hero ---------------- */
+.hero { padding: 52px 0 30px; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px;
+  font-size: 13px; font-weight: 600; color: var(--text-2);
+}
+.dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; }
+.dot-m { background: var(--brand); }
+.dot-s { background: var(--info); }
+.hero-x { color: var(--text-3); }
+.hero h1 { font-size: clamp(32px, 5vw, 54px); line-height: 1.05; letter-spacing: -0.03em; font-weight: 800; }
+.hero p { margin: 16px 0 0; max-width: 78ch; font-size: 15.5px; color: var(--text-2); }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.stat {
+  border: 1px solid var(--line); background: var(--surface);
+  border-radius: var(--r-sm); padding: 6px 13px; font-size: 12.5px;
+  font-weight: 500; color: var(--text-2);
+}
+.stat b { color: var(--text); font-weight: 700; margin-right: 3px; }
+.stat-m b { color: var(--brand); }
+.stat-s b { color: var(--info); }
+
+/* ---------------- section chrome ---------------- */
+.sec { margin-top: 56px; scroll-margin-top: 72px; }
+.sec-head { margin-bottom: 18px; }
+.sec-head h2 { font-size: 22px; }
+.sec-head p { margin: 8px 0 0; max-width: 84ch; font-size: 13.6px; color: var(--text-2); }
+.eyebrow {
+  font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--accent-active); margin-bottom: 7px;
+}
+
+/* ---------------- panels ---------------- */
+.panel { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }
+.panel-h {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--surface-2);
+}
+.panel-h h3 { font-size: 15px; }
+.panel-h .sub { font-size: 12px; color: var(--text-3); font-family: var(--mono); }
+.panel-b { padding: 16px; }
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+
+/* chart + side-rail layout used by most sections */
+.lab-body { display: grid; grid-template-columns: 1fr 330px; }
+.lab-chart { padding: 16px; border-right: 1px solid var(--line); min-width: 0; }
+.lab-side { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+canvas { display: block; width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-md); }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 9px; font-size: 11.5px; color: var(--text-3); }
+.legend i { display: inline-block; width: 14px; height: 2px; margin-right: 5px; vertical-align: middle; }
+
+/* ---------------- controls ---------------- */
+.ctrl { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px; }
+.ctrl label { font-size: 11.5px; font-weight: 600; color: var(--text-2); }
+.ctrl output { font-family: var(--mono); font-size: 12.5px; color: var(--text); }
+.ctrl input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent-active); height: 18px; }
+.toggles { display: flex; gap: 14px; flex-wrap: wrap; font-size: 11.5px; color: var(--text-2); }
+.toggles label { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
+.toggles input { accent-color: var(--accent-active); }
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-2);
+  border-radius: var(--r-sm); padding: 6px 12px; font-size: 12.5px; font-weight: 600;
+  cursor: pointer; font-family: inherit; white-space: nowrap;
+}
+.chip:hover { border-color: var(--accent-active); color: var(--text); }
+.chip.on { background: var(--accent-active); border-color: var(--accent-active); color: #17110A; }
+.btn {
+  border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-2);
+  border-radius: var(--r-sm); padding: 7px 13px; font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+}
+.btn:hover { border-color: var(--accent-active); color: var(--text); }
+.btn.primary { background: var(--accent-active); border-color: var(--accent-active); color: #17110A; }
+
+/* ---------------- readout tiles ---------------- */
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.kpi { border: 1px solid var(--line); background: var(--surface-2); border-radius: var(--r-sm); padding: 8px 10px; }
+.kpi .k { font-size: 10.5px; font-weight: 600; letter-spacing: .03em; color: var(--text-3); text-transform: uppercase; }
+.kpi .v { font-family: var(--mono); font-size: 15px; font-weight: 700; margin-top: 2px; }
+.kpi.wide { grid-column: 1 / -1; }
+.v-up { color: var(--up); } .v-dn { color: var(--down); } .v-gold { color: var(--gold); }
+.v-acc { color: var(--accent-active); } .v-info { color: var(--info); }
+
+/* ---------------- hand-rolled formula typography ----------------
+   No KaTeX, no MathJax, no CDN. Formulas are spans: .eq is the line,
+   .tok a symbol that can carry a live value underneath it, .frac a
+   stacked fraction, .sqrt a radical. Good enough for the dozen shapes
+   this page needs and it costs zero requests. */
+.eq {
+  font-family: var(--math); font-size: 19px; line-height: 2.6;
+  text-align: center; color: var(--text); padding: 14px 10px;
+  overflow-x: auto; white-space: nowrap;
+}
+.eq.sm { font-size: 16px; line-height: 2.2; }
+.tok { position: relative; display: inline-block; padding: 0 2px; font-style: italic; }
+.tok .v {
+  position: absolute; left: 50%; transform: translateX(-50%); top: 100%;
+  font-family: var(--mono); font-style: normal; font-size: 10.5px;
+  color: var(--info); white-space: nowrap;
+}
+.tok.hi { color: var(--gold); font-style: normal; font-weight: 700; }
+.op { display: inline-block; padding: 0 6px; color: var(--text-3); font-style: normal; }
+.fn { font-style: normal; font-family: var(--math); }
+.frac { display: inline-block; vertical-align: middle; text-align: center; padding: 0 5px; }
+.frac .n { display: block; padding: 0 5px 2px; border-bottom: 1px solid var(--text-2); }
+.frac .d { display: block; padding: 2px 5px 0; }
+.sqrt { display: inline-block; border-top: 1px solid var(--text-2); padding: 0 3px; margin-left: -2px; }
+.eq-note { font-size: 12px; color: var(--text-3); text-align: center; margin: 2px 0 0; }
+
+/* ---------------- prose blocks ---------------- */
+.prose { font-size: 13.8px; color: var(--text-2); }
+.prose p { margin: 0 0 10px; }
+.prose b { color: var(--text); font-weight: 600; }
+.prose ul { margin: 0 0 10px; padding-left: 20px; }
+.prose li { margin: 4px 0; }
+.prose code, .prose .mono { font-family: var(--mono); font-size: 12.6px; color: var(--gold); }
+.note { font-size: 12.4px; color: var(--text-3); line-height: 1.6; }
+
+.callout {
+  border: 1px solid var(--line-2); border-left: 3px solid var(--accent-active);
+  background: var(--surface-2); border-radius: var(--r-sm);
+  padding: 13px 16px; margin-top: 14px; font-size: 13.2px; color: var(--text-2);
+}
+.callout b { color: var(--text); }
+.callout.fin { border-left-color: var(--info); }
+.callout.warn { border-left-color: var(--warn); }
+
+/* the "→ what this is for in finance" strip that closes each section */
+.bridge {
+  display: flex; gap: 12px; align-items: flex-start;
+  border: 1px solid var(--line); border-radius: var(--r-md);
+  background: var(--surface-2); padding: 13px 16px; margin-top: 14px;
+}
+.bridge .ico {
+  flex: none; display: grid; place-items: center; width: 26px; height: 26px;
+  border-radius: var(--r-sm); background: rgba(46,155,255,.14); color: var(--info);
+  font-size: 14px; font-weight: 800;
+}
+.bridge .bx { font-size: 13.2px; color: var(--text-2); }
+.bridge .bx b { color: var(--text); }
+
+/* ---------------- tables ---------------- */
+.tbl-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-lg); }
+table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 640px; }
+table.tbl th {
+  text-align: left; padding: 10px 14px; background: var(--surface-2);
+  border-bottom: 1px solid var(--line); font-size: 11.5px; font-weight: 700;
+  letter-spacing: .04em; text-transform: uppercase; color: var(--text-3); white-space: nowrap;
+}
+table.tbl td { padding: 10px 14px; border-bottom: 1px solid var(--line); color: var(--text-2); vertical-align: top; }
+table.tbl tr:last-child td { border-bottom: 0; }
+table.tbl td b, table.tbl td strong { color: var(--text); }
+table.tbl td.num { font-family: var(--mono); text-align: right; }
+table.tbl .sym { font-family: var(--math); font-style: italic; font-size: 15px; color: var(--text); }
+
+/* matrix rendering for the linear-algebra section */
+.mat { display: inline-grid; gap: 2px 12px; padding: 6px 12px; position: relative; font-family: var(--mono); font-size: 13px; vertical-align: middle; }
+.mat::before, .mat::after {
+  content: ''; position: absolute; top: 0; bottom: 0; width: 6px;
+  border: 1px solid var(--text-2);
+}
+.mat::before { left: 0; border-right: 0; }
+.mat::after { right: 0; border-left: 0; }
+.mat span { text-align: right; padding: 1px 2px; }
+.mat-eq { display: flex; align-items: center; justify-content: center; gap: 6px; flex-wrap: wrap; padding: 10px 0; }
+.mat-in { width: 58px; padding: 5px 7px; text-align: right; font-family: var(--mono); font-size: 13px;
+  background: var(--surface-3); color: var(--text); border: 1px solid var(--line-2); border-radius: 4px; }
+
+/* function-shape gallery */
+.gal { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.gal .card { border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface-2); overflow: hidden; }
+.gal .card canvas { border: 0; border-radius: 0; border-bottom: 1px solid var(--line); background: var(--bg); }
+.gal .card .cb { padding: 10px 12px; }
+.gal .card h4 { font-size: 13px; margin-bottom: 3px; }
+.gal .card .fx { font-family: var(--math); font-style: italic; font-size: 13px; color: var(--gold); }
+.gal .card p { margin: 6px 0 0; font-size: 11.8px; color: var(--text-3); line-height: 1.55; }
+
+footer {
+  margin-top: 72px; border-top: 1px solid var(--line); padding: 26px 0 48px;
+  font-size: 12.2px; color: var(--text-3);
+}
+footer p { margin: 0 0 8px; max-width: 92ch; }
+footer a { color: var(--text-2); text-decoration: underline; text-underline-offset: 2px; }
+
+@media (max-width: 1080px) {
+  .lab-body { grid-template-columns: 1fr; }
+  .lab-chart { border-right: 0; border-bottom: 1px solid var(--line); }
+  .grid-3 { grid-template-columns: 1fr; }
+}
+@media (max-width: 780px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .tb-link { display: none; }
+  .tb-cv { display: inline; }
+  .hero { padding: 34px 0 22px; }
+  .sec { margin-top: 40px; }
+  .eq { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="logo">∑</span><span class="brand-text">Math<b>ForFinance</b></span></a>
+    <div class="spacer"></div>
+    <a class="tb-link" href="#deriv"><span data-t="navDeriv">Derivatives</span></a>
+    <a class="tb-link" href="#taylor"><span data-t="navTaylor">Taylor</span></a>
+    <a class="tb-link" href="#linalg"><span data-t="navLinalg">Linear algebra</span></a>
+    <a class="tb-link" href="#fourier"><span data-t="navFourier">Fourier</span></a>
+    <a class="tb-link" href="#kelly"><span data-t="navKelly">Kelly</span></a>
+    <a class="tb-link tb-ext" href="options.html">↔ <span data-t="optionsLink">Options</span></a>
+    <a class="tb-link tb-ext" href="indicators.html">↔ <span data-t="indicatorsLink">Indicators</span></a>
+    <a class="tb-link tb-cv" href="cv.html">← <span data-t="backToCv">Back to CV</span></a>
+    <button class="lang-btn" id="langBtn"><span id="langLabel">EN</span></button>
+  </div>
+</div>
+
+<div class="wrap" id="top">
+
+  <header class="hero">
+    <div class="hero-eyebrow">
+      <span class="dot dot-m"></span><span data-t="familyMath">Mathematics</span>
+      <span class="hero-x">×</span>
+      <span class="dot dot-s"></span><span data-t="familyFin">Financial engineering</span>
+    </div>
+    <h1 data-t="title">Math for Finance</h1>
+    <p data-t="subtitle"></p>
+    <div class="stats">
+      <div class="stat stat-m"><b>10</b> <span data-t="statSections">sections</span></div>
+      <div class="stat stat-s"><b>18</b> <span data-t="statCharts">interactive plots</span></div>
+      <div class="stat"><b data-t="statOffline">Self-contained</b></div>
+    </div>
+  </header>
+
+  <!-- ============================================================ 01 导数 -->
+  <section class="sec" id="deriv">
+    <div class="sec-head">
+      <div class="eyebrow">01 — <span data-t="ebDeriv">Derivatives</span></div>
+      <h2 data-t="derivTitle">First and second derivatives, drawn</h2>
+      <p data-t="derivSub"></p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <h3 data-t="derivPlotTitle">f(x) = x³ − 3x and its two derivatives</h3>
+        <span class="sub" id="derivReadout"></span>
+      </div>
+      <div class="lab-body">
+        <div class="lab-chart">
+          <canvas id="cDeriv" style="height:380px"></canvas>
+          <div class="legend">
+            <span><i style="background:#EAECEF"></i><span class="mono">f(x) = x³ − 3x</span></span>
+            <span><i style="background:#2E9BFF"></i><span class="mono">f′(x) = 3x² − 3</span></span>
+            <span><i style="background:#FF7A00"></i><span class="mono">f″(x) = 6x</span></span>
+            <span><i style="background:#00B96B"></i><span data-t="tangentLine">Tangent at x₀</span></span>
+          </div>
+        </div>
+        <aside class="lab-side">
+          <div class="ctrl">
+            <label data-t="probeX">Probe point x₀</label>
+            <output id="oProbe">0.00</output>
+            <input type="range" id="rProbe" min="-2.2" max="2.2" step="0.01" value="-1.6">
+          </div>
+          <div class="kpis" id="derivKpis"></div>
+          <div class="toggles">
+            <label><input type="checkbox" id="tgD1" checked> <span data-t="showD1">f′(x)</span></label>
+            <label><input type="checkbox" id="tgD2" checked> <span data-t="showD2">f″(x)</span></label>
+            <label><input type="checkbox" id="tgTan" checked> <span data-t="showTan">Tangent</span></label>
+          </div>
+          <p class="note" data-t="derivProbeNote"></p>
+        </aside>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:14px">
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="d1Title">First derivative = slope</h3></div>
+        <div class="panel-b prose" data-th="d1Body"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="d2Title">Second derivative = rate of change of the slope</h3></div>
+        <div class="panel-b prose" data-th="d2Body"></div>
+      </div>
+    </div>
+
+    <div class="callout" data-th="carAnalogy"></div>
+
+    <div class="bridge">
+      <div class="ico">→</div>
+      <div class="bx" data-th="derivBridge"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================== 02 微积分 -->
+  <section class="sec" id="calculus">
+    <div class="sec-head">
+      <div class="eyebrow">02 — <span data-t="ebCalc">Calculus</span></div>
+      <h2 data-t="calcTitle">The limit, the rules, and the integral</h2>
+      <p data-t="calcSub"></p>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-h">
+          <h3 data-t="secantTitle">The limit that defines a derivative</h3>
+          <span class="sub" id="secantReadout"></span>
+        </div>
+        <div class="panel-b">
+          <canvas id="cSecant" style="height:250px"></canvas>
+          <div class="ctrl" style="margin-top:12px">
+            <label data-t="hStep">Step h</label>
+            <output id="oH">1.000</output>
+            <input type="range" id="rH" min="-3" max="0.15" step="0.01" value="0">
+          </div>
+          <p class="note" data-t="secantNote"></p>
+          <div class="eq sm" data-th="secantEq"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h">
+          <h3 data-t="riemannTitle">The integral is an accumulated sum</h3>
+          <span class="sub" id="riemannReadout"></span>
+        </div>
+        <div class="panel-b">
+          <canvas id="cRiemann" style="height:250px"></canvas>
+          <div class="ctrl" style="margin-top:12px">
+            <label data-t="nRect">Rectangles n</label>
+            <output id="oN">8</output>
+            <input type="range" id="rN" min="2" max="200" step="1" value="8">
+          </div>
+          <p class="note" data-t="riemannNote"></p>
+          <div class="eq sm" data-th="riemannEq"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-h"><h3 data-t="rulesTitle">The rules you actually use</h3></div>
+      <div class="panel-b">
+        <div class="tbl-wrap" style="border:0">
+          <table class="tbl">
+            <thead><tr>
+              <th data-t="thRule">Rule</th><th data-t="thForm">Form</th><th data-t="thWhy">Why it matters here</th>
+            </tr></thead>
+            <tbody id="rulesBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="bridge">
+      <div class="ico">→</div>
+      <div class="bx" data-th="calcBridge"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================== 03 常见函数形态 -->
+  <section class="sec" id="shapes">
+    <div class="sec-head">
+      <div class="eyebrow">03 — <span data-t="ebShapes">Function shapes</span></div>
+      <h2 data-t="shapesTitle">Eight shapes that cover most of finance</h2>
+      <p data-t="shapesSub"></p>
+    </div>
+    <div class="gal" id="shapeGal"></div>
+    <div class="bridge">
+      <div class="ico">→</div>
+      <div class="bx" data-th="shapesBridge"></div>
+    </div>
+  </section>
+
+  <!-- ======================================================== 04 泰勒展开 -->
+  <section class="sec" id="taylor">
+    <div class="sec-head">
+      <div class="eyebrow">04 — <span data-t="ebTaylor">Taylor series</span></div>
+      <h2 data-t="taylorTitle">Any smooth curve is a polynomial in disguise</h2>
+      <p data-t="taylorSub"></p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <h3 data-t="taylorPlotTitle">Truncated expansion vs the true function</h3>
+        <span class="sub" id="taylorReadout"></span>
+      </div>
+      <div class="lab-body">
+        <div class="lab-chart">
+          <canvas id="cTaylor" style="height:340px"></canvas>
+          <div class="legend">
+            <span><i style="background:#EAECEF"></i><span data-t="trueFn">True function</span></span>
+            <span><i style="background:#FF7A00"></i><span data-t="approxFn">Taylor approximation</span></span>
+            <span><i style="background:#FA4D56"></i><span data-t="errBand">|error|</span></span>
+          </div>
+        </div>
+        <aside class="lab-side">
+          <div class="chips" id="taylorPick"></div>
+          <div class="ctrl">
+            <label data-t="orderN">Order n</label>
+            <output id="oOrder">3</output>
+            <input type="range" id="rOrder" min="0" max="12" step="1" value="3">
+          </div>
+          <div class="ctrl">
+            <label data-t="centerA">Expansion point a</label>
+            <output id="oCenter">0.00</output>
+            <input type="range" id="rCenter" min="-2" max="2" step="0.1" value="0">
+          </div>
+          <div class="kpis" id="taylorKpis"></div>
+          <p class="note" data-t="taylorNote"></p>
+        </aside>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-h"><h3 data-t="taylorGreekTitle">The one expansion every options trader carries</h3></div>
+      <div class="panel-b">
+        <div class="eq" data-th="taylorGreekEq"></div>
+        <p class="eq-note" data-t="taylorGreekNote"></p>
+        <div class="prose" style="margin-top:12px" data-th="taylorGreekBody"></div>
+      </div>
+    </div>
+
+    <div class="bridge">
+      <div class="ico">→</div>
+      <div class="bx" data-th="taylorBridge"></div>
+    </div>
+  </section>
+
+  <!-- ======================================================== 05 线性代数 -->
+  <section class="sec" id="linalg">
+    <div class="sec-head">
+      <div class="eyebrow">05 — <span data-t="ebLinalg">Linear algebra</span></div>
+      <h2 data-t="linalgTitle">A matrix is a thing that moves space</h2>
+      <p data-t="linalgSub"></p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <h3 data-t="matTitle">2×2 transform of the unit square</h3>
+        <span class="sub" id="matReadout"></span>
+      </div>
+      <div class="lab-body">
+        <div class="lab-chart">
+          <canvas id="cMat" style="height:340px"></canvas>
+          <div class="legend">
+            <span><i style="background:#626A78"></i><span data-t="beforeShape">Before (unit square)</span></span>
+            <span><i style="background:#FF7A00"></i><span data-t="afterShape">After (A·x)</span></span>
+            <span><i style="background:#00B96B"></i><span data-t="eigvec">Eigenvectors</span></span>
+          </div>
+        </div>
+        <aside class="lab-side">
+          <div class="mat-eq">
+            <span class="mono" style="font-size:15px">A =</span>
+            <span class="mat" style="grid-template-columns:auto auto">
+              <input class="mat-in" id="mA" value="1.4"><input class="mat-in" id="mB" value="0.6">
+              <input class="mat-in" id="mC" value="0.3"><input class="mat-in" id="mD" value="1.1">
+            </span>
+          </div>
+          <div class="kpis" id="matKpis"></div>
+          <div class="chips" id="matPresets"></div>
+          <p class="note" data-t="matNote"></p>
+        </aside>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:14px">
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="matOpsTitle">The operations, and what each one means</h3></div>
+        <div class="panel-b">
+          <div class="tbl-wrap" style="border:0">
+            <table class="tbl"><thead><tr>
+              <th data-t="thOp">Operation</th><th data-t="thMeans">Geometric meaning</th><th data-t="thFinUse">Finance use</th>
+            </tr></thead><tbody id="matOpsBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h">
+          <h3 data-t="portVarTitle">Portfolio variance is one matrix product</h3>
+          <span class="sub" id="portVarReadout"></span>
+        </div>
+        <div class="panel-b">
+          <div class="eq sm" data-th="portVarEq"></div>
+          <div id="portVarUI"></div>
+          <canvas id="cPortVar" style="height:170px;margin-top:12px"></canvas>
+          <p class="note" data-t="portVarNote"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="bridge">
+      <div class="ico">→</div>
+      <div class="bx" data-th="linalgBridge"></div>
+    </div>
+  </section>
+
+  <!-- ======================================================== 06 三角函数 -->
+  <section class="sec" id="trig">
+    <div class="sec-head">
+      <div class="eyebrow">06 — <span data-t="ebTrig">Trigonometry</span></div>
+      <h2 data-t="trigTitle">Circles unrolled into waves</h2>
+      <p data-t="trigSub"></p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <h3 data-t="trigPlotTitle">Unit circle → sine and cosine</h3>
+        <span class="sub" id="trigReadout"></span>
+      </div>
+      <div class="lab-body">
+        <div class="lab-chart">
+          <canvas id="cTrig" style="height:300px"></canvas>
+          <div class="legend">
+            <span><i style="background:#2E9BFF"></i><span class="mono">sin θ</span></span>
+            <span><i style="background:#FF7A00"></i><span class="mono">cos θ</span></span>
+            <span><i style="background:#00B96B"></i><span data-t="radiusVec">Radius vector</span></span>
+          </div>
+        </div>
+        <aside class="lab-side">
+          <div class="ctrl">
+            <label data-t="angleTheta">Angle θ</label>
+            <output id="oTheta">0.90π</output>
+            <input type="range" id="rTheta" min="0" max="6.2832" step="0.01" value="2.827">
+          </div>
+          <div class="kpis" id="trigKpis"></div>
+          <p class="note" data-t="trigNote"></p>
+          <div class="eq sm" data-th="trigEq"></div>
+        </aside>
+      </div>
+    </div>
+
+    <div class="bridge">
+      <div class="ico">→</div>
+      <div class="bx" data-th="trigBridge"></div>
+    </div>
+  </section>
+
+  <!-- ========================================================== 07 傅立叶 -->
+  <section class="sec" id="fourier">
+    <div class="sec-head">
+      <div class="eyebrow">07 — <span data-t="ebFourier">Fourier</span></div>
+      <h2 data-t="fourierTitle">Every signal is a stack of sine waves</h2>
+      <p data-t="fourierSub"></p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <h3 data-t="fourierPlotTitle">Partial sums of a Fourier series</h3>
+        <span class="sub" id="fourierReadout"></span>
+      </div>
+      <div class="lab-body">
+        <div class="lab-chart">
+          <canvas id="cFourier" style="height:270px"></canvas>
+          <canvas id="cSpectrum" style="height:150px;margin-top:12px"></canvas>
+          <div class="legend">
+            <span><i style="background:#626A78"></i><span data-t="targetWave">Target wave</span></span>
+            <span><i style="background:#FF7A00"></i><span data-t="partialSum">Partial sum</span></span>
+            <span><i style="background:#2E9BFF"></i><span data-t="spectrumBars">Harmonic amplitudes</span></span>
+          </div>
+        </div>
+        <aside class="lab-side">
+          <div class="chips" id="wavePick"></div>
+          <div class="ctrl">
+            <label data-t="harmonics">Harmonics N</label>
+            <output id="oHarm">5</output>
+            <input type="range" id="rHarm" min="1" max="60" step="1" value="5">
+          </div>
+          <div class="kpis" id="fourierKpis"></div>
+          <p class="note" data-t="fourierNote"></p>
+        </aside>
+      </div>
+    </div>
+
+    <div class="callout warn" data-th="gibbsNote"></div>
+
+    <div class="bridge">
+      <div class="ico">→</div>
+      <div class="bx" data-th="fourierBridge"></div>
+    </div>
+  </section>
+
+  <!-- ==================================================== 08 概率与随机 -->
+  <section class="sec" id="prob">
+    <div class="sec-head">
+      <div class="eyebrow">08 — <span data-t="ebProb">Probability</span></div>
+      <h2 data-t="probTitle">Normal, lognormal, and the random walk</h2>
+      <p data-t="probSub"></p>
+    </div>
+
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-h">
+          <h3 data-t="normTitle">Normal → lognormal</h3>
+          <span class="sub" id="normReadout"></span>
+        </div>
+        <div class="panel-b">
+          <canvas id="cNorm" style="height:230px"></canvas>
+          <div class="ctrl" style="margin-top:12px">
+            <label data-t="sigmaVol">σ (annualised vol)</label>
+            <output id="oSig">45%</output>
+            <input type="range" id="rSig" min="5" max="150" step="1" value="45">
+          </div>
+          <div class="ctrl">
+            <label data-t="horizonT">Horizon (days)</label>
+            <output id="oTd">30</output>
+            <input type="range" id="rTd" min="1" max="730" step="1" value="30">
+          </div>
+          <p class="note" data-t="normNote"></p>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h">
+          <h3 data-t="gbmTitle">Geometric Brownian motion</h3>
+          <span class="sub" id="gbmReadout"></span>
+        </div>
+        <div class="panel-b">
+          <canvas id="cGbm" style="height:230px"></canvas>
+          <div class="ctrl" style="margin-top:12px">
+            <label data-t="nPaths">Paths</label>
+            <output id="oPaths">40</output>
+            <input type="range" id="rPaths" min="5" max="300" step="5" value="40">
+          </div>
+          <div class="toggles" style="margin-top:8px">
+            <button class="btn" id="gbmReroll" data-t="reroll">New random seed</button>
+          </div>
+          <p class="note" data-t="gbmNote"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-h"><h3 data-t="itoTitle">Itô's lemma — the chain rule when the input is random</h3></div>
+      <div class="panel-b">
+        <div class="eq" data-th="itoEq"></div>
+        <p class="eq-note" data-t="itoNote"></p>
+        <div class="prose" style="margin-top:12px" data-th="itoBody"></div>
+      </div>
+    </div>
+
+    <div class="bridge">
+      <div class="ico">→</div>
+      <div class="bx" data-th="probBridge"></div>
+    </div>
+  </section>
+
+  <!-- ======================================================== 09 凯利公式 -->
+  <section class="sec" id="kelly">
+    <div class="sec-head">
+      <div class="eyebrow">09 — <span data-t="ebKelly">Kelly criterion</span></div>
+      <h2 data-t="kellyTitle">How much to bet, derived rather than guessed</h2>
+      <p data-t="kellySub"></p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-h">
+        <h3 data-t="kellyPlotTitle">Long-run growth rate vs bet fraction</h3>
+        <span class="sub" id="kellyReadout"></span>
+      </div>
+      <div class="lab-body">
+        <div class="lab-chart">
+          <canvas id="cKelly" style="height:300px"></canvas>
+          <canvas id="cKellyPaths" style="height:200px;margin-top:12px"></canvas>
+          <div class="legend">
+            <span><i style="background:#FF7A00"></i><span data-t="growthCurve">Expected log growth g(f)</span></span>
+            <span><i style="background:#00B96B"></i><span data-t="fullKelly">Full Kelly f*</span></span>
+            <span><i style="background:#2E9BFF"></i><span data-t="halfKelly">Half Kelly</span></span>
+            <span><i style="background:#626A78"></i><span data-t="wealthPaths">Simulated wealth paths</span></span>
+          </div>
+        </div>
+        <aside class="lab-side">
+          <div class="ctrl">
+            <label data-t="winProb">Win probability p</label>
+            <output id="oP">55%</output>
+            <input type="range" id="rP" min="1" max="99" step="1" value="55">
+          </div>
+          <div class="ctrl">
+            <label data-t="payoffB">Win / loss ratio b</label>
+            <output id="oB">1.00</output>
+            <input type="range" id="rB" min="0.2" max="5" step="0.05" value="1">
+          </div>
+          <div class="ctrl">
+            <label data-t="betFrac">Your bet fraction f</label>
+            <output id="oF">10%</output>
+            <input type="range" id="rF" min="0" max="100" step="1" value="10">
+          </div>
+          <div class="kpis" id="kellyKpis"></div>
+          <p class="note" data-t="kellyNote"></p>
+        </aside>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top:14px">
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="kellyDerivTitle">Where the formula comes from</h3></div>
+        <div class="panel-b">
+          <div class="eq sm" data-th="kellyEq"></div>
+          <div class="prose" data-th="kellyDerivBody"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="kellyContTitle">Continuous form, and why nobody bets full Kelly</h3></div>
+        <div class="panel-b">
+          <div class="eq sm" data-th="kellyContEq"></div>
+          <div class="prose" data-th="kellyContBody"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout warn" data-th="kellyWarn"></div>
+
+    <div class="bridge">
+      <div class="ico">→</div>
+      <div class="bx" data-th="kellyBridge"></div>
+    </div>
+  </section>
+
+  <!-- ================================================== 10 金融工程应用 -->
+  <section class="sec" id="applied">
+    <div class="sec-head">
+      <div class="eyebrow">10 — <span data-t="ebApplied">Applied</span></div>
+      <h2 data-t="appliedTitle">Which piece of maths does which job</h2>
+      <p data-t="appliedSub"></p>
+    </div>
+    <div class="tbl-wrap">
+      <table class="tbl">
+        <thead><tr>
+          <th data-t="thTool">Mathematical tool</th>
+          <th data-t="thObject">The financial object</th>
+          <th data-t="thJob">What it actually does for you</th>
+        </tr></thead>
+        <tbody id="appliedBody"></tbody>
+      </table>
+    </div>
+    <div class="callout fin" data-th="appliedClose"></div>
+  </section>
+
+  <footer>
+    <p data-th="footNote1"></p>
+    <p data-th="footNote2"></p>
+    <p style="opacity:.72" data-th="footNote3"></p>
+  </footer>
+</div>
+
+<script>/* =============================================================================
+   strings.js — UI copy, EN / 中文.
+
+   Two flavours of key:
+     data-t   plain text, written with textContent
+     data-th  rich text, written with innerHTML (formulas, <b>, lists)
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var MF = root.MF = root.MF || {};
+
+  MF.T = {
+    /* ---- chrome ---- */
+    navDeriv:    { en: 'Derivatives', zh: '导数' },
+    navTaylor:   { en: 'Taylor', zh: '泰勒展开' },
+    navLinalg:   { en: 'Linear algebra', zh: '线性代数' },
+    navFourier:  { en: 'Fourier', zh: '傅立叶' },
+    navKelly:    { en: 'Kelly', zh: '凯利公式' },
+    optionsLink: { en: 'Options', zh: '期权手册' },
+    indicatorsLink: { en: 'Indicators', zh: '指标手册' },
+    backToCv:    { en: 'Back to CV', zh: '返回简历' },
+    familyMath:  { en: 'Mathematics', zh: '数学' },
+    familyFin:   { en: 'Financial engineering', zh: '金融工程' },
+    title:       { en: 'Math for Finance', zh: '金融数学手册' },
+    subtitle: {
+      en: 'Ten pieces of mathematics, each one plotted rather than asserted, and each one followed through to the place it actually shows up in a trading account — derivatives become delta and gamma, Taylor becomes the position risk expansion, linear algebra becomes portfolio variance, Fourier becomes a pricing transform, and Kelly becomes position size. Every chart is live: drag the sliders and watch which term moves.',
+      zh: '十块数学，每一块都用图画出来而不是断言出来，并且一路跟到它在交易账户里真正出现的位置——导数变成 Delta 和 Gamma，泰勒展开变成持仓风险公式，线性代数变成组合方差，傅立叶变成定价变换，凯利变成仓位大小。所有图都是活的：拖动滑块，看哪一项在动。'
+    },
+    statSections: { en: 'sections', zh: '个章节' },
+    statCharts:   { en: 'interactive plots', zh: '张交互图' },
+    statOffline:  { en: 'Self-contained', zh: '单文件离线可用' },
+
+    /* ---- 01 derivatives ---- */
+    ebDeriv:    { en: 'Derivatives', zh: '导数' },
+    derivTitle: { en: 'First and second derivatives, drawn', zh: '一阶导与二阶导，画出来看' },
+    derivSub: {
+      en: 'One worked example carries the whole idea. Take f(x) = x³ − 3x. Its first derivative is f′(x) = 3x² − 3, its second is f″(x) = 6x. Drag the probe below and read the three curves together: where the blue curve crosses zero the white curve goes flat, and where the orange curve changes sign the white curve changes which way it bends.',
+      zh: '一个例子就能把整件事讲完。取 f(x) = x³ − 3x，一阶导 f′(x) = 3x² − 3，二阶导 f″(x) = 6x。拖动下面的探针，把三条曲线放在一起读：蓝线穿过零点的地方，白线就"走平"；橙线变号的地方，白线就换一个弯法。'
+    },
+    derivPlotTitle: { en: 'f(x) = x³ − 3x and its two derivatives', zh: 'f(x) = x³ − 3x 与它的两个导数' },
+    probeX:     { en: 'Probe point x₀', zh: '探针位置 x₀' },
+    tangentLine:{ en: 'Tangent at x₀', zh: 'x₀ 处的切线' },
+    showD1:     { en: 'f′(x)', zh: 'f′(x)' },
+    showD2:     { en: 'f″(x)', zh: 'f″(x)' },
+    showTan:    { en: 'Tangent', zh: '切线' },
+    derivProbeNote: {
+      en: 'The green line is the tangent — its slope is exactly f′(x₀). Slide through x = −1 and x = 1 and watch it go horizontal.',
+      zh: '绿线是切线，它的斜率恰好等于 f′(x₀)。滑过 x = −1 和 x = 1，看它变成水平。'
+    },
+    d1Title: { en: 'First derivative = slope (speed and direction)', zh: '一阶导 = 斜率（快慢和方向）' },
+    d1Body: {
+      en: '<ul>' +
+          '<li>At <b>x = −1</b> and <b>x = 1</b>, f′ = 0 → the original function <b>goes flat</b> at those two points: a local maximum (2) and a local minimum (−2).</li>' +
+          '<li>For <b>−1 &lt; x &lt; 1</b>, f′ &lt; 0 (the blue curve is below zero) → the original function is <b>falling</b>.</li>' +
+          '<li>Outside that interval f′ &gt; 0 → the original function is <b>rising</b>.</li>' +
+          '</ul><p>So the sign of f′ answers "which way", and its magnitude answers "how fast".</p>',
+      zh: '<ul>' +
+          '<li><b>x = −1</b> 和 <b>x = 1</b> 处 f′ = 0 → 原函数在这两点"走平了"，分别是极大值（2）和极小值（−2）。</li>' +
+          '<li><b>−1 &lt; x &lt; 1</b> 时 f′ &lt; 0（蓝线在零下）→ 原函数下降。</li>' +
+          '<li>两侧 f′ &gt; 0 → 原函数上升。</li>' +
+          '</ul><p>所以 f′ 的符号回答"往哪走"，f′ 的大小回答"走多快"。</p>'
+    },
+    d2Title: { en: 'Second derivative = rate of change of the slope (which way it bends)', zh: '二阶导 = 斜率的变化率（弯的方向）' },
+    d2Body: {
+      en: '<ul>' +
+          '<li>For <b>x &lt; 0</b>, f″ &lt; 0 → the curve bends downward (concave), like a hilltop.</li>' +
+          '<li>For <b>x &gt; 0</b>, f″ &gt; 0 → the curve bends upward (convex), like the bottom of a bowl.</li>' +
+          '<li>At <b>x = 0</b>, f″ = 0 <i>and changes sign</i> → an <b>inflection point</b>: the curve switches which way it bends here.</li>' +
+          '</ul><p>A zero of f″ on its own is not enough — it has to change sign. That is what separates an inflection point from a flat spot.</p>',
+      zh: '<ul>' +
+          '<li><b>x &lt; 0</b> 时 f″ &lt; 0 → 曲线向下弯（凹），像山顶。</li>' +
+          '<li><b>x &gt; 0</b> 时 f″ &gt; 0 → 曲线向上弯（凸），像碗底。</li>' +
+          '<li><b>x = 0</b> 处 f″ = 0 <i>且变号</i> → <b>拐点</b>，曲线在这里"换弯"。</li>' +
+          '</ul><p>光是 f″ = 0 还不够，必须变号。这正是拐点与"平缓段"的区别。</p>'
+    },
+    carAnalogy: {
+      en: '<b>The clearest analogy is driving.</b> Position is f, speed is f′ (positive = moving forward, zero = stopped), acceleration is f″ (positive = on the throttle, negative = on the brake). ' +
+          'Speed being zero does not mean acceleration is zero — at the instant the car stops, it may be getting shoved hard backwards. ' +
+          'That is exactly the situation at x = −1 and x = 1 on the chart above: f′ = 0, but f″ ≠ 0, so the motion is still being turned around.',
+      zh: '<b>最直观的类比是开车</b>：位置是 f，速度是 f′（正 = 前进，零 = 停），加速度是 f″（正 = 在踩油门，负 = 在踩刹车）。' +
+          '速度为零不代表加速度为零——车停住的那一瞬间，可能正被猛推着往回走。' +
+          '这正是上图 x = −1 和 x = 1 处的情形：f′ = 0，但 f″ ≠ 0，运动仍在被扭转。'
+    },
+    derivBridge: {
+      en: 'These two quantities are <b>Delta</b> (first order) and <b>Gamma</b> (second order) in options. ' +
+          'Delta tells you which way the price moves and by how much; Gamma tells you how fast Delta itself is changing. ' +
+          'A long call at Δ = 0 (deep out of the money) with meaningful Gamma is the option equivalent of a stopped car with the accelerator down. ' +
+          'See them plotted against spot in the <a href="options.html#engine">Options Handbook engine room</a>.',
+      zh: '这两个量在期权里就是 <b>Delta</b>（一阶）和 <b>Gamma</b>（二阶）：Delta 告诉你价格变动方向，Gamma 告诉你 Delta 本身变得有多快。' +
+          '一张深度虚值、Δ ≈ 0 但 Gamma 不小的看涨期权，就是期权版的"车停着但油门踩着"。' +
+          '在<a href="options.html#engine">期权手册的定价引擎室</a>里可以看到它们对股价的完整曲线。'
+    },
+
+    /* ---- 02 calculus ---- */
+    ebCalc:    { en: 'Calculus', zh: '微积分' },
+    calcTitle: { en: 'The limit, the rules, and the integral', zh: '极限、求导法则与积分' },
+    calcSub: {
+      en: 'A derivative is not a new kind of object — it is the limit of an ordinary slope as the step shrinks. An integral is not a new kind of object either — it is the limit of an ordinary sum as the pieces get thin. Both panels below let you run the limit by hand.',
+      zh: '导数不是什么新东西——它就是普通斜率在步长趋于零时的极限。积分也不是新东西——它就是普通求和在分块变细时的极限。下面两块面板可以让你亲手把这个极限走一遍。'
+    },
+    secantTitle: { en: 'The limit that defines a derivative', zh: '定义导数的那个极限' },
+    hStep:       { en: 'Step h', zh: '步长 h' },
+    secantNote: {
+      en: 'The dashed line is a secant through two points a distance h apart. Shrink h and it settles onto the tangent. The readout compares the secant slope to the exact f′(x₀).',
+      zh: '虚线是穿过相距 h 的两点的割线。把 h 缩小，它会稳定地贴到切线上。读数把割线斜率与精确的 f′(x₀) 做对比。'
+    },
+    secantEq: {
+      en: '<span class="fn">f′</span>(<span class="tok">x</span>) <span class="op">=</span> <span class="fn">lim</span><sub style="font-size:11px">h→0</sub> <span class="frac"><span class="n"><span class="fn">f</span>(x+h) <span class="op">−</span> <span class="fn">f</span>(x)</span><span class="d">h</span></span>',
+      zh: '<span class="fn">f′</span>(<span class="tok">x</span>) <span class="op">=</span> <span class="fn">lim</span><sub style="font-size:11px">h→0</sub> <span class="frac"><span class="n"><span class="fn">f</span>(x+h) <span class="op">−</span> <span class="fn">f</span>(x)</span><span class="d">h</span></span>'
+    },
+    riemannTitle: { en: 'The integral is an accumulated sum', zh: '积分是累加出来的' },
+    nRect:        { en: 'Rectangles n', zh: '矩形数 n' },
+    riemannNote: {
+      en: 'The shaded rectangles approximate the area under the standard normal density φ(x) from −3 to 1. That area <i>is</i> a probability: N(1) − N(−3) ≈ 0.8400. Push n up and watch the error collapse.',
+      zh: '阴影矩形在逼近标准正态密度 φ(x) 从 −3 到 1 的面积。这块面积<i>就是</i>一个概率：N(1) − N(−3) ≈ 0.8400。把 n 推大，看误差塌下去。'
+    },
+    riemannEq: {
+      en: '<span class="fn">N</span>(z) <span class="op">=</span> <span style="font-size:24px">∫</span><sub style="font-size:11px">−∞</sub><sup style="font-size:11px">z</sup> <span class="fn">φ</span>(x) <span class="fn">dx</span> <span class="op">≈</span> <span style="font-size:22px">Σ</span> <span class="fn">φ</span>(x<sub>i</sub>) <span class="op">·</span> Δx',
+      zh: '<span class="fn">N</span>(z) <span class="op">=</span> <span style="font-size:24px">∫</span><sub style="font-size:11px">−∞</sub><sup style="font-size:11px">z</sup> <span class="fn">φ</span>(x) <span class="fn">dx</span> <span class="op">≈</span> <span style="font-size:22px">Σ</span> <span class="fn">φ</span>(x<sub>i</sub>) <span class="op">·</span> Δx'
+    },
+    rulesTitle: { en: 'The rules you actually use', zh: '你真正会用到的求导法则' },
+    thRule: { en: 'Rule', zh: '法则' },
+    thForm: { en: 'Form', zh: '形式' },
+    thWhy:  { en: 'Why it matters here', zh: '在这里为什么重要' },
+    calcBridge: {
+      en: 'Black-Scholes is a <b>partial</b> differential equation: the option value V depends on both S and t, so you differentiate with respect to one while holding the other fixed. ' +
+          'Every greek is one such partial derivative — Δ = ∂V/∂S, Θ = ∂V/∂t, 𝒱 = ∂V/∂σ, Γ = ∂²V/∂S². Nothing more exotic than the rules in the table above is needed to get them.',
+      zh: 'Black-Scholes 是一个<b>偏</b>微分方程：期权价值 V 同时依赖 S 和 t，所以对其中一个求导时把另一个按住不动。' +
+          '每个希腊字母都是这样一个偏导数——Δ = ∂V/∂S，Θ = ∂V/∂t，𝒱 = ∂V/∂σ，Γ = ∂²V/∂S²。推出它们用不到比上表更复杂的东西。'
+    },
+
+    /* ---- 03 shapes ---- */
+    ebShapes:    { en: 'Function shapes', zh: '常见函数形态' },
+    shapesTitle: { en: 'Eight shapes that cover most of finance', zh: '八种形态，覆盖金融里的大半' },
+    shapesSub: {
+      en: 'You do not need to recognise arbitrary functions — you need to recognise these eight on sight and know what each one implies about growth, decay, saturation and tail risk.',
+      zh: '你不需要认识任意函数，你需要的是一眼认出下面这八种，并且知道每一种对增长、衰减、饱和与尾部风险各意味着什么。'
+    },
+    shapesBridge: {
+      en: 'Two of these do the heavy lifting in options. The <b>exponential</b> is the discount factor e<sup>−rT</sup> that drags every future cash flow back to today. ' +
+          'The <b>Gaussian pair</b> — φ for density, N for its running total — is literally what N(d₁) and N(d₂) are: probability weights read off the bell curve.',
+      zh: '其中两种在期权里干了大部分活。<b>指数函数</b>就是折现因子 e<sup>−rT</sup>，把所有未来现金流拖回今天。' +
+          '<b>高斯这一对</b>——φ 是密度、N 是它的累积——正是 N(d₁) 与 N(d₂) 的本体：从钟形曲线上读出来的概率权重。'
+    },
+
+    /* ---- 04 taylor ---- */
+    ebTaylor:    { en: 'Taylor series', zh: '泰勒展开' },
+    taylorTitle: { en: 'Any smooth curve is a polynomial in disguise', zh: '任何光滑曲线都是伪装的多项式' },
+    taylorSub: {
+      en: 'Taylor\'s idea: near a point a, match the value, then the slope, then the curvature, then the next derivative, and so on. Each extra term buys you accuracy over a wider neighbourhood. Watch the approximation peel away from the truth as you move from the expansion point — that gap is the whole reason a hedge that is fine for a $1 move breaks for a $20 move.',
+      zh: '泰勒的想法：在点 a 附近，先对上函数值，再对上斜率，再对上弯曲程度，再对上下一阶导数，如此下去。每多一项，精确的邻域就宽一点。注意看近似曲线怎样在远离展开点处脱离真值——那道缝就是"对 1 美元波动没问题的对冲，对 20 美元波动会崩"的全部原因。'
+    },
+    taylorPlotTitle: { en: 'Truncated expansion vs the true function', zh: '截断展开 vs 真实函数' },
+    trueFn:   { en: 'True function', zh: '真实函数' },
+    approxFn: { en: 'Taylor approximation', zh: '泰勒近似' },
+    errBand:  { en: '|error|', zh: '误差绝对值' },
+    orderN:   { en: 'Order n', zh: '阶数 n' },
+    centerA:  { en: 'Expansion point a', zh: '展开点 a' },
+    taylorNote: {
+      en: 'Order 1 is the tangent line — that is Delta hedging. Order 2 adds curvature — that is Delta + Gamma. Options desks stop at 2 and re-hedge often, because term 3 costs more to compute than it saves.',
+      zh: '一阶就是切线——那就是 Delta 对冲。二阶加上曲率——那就是 Delta + Gamma。期权台一般停在二阶然后频繁再对冲，因为第三项的计算成本高过它省下的钱。'
+    },
+    taylorGreekTitle: { en: 'The one expansion every options trader carries', zh: '每个期权交易者随身带的那个展开式' },
+    taylorGreekEq: {
+      en: 'Δ<span class="fn">V</span> <span class="op">≈</span> <span class="tok">Δ</span><span class="op">·</span><span class="fn">dS</span> <span class="op">+</span> <span class="frac"><span class="n">1</span><span class="d">2</span></span><span class="tok">Γ</span><span class="op">·</span>(<span class="fn">dS</span>)<sup>2</sup> <span class="op">+</span> <span class="tok">𝒱</span><span class="op">·</span><span class="fn">dσ</span> <span class="op">+</span> <span class="tok">Θ</span><span class="op">·</span><span class="fn">dt</span>',
+      zh: 'Δ<span class="fn">V</span> <span class="op">≈</span> <span class="tok">Δ</span><span class="op">·</span><span class="fn">dS</span> <span class="op">+</span> <span class="frac"><span class="n">1</span><span class="d">2</span></span><span class="tok">Γ</span><span class="op">·</span>(<span class="fn">dS</span>)<sup>2</sup> <span class="op">+</span> <span class="tok">𝒱</span><span class="op">·</span><span class="fn">dσ</span> <span class="op">+</span> <span class="tok">Θ</span><span class="op">·</span><span class="fn">dt</span>'
+    },
+    taylorGreekNote: {
+      en: 'A second-order Taylor expansion of the option value in spot, plus first-order terms in volatility and time.',
+      zh: '期权价值对股价的二阶泰勒展开，再加上对波动率和时间的一阶项。'
+    },
+    taylorGreekBody: {
+      en: '<p>This is the only formula you strictly need while holding a position, because it says <b>four things are happening at once</b> and any one of them can lose you money:</p>' +
+          '<ul>' +
+          '<li><b>Δ·dS</b> — the stock moved. This is the term everyone watches.</li>' +
+          '<li><b>½Γ·(dS)²</b> — the move was big. Squared, so it is sign-blind: a long option gains here whether the move was up or down. This is convexity, and it is what you are actually buying.</li>' +
+          '<li><b>𝒱·dσ</b> — the market re-priced uncertainty. You can be right on direction and still lose if implied vol collapses.</li>' +
+          '<li><b>Θ·dt</b> — a day passed. The only term guaranteed to fire, and for a buyer it is always negative.</li>' +
+          '</ul>' +
+          '<p>Notice the structure: term one is a first derivative, term two is a second derivative with the ½ and the square that the Taylor formula demands. It is the same expansion as the chart above, with S in place of x.</p>',
+      zh: '<p>持仓时你严格需要记住的只有这一个式子，因为它说明<b>四件事在同时发生</b>，任何一件都能让你亏钱：</p>' +
+          '<ul>' +
+          '<li><b>Δ·dS</b> —— 股价动了。这是所有人都盯着的一项。</li>' +
+          '<li><b>½Γ·(dS)²</b> —— 动得很大。因为平方，它对符号不敏感：多头期权无论涨跌都在这一项上赚钱。这就是凸性，也是你真正买到的东西。</li>' +
+          '<li><b>𝒱·dσ</b> —— 市场重新给不确定性定价了。方向judgment对了，隐含波动率塌了照样亏。</li>' +
+          '<li><b>Θ·dt</b> —— 过了一天。唯一保证会发生的一项，而且对买方永远为负。</li>' +
+          '</ul>' +
+          '<p>注意它的结构：第一项是一阶导，第二项是二阶导，带着泰勒公式要求的 ½ 和平方。它和上图是同一个展开，只是把 x 换成了 S。</p>'
+    },
+    taylorBridge: {
+      en: 'Truncation is a risk decision, not a maths detail. A Delta-only hedge (order 1) is exact for infinitesimal moves and wrong for gaps; that error is precisely the ½Γ(dS)² you chose to ignore. ' +
+          'Gap risk in a portfolio is, quite literally, the size of the terms you dropped.',
+      zh: '在哪里截断是个风险决策，不是数学细节。只做 Delta 对冲（一阶）对无穷小变动是精确的，对跳空则是错的；那个误差恰好就是你选择忽略的 ½Γ(dS)²。' +
+          '组合里的跳空风险，字面意义上就是你丢掉的那些项的大小。'
+    },
+
+    /* ---- 05 linear algebra ---- */
+    ebLinalg:    { en: 'Linear algebra', zh: '线性代数' },
+    linalgTitle: { en: 'A matrix is a thing that moves space', zh: '矩阵是一个搬动空间的东西' },
+    linalgSub: {
+      en: 'Forget the arithmetic for a moment. A 2×2 matrix takes every point in the plane and moves it somewhere else, and it does so in a way that keeps grid lines straight and parallel. Type numbers into A and watch what happens to the unit square. Determinant is the area scale factor; eigenvectors are the directions that survive the transform pointing the same way.',
+      zh: '先把算术放一边。一个 2×2 矩阵把平面上每个点搬到别处，而且搬的方式保证网格线仍然是直的、平行的。往 A 里输数字，看单位正方形发生了什么。行列式是面积缩放倍数；特征向量是那些经过变换后方向不变的方向。'
+    },
+    matTitle:    { en: '2×2 transform of the unit square', zh: '单位正方形的 2×2 变换' },
+    beforeShape: { en: 'Before (unit square)', zh: '变换前（单位正方形）' },
+    afterShape:  { en: 'After (A·x)', zh: '变换后（A·x）' },
+    eigvec:      { en: 'Eigenvectors', zh: '特征向量' },
+    matNote: {
+      en: 'det(A) < 0 means the transform flipped orientation. det(A) = 0 means it squashed the plane onto a line — the matrix is singular and cannot be inverted, which is exactly what happens to a covariance matrix when two assets are perfectly correlated.',
+      zh: 'det(A) < 0 表示变换翻转了定向。det(A) = 0 表示它把平面压成了一条线——矩阵奇异、不可逆，而这正是两个资产完全相关时协方差矩阵的下场。'
+    },
+    matOpsTitle: { en: 'The operations, and what each one means', zh: '各种运算分别意味着什么' },
+    thOp:     { en: 'Operation', zh: '运算' },
+    thMeans:  { en: 'Geometric meaning', zh: '几何含义' },
+    thFinUse: { en: 'Finance use', zh: '金融用途' },
+    portVarTitle: { en: 'Portfolio variance is one matrix product', zh: '组合方差就是一个矩阵乘积' },
+    portVarEq: {
+      en: '<span class="tok">σ</span><sub style="font-size:12px">p</sub><sup>2</sup> <span class="op">=</span> <span class="tok">w</span><sup>⊤</sup> <span class="tok">Σ</span> <span class="tok">w</span> <span class="op">=</span> w<sub>1</sub><sup>2</sup>σ<sub>1</sub><sup>2</sup> <span class="op">+</span> w<sub>2</sub><sup>2</sup>σ<sub>2</sub><sup>2</sup> <span class="op">+</span> 2w<sub>1</sub>w<sub>2</sub>ρσ<sub>1</sub>σ<sub>2</sub>',
+      zh: '<span class="tok">σ</span><sub style="font-size:12px">p</sub><sup>2</sup> <span class="op">=</span> <span class="tok">w</span><sup>⊤</sup> <span class="tok">Σ</span> <span class="tok">w</span> <span class="op">=</span> w<sub>1</sub><sup>2</sup>σ<sub>1</sub><sup>2</sup> <span class="op">+</span> w<sub>2</sub><sup>2</sup>σ<sub>2</sub><sup>2</sup> <span class="op">+</span> 2w<sub>1</sub>w<sub>2</sub>ρσ<sub>1</sub>σ<sub>2</sub>'
+    },
+    portVarNote: {
+      en: 'The curve is portfolio volatility as weight shifts from asset 2 to asset 1. Drag ρ down and the curve sags below the straight line joining the endpoints — that sag is diversification, and it is entirely the doing of the cross term.',
+      zh: '曲线是权重从资产 2 移向资产 1 时的组合波动率。把 ρ 拖低，曲线会塌到连接两端点的直线以下——那道凹陷就是分散化，全部来自交叉项。'
+    },
+    linalgBridge: {
+      en: 'Σ is the covariance matrix; wᵀΣw is portfolio variance; its eigenvectors are the principal components — the independent directions a market actually moves in. ' +
+          'The first eigenvector of an equity covariance matrix is almost always "everything up together", which is why single-name diversification stops helping in a crash: correlations run to 1 and the matrix collapses toward rank one.',
+      zh: 'Σ 是协方差矩阵，wᵀΣw 是组合方差，它的特征向量是主成分——市场真正在动的那些独立方向。' +
+          '股票协方差矩阵的第一特征向量几乎总是"全部一起涨"，这也是为什么崩盘时挑个股分散化会失灵：相关性冲向 1，矩阵塌向秩一。'
+    },
+
+    /* ---- 06 trig ---- */
+    ebTrig:    { en: 'Trigonometry', zh: '三角函数' },
+    trigTitle: { en: 'Circles unrolled into waves', zh: '把圆展开成波' },
+    trigSub: {
+      en: 'Sine and cosine are not really about triangles — they are the coordinates of a point going round a circle, plotted against the angle. Drag θ and watch the green radius sweep while the two waves trace out its shadow on each axis. Everything periodic in finance is built from these.',
+      zh: '正弦和余弦其实与三角形关系不大——它们是一个点绕圆运动时的坐标，对角度作图。拖动 θ，看绿色半径扫过去，两条波在描出它在各轴上的投影。金融里一切周期性的东西都由它们搭成。'
+    },
+    trigPlotTitle: { en: 'Unit circle → sine and cosine', zh: '单位圆 → 正弦与余弦' },
+    radiusVec: { en: 'Radius vector', zh: '半径向量' },
+    angleTheta: { en: 'Angle θ', zh: '角度 θ' },
+    trigNote: {
+      en: 'sin²θ + cos²θ = 1 is just Pythagoras on the radius. The phase shift between the two curves is exactly π/2 — cosine is sine that started a quarter turn early.',
+      zh: 'sin²θ + cos²θ = 1 不过是半径上的勾股定理。两条曲线之间的相位差恰好是 π/2——余弦就是提前了四分之一圈出发的正弦。'
+    },
+    trigEq: {
+      en: '<span class="fn">e</span><sup><span class="tok">i</span><span class="tok">θ</span></sup> <span class="op">=</span> <span class="fn">cos</span> θ <span class="op">+</span> <span class="tok">i</span> <span class="fn">sin</span> θ',
+      zh: '<span class="fn">e</span><sup><span class="tok">i</span><span class="tok">θ</span></sup> <span class="op">=</span> <span class="fn">cos</span> θ <span class="op">+</span> <span class="tok">i</span> <span class="fn">sin</span> θ'
+    },
+    trigBridge: {
+      en: 'Euler\'s identity above is the bridge to the next section: it turns "a wave" into "a complex exponential", which is what makes Fourier analysis algebra instead of trigonometry. ' +
+          'It is also why option pricing by characteristic function works — E[e<sup>iuX</sup>] is a single expectation that encodes the entire distribution of X.',
+      zh: '上面的欧拉恒等式是通往下一节的桥：它把"一个波"变成"一个复指数"，这正是傅立叶分析能变成代数而不是三角学的原因。' +
+          '这也是特征函数定价法能成立的原因——E[e<sup>iuX</sup>] 是一个期望，却编码了 X 的整个分布。'
+    },
+
+    /* ---- 07 fourier ---- */
+    ebFourier:    { en: 'Fourier', zh: '傅立叶' },
+    fourierTitle: { en: 'Every signal is a stack of sine waves', zh: '任何信号都是一叠正弦波' },
+    fourierSub: {
+      en: 'Fourier\'s claim is startling the first time you meet it: any repeating signal, including one with sharp corners, can be written as a sum of pure sine waves at integer multiples of one base frequency. Add harmonics one at a time and watch a smooth sine turn into a square.',
+      zh: '傅立叶的主张第一次见到时相当惊人：任何重复信号，哪怕带尖角，都能写成一个基频的整数倍上的纯正弦波之和。一次加一个谐波，看一条光滑正弦怎么变成方波。'
+    },
+    fourierPlotTitle: { en: 'Partial sums of a Fourier series', zh: '傅立叶级数的部分和' },
+    targetWave:   { en: 'Target wave', zh: '目标波形' },
+    partialSum:   { en: 'Partial sum', zh: '部分和' },
+    spectrumBars: { en: 'Harmonic amplitudes', zh: '各谐波振幅' },
+    harmonics:    { en: 'Harmonics N', zh: '谐波数 N' },
+    fourierNote: {
+      en: 'The lower panel is the spectrum: one bar per harmonic, height = how much of that frequency the signal contains. Reading a signal in the frequency domain instead of the time domain is the entire trick.',
+      zh: '下面那块是频谱：每个谐波一根柱子，高度 = 信号里含有多少那个频率。把信号从时域换到频域来读，就是全部诀窍。'
+    },
+    gibbsNote: {
+      en: '<b>Notice the overshoot at the corners</b> — it never goes away, no matter how many harmonics you add. It just gets narrower. That is the <b>Gibbs phenomenon</b>, and it is the honest reason smooth basis functions struggle with jumps. ' +
+          'Financially: models built from continuous processes systematically misprice gap risk, which is why a pure Black-Scholes model underprices deep out-of-the-money puts and the market charges a skew premium on top.',
+      zh: '<b>注意拐角处的过冲</b>——无论加多少谐波它都不会消失，只会变窄。这就是 <b>吉布斯现象</b>，也是光滑基函数处理跳变时力不从心的诚实原因。' +
+          '对应到金融：用连续过程搭出来的模型会系统性低估跳空风险，这正是纯 Black-Scholes 会低估深度虚值看跌期权、而市场要在上面额外收一层偏斜溢价的原因。'
+    },
+    fourierBridge: {
+      en: 'Two uses. <b>Pricing:</b> the Carr-Madan method writes an option price as a Fourier transform of the characteristic function, which prices a whole strike ladder in one FFT — this is how models with jumps (Heston, variance gamma) are made fast enough to calibrate. ' +
+          '<b>Analysis:</b> spectral methods on a return series test whether an apparent cycle is real or is just the eye finding patterns in noise. Be sceptical here — most claimed market cycles do not survive an out-of-sample test.',
+      zh: '两个用途。<b>定价：</b>Carr-Madan 方法把期权价格写成特征函数的傅立叶变换，一次 FFT 就能定出整条行权价阶梯——带跳跃的模型（Heston、variance gamma）就是这样被加速到可以校准的。' +
+          '<b>分析：</b>对收益率序列做谱分析，检验看到的周期是真的还是眼睛在噪声里找规律。这里要多疑——多数号称的市场周期扛不过样本外检验。'
+    },
+
+    /* ---- 08 probability ---- */
+    ebProb:    { en: 'Probability', zh: '概率' },
+    probTitle: { en: 'Normal, lognormal, and the random walk', zh: '正态、对数正态与随机游走' },
+    probSub: {
+      en: 'Option pricing assumes log returns are normal, which makes prices lognormal — bounded below at zero and skewed right. That single assumption produces both N(d₁) and N(d₂), and both of its failure modes (fat tails, volatility clustering) are why every model needs a skew correction bolted on.',
+      zh: '期权定价假设对数收益服从正态，于是价格服从对数正态——下方以零为界、右偏。这一个假设同时产生了 N(d₁) 和 N(d₂)，而它的两种失效方式（肥尾、波动率聚集）正是每个模型都要外挂一层偏斜修正的原因。'
+    },
+    normTitle:  { en: 'Normal → lognormal', zh: '正态 → 对数正态' },
+    sigmaVol:   { en: 'σ (annualised vol)', zh: 'σ（年化波动率）' },
+    horizonT:   { en: 'Horizon (days)', zh: '期限（天）' },
+    normNote: {
+      en: 'Upper curve: the distribution of log return, symmetric. Lower curve: the same thing expressed as price, from a $100 start — now skewed, because a stock can triple but cannot fall below zero. The shaded band is ±1σ, the "expected move" an options screen quotes.',
+      zh: '上面那条：对数收益的分布，对称。下面那条：同一件事换成价格表达，从 $100 起步——现在是右偏的，因为股票能翻三倍但不能跌破零。阴影带是 ±1σ，也就是期权界面上报的"预期波动幅度"。'
+    },
+    gbmTitle: { en: 'Geometric Brownian motion', zh: '几何布朗运动' },
+    nPaths:   { en: 'Paths', zh: '路径数' },
+    reroll:   { en: 'New random seed', zh: '换一组随机数' },
+    gbmNote: {
+      en: 'Each path is one possible future under the same σ. The terminal spread of these paths is the lognormal above. An option price is the discounted average payoff across all of them — which is what a Monte Carlo pricer computes literally.',
+      zh: '每条路径是同一个 σ 下的一种可能未来。这些路径末端的散布就是上面那个对数正态。期权价格就是所有路径收益的折现平均——蒙特卡洛定价器就是字面意义上这么算的。'
+    },
+    itoTitle: { en: 'Itô\'s lemma — the chain rule when the input is random', zh: '伊藤引理——输入是随机的时候的链式法则' },
+    itoEq: {
+      en: '<span class="fn">d</span><span class="tok">V</span> <span class="op">=</span> ( <span class="frac"><span class="n">∂V</span><span class="d">∂t</span></span> <span class="op">+</span> μS<span class="frac"><span class="n">∂V</span><span class="d">∂S</span></span> <span class="op">+</span> <span class="frac"><span class="n">1</span><span class="d">2</span></span>σ<sup>2</sup>S<sup>2</sup><span class="frac"><span class="n">∂<sup>2</sup>V</span><span class="d">∂S<sup>2</sup></span></span> ) <span class="fn">dt</span> <span class="op">+</span> σS<span class="frac"><span class="n">∂V</span><span class="d">∂S</span></span><span class="fn">dW</span>',
+      zh: '<span class="fn">d</span><span class="tok">V</span> <span class="op">=</span> ( <span class="frac"><span class="n">∂V</span><span class="d">∂t</span></span> <span class="op">+</span> μS<span class="frac"><span class="n">∂V</span><span class="d">∂S</span></span> <span class="op">+</span> <span class="frac"><span class="n">1</span><span class="d">2</span></span>σ<sup>2</sup>S<sup>2</sup><span class="frac"><span class="n">∂<sup>2</sup>V</span><span class="d">∂S<sup>2</sup></span></span> ) <span class="fn">dt</span> <span class="op">+</span> σS<span class="frac"><span class="n">∂V</span><span class="d">∂S</span></span><span class="fn">dW</span>'
+    },
+    itoNote: {
+      en: 'The ordinary chain rule plus one extra term — the ½σ²S²∂²V/∂S² that ordinary calculus does not have.',
+      zh: '普通链式法则再加一项——普通微积分里没有的 ½σ²S²∂²V/∂S²。'
+    },
+    itoBody: {
+      en: '<p>In ordinary calculus, (dx)² is negligible: shrink the step and the square shrinks far faster. For a random walk it is not. Over a time step dt the move is on the order of √dt, so its square is on the order of dt — the same order as the terms you are keeping. It refuses to vanish.</p>' +
+          '<p>That surviving term is <b>the Gamma term</b>. Follow it through: build a portfolio that is long the option and short Δ shares, and the random dW cancels. What is left is riskless, so it must earn r, and rearranging gives the Black-Scholes PDE:</p>' +
+          '<div class="eq sm">∂V/∂t <span class="op">+</span> ½σ²S²∂²V/∂S² <span class="op">+</span> rS·∂V/∂S <span class="op">−</span> rV <span class="op">=</span> 0</div>' +
+          '<p>Read it as a sentence: <b>time decay plus gamma income equals the financing cost</b>. Θ and Γ are locked together by an identity, not by a rule of thumb — which is why "I want gamma but not theta" is not a position that exists.</p>',
+      zh: '<p>普通微积分里 (dx)² 可以忽略：步长缩小，平方缩小得快得多。随机游走里不行。在时间步 dt 内位移是 √dt 量级，于是它的平方是 dt 量级——和你保留的那些项同阶。它拒绝消失。</p>' +
+          '<p>活下来的那一项就是 <b>Gamma 项</b>。顺着往下走：构造一个多头期权、空头 Δ 股股票的组合，随机项 dW 抵消掉。剩下的东西无风险，所以必须只赚 r，整理一下就得到 Black-Scholes 偏微分方程：</p>' +
+          '<div class="eq sm">∂V/∂t <span class="op">+</span> ½σ²S²∂²V/∂S² <span class="op">+</span> rS·∂V/∂S <span class="op">−</span> rV <span class="op">=</span> 0</div>' +
+          '<p>把它当句子读：<b>时间衰减加上 gamma 收益等于融资成本</b>。Θ 与 Γ 被一个恒等式锁在一起，不是经验规律——所以"我只要 gamma 不要 theta"根本不是一个存在的头寸。</p>'
+    },
+    probBridge: {
+      en: 'N(d₂) is the risk-neutral probability the option finishes in the money; N(d₁) is that same probability re-weighted by how much stock you receive when it does. ' +
+          'Both are areas under the bell curve you integrated by hand in section 02.',
+      zh: 'N(d₂) 是风险中性下期权到期价内的概率；N(d₁) 是同一个概率，再按"价内时你拿到多少股票"重新加权。' +
+          '两者都是你在第 02 节亲手积出来的那条钟形曲线下的面积。'
+    },
+
+    /* ---- 09 kelly ---- */
+    ebKelly:    { en: 'Kelly criterion', zh: '凯利公式' },
+    kellyTitle: { en: 'How much to bet, derived rather than guessed', zh: '下多大注，推导出来而不是猜出来' },
+    kellySub: {
+      en: 'Given an edge, there is a mathematically optimal fraction of capital to risk. Bet less and you grow slower than you could; bet more and you grow slower too, then eventually you go broke with probability one — even with a positive edge. The curve below has a peak, and both sides of it are punishment.',
+      zh: '有了优势之后，存在一个数学上最优的资金投入比例。下得比它少，增长慢于本可以达到的速度；下得比它多，增长同样变慢，并且最终以概率 1 破产——哪怕你的优势是正的。下面这条曲线有个顶点，两侧都是惩罚。'
+    },
+    kellyPlotTitle: { en: 'Long-run growth rate vs bet fraction', zh: '长期增长率 vs 下注比例' },
+    growthCurve: { en: 'Expected log growth g(f)', zh: '期望对数增长 g(f)' },
+    fullKelly:   { en: 'Full Kelly f*', zh: '完整凯利 f*' },
+    halfKelly:   { en: 'Half Kelly', zh: '半凯利' },
+    wealthPaths: { en: 'Simulated wealth paths', zh: '模拟财富路径' },
+    winProb:  { en: 'Win probability p', zh: '胜率 p' },
+    payoffB:  { en: 'Win / loss ratio b', zh: '赔率 b（赢时收益 / 输时损失）' },
+    betFrac:  { en: 'Your bet fraction f', zh: '你的下注比例 f' },
+    kellyNote: {
+      en: 'The lower panel simulates 200 sequential bets at your chosen f, on a log scale. Past the point where g(f) crosses zero, the median path goes down even though the average bet is profitable.',
+      zh: '下面那块用你选的 f 模拟 200 次连续下注，纵轴取对数。越过 g(f) 穿零的那一点，即使每次下注的期望是正的，中位数路径也在往下走。'
+    },
+    kellyDerivTitle: { en: 'Where the formula comes from', zh: '公式是怎么来的' },
+    kellyEq: {
+      en: '<span class="fn">g</span>(f) <span class="op">=</span> p·<span class="fn">ln</span>(1+fb) <span class="op">+</span> q·<span class="fn">ln</span>(1−f)　<span class="op">⟹</span>　<span class="tok hi">f*</span> <span class="op">=</span> <span class="frac"><span class="n">pb − q</span><span class="d">b</span></span>',
+      zh: '<span class="fn">g</span>(f) <span class="op">=</span> p·<span class="fn">ln</span>(1+fb) <span class="op">+</span> q·<span class="fn">ln</span>(1−f)　<span class="op">⟹</span>　<span class="tok hi">f*</span> <span class="op">=</span> <span class="frac"><span class="n">pb − q</span><span class="d">b</span></span>'
+    },
+    kellyDerivBody: {
+      en: '<p>Maximise the expected <b>log</b> of wealth, not wealth itself. Log matters because bets compound multiplicatively: losing 50% then gaining 50% leaves you at 0.75, not 1.0. Log turns that product into a sum, so the law of large numbers applies to the growth <i>rate</i>.</p>' +
+          '<p>Then it is section 01 all over again: set g′(f) = 0 and solve. The first derivative locates the peak; the second derivative is negative everywhere, which confirms it is a maximum rather than a minimum.</p>' +
+          '<p>With q = 1 − p, the answer simplifies to <b>f* = p − q/b</b>: your edge, divided by the odds.</p>',
+      zh: '<p>要最大化的是财富的<b>对数</b>的期望，不是财富本身。对数之所以关键，是因为下注是乘性复利的：先亏 50% 再赚 50%，你在 0.75，不是 1.0。取对数把乘积变成求和，于是大数定律作用在增长<i>率</i>上。</p>' +
+          '<p>接下来就是第 01 节的重演：令 g′(f) = 0 求解。一阶导定位顶点；二阶导处处为负，确认那是极大值而不是极小值。</p>' +
+          '<p>代入 q = 1 − p，答案化简成 <b>f* = p − q/b</b>：你的优势，除以赔率。</p>'
+    },
+    kellyContTitle: { en: 'Continuous form, and why nobody bets full Kelly', zh: '连续形式，以及为什么没人真按完整凯利下注' },
+    kellyContEq: {
+      en: '<span class="tok hi">f*</span> <span class="op">=</span> <span class="frac"><span class="n">μ − r</span><span class="d">σ<sup>2</sup></span></span>',
+      zh: '<span class="tok hi">f*</span> <span class="op">=</span> <span class="frac"><span class="n">μ − r</span><span class="d">σ<sup>2</sup></span></span>'
+    },
+    kellyContBody: {
+      en: '<p>For a continuously-traded asset the same derivation gives excess return over variance — the Merton fraction. Note the denominator is σ<b>²</b>, not σ: doubling volatility quarters the optimal position, and this is the mathematical form of "size down in a volatile market".</p>' +
+          '<p>Practitioners almost universally bet <b>half Kelly or less</b>. Three reasons:</p>' +
+          '<ul>' +
+          '<li>The growth curve is <b>flat near its peak</b> but steep past it. Half Kelly gives up about 25% of the growth rate for roughly half the volatility — a trade nearly everyone takes.</li>' +
+          '<li>p, b, μ and σ are <b>estimated</b>, not known. Overestimating your edge pushes you past the peak without you noticing.</li>' +
+          '<li>Full-Kelly drawdowns are brutal — the expected worst drawdown approaches 50%, which is survivable arithmetically and not survivable psychologically or for anyone managing outside money.</li>' +
+          '</ul>',
+      zh: '<p>对连续交易的资产，同样的推导给出超额收益除以方差——即 Merton 比例。注意分母是 σ<b>²</b> 不是 σ：波动率翻倍，最优仓位变成四分之一，这就是"市场波动大就降仓位"的数学形式。</p>' +
+          '<p>实务上几乎所有人都只下 <b>半凯利或更少</b>。三个原因：</p>' +
+          '<ul>' +
+          '<li>增长曲线在<b>顶点附近很平</b>，越过顶点却很陡。半凯利放弃约 25% 的增长率，换来大约一半的波动——这笔交易几乎人人都做。</li>' +
+          '<li>p、b、μ、σ 都是<b>估计</b>出来的，不是已知的。高估自己的优势会让你在毫无察觉的情况下冲过顶点。</li>' +
+          '<li>完整凯利的回撤很凶——期望最大回撤接近 50%，这在算术上能活，在心理上活不了，管着别人的钱更活不了。</li>' +
+          '</ul>'
+    },
+    kellyWarn: {
+      en: '<b>Kelly assumes you know your edge.</b> In markets you do not — you have an estimate with error bars, usually fitted on the same data that suggested the strategy. If your true edge is zero and you think it is 5%, Kelly hands you a formula that sizes you confidently into ruin. ' +
+          'The formula is not the risky part; the inputs are. Treat f* as an <b>upper bound you never reach</b>, not a target.',
+      zh: '<b>凯利假设你知道自己的优势。</b>在市场里你并不知道——你有的是一个带误差棒的估计，而且通常是在提出这个策略的同一批数据上拟合的。如果你真实优势是零而你以为有 5%，凯利会给你一个公式，让你信心十足地把仓位加到破产。' +
+          '有风险的不是公式，是输入。把 f* 当作一个<b>你永远不会走到的上界</b>，而不是目标。'
+    },
+    kellyBridge: {
+      en: 'Position sizing is where mathematics touches a real account most directly. Note that Kelly needs a <b>positive edge</b> to return a positive f — and for a systematic option buyer paying the variance risk premium, the honest estimate of that edge is often negative, in which case the formula\'s answer is "do not take this bet at all".',
+      zh: '仓位管理是数学与真实账户接触最直接的地方。注意凯利需要<b>正的优势</b>才会给出正的 f——而对于一个系统性买入期权、长期支付方差风险溢价的人，对这个优势的诚实估计往往是负的，这时公式给出的答案是"这个注根本不要下"。'
+    },
+
+    /* ---- 10 applied ---- */
+    ebApplied:    { en: 'Applied', zh: '应用' },
+    appliedTitle: { en: 'Which piece of maths does which job', zh: '哪块数学干哪份活' },
+    appliedSub: {
+      en: 'The whole page on one screen: every tool above, the object it becomes in a financial model, and the decision it actually informs.',
+      zh: '整页浓缩成一屏：上面每个工具、它在金融模型里变成的对象，以及它真正支撑的那个决策。'
+    },
+    thTool:   { en: 'Mathematical tool', zh: '数学工具' },
+    thObject: { en: 'The financial object', zh: '对应的金融对象' },
+    thJob:    { en: 'What it actually does for you', zh: '它真正为你做的事' },
+    appliedClose: {
+      en: '<b>A closing caution.</b> Every model on this page is a set of assumptions with a formula attached. The formulas are exact; the assumptions are not. ' +
+          'Black-Scholes assumes constant volatility, lognormal returns, continuous hedging and zero transaction costs — in reality all four are false. ' +
+          'The value of the mathematics is that it gives you a <b>precise shared language</b> for arguing about risk, not that it hands you a correct price. ' +
+          'When a model and the market disagree, the model is the thing more likely to be wrong.',
+      zh: '<b>最后一句提醒。</b>这一页上的每个模型都是"一组假设 + 一个公式"。公式是精确的，假设不是。' +
+          'Black-Scholes 假设波动率恒定、收益率对数正态、可连续对冲、无交易成本——现实中这四条全部不成立。' +
+          '数学的价值在于给了你一套<b>精确的共同语言</b>来讨论风险，而不在于它交给你一个正确价格。' +
+          '当模型与市场分歧时，更可能错的是模型。'
+    },
+
+    /* ---- footer ---- */
+    footNote1: {
+      en: '<b>Scope.</b> This page is a mathematical companion to the <a href="options.html">Options Handbook</a> and the <a href="indicators.html">Stock Indicator Handbook</a>. Every chart is computed live in the browser from the formulas shown next to it — nothing is fetched, nothing is pre-rendered, and the page works offline from <code>file://</code>.',
+      zh: '<b>范围。</b>本页是<a href="options.html">期权教学手册</a>与<a href="indicators.html">股票指标手册</a>的数学配套。每张图都由旁边写着的公式在浏览器里实时算出——不抓取任何数据，不预渲染，页面从 <code>file://</code> 打开也能离线工作。'
+    },
+    footNote2: {
+      en: '<b>Numerical honesty.</b> N(x) uses the Abramowitz-Stegun rational approximation (absolute error &lt; 7.5×10⁻⁸), good enough for plotting and for the greeks shown here but not for production risk systems. Monte Carlo paths use a seeded PRNG so a reload reproduces the same picture; press the reseed button to draw a genuinely different sample.',
+      zh: '<b>数值说明。</b>N(x) 使用 Abramowitz-Stegun 有理逼近（绝对误差 &lt; 7.5×10⁻⁸），用于作图和本页展示的希腊字母足够，但不适用于生产风控系统。蒙特卡洛路径使用带种子的伪随机数，刷新会复现同一张图；按"换一组随机数"才会抽到真正不同的样本。'
+    },
+    footNote3: {
+      en: 'Educational material on the mathematics behind derivative pricing and position sizing. Not investment advice. No formula on this page tells you what a security is worth — they only tell you what a set of assumptions implies.',
+      zh: '关于衍生品定价与仓位管理背后数学的教学材料，不构成投资建议。本页任何公式都不会告诉你一个证券值多少钱——它们只告诉你一组假设推出了什么。'
+    }
+  };
+
+  /* ---- table rows: built here so both languages stay side by side ---- */
+  MF.RULES = [
+    { r: { en: 'Power rule', zh: '幂函数法则' },
+      f: 'd/dx xⁿ = n·xⁿ⁻¹',
+      w: { en: 'Gives f′(x) = 3x² − 3 for the cubic in section 01, in one line.',
+           zh: '一行就得到第 01 节那个三次函数的 f′(x) = 3x² − 3。' } },
+    { r: { en: 'Chain rule', zh: '链式法则' },
+      f: 'd/dx f(g(x)) = f′(g)·g′(x)',
+      w: { en: 'Everything in Black-Scholes is a function of d₁, which is itself a function of S. Nothing gets differentiated without it.',
+           zh: 'Black-Scholes 里一切都是 d₁ 的函数，而 d₁ 本身是 S 的函数。没有它什么都求不了导。' } },
+    { r: { en: 'Product rule', zh: '乘积法则' },
+      f: 'd/dx u·v = u′v + uv′',
+      w: { en: 'The call price is S·N(d₁) minus K·e^(−rT)·N(d₂) — two products. Delta comes out of differentiating them.',
+           zh: '看涨期权价格是 S·N(d₁) 减 K·e^(−rT)·N(d₂)，两个乘积。Delta 就是把它们求导得来的。' } },
+    { r: { en: 'Quotient rule', zh: '商法则' },
+      f: 'd/dx u/v = (u′v − uv′)/v²',
+      w: { en: 'Needed for d₁ itself, which is a ratio with σ√T underneath.',
+           zh: 'd₁ 本身就要用到——它是一个分母为 σ√T 的比值。' } },
+    { r: { en: 'Exponential & log', zh: '指数与对数' },
+      f: 'd/dx eˣ = eˣ,　d/dx ln x = 1/x',
+      w: { en: 'The discount factor e^(−rT) and the moneyness term ln(S/K) are the two places these show up.',
+           zh: '折现因子 e^(−rT) 与价内程度项 ln(S/K)，就是这两处。' } },
+    { r: { en: 'Partial derivative', zh: '偏导数' },
+      f: '∂f/∂x — differentiate in x, hold everything else fixed',
+      w: { en: 'The definition of a greek. Delta holds time and vol fixed; Vega holds spot and time fixed.',
+           zh: '希腊字母的定义。Delta 按住时间和波动率，Vega 按住股价和时间。' } },
+    { r: { en: 'Fundamental theorem', zh: '微积分基本定理' },
+      f: '∫ₐᵇ f′(x) dx = f(b) − f(a)',
+      w: { en: 'Differentiation and integration undo each other — which is why the density φ integrates up to the cumulative N.',
+           zh: '求导与积分互为逆运算——这正是密度 φ 积起来就得到累积分布 N 的原因。' } }
+  ];
+
+  MF.MATOPS = [
+    { o: { en: 'Determinant det(A)', zh: '行列式 det(A)' },
+      m: { en: 'Area scale factor. Negative = orientation flipped, zero = collapsed to a line.',
+           zh: '面积缩放倍数。为负 = 定向翻转，为零 = 压成一条线。' },
+      u: { en: 'A zero determinant on a covariance matrix means an asset is redundant — you cannot invert it, so mean-variance optimisation fails.',
+           zh: '协方差矩阵行列式为零意味着有资产是冗余的——矩阵不可逆，均值方差优化直接失败。' } },
+    { o: { en: 'Transpose Aᵀ', zh: '转置 Aᵀ' },
+      m: { en: 'Reflect across the diagonal; rows become columns.',
+           zh: '沿对角线翻转，行变成列。' },
+      u: { en: 'The wᵀ in wᵀΣw. It is what makes the dimensions line up into a single number.',
+           zh: 'wᵀΣw 里的那个 wᵀ。它让维度对齐，结果收成一个数。' } },
+    { o: { en: 'Inverse A⁻¹', zh: '逆矩阵 A⁻¹' },
+      m: { en: 'The transform that undoes A. Exists only when det(A) ≠ 0.',
+           zh: '把 A 撤销的那个变换。只有 det(A) ≠ 0 时存在。' },
+      u: { en: 'Σ⁻¹ sits at the heart of the optimal-portfolio formula w ∝ Σ⁻¹μ, and it is exactly the unstable part.',
+           zh: 'Σ⁻¹ 是最优组合公式 w ∝ Σ⁻¹μ 的核心，也恰恰是最不稳定的那部分。' } },
+    { o: { en: 'Eigenvector / eigenvalue', zh: '特征向量 / 特征值' },
+      m: { en: 'Directions the transform only stretches, never rotates. Av = λv.',
+           zh: '变换只拉伸、不旋转的那些方向。Av = λv。' },
+      u: { en: 'Principal components of a return covariance matrix: the first is usually "the whole market", the rest are style and sector factors.',
+           zh: '收益率协方差矩阵的主成分：第一个通常是"整个市场"，其余是风格与行业因子。' } },
+    { o: { en: 'Matrix product AB', zh: '矩阵乘法 AB' },
+      m: { en: 'Apply B first, then A. Order matters — AB ≠ BA in general.',
+           zh: '先作用 B，再作用 A。顺序有影响——一般 AB ≠ BA。' },
+      u: { en: 'Chaining a factor-exposure matrix onto a factor-covariance matrix is how a risk model compresses thousands of names into a handful of factors.',
+           zh: '把因子暴露矩阵接到因子协方差矩阵上，风险模型就是这样把上千只标的压缩成少数几个因子的。' } }
+  ];
+
+  MF.APPLIED = [
+    { t: { en: 'First derivative', zh: '一阶导数' },
+      o: { en: 'Delta, duration, beta', zh: 'Delta、久期、贝塔' },
+      j: { en: 'Tells you your directional exposure right now, and therefore how many shares or futures to sell to neutralise it.',
+           zh: '告诉你此刻的方向敞口，因而也告诉你要卖出多少股票或期货把它对冲掉。' } },
+    { t: { en: 'Second derivative', zh: '二阶导数' },
+      o: { en: 'Gamma, convexity', zh: 'Gamma、凸性' },
+      j: { en: 'Tells you how fast that exposure is changing, i.e. how quickly a hedge that is correct now goes stale.',
+           zh: '告诉你那个敞口变得有多快，也就是现在正确的对冲会多快失效。' } },
+    { t: { en: 'Taylor expansion', zh: '泰勒展开' },
+      o: { en: 'The greeks P&L attribution', zh: '希腊字母盈亏归因' },
+      j: { en: 'Decomposes yesterday\'s P&L into "how much came from direction, from convexity, from vol, from time" — the daily risk report.',
+           zh: '把昨天的盈亏拆成"多少来自方向、多少来自凸性、多少来自波动率、多少来自时间"——也就是每日风险报告。' } },
+    { t: { en: 'Integration', zh: '积分' },
+      o: { en: 'N(d₁), N(d₂), expected payoff', zh: 'N(d₁)、N(d₂)、期望收益' },
+      j: { en: 'Converts a probability density into an actual probability, and a payoff function into an expected value.',
+           zh: '把概率密度换成真正的概率，把收益函数换成期望值。' } },
+    { t: { en: 'Linear algebra', zh: '线性代数' },
+      o: { en: 'Covariance matrix Σ, factor models', zh: '协方差矩阵 Σ、因子模型' },
+      j: { en: 'Aggregates thousands of correlated positions into a handful of numbers you can actually act on.',
+           zh: '把上千个相关联的头寸聚合成少数几个你真能据以行动的数字。' } },
+    { t: { en: 'Trigonometry / Euler', zh: '三角函数 / 欧拉公式' },
+      o: { en: 'Characteristic functions', zh: '特征函数' },
+      j: { en: 'Encodes an entire return distribution in one complex-valued function, which is what makes transform pricing possible.',
+           zh: '把整个收益分布编码进一个复值函数，这正是变换定价法的前提。' } },
+    { t: { en: 'Fourier transform', zh: '傅立叶变换' },
+      o: { en: 'Carr-Madan / FFT pricing', zh: 'Carr-Madan / FFT 定价' },
+      j: { en: 'Prices an entire strike ladder in one pass, which is what makes jump and stochastic-vol models fast enough to calibrate intraday.',
+           zh: '一次算完整条行权价阶梯，让带跳跃和随机波动率的模型快到可以日内校准。' } },
+    { t: { en: 'Stochastic calculus (Itô)', zh: '随机微积分（伊藤）' },
+      o: { en: 'The Black-Scholes PDE', zh: 'Black-Scholes 偏微分方程' },
+      j: { en: 'Produces the pricing equation itself, and the Θ–Γ identity that makes time decay the price of convexity.',
+           zh: '产生定价方程本身，以及那个让时间衰减成为凸性价格的 Θ–Γ 恒等式。' } },
+    { t: { en: 'Probability distributions', zh: '概率分布' },
+      o: { en: 'Lognormal spot, probability cone', zh: '对数正态价格、概率锥' },
+      j: { en: 'Turns a volatility number into a range of outcomes with odds attached — the "expected move" on an options screen.',
+           zh: '把一个波动率数字变成一组带概率的结果区间——期权界面上的"预期波动幅度"。' } },
+    { t: { en: 'Kelly criterion', zh: '凯利公式' },
+      o: { en: 'Position size', zh: '仓位大小' },
+      j: { en: 'Converts an estimated edge into a bet size, and warns you that over-betting a real edge still ends in ruin.',
+           zh: '把估计出的优势换算成下注规模，并警告你：即使优势是真的，下注过量照样归零。' } }
+  ];
+}(globalThis));
+</script>
+
+<script>/* =============================================================================
+   plot.js — a very small 2D plotting layer.
+
+   One Frame maps a maths domain onto a canvas with device-pixel-ratio aware
+   sizing, then exposes X()/Y() so every renderer below can think in maths
+   coordinates and never in pixels.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var MF = root.MF = root.MF || {};
+  var P = MF.P = {};
+
+  var CSS = getComputedStyle(document.documentElement);
+  P.col = function (name) { return CSS.getPropertyValue(name).trim() || '#888'; };
+
+  /* Resize the backing store to match CSS pixels × DPR. Returns a context
+     already scaled so that 1 unit = 1 CSS pixel. */
+  function fit(cv) {
+    var r = cv.getBoundingClientRect();
+    var dpr = root.devicePixelRatio || 1;
+    var w = Math.max(1, Math.round(r.width)), h = Math.max(1, Math.round(r.height));
+    if (cv.width !== w * dpr || cv.height !== h * dpr) {
+      cv.width = w * dpr; cv.height = h * dpr;
+    }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    return { ctx: ctx, w: w, h: h };
+  }
+  P.fit = fit;
+
+  /* A Frame is a linear map from [x0,x1]×[y0,y1] onto the canvas minus padding. */
+  P.frame = function (cv, x0, x1, y0, y1, pad) {
+    var f = fit(cv);
+    pad = pad || {};
+    var l = pad.l == null ? 38 : pad.l, r = pad.r == null ? 12 : pad.r,
+        t = pad.t == null ? 12 : pad.t, b = pad.b == null ? 26 : pad.b;
+    var iw = Math.max(1, f.w - l - r), ih = Math.max(1, f.h - t - b);
+    var sx = iw / (x1 - x0 || 1), sy = ih / (y1 - y0 || 1);
+    return {
+      ctx: f.ctx, w: f.w, h: f.h, l: l, r: r, t: t, b: b, iw: iw, ih: ih,
+      x0: x0, x1: x1, y0: y0, y1: y1,
+      X: function (x) { return l + (x - x0) * sx; },
+      Y: function (y) { return t + ih - (y - y0) * sy; }
+    };
+  };
+
+  /* Grid + axes + tick labels. `fmtX`/`fmtY` are optional formatters. */
+  P.grid = function (F, opt) {
+    opt = opt || {};
+    var ctx = F.ctx, i, v, px, py;
+    var nx = opt.nx || 8, ny = opt.ny || 5;
+    ctx.save();
+    ctx.strokeStyle = P.col('--line');
+    ctx.fillStyle = P.col('--text-3');
+    ctx.lineWidth = 1;
+    ctx.font = '10px ' + P.col('--mono');
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (i = 0; i <= nx; i++) {
+      v = F.x0 + (F.x1 - F.x0) * i / nx; px = Math.round(F.X(v)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(px, F.t); ctx.lineTo(px, F.t + F.ih); ctx.stroke();
+      if (opt.fmtX !== false) ctx.fillText((opt.fmtX || function (a) { return a.toFixed(1); })(v), px, F.t + F.ih + 6);
+    }
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    for (i = 0; i <= ny; i++) {
+      v = F.y0 + (F.y1 - F.y0) * i / ny; py = Math.round(F.Y(v)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(F.l, py); ctx.lineTo(F.l + F.iw, py); ctx.stroke();
+      if (opt.fmtY !== false) ctx.fillText((opt.fmtY || function (a) { return a.toFixed(1); })(v), F.l - 6, py);
+    }
+    /* zero axes drawn heavier when they fall inside the view */
+    ctx.strokeStyle = P.col('--line-2'); ctx.lineWidth = 1.4;
+    if (F.y0 < 0 && F.y1 > 0) { py = Math.round(F.Y(0)) + 0.5; ctx.beginPath(); ctx.moveTo(F.l, py); ctx.lineTo(F.l + F.iw, py); ctx.stroke(); }
+    if (F.x0 < 0 && F.x1 > 0) { px = Math.round(F.X(0)) + 0.5; ctx.beginPath(); ctx.moveTo(px, F.t); ctx.lineTo(px, F.t + F.ih); ctx.stroke(); }
+    ctx.restore();
+  };
+
+  /* Plot y = fn(x) by sampling. Values that are non-finite or far outside the
+     view break the path rather than drawing a spurious vertical line. */
+  P.fn = function (F, fn, col, opt) {
+    opt = opt || {};
+    var ctx = F.ctx, n = opt.n || 480, i, x, y, up = false;
+    var lim = (F.y1 - F.y0) * 6;
+    ctx.save();
+    ctx.strokeStyle = col; ctx.lineWidth = opt.w || 2;
+    if (opt.dash) ctx.setLineDash(opt.dash);
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    for (i = 0; i <= n; i++) {
+      x = F.x0 + (F.x1 - F.x0) * i / n;
+      y = fn(x);
+      if (!isFinite(y) || y > F.y1 + lim || y < F.y0 - lim) { up = false; continue; }
+      if (!up) { ctx.moveTo(F.X(x), F.Y(y)); up = true; } else { ctx.lineTo(F.X(x), F.Y(y)); }
+    }
+    ctx.stroke();
+    ctx.restore();
+  };
+
+  /* Polyline through explicit points [[x,y],…]. */
+  P.line = function (F, pts, col, opt) {
+    opt = opt || {};
+    var ctx = F.ctx, i;
+    if (!pts.length) return;
+    ctx.save();
+    ctx.strokeStyle = col; ctx.lineWidth = opt.w || 2;
+    if (opt.dash) ctx.setLineDash(opt.dash);
+    ctx.lineJoin = 'round';
+    ctx.beginPath();
+    ctx.moveTo(F.X(pts[0][0]), F.Y(pts[0][1]));
+    for (i = 1; i < pts.length; i++) ctx.lineTo(F.X(pts[i][0]), F.Y(pts[i][1]));
+    if (opt.close) ctx.closePath();
+    if (opt.fill) { ctx.fillStyle = opt.fill; ctx.fill(); }
+    if (opt.w !== 0) ctx.stroke();
+    ctx.restore();
+  };
+
+  P.dot = function (F, x, y, col, r) {
+    var ctx = F.ctx;
+    ctx.save(); ctx.fillStyle = col;
+    ctx.beginPath(); ctx.arc(F.X(x), F.Y(y), r || 4, 0, 6.2832); ctx.fill();
+    ctx.restore();
+  };
+
+  P.vline = function (F, x, col, opt) {
+    opt = opt || {};
+    var ctx = F.ctx, px = Math.round(F.X(x)) + 0.5;
+    ctx.save();
+    ctx.strokeStyle = col; ctx.lineWidth = opt.w || 1.2;
+    ctx.setLineDash(opt.dash || [4, 4]);
+    ctx.beginPath(); ctx.moveTo(px, F.t); ctx.lineTo(px, F.t + F.ih); ctx.stroke();
+    if (opt.label) {
+      ctx.setLineDash([]); ctx.fillStyle = col;
+      ctx.font = '10px ' + P.col('--mono');
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(opt.label, px, F.t + 2);
+    }
+    ctx.restore();
+  };
+
+  P.label = function (F, x, y, text, col, opt) {
+    opt = opt || {};
+    var ctx = F.ctx;
+    ctx.save();
+    ctx.fillStyle = col;
+    ctx.font = (opt.size || 10) + 'px ' + P.col('--mono');
+    ctx.textAlign = opt.align || 'left'; ctx.textBaseline = opt.base || 'bottom';
+    ctx.fillText(text, F.X(x) + (opt.dx || 0), F.Y(y) + (opt.dy || 0));
+    ctx.restore();
+  };
+
+  P.bars = function (F, xs, ys, col, opt) {
+    opt = opt || {};
+    var ctx = F.ctx, i, bw = Math.max(1, (F.iw / xs.length) * (opt.frac || 0.6));
+    ctx.save(); ctx.fillStyle = col;
+    for (i = 0; i < xs.length; i++) {
+      var x = F.X(xs[i]), y0 = F.Y(0), y1 = F.Y(ys[i]);
+      ctx.fillRect(x - bw / 2, Math.min(y0, y1), bw, Math.abs(y1 - y0));
+    }
+    ctx.restore();
+  };
+
+  /* ---- shared maths helpers ---- */
+  P.ncdf = function (x) {
+    var b1 = 0.319381530, b2 = -0.356563782, b3 = 1.781477937,
+        b4 = -1.821255978, b5 = 1.330274429, p = 0.2316419, c = 0.39894228, t;
+    if (x >= 0) { t = 1 / (1 + p * x); return 1 - c * Math.exp(-x * x / 2) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1); }
+    t = 1 / (1 - p * x); return c * Math.exp(-x * x / 2) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1);
+  };
+  P.npdf = function (x) { return 0.3989422804014327 * Math.exp(-x * x / 2); };
+
+  /* Mulberry32 — small, seedable, good enough for teaching pictures. */
+  P.rng = function (seed) {
+    var s = seed >>> 0;
+    return function () {
+      s = (s + 0x6D2B79F5) >>> 0;
+      var t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  };
+  /* Box-Muller on top of the above. */
+  P.gauss = function (rnd) {
+    var u = 0, v = 0;
+    while (u === 0) u = rnd();
+    while (v === 0) v = rnd();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.283185307179586 * v);
+  };
+
+  P.fmt = function (x, d) {
+    if (!isFinite(x)) return '—';
+    return x.toFixed(d == null ? 2 : d);
+  };
+}(globalThis));
+</script>
+
+<script>/* =============================================================================
+   app.js — every interactive section on the page.
+
+   Each section exposes a single draw() that reads the DOM controls and repaints.
+   RENDER collects them so one resize / language change repaints everything.
+   Plain DOM, no framework, no build step.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var MF = root.MF, P = MF.P, T = MF.T;
+  var $ = function (id) { return document.getElementById(id); };
+  var RENDER = [];
+  var lang = 'en';
+
+  var C = {
+    f: function () { return P.col('--c-f'); },
+    d1: function () { return P.col('--c-d1'); },
+    d2: function () { return P.col('--c-d2'); },
+    d3: function () { return P.col('--c-d3'); },
+    aux: function () { return P.col('--c-aux'); },
+    dim: function () { return P.col('--text-3'); },
+    down: function () { return P.col('--down'); },
+    gold: function () { return P.col('--gold'); }
+  };
+
+  function tr(k) { var e = T[k]; return e ? (e[lang] || e.en) : k; }
+  function kpi(k, v, cls) {
+    return '<div class="kpi"><div class="k">' + k + '</div><div class="v ' + (cls || '') + '">' + v + '</div></div>';
+  }
+
+  /* ======================================================= 01 derivatives */
+  var D = {
+    f: function (x) { return x * x * x - 3 * x; },
+    d1: function (x) { return 3 * x * x - 3; },
+    d2: function (x) { return 6 * x; }
+  };
+
+  function drawDeriv() {
+    var cv = $('cDeriv'); if (!cv) return;
+    var x0 = parseFloat($('rProbe').value);
+    var F = P.frame(cv, -2.4, 2.4, -8, 8, { l: 40, b: 28 });
+    P.grid(F, { nx: 8, ny: 8, fmtY: function (v) { return v.toFixed(0); } });
+
+    /* the three special abscissae get called out before the curves are drawn */
+    [[-1, 'x = −1'], [1, 'x = 1'], [0, 'x = 0']].forEach(function (m) {
+      P.vline(F, m[0], P.col('--line-2'), { dash: [3, 5], label: m[1] });
+    });
+
+    if ($('tgD2').checked) P.fn(F, D.d2, C.d2(), { w: 1.8 });
+    if ($('tgD1').checked) P.fn(F, D.d1, C.d1(), { w: 1.8 });
+    P.fn(F, D.f, C.f(), { w: 2.4 });
+
+    /* extrema of f — where f′ = 0 */
+    P.dot(F, -1, D.f(-1), C.gold(), 4);
+    P.dot(F, 1, D.f(1), C.gold(), 4);
+    P.label(F, -1, D.f(-1), lang === 'zh' ? ' 极大 2' : ' max 2', C.gold(), { dy: -8 });
+    P.label(F, 1, D.f(1), lang === 'zh' ? ' 极小 −2' : ' min −2', C.gold(), { dy: 16 });
+    /* inflection */
+    P.dot(F, 0, 0, C.d3(), 4);
+    P.label(F, 0, 0, lang === 'zh' ? ' 拐点' : ' inflection', C.d3(), { dy: -8 });
+
+    var y0 = D.f(x0), s = D.d1(x0);
+    if ($('tgTan').checked) {
+      var span = 1.5;
+      P.line(F, [[x0 - span, y0 - s * span], [x0 + span, y0 + s * span]], C.aux(), { w: 1.6, dash: [6, 4] });
+    }
+    P.dot(F, x0, y0, C.f(), 5);
+    P.dot(F, x0, D.d1(x0), C.d1(), 3.5);
+    P.dot(F, x0, D.d2(x0), C.d2(), 3.5);
+
+    $('oProbe').textContent = x0.toFixed(2);
+    var rising = s > 0, convex = D.d2(x0) > 0;
+    var dirTxt = Math.abs(s) < 0.05
+      ? (lang === 'zh' ? '走平' : 'flat')
+      : (rising ? (lang === 'zh' ? '上升' : 'rising') : (lang === 'zh' ? '下降' : 'falling'));
+    var bendTxt = Math.abs(D.d2(x0)) < 0.05
+      ? (lang === 'zh' ? '拐点' : 'inflection')
+      : (convex ? (lang === 'zh' ? '向上弯（凸）' : 'bends up (convex)') : (lang === 'zh' ? '向下弯（凹）' : 'bends down (concave)'));
+
+    $('derivKpis').innerHTML =
+      kpi('f(x₀)', P.fmt(y0, 3)) +
+      kpi('f′(x₀)', P.fmt(s, 3), rising ? 'v-info' : 'v-dn') +
+      kpi('f″(x₀)', P.fmt(D.d2(x0), 3), 'v-acc') +
+      kpi(lang === 'zh' ? '切线斜率' : 'tangent slope', P.fmt(s, 3)) +
+      '<div class="kpi wide"><div class="k">' + (lang === 'zh' ? '此处的原函数' : 'the function here') +
+      '</div><div class="v" style="font-size:12.5px">' + dirTxt + ' · ' + bendTxt + '</div></div>';
+
+    $('derivReadout').textContent = 'x₀ = ' + x0.toFixed(2);
+  }
+  RENDER.push(drawDeriv);
+
+  /* ========================================================= 02 calculus */
+  function drawSecant() {
+    var cv = $('cSecant'); if (!cv) return;
+    var h = Math.pow(10, parseFloat($('rH').value));
+    var x0 = 1.5;
+    var F = P.frame(cv, 0.4, 2.6, -3, 6, { l: 34, b: 24 });
+    P.grid(F, { nx: 5, ny: 4, fmtY: function (v) { return v.toFixed(0); } });
+    P.fn(F, D.f, C.f(), { w: 2.2 });
+
+    var y0 = D.f(x0), y1 = D.f(x0 + h);
+    var slope = (y1 - y0) / h, exact = D.d1(x0);
+
+    /* exact tangent underneath, secant on top, so convergence is visible */
+    P.line(F, [[x0 - 1, y0 - exact], [x0 + 1, y0 + exact]], C.aux(), { w: 1.6 });
+    P.line(F, [[x0 - 1, y0 - slope], [x0 + 1.2, y0 + slope * 1.2]], C.d2(), { w: 1.6, dash: [5, 4] });
+    P.dot(F, x0, y0, C.f(), 4.5);
+    P.dot(F, x0 + h, y1, C.d2(), 4);
+
+    $('oH').textContent = h < 0.01 ? h.toExponential(1) : h.toFixed(3);
+    $('secantReadout').textContent =
+      (lang === 'zh' ? '割线 ' : 'secant ') + slope.toFixed(4) +
+      (lang === 'zh' ? ' · 精确 ' : ' · exact ') + exact.toFixed(4) +
+      ' · |Δ| ' + Math.abs(slope - exact).toExponential(1);
+  }
+  RENDER.push(drawSecant);
+
+  function drawRiemann() {
+    var cv = $('cRiemann'); if (!cv) return;
+    var n = parseInt($('rN').value, 10);
+    var a = -3, b = 1;
+    var F = P.frame(cv, -3.4, 3.4, 0, 0.45, { l: 40, b: 24 });
+    P.grid(F, { nx: 6, ny: 3, fmtY: function (v) { return v.toFixed(2); } });
+
+    /* midpoint rule — converges fast enough that the error readout is honest */
+    var dx = (b - a) / n, sum = 0, ctx = F.ctx, i;
+    ctx.save();
+    ctx.fillStyle = 'rgba(46,155,255,.22)';
+    ctx.strokeStyle = 'rgba(46,155,255,.55)';
+    ctx.lineWidth = 1;
+    for (i = 0; i < n; i++) {
+      var xm = a + dx * (i + 0.5), y = P.npdf(xm);
+      sum += y * dx;
+      var px = F.X(a + dx * i), pw = F.X(a + dx * (i + 1)) - px;
+      var py = F.Y(y), ph = F.Y(0) - py;
+      ctx.fillRect(px, py, pw, ph);
+      if (n <= 60) ctx.strokeRect(px + 0.5, py + 0.5, pw - 1, ph);
+    }
+    ctx.restore();
+
+    P.fn(F, P.npdf, C.f(), { w: 2.2 });
+    P.vline(F, b, C.gold(), { label: 'z = 1' });
+
+    var exact = P.ncdf(b) - P.ncdf(a);
+    $('oN').textContent = n;
+    $('riemannReadout').textContent =
+      'Σ ' + sum.toFixed(6) + ' · ' + (lang === 'zh' ? '精确 ' : 'exact ') + exact.toFixed(6) +
+      ' · |Δ| ' + Math.abs(sum - exact).toExponential(1);
+  }
+  RENDER.push(drawRiemann);
+
+  function fillRules() {
+    var b = $('rulesBody'); if (!b) return;
+    b.innerHTML = MF.RULES.map(function (r) {
+      return '<tr><td><b>' + r.r[lang] + '</b></td>' +
+             '<td class="mono" style="color:var(--gold);white-space:nowrap">' + r.f + '</td>' +
+             '<td>' + r.w[lang] + '</td></tr>';
+    }).join('');
+  }
+  RENDER.push(fillRules);
+
+  /* =========================================================== 03 shapes */
+  var SHAPES = [
+    { n: { en: 'Linear', zh: '线性' }, fx: 'y = ax + b', d: [-3, 3, -3, 3],
+      f: function (x) { return 0.8 * x + 0.3; },
+      p: { en: 'Constant slope, zero curvature. A hedged position with no convexity looks like this.',
+           zh: '斜率恒定，曲率为零。没有凸性的对冲头寸就长这样。' } },
+    { n: { en: 'Quadratic', zh: '二次' }, fx: 'y = x²', d: [-3, 3, -0.5, 8],
+      f: function (x) { return x * x; },
+      p: { en: 'Constant second derivative. Symmetric payoff around the minimum — the shape of pure gamma.',
+           zh: '二阶导恒定。围绕极小值对称——纯 gamma 的形状。' } },
+    { n: { en: 'Cubic', zh: '三次' }, fx: 'y = x³ − 3x', d: [-2.4, 2.4, -4, 4],
+      f: function (x) { return x * x * x - 3 * x; },
+      p: { en: 'Two turning points and one inflection. The worked example in section 01.',
+           zh: '两个极值点、一个拐点。第 01 节的例子。' } },
+    { n: { en: 'Exponential', zh: '指数' }, fx: 'y = eˣ,  y = e⁻ˣ', d: [-2.5, 2.5, 0, 8],
+      f: function (x) { return Math.exp(x); }, f2: function (x) { return Math.exp(-x); },
+      p: { en: 'Its own derivative. Growth compounding and discounting are the same curve read in opposite directions.',
+           zh: '导数等于自身。复利增长与折现是同一条曲线的两个读法。' } },
+    { n: { en: 'Logarithm', zh: '对数' }, fx: 'y = ln x', d: [0.05, 6, -3, 2],
+      f: function (x) { return Math.log(x); },
+      p: { en: 'Turns products into sums — which is why returns are compounded in logs and why Kelly maximises log wealth.',
+           zh: '把乘积变成求和——这正是收益率用对数复合、凯利最大化对数财富的原因。' } },
+    { n: { en: 'Logistic', zh: 'S 型（逻辑斯蒂）' }, fx: 'y = 1/(1+e⁻ˣ)', d: [-6, 6, -0.1, 1.1],
+      f: function (x) { return 1 / (1 + Math.exp(-x)); },
+      p: { en: 'Saturates at 0 and 1. Delta as a function of spot is essentially this shape.',
+           zh: '在 0 和 1 处饱和。Delta 对股价的函数基本就是这个形状。' } },
+    { n: { en: 'Gaussian pair', zh: '高斯一对' }, fx: 'φ(x) and N(x)', d: [-3.5, 3.5, -0.05, 1.05],
+      f: function (x) { return P.ncdf(x); }, f2: function (x) { return P.npdf(x); },
+      p: { en: 'Density and its running total. N(d₁) and N(d₂) are literally readings off the upper curve.',
+           zh: '密度与它的累积。N(d₁)、N(d₂) 就是从上面那条曲线上读数。' } },
+    { n: { en: 'Power law', zh: '幂律' }, fx: 'y = x⁻ᵅ', d: [0.15, 5, 0, 6],
+      f: function (x) { return Math.pow(x, -1.5); },
+      p: { en: 'Decays far more slowly than an exponential in the tail. Real return tails look like this, which is exactly what Black-Scholes assumes away.',
+           zh: '尾部衰减远慢于指数。真实收益率的尾部是这个样子，而这恰恰是 Black-Scholes 假设掉的东西。' } }
+  ];
+
+  function drawShapes() {
+    var gal = $('shapeGal'); if (!gal) return;
+    if (!gal.children.length) {
+      gal.innerHTML = SHAPES.map(function (s, i) {
+        return '<div class="card"><canvas id="sg' + i + '" style="height:120px"></canvas>' +
+               '<div class="cb"><h4 class="sgn"></h4><div class="fx">' + s.fx + '</div><p class="sgp"></p></div></div>';
+      }).join('');
+    }
+    SHAPES.forEach(function (s, i) {
+      var t = gal.children[i];
+      t.querySelector('.sgn').textContent = s.n[lang];
+      t.querySelector('.sgp').textContent = s.p[lang];
+      var cv = $('sg' + i); if (!cv) return;
+      var F = P.frame(cv, s.d[0], s.d[1], s.d[2], s.d[3], { l: 24, b: 16, t: 8, r: 8 });
+      P.grid(F, { nx: 4, ny: 3, fmtX: false, fmtY: false });
+      if (s.f2) P.fn(F, s.f2, C.d1(), { w: 1.6 });
+      P.fn(F, s.f, C.d2(), { w: 2 });
+    });
+  }
+  RENDER.push(drawShapes);
+
+  /* =========================================================== 04 taylor */
+  var TAY = [
+    { id: 'exp', lbl: 'eˣ', f: Math.exp, d: [-3, 3, -1, 9],
+      c: function (a, k) { return Math.exp(a) / fact(k); } },
+    { id: 'sin', lbl: 'sin x', f: Math.sin, d: [-7, 7, -2.2, 2.2],
+      c: function (a, k) { return Math.sin(a + k * Math.PI / 2) / fact(k); } },
+    { id: 'log', lbl: 'ln(1+x)', f: function (x) { return Math.log(1 + x); }, d: [-0.9, 3, -3, 2],
+      c: function (a, k) {
+        if (k === 0) return Math.log(1 + a);
+        return Math.pow(-1, k - 1) / (k * Math.pow(1 + a, k));
+      } },
+    { id: 'geo', lbl: '1/(1−x)', f: function (x) { return 1 / (1 - x); }, d: [-2, 0.95, -2, 8],
+      c: function (a, k) { return 1 / Math.pow(1 - a, k + 1); } }
+  ];
+  var FACT = [1];
+  function fact(k) {
+    for (var i = FACT.length; i <= k; i++) FACT[i] = FACT[i - 1] * i;
+    return FACT[k];
+  }
+  var tayPick = 'exp';
+
+  function taylorAt(entry, a, n) {
+    var coef = [], k;
+    for (k = 0; k <= n; k++) coef.push(entry.c(a, k));
+    return function (x) {
+      var s = 0, pw = 1, dx = x - a, i;
+      for (i = 0; i <= n; i++) { s += coef[i] * pw; pw *= dx; }
+      return s;
+    };
+  }
+
+  function drawTaylor() {
+    var cv = $('cTaylor'); if (!cv) return;
+    var pick = $('taylorPick');
+    if (!pick.children.length) {
+      pick.innerHTML = TAY.map(function (e) {
+        return '<button class="chip' + (e.id === tayPick ? ' on' : '') + '" data-fn="' + e.id + '">' + e.lbl + '</button>';
+      }).join('');
+      pick.addEventListener('click', function (ev) {
+        var b = ev.target.closest('[data-fn]'); if (!b) return;
+        tayPick = b.getAttribute('data-fn');
+        [].forEach.call(pick.children, function (c) { c.classList.toggle('on', c.getAttribute('data-fn') === tayPick); });
+        drawTaylor();
+      });
+    }
+    var e = TAY.filter(function (x) { return x.id === tayPick; })[0];
+    var n = parseInt($('rOrder').value, 10);
+    var a = parseFloat($('rCenter').value);
+    /* keep the expansion point inside the function's own domain */
+    if (e.id === 'log' && a <= -0.9) a = -0.85;
+    if (e.id === 'geo' && a >= 0.95) a = 0.9;
+
+    var approx = taylorAt(e, a, n);
+    var F = P.frame(cv, e.d[0], e.d[1], e.d[2], e.d[3], { l: 40, b: 28 });
+    P.grid(F, { nx: 8, ny: 5, fmtY: function (v) { return v.toFixed(1); } });
+
+    /* |error| ribbon along the bottom, scaled into the lower fifth */
+    var i, xs = [], span = F.y1 - F.y0, base = F.y0 + span * 0.02, maxE = 0, errs = [];
+    for (i = 0; i <= 240; i++) {
+      var x = F.x0 + (F.x1 - F.x0) * i / 240;
+      var er = Math.abs(e.f(x) - approx(x));
+      if (isFinite(er)) { maxE = Math.max(maxE, Math.min(er, span)); }
+      xs.push(x); errs.push(er);
+    }
+    if (maxE > 1e-12) {
+      var pts = xs.map(function (x, j) {
+        var er = isFinite(errs[j]) ? Math.min(errs[j], span) : span;
+        return [x, base + (er / maxE) * span * 0.18];
+      });
+      pts.unshift([F.x0, base]); pts.push([F.x1, base]);
+      P.line(F, pts, 'rgba(250,77,86,.5)', { w: 0, fill: 'rgba(250,77,86,.16)', close: true });
+    }
+
+    P.fn(F, e.f, C.f(), { w: 2.4 });
+    P.fn(F, approx, C.d2(), { w: 2, dash: [6, 4] });
+    P.vline(F, a, C.aux(), { label: 'a = ' + a.toFixed(1) });
+    P.dot(F, a, e.f(a), C.aux(), 4.5);
+
+    $('oOrder').textContent = n;
+    $('oCenter').textContent = a.toFixed(2);
+    $('taylorReadout').textContent = e.lbl + ' · n = ' + n + ' · a = ' + a.toFixed(1);
+
+    /* honest error readouts at two distances from the expansion point */
+    var near = a + 0.5, far = a + (F.x1 - a) * 0.75;
+    var eN = Math.abs(e.f(near) - approx(near)), eF = Math.abs(e.f(far) - approx(far));
+    $('taylorKpis').innerHTML =
+      kpi((lang === 'zh' ? '误差 @ a+0.5' : 'error @ a+0.5'), isFinite(eN) ? eN.toExponential(2) : '—', 'v-up') +
+      kpi((lang === 'zh' ? '误差 @ 远端' : 'error @ far'), isFinite(eF) ? eF.toExponential(2) : '—', 'v-dn') +
+      '<div class="kpi wide"><div class="k">' + (lang === 'zh' ? '当前展开式' : 'current expansion') +
+      '</div><div class="v" style="font-size:11.5px;white-space:normal">' + termsText(e, a, n) + '</div></div>';
+  }
+  function termsText(e, a, n) {
+    var out = [], k, c;
+    for (k = 0; k <= Math.min(n, 4); k++) {
+      c = e.c(a, k);
+      if (!isFinite(c) || Math.abs(c) < 1e-9) continue;
+      out.push((c > 0 && k > 0 ? '+' : '') + c.toFixed(3) + (k === 0 ? '' : '(x−a)' + (k > 1 ? '^' + k : '')));
+    }
+    return out.join(' ') + (n > 4 ? ' …' : '');
+  }
+  RENDER.push(drawTaylor);
+
+  /* ==================================================== 05 linear algebra */
+  var MAT_PRESETS = [
+    { id: 'rot', l: { en: 'Rotation 30°', zh: '旋转 30°' }, v: [0.866, -0.5, 0.5, 0.866] },
+    { id: 'scale', l: { en: 'Scale 2×0.5', zh: '缩放 2×0.5' }, v: [2, 0, 0, 0.5] },
+    { id: 'shear', l: { en: 'Shear', zh: '剪切' }, v: [1, 1, 0, 1] },
+    { id: 'sing', l: { en: 'Singular', zh: '奇异（det=0）' }, v: [1, 2, 0.5, 1] },
+    { id: 'refl', l: { en: 'Reflection', zh: '反射' }, v: [1, 0, 0, -1] }
+  ];
+
+  function readMat() {
+    return ['mA', 'mB', 'mC', 'mD'].map(function (id) {
+      var v = parseFloat($(id).value);
+      return isFinite(v) ? v : 0;
+    });
+  }
+
+  function drawMat() {
+    var cv = $('cMat'); if (!cv) return;
+    var m = readMat(), a = m[0], b = m[1], c = m[2], d = m[3];
+    var det = a * d - b * c, trace = a + d;
+
+    var F = P.frame(cv, -3, 3, -3, 3, { l: 34, b: 24 });
+    P.grid(F, { nx: 6, ny: 6, fmtY: function (v) { return v.toFixed(0); } });
+
+    var sq = [[0, 0], [1, 0], [1, 1], [0, 1]];
+    P.line(F, sq.concat([sq[0]]), C.dim(), { w: 1.4, dash: [4, 4] });
+    var img = sq.map(function (p) { return [a * p[0] + b * p[1], c * p[0] + d * p[1]]; });
+    P.line(F, img.concat([img[0]]), C.d2(), { w: 2.2, fill: 'rgba(255,122,0,.16)', close: true });
+
+    /* basis vectors: where î and ĵ land is the whole content of the matrix */
+    P.line(F, [[0, 0], [a, c]], C.d2(), { w: 2.6 });
+    P.line(F, [[0, 0], [b, d]], C.gold(), { w: 2.6 });
+    P.label(F, a, c, ' A·î', C.d2(), { dy: -4 });
+    P.label(F, b, d, ' A·ĵ', C.gold(), { dy: -4 });
+
+    /* real eigenvectors only — complex ones mean a rotation, so nothing to draw */
+    var disc = trace * trace - 4 * det, eigTxt, l1, l2;
+    if (disc >= 0) {
+      var rt = Math.sqrt(disc);
+      l1 = (trace + rt) / 2; l2 = (trace - rt) / 2;
+      [l1, l2].forEach(function (lam) {
+        var vx, vy, nrm;
+        if (Math.abs(b) > 1e-9) { vx = b; vy = lam - a; }
+        else if (Math.abs(c) > 1e-9) { vx = lam - d; vy = c; }
+        else { vx = Math.abs(lam - a) < 1e-9 ? 1 : 0; vy = Math.abs(lam - a) < 1e-9 ? 0 : 1; }
+        nrm = Math.hypot(vx, vy); if (nrm < 1e-9) return;
+        vx /= nrm; vy /= nrm;
+        P.line(F, [[-vx * 2.8, -vy * 2.8], [vx * 2.8, vy * 2.8]], C.aux(), { w: 1.4, dash: [7, 5] });
+      });
+      eigTxt = 'λ = ' + l1.toFixed(3) + ', ' + l2.toFixed(3);
+    } else {
+      eigTxt = (lang === 'zh' ? '复数（纯旋转）' : 'complex (rotation)');
+    }
+
+    $('matKpis').innerHTML =
+      kpi('det(A)', P.fmt(det, 3), Math.abs(det) < 1e-6 ? 'v-dn' : (det < 0 ? 'v-gold' : 'v-up')) +
+      kpi('trace(A)', P.fmt(trace, 3)) +
+      '<div class="kpi wide"><div class="k">' + (lang === 'zh' ? '特征值' : 'eigenvalues') +
+      '</div><div class="v" style="font-size:12.5px">' + eigTxt + '</div></div>' +
+      '<div class="kpi wide"><div class="k">' + (lang === 'zh' ? '面积变化' : 'area change') +
+      '</div><div class="v" style="font-size:12.5px">1.000 → ' + Math.abs(det).toFixed(3) +
+      (det < 0 ? (lang === 'zh' ? '（已翻转）' : ' (flipped)') : '') + '</div></div>';
+
+    $('matReadout').textContent = 'det ' + det.toFixed(3);
+
+    var pr = $('matPresets');
+    if (!pr.children.length) {
+      pr.innerHTML = MAT_PRESETS.map(function (p) {
+        return '<button class="chip" data-p="' + p.id + '"></button>';
+      }).join('');
+      pr.addEventListener('click', function (ev) {
+        var btn = ev.target.closest('[data-p]'); if (!btn) return;
+        var pp = MAT_PRESETS.filter(function (x) { return x.id === btn.getAttribute('data-p'); })[0];
+        ['mA', 'mB', 'mC', 'mD'].forEach(function (id, i) { $(id).value = pp.v[i]; });
+        drawMat();
+      });
+    }
+    [].forEach.call(pr.children, function (btn, i) { btn.textContent = MAT_PRESETS[i].l[lang]; });
+  }
+  RENDER.push(drawMat);
+
+  function fillMatOps() {
+    var b = $('matOpsBody'); if (!b) return;
+    b.innerHTML = MF.MATOPS.map(function (r) {
+      return '<tr><td><b>' + r.o[lang] + '</b></td><td>' + r.m[lang] + '</td><td>' + r.u[lang] + '</td></tr>';
+    }).join('');
+  }
+  RENDER.push(fillMatOps);
+
+  /* portfolio variance -------------------------------------------------- */
+  var PV = { w1: 50, s1: 20, s2: 32, rho: 20 };
+  function pvSlider(key, label, min, max, step, fmt) {
+    return '<div class="ctrl"><label>' + label + '</label>' +
+           '<output id="pvo_' + key + '">' + fmt(PV[key]) + '</output>' +
+           '<input type="range" id="pv_' + key + '" min="' + min + '" max="' + max + '" step="' + step + '" value="' + PV[key] + '"></div>';
+  }
+
+  function drawPortVar() {
+    var host = $('portVarUI'); if (!host) return;
+    var fmtPct = function (v) { return v + '%'; };
+    if (!host.children.length) {
+      host.innerHTML =
+        pvSlider('w1', 'w₁', 0, 100, 1, fmtPct) +
+        pvSlider('s1', 'σ₁', 1, 100, 1, fmtPct) +
+        pvSlider('s2', 'σ₂', 1, 100, 1, fmtPct) +
+        pvSlider('rho', 'ρ', -100, 100, 1, function (v) { return (v / 100).toFixed(2); });
+      ['w1', 's1', 's2', 'rho'].forEach(function (k) {
+        $('pv_' + k).addEventListener('input', function () { PV[k] = parseFloat(this.value); drawPortVar(); });
+      });
+    }
+    ['w1', 's1', 's2'].forEach(function (k) { $('pvo_' + k).textContent = fmtPct(PV[k]); });
+    $('pvo_rho').textContent = (PV.rho / 100).toFixed(2);
+
+    var s1 = PV.s1 / 100, s2 = PV.s2 / 100, rho = PV.rho / 100;
+    var vol = function (w) {
+      var v = w * w * s1 * s1 + (1 - w) * (1 - w) * s2 * s2 + 2 * w * (1 - w) * rho * s1 * s2;
+      return Math.sqrt(Math.max(0, v));
+    };
+    var w1 = PV.w1 / 100, cur = vol(w1);
+
+    var cv = $('cPortVar');
+    var top = Math.max(s1, s2) * 1.25;
+    var F = P.frame(cv, 0, 1, 0, top, { l: 40, b: 24, t: 10 });
+    P.grid(F, {
+      nx: 5, ny: 4,
+      fmtX: function (v) { return (v * 100).toFixed(0) + '%'; },
+      fmtY: function (v) { return (v * 100).toFixed(0) + '%'; }
+    });
+    /* the straight line is the no-diversification benchmark */
+    P.line(F, [[0, s2], [1, s1]], C.dim(), { w: 1.4, dash: [5, 4] });
+    var pts = [], i;
+    for (i = 0; i <= 100; i++) pts.push([i / 100, vol(i / 100)]);
+    P.line(F, pts, C.d2(), { w: 2.4 });
+
+    /* minimum-variance weight, where the derivative of the curve is zero */
+    var den = s1 * s1 + s2 * s2 - 2 * rho * s1 * s2;
+    var wMin = den > 1e-9 ? (s2 * s2 - rho * s1 * s2) / den : 0;
+    wMin = Math.min(1, Math.max(0, wMin));
+    P.dot(F, wMin, vol(wMin), C.aux(), 4);
+    P.dot(F, w1, cur, C.gold(), 5);
+    P.vline(F, w1, C.gold(), { dash: [3, 4] });
+
+    $('portVarReadout').textContent = 'σₚ = ' + (cur * 100).toFixed(2) + '%';
+  }
+  RENDER.push(drawPortVar);
+
+  /* ============================================================= 06 trig */
+  function drawTrig() {
+    var cv = $('cTrig'); if (!cv) return;
+    var th = parseFloat($('rTheta').value);
+    var f = P.fit(cv), ctx = f.ctx;
+    var cx = 78, cy = f.h / 2, R = Math.min(62, f.h / 2 - 18);
+
+    /* left: the circle itself */
+    ctx.save();
+    ctx.strokeStyle = P.col('--line-2'); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.arc(cx, cy, R, 0, 6.2832); ctx.stroke();
+    ctx.strokeStyle = P.col('--line');
+    ctx.beginPath(); ctx.moveTo(cx - R - 8, cy); ctx.lineTo(cx + R + 8, cy);
+    ctx.moveTo(cx, cy - R - 8); ctx.lineTo(cx, cy + R + 8); ctx.stroke();
+
+    var px = cx + R * Math.cos(th), py = cy - R * Math.sin(th);
+    ctx.strokeStyle = C.d2(); ctx.lineWidth = 1.5; ctx.setLineDash([3, 3]);
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, cy); ctx.stroke();
+    ctx.strokeStyle = C.d1();
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(cx, py); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle = C.aux(); ctx.lineWidth = 2.2;
+    ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(px, py); ctx.stroke();
+    ctx.fillStyle = C.aux();
+    ctx.beginPath(); ctx.arc(px, py, 4, 0, 6.2832); ctx.fill();
+    ctx.restore();
+
+    /* right: the same angle unrolled */
+    var left = cx + R + 26;
+    var F = {
+      ctx: ctx, w: f.w, h: f.h, l: left, t: 12, iw: Math.max(10, f.w - left - 10), ih: f.h - 12 - 24,
+      x0: 0, x1: 6.2832, y0: -1.15, y1: 1.15,
+      X: function (x) { return left + (x / 6.2832) * Math.max(10, f.w - left - 10); },
+      Y: function (y) { return 12 + (f.h - 12 - 24) - ((y + 1.15) / 2.3) * (f.h - 12 - 24); }
+    };
+    P.grid(F, {
+      nx: 4, ny: 4,
+      fmtX: function (v) { return (v / Math.PI).toFixed(1) + 'π'; },
+      fmtY: function (v) { return v.toFixed(1); }
+    });
+    P.fn(F, Math.sin, C.d1(), { w: 2 });
+    P.fn(F, Math.cos, C.d2(), { w: 2 });
+    P.vline(F, th, C.aux(), { dash: [4, 4] });
+    P.dot(F, th, Math.sin(th), C.d1(), 4);
+    P.dot(F, th, Math.cos(th), C.d2(), 4);
+
+    $('oTheta').textContent = (th / Math.PI).toFixed(2) + 'π';
+    $('trigKpis').innerHTML =
+      kpi('sin θ', P.fmt(Math.sin(th), 4), 'v-info') +
+      kpi('cos θ', P.fmt(Math.cos(th), 4), 'v-acc') +
+      kpi('tan θ', Math.abs(Math.cos(th)) < 1e-6 ? '±∞' : P.fmt(Math.tan(th), 4)) +
+      kpi('sin² + cos²', P.fmt(Math.sin(th) * Math.sin(th) + Math.cos(th) * Math.cos(th), 4), 'v-up');
+    $('trigReadout').textContent = 'θ = ' + (th / Math.PI).toFixed(2) + 'π = ' + (th * 180 / Math.PI).toFixed(0) + '°';
+  }
+  RENDER.push(drawTrig);
+
+  /* ========================================================== 07 fourier */
+  var WAVES = [
+    { id: 'square', l: { en: 'Square', zh: '方波' },
+      f: function (x) { return Math.sin(x) >= 0 ? 1 : -1; },
+      /* odd harmonics only, amplitude 4/(nπ) */
+      a: function (n) { return n % 2 === 1 ? 4 / (n * Math.PI) : 0; },
+      t: function (n, x) { return Math.sin(n * x); } },
+    { id: 'saw', l: { en: 'Sawtooth', zh: '锯齿波' },
+      f: function (x) { var u = ((x + Math.PI) % (2 * Math.PI) + 2 * Math.PI) % (2 * Math.PI); return (u - Math.PI) / Math.PI; },
+      a: function (n) { return 2 / (n * Math.PI) * (n % 2 === 1 ? 1 : -1); },
+      t: function (n, x) { return Math.sin(n * x); } },
+    { id: 'tri', l: { en: 'Triangle', zh: '三角波' },
+      f: function (x) {
+        var u = ((x % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+        return u < Math.PI ? (2 * u / Math.PI - 1) : (3 - 2 * u / Math.PI);
+      },
+      a: function (n) { return n % 2 === 1 ? 8 / (n * n * Math.PI * Math.PI) * (((n - 1) / 2) % 2 === 0 ? 1 : -1) : 0; },
+      t: function (n, x) { return Math.sin(n * x); } }
+  ];
+  var wavePick = 'square';
+
+  function drawFourier() {
+    var cv = $('cFourier'); if (!cv) return;
+    var pick = $('wavePick');
+    if (!pick.children.length) {
+      pick.innerHTML = WAVES.map(function (w) {
+        return '<button class="chip' + (w.id === wavePick ? ' on' : '') + '" data-w="' + w.id + '"></button>';
+      }).join('');
+      pick.addEventListener('click', function (ev) {
+        var b = ev.target.closest('[data-w]'); if (!b) return;
+        wavePick = b.getAttribute('data-w');
+        [].forEach.call(pick.children, function (c) { c.classList.toggle('on', c.getAttribute('data-w') === wavePick); });
+        drawFourier();
+      });
+    }
+    var W = WAVES.filter(function (x) { return x.id === wavePick; })[0];
+    [].forEach.call(pick.children, function (btn, i) {
+      btn.textContent = WAVES[i].l[lang];
+      btn.classList.toggle('on', WAVES[i].id === wavePick);
+    });
+
+    var N = parseInt($('rHarm').value, 10);
+    var amps = [], n, used = 0;
+    for (n = 1; n <= N; n++) { amps.push(W.a(n)); if (Math.abs(W.a(n)) > 1e-9) used++; }
+    var partial = function (x) {
+      var s = 0, i;
+      for (i = 0; i < amps.length; i++) if (amps[i]) s += amps[i] * W.t(i + 1, x);
+      return s;
+    };
+
+    var F = P.frame(cv, -Math.PI, 3 * Math.PI, -1.6, 1.6, { l: 34, b: 24 });
+    P.grid(F, {
+      nx: 4, ny: 4,
+      fmtX: function (v) { return (v / Math.PI).toFixed(0) + 'π'; },
+      fmtY: function (v) { return v.toFixed(1); }
+    });
+    P.fn(F, W.f, C.dim(), { w: 1.8, n: 1200 });
+    P.fn(F, partial, C.d2(), { w: 2.2, n: 1200 });
+
+    /* spectrum */
+    var sc = $('cSpectrum');
+    var maxA = Math.max.apply(null, amps.map(Math.abs).concat([0.01]));
+    var G = P.frame(sc, 0.5, Math.max(6, N) + 0.5, 0, maxA * 1.15, { l: 40, b: 22, t: 10 });
+    P.grid(G, {
+      nx: Math.min(10, Math.max(6, N)), ny: 3,
+      fmtX: function (v) { return v.toFixed(0); },
+      fmtY: function (v) { return v.toFixed(2); }
+    });
+    P.bars(G, amps.map(function (_, i) { return i + 1; }), amps.map(Math.abs), C.d1(), { frac: 0.55 });
+
+    /* honest error metric: RMS over one period, sampled */
+    var err = 0, m = 600, i2;
+    for (i2 = 0; i2 < m; i2++) {
+      var x = -Math.PI + (2 * Math.PI) * i2 / m;
+      var d = W.f(x) - partial(x);
+      err += d * d;
+    }
+    err = Math.sqrt(err / m);
+
+    $('oHarm').textContent = N;
+    $('fourierKpis').innerHTML =
+      kpi(lang === 'zh' ? '非零谐波' : 'non-zero harmonics', used) +
+      kpi('RMS ' + (lang === 'zh' ? '误差' : 'error'), err.toFixed(4), err < 0.15 ? 'v-up' : 'v-dn') +
+      '<div class="kpi wide"><div class="k">' + (lang === 'zh' ? '基频振幅' : 'fundamental amplitude') +
+      '</div><div class="v">' + (amps[0] || 0).toFixed(4) + '</div></div>';
+    $('fourierReadout').textContent = 'N = ' + N + ' · RMS ' + err.toFixed(4);
+  }
+  RENDER.push(drawFourier);
+
+  /* ====================================================== 08 probability */
+  function drawNorm() {
+    var cv = $('cNorm'); if (!cv) return;
+    var sig = parseFloat($('rSig').value) / 100;
+    var days = parseInt($('rTd').value, 10);
+    var T2 = days / 365, S0 = 100;
+    var sd = sig * Math.sqrt(T2);
+
+    var f = P.fit(cv), half = f.h / 2 - 4;
+    /* upper: log-return density, symmetric */
+    var span = Math.max(3.2 * sd, 0.05);
+    var Fu = {
+      ctx: f.ctx, w: f.w, h: f.h, l: 40, t: 8, iw: f.w - 52, ih: half - 18,
+      x0: -span, x1: span, y0: 0, y1: 1.12,
+      X: function (x) { return 40 + ((x + span) / (2 * span)) * (f.w - 52); },
+      Y: function (y) { return 8 + (half - 18) - (y / 1.12) * (half - 18); }
+    };
+    P.grid(Fu, {
+      nx: 4, ny: 2,
+      fmtX: function (v) { return (v * 100).toFixed(0) + '%'; },
+      fmtY: false
+    });
+    P.fn(Fu, function (x) { return Math.exp(-0.5 * (x / sd) * (x / sd)); }, C.d1(), { w: 2.2 });
+    P.vline(Fu, -sd, C.dim(), { dash: [3, 4] });
+    P.vline(Fu, sd, C.dim(), { dash: [3, 4] });
+    P.label(Fu, 0, 1.02, lang === 'zh' ? 'ln(S_T/S₀) 正态' : 'ln(S_T/S₀) — normal', C.d1(), { align: 'center' });
+
+    /* lower: the same thing in price space, right-skewed */
+    var lo = S0 * Math.exp(-3.2 * sd), hi = S0 * Math.exp(3.2 * sd);
+    var Fl = {
+      ctx: f.ctx, w: f.w, h: f.h, l: 40, t: half + 12, iw: f.w - 52, ih: half - 26,
+      x0: lo, x1: hi, y0: 0, y1: 1.12,
+      X: function (x) { return 40 + ((x - lo) / (hi - lo)) * (f.w - 52); },
+      Y: function (y) { return half + 12 + (half - 26) - (y / 1.12) * (half - 26); }
+    };
+    P.grid(Fl, {
+      nx: 4, ny: 2,
+      fmtX: function (v) { return v.toFixed(0); },
+      fmtY: false
+    });
+    var peak = 0, i;
+    var dens = function (S) {
+      if (S <= 0) return 0;
+      var z = Math.log(S / S0) / sd;
+      return Math.exp(-0.5 * z * z) / S;
+    };
+    for (i = 0; i <= 200; i++) peak = Math.max(peak, dens(lo + (hi - lo) * i / 200));
+    P.fn(Fl, function (S) { return dens(S) / (peak || 1); }, C.d2(), { w: 2.2 });
+    P.vline(Fl, S0 * Math.exp(-sd), C.dim(), { dash: [3, 4] });
+    P.vline(Fl, S0 * Math.exp(sd), C.dim(), { dash: [3, 4] });
+    P.vline(Fl, S0, C.gold(), { dash: [2, 3], label: 'S₀' });
+    P.label(Fl, (lo + hi) / 2, 1.02, lang === 'zh' ? 'S_T 对数正态（右偏）' : 'S_T — lognormal (right-skewed)', C.d2(), { align: 'center' });
+
+    $('oSig').textContent = (sig * 100).toFixed(0) + '%';
+    $('oTd').textContent = days;
+    $('normReadout').textContent =
+      '±1σ: ' + (S0 * Math.exp(-sd)).toFixed(1) + ' – ' + (S0 * Math.exp(sd)).toFixed(1) +
+      ' · ' + (lang === 'zh' ? '预期波动 ' : 'exp. move ') + (S0 * sd * 0.7979).toFixed(2);
+  }
+  RENDER.push(drawNorm);
+
+  var gbmSeed = 20260821;
+  function drawGbm() {
+    var cv = $('cGbm'); if (!cv) return;
+    var nP = parseInt($('rPaths').value, 10);
+    var sig = parseFloat($('rSig').value) / 100;
+    var days = parseInt($('rTd').value, 10);
+    var steps = Math.min(days, 260), dt = (days / 365) / steps;
+    var rnd = P.rng(gbmSeed), S0 = 100, drift = -0.5 * sig * sig * dt, vol = sig * Math.sqrt(dt);
+
+    var paths = [], i, j, lo = S0, hi = S0;
+    for (i = 0; i < nP; i++) {
+      var s = S0, pts = [[0, S0]];
+      for (j = 1; j <= steps; j++) {
+        s *= Math.exp(drift + vol * P.gauss(rnd));
+        pts.push([j, s]);
+      }
+      lo = Math.min(lo, s); hi = Math.max(hi, s);
+      paths.push(pts);
+    }
+    var pad = (hi - lo) * 0.08 + 1;
+    var F = P.frame(cv, 0, steps, Math.max(0.1, lo - pad), hi + pad, { l: 40, b: 24, t: 10 });
+    P.grid(F, {
+      nx: 5, ny: 4,
+      fmtX: function (v) { return (v / steps * days).toFixed(0) + 'd'; },
+      fmtY: function (v) { return v.toFixed(0); }
+    });
+    paths.forEach(function (p) { P.line(F, p, 'rgba(153,161,173,.34)', { w: 1 }); });
+
+    /* the analytic ±1σ envelope the paths should fill */
+    var env = function (k) {
+      var pts = [], t;
+      for (t = 0; t <= steps; t++) {
+        var tt = (t / steps) * (days / 365);
+        pts.push([t, S0 * Math.exp(-0.5 * sig * sig * tt + k * sig * Math.sqrt(tt))]);
+      }
+      return pts;
+    };
+    P.line(F, env(1), C.d2(), { w: 1.8, dash: [6, 4] });
+    P.line(F, env(-1), C.d2(), { w: 1.8, dash: [6, 4] });
+    P.line(F, env(0), C.gold(), { w: 1.6 });
+
+    var finals = paths.map(function (p) { return p[p.length - 1][1]; }).sort(function (a, b) { return a - b; });
+    var med = finals.length ? finals[Math.floor(finals.length / 2)] : S0;
+    $('oPaths').textContent = nP;
+    $('gbmReadout').textContent =
+      (lang === 'zh' ? '末端中位数 ' : 'median end ') + med.toFixed(1) +
+      ' · ' + (lang === 'zh' ? '区间 ' : 'range ') + finals[0].toFixed(0) + '–' + finals[finals.length - 1].toFixed(0);
+  }
+  RENDER.push(drawGbm);
+
+  /* ============================================================ 09 kelly */
+  function drawKelly() {
+    var cv = $('cKelly'); if (!cv) return;
+    var p = parseFloat($('rP').value) / 100;
+    var b = parseFloat($('rB').value);
+    var f = parseFloat($('rF').value) / 100;
+    var q = 1 - p;
+    var g = function (x) {
+      if (x <= 0) return 0;
+      if (x >= 1) return -Infinity;
+      return p * Math.log(1 + x * b) + q * Math.log(1 - x);
+    };
+    var fStar = (p * b - q) / b;
+    var edge = p * b - q;
+
+    // Frame the peak, not the ruin tail: g(f) dives to −∞ as f→1, so fitting the
+    // full range would squash the maximum into a few pixels and hide the point.
+    var gMax = fStar > 0 && fStar < 1 ? g(fStar) : 0;
+    var top, bot;
+    if (gMax > 1e-6) { top = gMax * 1.6; bot = -gMax * 4; }
+    else { top = 0.02; bot = -0.30; }
+    var F = P.frame(cv, 0, 1, bot, top, { l: 46, b: 26, t: 10 });
+    P.grid(F, {
+      nx: 5, ny: 4,
+      fmtX: function (v) { return (v * 100).toFixed(0) + '%'; },
+      fmtY: function (v) { return v.toFixed(3); }
+    });
+    P.fn(F, g, C.d2(), { w: 2.4, n: 400 });
+
+    if (fStar > 0 && fStar < 1) {
+      P.vline(F, fStar, C.aux(), { label: 'f* ' + (fStar * 100).toFixed(1) + '%' });
+      P.dot(F, fStar, g(fStar), C.aux(), 5);
+      P.vline(F, fStar / 2, C.d1(), { dash: [3, 5] });   // labelled in the legend; a
+                                                        // second label here collides with f*
+    }
+    P.dot(F, f, g(f), C.gold(), 5);
+
+    $('oP').textContent = (p * 100).toFixed(0) + '%';
+    $('oB').textContent = b.toFixed(2);
+    $('oF').textContent = (f * 100).toFixed(0) + '%';
+
+    var gf = g(f);
+    var verdict;
+    if (edge <= 0) verdict = lang === 'zh' ? '无优势 —— 不该下注' : 'no edge — do not bet';
+    else if (f > fStar) verdict = lang === 'zh' ? '超过 f*，增长率在下降' : 'past f*, growth is falling';
+    else if (f > fStar * 0.55) verdict = lang === 'zh' ? '接近 f*，风险偏高' : 'near f*, aggressive';
+    else verdict = lang === 'zh' ? '在 f* 以下，保守' : 'below f*, conservative';
+
+    $('kellyKpis').innerHTML =
+      kpi('f*', fStar > 0 ? (fStar * 100).toFixed(1) + '%' : '—', fStar > 0 ? 'v-up' : 'v-dn') +
+      kpi(lang === 'zh' ? '优势 pb−q' : 'edge pb−q', edge.toFixed(3), edge > 0 ? 'v-up' : 'v-dn') +
+      kpi('g(f)', isFinite(gf) ? gf.toFixed(4) : '−∞', gf > 0 ? 'v-up' : 'v-dn') +
+      kpi(lang === 'zh' ? '半凯利' : 'half Kelly', fStar > 0 ? (fStar * 50).toFixed(1) + '%' : '—', 'v-info') +
+      '<div class="kpi wide"><div class="k">' + (lang === 'zh' ? '判断' : 'verdict') +
+      '</div><div class="v" style="font-size:12px;white-space:normal">' + verdict + '</div></div>';
+    $('kellyReadout').textContent = 'f* = ' + (fStar > 0 ? (fStar * 100).toFixed(1) + '%' : 'n/a');
+
+    /* wealth paths at the chosen f, log scale */
+    var cv2 = $('cKellyPaths');
+    var nBets = 200, nPath = 24, rnd = P.rng(4242), k, t;
+    var series = [], loL = 0, hiL = 0;
+    for (k = 0; k < nPath; k++) {
+      var w = 1, pts = [[0, 0]];
+      for (t = 1; t <= nBets; t++) {
+        w *= rnd() < p ? (1 + f * b) : (1 - f);
+        if (w < 1e-12) w = 1e-12;
+        var lw = Math.log10(w);
+        loL = Math.min(loL, lw); hiL = Math.max(hiL, lw);
+        pts.push([t, lw]);
+      }
+      series.push(pts);
+    }
+    var G = P.frame(cv2, 0, nBets, loL - 0.2, hiL + 0.2, { l: 46, b: 24, t: 10 });
+    P.grid(G, {
+      nx: 5, ny: 4,
+      fmtX: function (v) { return v.toFixed(0); },
+      fmtY: function (v) { return Math.pow(10, v) >= 0.01 ? Math.pow(10, v).toFixed(2) + '×' : '10^' + v.toFixed(0); }
+    });
+    series.forEach(function (s) { P.line(G, s, 'rgba(153,161,173,.4)', { w: 1 }); });
+    /* the deterministic growth line g(f)·n, in log10 */
+    if (isFinite(gf)) {
+      P.line(G, [[0, 0], [nBets, gf * nBets / Math.LN10]], C.d2(), { w: 2 });
+    }
+  }
+  RENDER.push(drawKelly);
+
+  /* ========================================================== 10 applied */
+  function fillApplied() {
+    var b = $('appliedBody'); if (!b) return;
+    b.innerHTML = MF.APPLIED.map(function (r) {
+      return '<tr><td><b>' + r.t[lang] + '</b></td><td style="color:var(--gold)">' + r.o[lang] + '</td><td>' + r.j[lang] + '</td></tr>';
+    }).join('');
+  }
+  RENDER.push(fillApplied);
+
+  /* =============================================== language + event wiring */
+  function applyLang() {
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.body.classList.toggle('lang-zh', lang === 'zh');
+    [].forEach.call(document.querySelectorAll('[data-t]'), function (n) {
+      n.textContent = tr(n.getAttribute('data-t'));
+    });
+    [].forEach.call(document.querySelectorAll('[data-th]'), function (n) {
+      n.innerHTML = tr(n.getAttribute('data-th'));
+    });
+    $('langLabel').textContent = lang === 'en' ? 'EN' : '中';
+  }
+
+  function renderAll() {
+    RENDER.forEach(function (fn) {
+      try { fn(); } catch (e) { if (root.console) console.error('render failed:', e); }
+    });
+  }
+
+  function bind(id, fn) {
+    var el = $(id);
+    if (el) el.addEventListener('input', fn);
+  }
+
+  function init() {
+    ['rProbe'].forEach(function (id) { bind(id, drawDeriv); });
+    ['tgD1', 'tgD2', 'tgTan'].forEach(function (id) {
+      var el = $(id); if (el) el.addEventListener('change', drawDeriv);
+    });
+    bind('rH', drawSecant);
+    bind('rN', drawRiemann);
+    bind('rOrder', drawTaylor);
+    bind('rCenter', drawTaylor);
+    ['mA', 'mB', 'mC', 'mD'].forEach(function (id) { bind(id, drawMat); });
+    bind('rTheta', drawTrig);
+    bind('rHarm', drawFourier);
+    bind('rSig', function () { drawNorm(); drawGbm(); });
+    bind('rTd', function () { drawNorm(); drawGbm(); });
+    bind('rPaths', drawGbm);
+    var rr = $('gbmReroll');
+    if (rr) rr.addEventListener('click', function () { gbmSeed = (gbmSeed * 1103515245 + 12345) >>> 0; drawGbm(); });
+    ['rP', 'rB', 'rF'].forEach(function (id) { bind(id, drawKelly); });
+
+    $('langBtn').addEventListener('click', function () {
+      lang = lang === 'en' ? 'zh' : 'en';
+      try { localStorage.setItem('mf-lang', lang); } catch (e) { /* private mode — fine */ }
+      applyLang();
+      renderAll();
+    });
+
+    try {
+      var saved = localStorage.getItem('mf-lang');
+      if (saved === 'zh' || saved === 'en') lang = saved;
+    } catch (e) { /* no storage — default EN */ }
+
+    applyLang();
+    renderAll();
+
+    var rt;
+    root.addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(renderAll, 140);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+}(globalThis));
+</script>
+</body>
+</html>
