@@ -3286,7 +3286,7 @@ footer p { margin: 0 0 8px; max-width: 100ch; }
 
     $('engEqD1').innerHTML =
       tok('d<sub>1</sub>', n2(c.d1, 4)) + op('=') +
-      '<span class="frac"><span class="n">' + fn2('ln') + '(' + tok('S', n2(S, 0)) + ' / ' + tok('K', n2(K, 0)) + ')' +
+      '<span class="frac"><span class="n">' + fn2('ln') + '(' + tok('S', n2(S)) + ' / ' + tok('K', n2(K)) + ')' +
       op('+') + '( ' + tok('r', (r * 100).toFixed(1) + '%') + op('−') + tok('q', (q * 100).toFixed(2) + '%') +
       op('+') + tok('σ', (v * 100).toFixed(0) + '%') + '<sup>2</sup>/2 ) ' + tok('T', n2(T, 4)) + '</span>' +
       '<span class="d">' + tok('σ', (v * 100).toFixed(0) + '%') + ' <span class="sqrt">√' + tok('T', n2(T, 4)) + '</span></span></span>';
