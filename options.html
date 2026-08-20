@@ -461,6 +461,113 @@ footer p { margin: 0 0 8px; max-width: 100ch; }
   .case-tbl tr { margin-bottom: 8px; }
   .pl-canvas { min-height: 260px; flex: none; height: 260px; }
 }
+
+/* ---------------- engine room (Black-Scholes teardown) ----------------
+   Hand-rolled formula typography: no KaTeX, no MathJax, no CDN — this
+   page must keep working from file:// with zero requests. .eq is a
+   formula line, .tok a symbol that carries its live value underneath. */
+.duo { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.tk {
+  border: 1px solid var(--line); border-left: 3px solid var(--line-2);
+  background: var(--surface); border-radius: var(--r-md); padding: 13px 15px;
+}
+.tk.on { border-left-color: var(--accent-active); }
+.tk .sym { font-family: var(--mono); font-size: 17px; font-weight: 800; }
+.tk .co { font-size: 11.5px; color: var(--text-3); margin-bottom: 8px; }
+.tk .px { font-family: var(--mono); font-size: 21px; font-weight: 700; }
+.tk .chg { font-family: var(--mono); font-size: 12px; margin-bottom: 8px; }
+.tk dl { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; margin: 0; font-size: 11.5px; }
+.tk dt { color: var(--text-3); }
+.tk dd { margin: 0; font-family: var(--mono); color: var(--text-2); text-align: right; }
+
+.eng-rail {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 16px; align-items: center;
+  border: 1px solid var(--line); border-radius: var(--r-lg);
+  background: var(--surface); padding: 13px 16px; margin-bottom: 14px;
+}
+.eng-sliders { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px 14px; }
+.eng-px { display: flex; gap: 7px; }
+.pbox {
+  border: 1px solid var(--line-2); background: var(--surface-2);
+  border-radius: var(--r-sm); padding: 6px 12px; text-align: center; min-width: 92px;
+}
+.pbox span { display: block; font-size: 10px; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+.pbox b { font-family: var(--mono); font-size: 16px; color: var(--accent-active); }
+
+.eq {
+  font-family: "Latin Modern Math", "STIX Two Math", Cambria Math, Georgia, serif;
+  font-size: 19px; line-height: 3.1; text-align: center; color: var(--text);
+  padding: 10px 6px 26px; overflow-x: auto; white-space: nowrap;
+}
+.eq.sm { font-size: 16px; line-height: 2.4; padding-bottom: 22px; }
+.tok { position: relative; display: inline-block; padding: 0 2px; font-style: italic; }
+/* A token that carries a value underneath is widened to at least the width of
+   that value (set inline, per token), so adjacent annotations cannot collide.
+   The value is centred in the box, so the box being wider than the symbol is
+   exactly what keeps "1623.70" off its neighbour. */
+.tok.val { padding: 0 4px; text-align: center; }
+.tok .v {
+  position: absolute; left: 50%; transform: translateX(-50%); top: 100%;
+  font-family: var(--mono); font-style: normal; font-size: 10px;
+  color: var(--info); white-space: nowrap;
+}
+.tok.hi { color: var(--gold); font-style: normal; font-weight: 700; }
+.op { display: inline-block; padding: 0 5px; color: var(--text-3); font-style: normal; }
+.fn { font-style: normal; }
+.frac { display: inline-block; vertical-align: middle; text-align: center; padding: 0 5px; }
+.frac .n { display: block; padding: 0 5px 2px; border-bottom: 1px solid var(--text-2); }
+.frac .d { display: block; padding: 2px 5px 0; }
+.sqrt { display: inline-block; border-top: 1px solid var(--text-2); padding: 0 3px; margin-left: -2px; }
+.eq-check { font-size: 12px; color: var(--text-3); text-align: center; margin: 6px 0 0; }
+.eq-check b { font-family: var(--mono); color: var(--text); }
+
+.gloss { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 8px; }
+.gi { border: 1px solid var(--line); background: var(--surface-2); border-radius: var(--r-sm); padding: 9px 11px; }
+.gi .g1 { display: flex; align-items: baseline; gap: 8px; }
+.gi .sy {
+  font-family: "Latin Modern Math", "STIX Two Math", Cambria Math, Georgia, serif;
+  font-size: 16px; font-style: italic; color: var(--accent-active); min-width: 26px;
+}
+.gi .nm { font-size: 12px; font-weight: 700; }
+.gi .de { font-size: 11.4px; color: var(--text-2); margin-top: 3px; line-height: 1.5; }
+.gi .rg { font-size: 10.6px; color: var(--text-3); font-family: var(--mono); margin-top: 5px; }
+
+.gks { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+.gk { border: 1px solid var(--line); background: var(--surface); border-radius: var(--r-md); overflow: hidden; }
+.gk .gh { display: flex; align-items: baseline; gap: 9px; padding: 10px 13px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.gk .gl { font-family: "Latin Modern Math", "STIX Two Math", Cambria Math, Georgia, serif; font-size: 20px; font-weight: 700; }
+.gk .ge { font-size: 13px; font-weight: 700; }
+.gk .gz { font-size: 10.8px; color: var(--text-3); margin-left: auto; text-align: right; }
+.gk .gb { padding: 11px 13px; }
+.gk .gfx {
+  font-family: "Latin Modern Math", "STIX Two Math", Cambria Math, Georgia, serif;
+  font-size: 13.4px; color: var(--gold); background: var(--bg);
+  border: 1px solid var(--line); border-radius: var(--r-sm);
+  padding: 7px 9px; overflow-x: auto; white-space: nowrap;
+}
+.gk .gv { display: flex; justify-content: space-between; align-items: baseline; margin: 9px 0 7px; }
+.gk .gv .k { font-size: 10.5px; color: var(--text-3); text-transform: uppercase; letter-spacing: .04em; }
+.gk .gv .n { font-family: var(--mono); font-size: 15px; font-weight: 700; }
+.gk .gp { font-size: 11.8px; color: var(--text-2); line-height: 1.55; }
+.gk .gp b { color: var(--text); }
+.gk .gr { font-size: 10.6px; color: var(--text-3); font-family: var(--mono); margin-top: 7px; border-top: 1px solid var(--line); padding-top: 6px; }
+
+.eng-charts { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.eng-ch h4 { font-size: 13px; margin-bottom: 3px; }
+.eng-ch p.cs { font-size: 11.4px; color: var(--text-3); margin: 0 0 8px; line-height: 1.5; }
+.warnbox {
+  border: 1px solid var(--line-2); border-left: 3px solid var(--warn);
+  background: rgba(255,165,61,.05); border-radius: var(--r-sm);
+  padding: 12px 15px; margin-top: 14px; font-size: 12.8px; color: var(--text-2); line-height: 1.65;
+}
+.warnbox b { color: var(--text); }
+.warnbox.info { border-left-color: var(--info); background: rgba(46,155,255,.05); }
+
+@media (max-width: 900px) {
+  .duo, .eng-charts { grid-template-columns: 1fr; }
+  .eng-rail { grid-template-columns: 1fr; }
+  .eq { font-size: 16px; }
+}
 </style>
 </head>
 <body data-family="">
@@ -472,9 +579,11 @@ footer p { margin: 0 0 8px; max-width: 100ch; }
     <a class="tb-link" href="#lab"><span data-t="labChip">Strategy Lab</span></a>
     <a class="tb-link" href="#compare"><span data-t="cmpTitle">Comparison</span></a>
     <a class="tb-link" href="#analysis"><span data-t="analysisTitle">Analysis Lab</span></a>
+    <a class="tb-link" href="#engine"><span data-t="engChip">Engine Room</span></a>
     <a class="tb-link" href="#encyclopedia"><span data-t="encyclopedia">Encyclopedia</span></a>
     <a class="tb-link tb-ext" href="indicators.html">↔ <span data-t="indicatorsLink">Stock Indicators</span></a>
     <a class="tb-link tb-ext" href="orders.html">↔ <span data-t="ordersLink">Order Types</span></a>
+    <a class="tb-link tb-ext" href="math.html">↔ <span data-t="engMathLink">Math</span></a>
     <a class="tb-link tb-ext" href="journal.html">↔ <span data-t="journalLink">Journal</span></a>
     <a class="tb-link tb-cv" href="cv.html">← <span data-t="backToCv">Back to CV</span></a>
     <button class="lang-btn" id="langBtn"><span id="langLabel">EN</span></button>
@@ -627,10 +736,140 @@ footer p { margin: 0 0 8px; max-width: 100ch; }
     </div>
   </section>
 
+  <!-- --------------------------------------------------------- engine room -->
+  <section class="sec" id="engine">
+    <div class="sec-head">
+      <div class="eyebrow">04</div>
+      <h2 data-t="engTitle">Engine room — Black-Scholes taken apart</h2>
+      <p data-t="engSub"></p>
+    </div>
+
+    <!-- worked example: two real tickers whose only material difference is sigma -->
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-h">
+        <h3 data-t="engCaseTitle">One formula, two worlds</h3>
+        <span class="sim-badge" data-t="engDated">dated worked example</span>
+        <div class="spacer" style="flex:1"></div>
+        <div class="seg-mini" id="engTicker">
+          <button class="on" data-tk="SNDK">SNDK</button>
+          <button data-tk="MRK">MRK</button>
+        </div>
+      </div>
+      <div class="panel-b">
+        <p class="prose-lede" data-th="engCaseLede" style="font-size:13.2px;color:var(--text-2);margin:0 0 12px;line-height:1.7"></p>
+        <div class="duo" id="engDuo"></div>
+      </div>
+      <div class="sim-note" data-t="engCaseNote"></div>
+    </div>
+
+    <!-- live inputs -->
+    <div class="eng-rail">
+      <div class="pbox"><span data-t="engSpotLbl">Spot</span><b id="engSpotBox">—</b></div>
+      <div class="eng-sliders">
+        <div class="ctrl"><label>S <span data-t="engS">spot</span></label><output id="engLS"></output><input type="range" id="engRS"></div>
+        <div class="ctrl"><label>K <span data-t="engK">strike</span></label><output id="engLK"></output><input type="range" id="engRK"></div>
+        <div class="ctrl"><label>T <span data-t="engT">days</span></label><output id="engLT"></output><input type="range" id="engRT" min="1" max="730" step="1" value="30"></div>
+        <div class="ctrl"><label>σ <span data-t="engV">vol</span></label><output id="engLV"></output><input type="range" id="engRV" min="5" max="200" step="1"></div>
+        <div class="ctrl"><label>r <span data-t="engR">rate</span></label><output id="engLR"></output><input type="range" id="engRR" min="0" max="90" step="1"></div>
+      </div>
+      <div class="eng-px">
+        <div class="pbox"><span>Call</span><b id="engPxC">—</b></div>
+        <div class="pbox"><span>Put</span><b id="engPxP">—</b></div>
+      </div>
+    </div>
+
+    <!-- symbol glossary -->
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-h">
+        <h3 data-t="engGlossTitle">Every letter that appears in the formulas</h3>
+        <span class="sub" data-t="engGlossSub"></span>
+      </div>
+      <div class="panel-b"><div class="gloss" id="engGloss"></div></div>
+    </div>
+
+    <div class="warnbox info" data-th="engSigmaBox"></div>
+
+    <!-- formula teardown -->
+    <div class="panel" style="margin-top:14px">
+      <div class="panel-h"><h3 data-t="engFormulaTitle">The formula, one part at a time</h3></div>
+      <div class="panel-b">
+        <h4 style="font-size:13.5px" data-t="engStep1">① The two standardised distances d₁ and d₂</h4>
+        <p class="note" style="font-size:11.8px;color:var(--text-3);margin:5px 0 0" data-t="engStep1Note"></p>
+        <div class="eq" id="engEqD1"></div>
+        <div class="eq sm" id="engEqD2"></div>
+
+        <h4 style="font-size:13.5px;margin-top:14px;border-top:1px solid var(--line);padding-top:14px" data-t="engStep2">② Substitute into the pricing identity</h4>
+        <p class="note" style="font-size:11.8px;color:var(--text-3);margin:5px 0 0" data-t="engStep2Note"></p>
+        <div class="eq" id="engEqC"></div>
+        <div class="eq" id="engEqP"></div>
+
+        <h4 style="font-size:13.5px;margin-top:14px;border-top:1px solid var(--line);padding-top:14px" data-t="engStep3">③ Check: put-call parity</h4>
+        <p class="note" style="font-size:11.8px;color:var(--text-3);margin:5px 0 0" data-t="engStep3Note"></p>
+        <div class="eq sm" id="engEqPar"></div>
+        <p class="eq-check" id="engParCheck"></p>
+      </div>
+    </div>
+
+    <!-- greeks as partial derivatives -->
+    <div class="sec-head" style="margin-top:26px;margin-bottom:12px">
+      <h3 style="font-size:17px" data-t="engGreekTitle">Each greek is one partial derivative</h3>
+      <p data-t="engGreekSub" style="margin:6px 0 0;font-size:13.2px;color:var(--text-2)"></p>
+    </div>
+    <div class="gks" id="engGreeks"></div>
+
+    <div class="grid-2" style="margin-top:14px">
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="engTaylorTitle">Stitching the greeks together</h3></div>
+        <div class="panel-b">
+          <div class="eq sm" id="engEqTaylor"></div>
+          <p class="note" style="font-size:11.8px;color:var(--text-3);margin:8px 0 0" data-t="engTaylorNote"></p>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-h"><h3 data-t="engGtTitle">Gamma and Theta are one coin</h3></div>
+        <div class="panel-b">
+          <div class="eq sm" id="engEqGT"></div>
+          <p class="eq-check" id="engGtCheck"></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- greek shapes -->
+    <div class="sec-head" style="margin-top:26px;margin-bottom:12px">
+      <h3 style="font-size:17px" data-t="engShapeTitle">What the greeks look like</h3>
+      <p data-t="engShapeSub" style="margin:6px 0 0;font-size:13.2px;color:var(--text-2)"></p>
+    </div>
+    <div class="eng-charts">
+      <div class="panel"><div class="panel-b eng-ch">
+        <h4 data-t="engC1Title">Option price vs spot, at several maturities</h4>
+        <p class="cs" data-t="engC1Note"></p>
+        <canvas id="engC1" style="height:250px"></canvas>
+      </div></div>
+      <div class="panel"><div class="panel-b eng-ch">
+        <h4 data-t="engC2Title">Delta and Gamma vs spot</h4>
+        <p class="cs" data-t="engC2Note"></p>
+        <canvas id="engC2" style="height:250px"></canvas>
+      </div></div>
+      <div class="panel"><div class="panel-b eng-ch">
+        <h4 data-t="engC3Title">Vega and Theta vs spot</h4>
+        <p class="cs" data-t="engC3Note"></p>
+        <canvas id="engC3" style="height:250px"></canvas>
+      </div></div>
+      <div class="panel"><div class="panel-b eng-ch">
+        <h4 data-t="engC4Title">The time dimension: Gamma / Theta / Vega vs days left</h4>
+        <p class="cs" data-t="engC4Note"></p>
+        <canvas id="engC4" style="height:250px"></canvas>
+      </div></div>
+    </div>
+
+    <div class="warnbox" data-th="engLeapsBox"></div>
+    <div class="warnbox info" data-th="engMathBox"></div>
+  </section>
+
   <!-- ------------------------------------------------------ learning paths -->
   <section class="sec" id="paths">
     <div class="sec-head">
-      <div class="eyebrow">04</div>
+      <div class="eyebrow">05</div>
       <h2 data-t="pathsTitle">Learning paths</h2>
       <p data-t="pathsSub"></p>
     </div>
@@ -640,7 +879,7 @@ footer p { margin: 0 0 8px; max-width: 100ch; }
   <!-- -------------------------------------------------------- encyclopedia -->
   <section class="sec" id="encyclopedia">
     <div class="sec-head">
-      <div class="eyebrow">05</div>
+      <div class="eyebrow">06</div>
       <h2 data-t="encyclopedia">Encyclopedia</h2>
       <p data-t="encyclopediaSub"></p>
     </div>
@@ -2000,6 +2239,9 @@ footer p { margin: 0 0 8px; max-width: 100ch; }
     $('langLabel').textContent = lang === 'zh' ? '中文' : 'EN';
     [].forEach.call(document.querySelectorAll('[data-t]'), function (n) { n.textContent = t(n.getAttribute('data-t')); });
     [].forEach.call(document.querySelectorAll('[data-tp]'), function (n) { n.placeholder = t(n.getAttribute('data-tp')); });
+    /* rich-text keys (formulas, <b>, lists) need innerHTML, not textContent */
+    [].forEach.call(document.querySelectorAll('[data-th]'), function (n) { n.innerHTML = t(n.getAttribute('data-th')); });
+    if (FIN.engineRefresh) FIN.engineRefresh(lang);
   }
 
   /* ------------------------------------------------- view-model over content */
@@ -2607,6 +2849,650 @@ footer p { margin: 0 0 8px; max-width: 100ch; }
   else init();
 
 })(typeof globalThis !== 'undefined' ? globalThis : this);
+</script>
+<script>/* =============================================================================
+   engine.js — the Black-Scholes teardown section.
+
+   Self-contained on purpose. It does NOT reuse FIN.M.bs, because that function
+   returns greeks already scaled for display (vega per 1 vol point, theta per
+   calendar day, rho per 1%). The teardown shows a formula next to its value,
+   so it needs the RAW analytic quantities in the units the formulas are
+   written in — otherwise the Gamma-Theta identity below misses by 365x and
+   the vega card would print a per-1% number under a per-1.00 formula.
+
+   Worked-example figures are dated market closes with an ASSUMED sigma; see
+   the sim-note in the markup. Nothing here is a live quote.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var FIN = root.FIN = root.FIN || {};
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------------------------------------------------------- raw BS core */
+  function ncdf(x) {
+    var b1 = 0.319381530, b2 = -0.356563782, b3 = 1.781477937,
+        b4 = -1.821255978, b5 = 1.330274429, p = 0.2316419, c = 0.39894228, t;
+    if (x >= 0) { t = 1 / (1 + p * x); return 1 - c * Math.exp(-x * x / 2) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1); }
+    t = 1 / (1 - p * x); return c * Math.exp(-x * x / 2) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1);
+  }
+  function npdf(x) { return 0.3989422804014327 * Math.exp(-x * x / 2); }
+
+  /* Everything annualised and per-unit: theta is per YEAR, vega is per 1.00
+     of vol (i.e. per 100 vol points), rho is per 1.00 of rate. Display code
+     divides where it needs to and states the unit next to the number. */
+  function bs(type, S, K, T, r, q, v) {
+    var isC = type === 'C';
+    if (!(T > 0) || !(v > 0) || !(S > 0) || !(K > 0)) {
+      var intr = isC ? Math.max(S - K, 0) : Math.max(K - S, 0);
+      return { price: intr, d1: 0, d2: 0, Nd1: 0, Nd2: 0, nd1: 0,
+               delta: isC ? (S > K ? 1 : 0) : (S < K ? -1 : 0),
+               gamma: 0, vega: 0, theta: 0, rho: 0, vanna: 0, volga: 0, charm: 0 };
+    }
+    var sq = Math.sqrt(T),
+        d1 = (Math.log(S / K) + (r - q + v * v / 2) * T) / (v * sq),
+        d2 = d1 - v * sq,
+        dfq = Math.exp(-q * T), dfr = Math.exp(-r * T),
+        Nd1 = ncdf(d1), Nd2 = ncdf(d2), nd1 = npdf(d1);
+    var price = isC ? S * dfq * Nd1 - K * dfr * Nd2
+                    : K * dfr * ncdf(-d2) - S * dfq * ncdf(-d1);
+    var delta = isC ? dfq * Nd1 : dfq * (Nd1 - 1);
+    var gamma = dfq * nd1 / (S * v * sq);
+    var vega = S * dfq * nd1 * sq;
+    var theta = isC
+      ? -S * dfq * nd1 * v / (2 * sq) - r * K * dfr * Nd2 + q * S * dfq * Nd1
+      : -S * dfq * nd1 * v / (2 * sq) + r * K * dfr * ncdf(-d2) - q * S * dfq * ncdf(-d1);
+    var rho = isC ? K * T * dfr * Nd2 : -K * T * dfr * ncdf(-d2);
+    var vanna = -dfq * nd1 * d2 / v;
+    var volga = vega * d1 * d2 / v;
+    var charm = isC
+      ? -q * dfq * Nd1 + dfq * nd1 * (2 * (r - q) * T - d2 * v * sq) / (2 * T * v * sq)
+      : q * dfq * ncdf(-d1) + dfq * nd1 * (2 * (r - q) * T - d2 * v * sq) / (2 * T * v * sq);
+    return { price: price, d1: d1, d2: d2, Nd1: Nd1, Nd2: Nd2, nd1: nd1,
+             delta: delta, gamma: gamma, vega: vega, theta: theta, rho: rho,
+             vanna: vanna, volga: volga, charm: charm };
+  }
+
+  /* --------------------------------------------------------- worked example
+     Prices / changes / yields are the 2026-08-19 closes. Sigma is ASSUMED —
+     a real chain has a different IV at every strike (skew). Labelled as such
+     in the UI; see engCaseNote. */
+  var TK = {
+    SNDK: {
+      name: 'Sandisk Corporation', S: 1623.70, prev: 1786.85, chg: -163.15, chgP: -9.13,
+      sig: 0.90, q: 0, r: 0.037, Smin: 900, Smax: 2400, Kdef: 1550, step: 5,
+      rows: [['prevClose', '$1,786.85'], ['dayRange', '1,600.20 – 1,724.99'],
+             ['afterHours', '$1,586.00'], ['beta', '3.79'],
+             ['range52', '43.20 – 2,354.39'], ['assumedIv', '90%']]
+    },
+    MRK: {
+      name: 'Merck & Co.', S: 152.20, prev: 135.17, chg: 17.03, chgP: 12.60,
+      sig: 0.26, q: 0.0249, r: 0.037, Smin: 100, Smax: 210, Kdef: 155, step: 0.5,
+      rows: [['prevClose', '$135.17'], ['dayRange', '141.80 – 153.47'],
+             ['volume', '26.05M / avg 8.22M'], ['divYield', '2.49%'],
+             ['range52', '77.58 – 153.47'], ['assumedIv', '26%']]
+    }
+  };
+
+  var ST = { tk: 'SNDK', S: 0, K: 0, days: 30, sig: 0, r: 0, q: 0 };
+
+  /* ------------------------------------------------------------- strings */
+  Object.assign(FIN.T, {
+    engChip: { en: 'Engine Room', zh: '定价引擎室' },
+    engTitle: { en: 'Engine room — Black-Scholes taken apart', zh: '定价引擎室 —— 把 Black-Scholes 拆开' },
+    engSub: {
+      en: 'The rest of this page uses the model. This section opens it. Every symbol carries its live value underneath, every greek is shown as the partial derivative it actually is, and the two identities that constrain them — put-call parity and the Gamma-Theta relation — are checked numerically in front of you rather than asserted.',
+      zh: '这一页的其他部分在用这个模型，这一节把它打开。每个符号底下都带着它此刻的取值，每个希腊字母都以它真实的身份（偏导数）呈现，而约束它们的两个恒等式——看跌看涨平价与 Gamma-Theta 关系——是当着你的面用数值验算的，不是断言的。'
+    },
+    engCaseTitle: { en: 'One formula, two worlds', zh: '同一个公式，两个世界' },
+    engDated: { en: 'dated worked example', zh: '固定日期的示例' },
+    engCaseLede: {
+      en: 'On the same day, the same equation, an at-the-money option on <b>SNDK</b> asks about <b class="mono">10.4%</b> of the share price while <b>MRK</b> asks about <b class="mono">3.0%</b>. The difference is not direction and it is not the strike — it is entirely <span class="mono">σ</span>. Switch tickers above and watch every number below move.',
+      zh: '同一天、同一套方程，<b>SNDK</b> 的平价期权要价约为股价的 <b class="mono">10.4%</b>，而 <b>MRK</b> 只要 <b class="mono">3.0%</b>。差别不在方向，也不在行权价，全部在 <span class="mono">σ</span>。在上面切换标的，看下面每个数字怎么动。'
+    },
+    engCaseNote: {
+      en: 'Prices, changes, volume and dividend yield are public market data from 19 Aug 2026. The implied volatility σ and the risk-free rate r are ASSUMED values chosen to make the contrast legible — they are not quotes from an options chain. A real chain prices a different IV at every strike (volatility skew), and American options carry early-exercise value that this European model ignores.',
+      zh: '股价、涨跌幅、成交量与股息率为 2026 年 8 月 19 日的公开市场数据。隐含波动率 σ 与无风险利率 r 是为了让对比清晰而设定的假设值，并非期权链上的实际报价。真实期权链上每个行权价的 IV 各不相同（波动率偏斜），美式期权还有提前行权价值，而这里用的是欧式模型。'
+    },
+    engSpotLbl: { en: 'Spot', zh: '现价' },
+    engS: { en: 'spot', zh: '股价' },
+    engK: { en: 'strike', zh: '行权价' },
+    engT: { en: 'days', zh: '天数' },
+    engV: { en: 'vol', zh: '波动率' },
+    engR: { en: 'rate', zh: '利率' },
+    engGlossTitle: { en: 'Every letter that appears in the formulas', zh: '公式里出现的每一个字母' },
+    engGlossSub: { en: 'values update with the sliders', zh: '数值随滑块实时更新' },
+    engSigmaBox: {
+      en: '<b>Why σ is the only thing being traded.</b> Six inputs go into the price. Five are publicly observable: spot from the tape, strike and expiry from the contract, rates from the bill curve, dividends from the announcement. ' +
+          '<b>Only σ cannot be observed</b> — it is not read from the market, it is <i>solved out</i> of the market: the σ that makes the model price equal the traded price is the <b>implied volatility</b>. ' +
+          'What is realised afterwards is <b>realised volatility</b>. A buyer\'s long-run expectation is roughly <span class="mono">RV − IV</span>, and that number has historically been negative — the <b>variance risk premium</b>. That is the arithmetic behind "systematically buying options loses money over time".',
+      zh: '<b>为什么 σ 是唯一在博弈的东西。</b>定价要六个输入，其中五个公开可观测：股价看盘面，行权价与到期日写在合约上，利率查国债，股息查公告。' +
+          '<b>只有 σ 不可观测</b>——它不是从市场"读"出来的，而是从市场价格里<i>反解</i>出来的：让模型价等于成交价的那个 σ，就是<b>隐含波动率</b>。' +
+          '事后真正发生的波动叫<b>已实现波动率</b>。买方的长期期望大致是 <span class="mono">RV − IV</span>，而这个差值历史上通常为负——这就是<b>方差风险溢价</b>，也是"系统性买期权长期亏钱"背后的算术。'
+    },
+    engFormulaTitle: { en: 'The formula, one part at a time', zh: '公式，一个零件一个零件地看' },
+    engStep1: { en: '① The two standardised distances d₁ and d₂', zh: '① 两个标准化距离 d₁ 与 d₂' },
+    engStep1Note: {
+      en: 'd₁ and d₂ measure how far spot sits from the strike, counted in volatility units rather than dollars. Every greek below is a function of them.',
+      zh: 'd₁ 与 d₂ 衡量股价离行权价有多远——单位是波动率，不是美元。下面每个希腊字母都是它们的函数。'
+    },
+    engStep2: { en: '② Substitute into the pricing identity', zh: '② 代入定价式' },
+    engStep2Note: {
+      en: 'Read the call as: the present value of receiving the stock, weighted by a probability, minus the present value of paying the strike, weighted by a different probability.',
+      zh: '把看涨期权读成：拿到股票的现值 × 一个概率权重，减去付出行权价的现值 × 另一个概率权重。'
+    },
+    engStep3: { en: '③ Check: put-call parity', zh: '③ 校验：看跌看涨平价' },
+    engStep3Note: {
+      en: 'This identity must hold or a riskless arbitrage exists. It is also where synthetic positions come from: long call + short put at the same strike and expiry is synthetic long stock.',
+      zh: '这个恒等式必须成立，否则存在无风险套利。它也是"合成头寸"的来源：同一行权价、同一到期日，买 Call + 卖 Put = 合成做多股票。'
+    },
+    engGreekTitle: { en: 'Each greek is one partial derivative', zh: '每个希腊字母都是一个偏导数' },
+    engGreekSub: {
+      en: 'Not folklore — calculus. A first-order greek answers "input moves a little, how much does the price move". A second-order greek answers "how much does that first answer itself change". Units are stated next to every number, because the formula and the display convention are not always in the same units.',
+      zh: '不是玄学，是微积分。一阶希腊字母回答"输入动一点，价格动多少"，二阶回答"那个答案本身会怎么变"。每个数字旁边都标了单位——因为公式的单位和交易界面的显示口径经常不是一回事。'
+    },
+    engTaylorTitle: { en: 'Stitching the greeks together', zh: '把希腊字母缝在一起' },
+    engTaylorNote: {
+      en: 'A second-order Taylor expansion of the position value. Four things happen at once and any one of them can lose you money. Worked through step by step in the Math handbook.',
+      zh: '持仓价值的二阶泰勒展开。四件事同时发生，任何一件都能让你亏钱。数学手册里有逐步推导。'
+    },
+    engGtTitle: { en: 'Gamma and Theta are one coin', zh: 'Gamma 与 Theta 是同一枚硬币' },
+    engShapeTitle: { en: 'What the greeks look like', zh: '希腊字母长什么样' },
+    engShapeSub: {
+      en: 'The dashed vertical line is the current spot. Two things are worth staring at: the peak that Gamma and Theta share at the money, and what happens to both as time runs out.',
+      zh: '竖虚线是当前股价。有两件事值得盯住：Gamma 与 Theta 在平价处共有的那个尖峰，以及剩余时间归零时它俩会发生什么。'
+    },
+    engC1Title: { en: 'Option price vs spot, at several maturities', zh: '期权价格 vs 股价（不同剩余期限）' },
+    engC1Note: {
+      en: 'Longer-dated curves sit higher and smoother. The kinked line is intrinsic value at expiry — everything bulging above it is time value, and all of it decays to zero.',
+      zh: '期限越长，曲线越高越平滑。折线是到期时的内在价值——鼓在它上面的全部是时间价值，而这部分终将归零。'
+    },
+    engC2Title: { en: 'Delta and Gamma vs spot', zh: 'Delta 与 Gamma vs 股价' },
+    engC2Note: {
+      en: 'Delta is the S-curve; Gamma is its slope, so it peaks where Delta is steepest — at the money. Gamma is identical for calls and puts.',
+      zh: 'Delta 是 S 型曲线，Gamma 是它的斜率，所以在 Delta 最陡的地方（平价）取峰值。Call 与 Put 的 Gamma 完全相同。'
+    },
+    engC3Title: { en: 'Vega and Theta vs spot', zh: 'Vega 与 Theta vs 股价' },
+    engC3Note: {
+      en: 'Both extremise at the money and the shapes rhyme — not a coincidence, both carry the same φ(d₁) in the numerator.',
+      zh: '两者都在平价处取极值，形状也彼此呼应——这不是巧合，它们的分子里都有同一个 φ(d₁)。'
+    },
+    engC4Title: { en: 'The time dimension: Gamma / Theta / Vega vs days left', zh: '时间维度：Gamma / Theta / Vega vs 剩余天数' },
+    engC4Note: {
+      en: 'The decisive picture. Vega grows with √T; Gamma and |Theta| blow up as 1/√T. Each curve is normalised to its own maximum so the shapes can be compared.',
+      zh: '决定性的一张图。Vega 按 √T 增长，Gamma 与 |Theta| 按 1/√T 爆炸。三条线各自归一化到自身最大值，以便比较形状。'
+    },
+    engLeapsBox: {
+      en: '<b>That last chart is the entire difference between a LEAPS and a 0DTE.</b> At the right-hand end (long dated) Vega dominates — what you are buying is volatility, so <b>a LEAPS bought at high IV can be right on direction and still lose</b> when IV reverts. ' +
+          'At the left-hand end (near expiry) Gamma and Theta both spike while Vega goes to zero — what you are buying is pure short-horizon realised movement, and <b>on a 0DTE a rise in IV will not save you</b>. Same formula, two completely different businesses.',
+      zh: '<b>最后那张图就是 LEAPS 与 0DTE 的全部区别。</b>在图的右端（长期），Vega 主导——你买的是波动率，所以<b>在高 IV 时买入的 LEAPS，方向做对了也可能亏钱</b>，只要 IV 回落。' +
+          '在图的左端（临近到期），Gamma 与 Theta 同时冲顶而 Vega 归零——你买的是纯粹的短期实现波动，<b>0DTE 上 IV 涨了救不了你</b>。同一个公式，两门完全不同的生意。'
+    },
+    engMathBox: {
+      en: '<b>Where this comes from.</b> The identity above is the Black-Scholes PDE rearranged, and it drops out of Itô\'s lemma — the chain rule for a random input, where the squared term refuses to vanish and becomes the Gamma term. ' +
+          'The expansion beside it is an ordinary second-order Taylor series with S in place of x. Both are derived from first principles, plotted, and tied back here in the <a href="math.html#prob" style="color:var(--info)">Math for Finance handbook</a>.',
+      zh: '<b>这些是从哪来的。</b>上面那个恒等式是 Black-Scholes 偏微分方程的移项，而它来自伊藤引理——随机输入下的链式法则，其中平方项拒绝消失，变成了 Gamma 项。' +
+          '旁边那个展开式就是普通的二阶泰勒级数，只是把 x 换成了 S。两者的推导、作图与回接，都在<a href="math.html#prob" style="color:var(--info)">金融数学手册</a>里。'
+    },
+    engMathLink: { en: 'Math', zh: '数学手册' },
+    /* glossary + ticker row labels */
+    prevClose: { en: 'Prev close', zh: '前收盘' },
+    dayRange: { en: 'Day range', zh: '日内区间' },
+    afterHours: { en: 'After hours', zh: '盘后' },
+    beta: { en: 'Beta', zh: 'Beta' },
+    range52: { en: '52-week range', zh: '52周区间' },
+    assumedIv: { en: 'Assumed IV', zh: '假设 IV' },
+    volume: { en: 'Volume', zh: '成交量' },
+    divYield: { en: 'Dividend yield', zh: '股息率' },
+    engCurrent: { en: 'now', zh: '当前' },
+    engDomain: { en: 'range', zh: '取值' }
+  });
+
+  /* ------------------------------------------------------------- glossary */
+  function gloss() {
+    var T = ST.days / 365;
+    var c = bs('C', ST.S, ST.K, T, ST.r, ST.q, ST.sig);
+    var p = bs('P', ST.S, ST.K, T, ST.r, ST.q, ST.sig);
+    var n2 = function (x, d) { return isFinite(x) ? x.toFixed(d == null ? 2 : d) : '—'; };
+    return [
+      ['S', { en: 'Spot price', zh: '标的现价' },
+        { en: 'The current market price of the underlying. The only input that changes every second.', zh: '标的此刻的市场价格。唯一每秒都在变的输入。' },
+        '$' + n2(ST.S), '> 0'],
+      ['K', { en: 'Strike', zh: '行权价' },
+        { en: 'The price the contract locks in. Fixed for the whole life of the option.', zh: '合约锁定的价格。整个生命周期内不变。' },
+        '$' + n2(ST.K), { en: 'fixed by contract', zh: '合约固定' }],
+      ['T', { en: 'Time to expiry', zh: '剩余期限' },
+        { en: 'Measured in <b>years</b>. 30 days = 30/365 = 0.0822. Every formula on this page uses years, never days.', zh: '以<b>年</b>为单位。30 天 = 30/365 = 0.0822。本页所有公式用的都是年，不是天。' },
+        n2(T, 4) + (root.__engLang === 'zh' ? ' 年' : ' yr'), '(0, ∞)'],
+      ['r', { en: 'Risk-free rate', zh: '无风险利率' },
+        { en: 'Continuously compounded, annualised. Use the bill maturing near the option\'s expiry, not the 30-year.', zh: '连续复利年化。用与到期日匹配的短期国债利率，不是 30 年期。' },
+        (ST.r * 100).toFixed(1) + '%', '≈ 3.7%'],
+      ['q', { en: 'Dividend yield', zh: '股息率' },
+        { en: 'Continuous dividend yield. Holding the stock pays dividends, holding a call does not — so q pushes call values down.', zh: '连续股息收益率。持有股票有股息，持有 Call 没有，所以 q 会压低 Call 的价值。' },
+        (ST.q * 100).toFixed(2) + '%', '≥ 0'],
+      ['σ', { en: 'Volatility', zh: '波动率' },
+        { en: 'Annualised standard deviation of returns. <b>The one input nobody can observe</b>, and therefore the whole game.', zh: '收益率的年化标准差。<b>唯一不可观测的输入</b>，因而也是全部博弈所在。' },
+        (ST.sig * 100).toFixed(0) + '%', '> 0'],
+      ['μ', { en: 'Expected return', zh: '期望收益率' },
+        { en: 'Note that <b>μ does not appear in the formula</b>. Risk-neutral pricing replaces it with r — the most counter-intuitive result in the model.', zh: '注意 <b>μ 不在定价公式里</b>。风险中性定价用 r 把它替换掉了——这是模型里最反直觉的一点。' },
+        { en: 'absent', zh: '不出现' }, '—'],
+      ['d₁', { en: 'Standardised distance', zh: '标准化距离' },
+        { en: 'How many volatility units spot sits from the strike, drift-adjusted. Input to every greek below.', zh: '股价距行权价有几个"波动率单位"，并含漂移调整。是下面每个希腊字母的输入。' },
+        n2(c.d1, 4), '(−∞, +∞)'],
+      ['d₂', { en: 'd₁ − σ√T', zh: 'd₁ − σ√T' },
+        { en: 'One volatility unit below d₁. N(d₂) is the risk-neutral probability of finishing in the money.', zh: '比 d₁ 低一个波动率单位。N(d₂) 是风险中性下到期价内的概率。' },
+        n2(c.d2, 4), '(−∞, +∞)'],
+      ['N(·)', { en: 'Normal CDF', zh: '标准正态累积分布' },
+        { en: 'Area under the bell curve from −∞ up to x. Read it as a probability weight.', zh: '钟形曲线下从 −∞ 积到 x 的面积。当作概率权重来读。' },
+        'N(d₁) = ' + n2(c.Nd1, 4), '(0, 1)'],
+      ['φ(·)', { en: 'Normal density', zh: '标准正态概率密度' },
+        { en: 'The derivative of N — the bell curve itself. It shows up in Gamma, Vega and Theta alike.', zh: 'N 的导数，也就是钟形曲线本身。Gamma、Vega、Theta 的公式里都有它。' },
+        'φ(d₁) = ' + n2(c.nd1, 4), '(0, 0.399]'],
+      ['e', { en: 'Euler\'s number', zh: '自然常数' },
+        { en: '≈ 2.71828. e<sup>−rT</sup> is the discount factor that drags a future strike back to today\'s money.', zh: '≈ 2.71828。e<sup>−rT</sup> 是折现因子，把未来的行权价折算成今天的钱。' },
+        'e^(−rT) = ' + n2(Math.exp(-ST.r * T), 4), '(0, 1]'],
+      ['ln', { en: 'Natural log', zh: '自然对数' },
+        { en: 'ln(S/K) measures moneyness in <b>relative</b> terms. It is zero exactly at the money.', zh: 'ln(S/K) 以<b>相对</b>方式度量价内程度。恰好平价时它等于零。' },
+        n2(Math.log(ST.S / ST.K), 4), '(−∞, +∞)'],
+      ['C', { en: 'Call value', zh: '看涨期权价格' },
+        { en: 'Theoretical value per share. Multiply by 100 for one contract.', zh: '每股理论价值。乘以 100 才是一张合约的钱。' },
+        '$' + n2(c.price), { en: '≥ intrinsic', zh: '≥ 内在价值' }],
+      ['P', { en: 'Put value', zh: '看跌期权价格' },
+        { en: 'Theoretical value per share, same convention as C.', zh: '每股理论价值，口径同 C。' },
+        '$' + n2(p.price), { en: '≥ intrinsic', zh: '≥ 内在价值' }],
+      ['Δ,Γ,𝒱,Θ,ρ', { en: 'The greeks', zh: '希腊字母' },
+        { en: 'Partial derivatives of the value with respect to each input. Cards below.', zh: '价格对各个输入的偏导数。见下面的卡片。' },
+        'Δ = ' + n2(c.delta, 4), { en: 'see cards', zh: '见卡片' }]
+    ];
+  }
+
+  /* --------------------------------------------------------- greek cards */
+  function greekCards(c, p, T) {
+    return [
+      { l: 'Δ', e: 'Delta', z: { en: '1st order · ∂V/∂S', zh: '一阶 · ∂V/∂S' },
+        fx: 'Δ<sub>call</sub> = e<sup>−qT</sup> N(d₁)　　Δ<sub>put</sub> = Δ<sub>call</sub> − e<sup>−qT</sup>',
+        k: { en: 'call / put, per $1 of spot', zh: 'Call / Put，每 $1 股价' },
+        v: c.delta.toFixed(4) + ' / ' + p.delta.toFixed(4),
+        t: { en: 'The stock rises $1, the option gains <b>$Δ</b>. Three readings: price sensitivity; <b>hedge ratio</b> — one call needs Δ×100 shares sold short to be neutral; and a rough probability of finishing in the money (strictly that is N(d₂)).',
+             zh: '股价每涨 $1，期权涨 <b>$Δ</b>。三层含义：价格敏感度；<b>对冲比率</b>——一张 Call 需要卖空 Δ×100 股才中性；以及到期价内的粗略概率（严格说那是 N(d₂)）。' },
+        r: { en: 'call ∈ [0,1] · put ∈ [−1,0] · ≈ ±0.5 at the money', zh: 'Call ∈ [0,1] · Put ∈ [−1,0] · 平价约 ±0.5' } },
+      { l: 'Γ', e: 'Gamma', z: { en: '2nd order · ∂²V/∂S²', zh: '二阶 · ∂²V/∂S²' },
+        fx: 'Γ = e<sup>−qT</sup> φ(d₁) / ( S σ √T )',
+        k: { en: 'per $1 of spot', zh: '每 $1 股价' },
+        v: c.gamma.toFixed(6),
+        t: { en: 'How much Delta itself moves per $1. This is <b>convexity</b> — the thing you are actually buying when you buy an option. The √T in the denominator is why it explodes into expiry. Identical for calls and puts.',
+             zh: 'Delta 自己每 $1 股价变动多少。这就是<b>凸性</b>——你买期权时真正买到的东西。分母里的 √T 正是它临近到期时爆炸的原因。Call 与 Put 完全相同。' },
+        r: { en: '> 0 for buyers · peaks at the money · → ∞ as T → 0', zh: '买方 > 0 · 平价处最大 · T → 0 时 → ∞' } },
+      { l: '𝒱', e: 'Vega', z: { en: '1st order · ∂V/∂σ', zh: '一阶 · ∂V/∂σ' },
+        fx: '𝒱 = S e<sup>−qT</sup> φ(d₁) √T',
+        k: { en: 'per +1 IV point (formula is per 1.00)', zh: 'IV 每 +1 个百分点（公式口径为 per 1.00）' },
+        v: '$' + (c.vega / 100).toFixed(3),
+        t: { en: 'What one percentage point of implied vol is worth. <b>The √T is in the numerator: longer contracts carry more vega</b> — that is what a LEAPS really is. Same for calls and puts, and positive for both.',
+             zh: '隐含波动率变动一个百分点值多少钱。<b>√T 在分子上：期限越长 vega 越大</b>——这正是 LEAPS 的本质。Call 与 Put 相同，且都为正。' },
+        r: { en: '> 0 for buyers · peaks at the money · grows with √T', zh: '买方 > 0 · 平价处最大 · 随 √T 增长' } },
+      { l: 'Θ', e: 'Theta', z: { en: '1st order · ∂V/∂t', zh: '一阶 · ∂V/∂t' },
+        fx: 'Θ = −S e<sup>−qT</sup> φ(d₁) σ / (2√T) − rK e<sup>−rT</sup> N(d₂) + qS e<sup>−qT</sup> N(d₁)',
+        k: { en: 'per calendar day (formula is per year)', zh: '每日历日（公式口径为每年）' },
+        v: (c.theta / 365).toFixed(3) + ' / ' + (p.theta / 365).toFixed(3),
+        t: { en: 'What a day costs when nothing else happens. <b>The first term divides by 2√T, so the bleed accelerates into expiry.</b> For a buyer this is the only term guaranteed to fire.',
+             zh: '什么都不发生时，过一天要付多少钱。<b>第一项分母是 2√T，所以临近到期加速流血。</b>对买方来说，这是唯一保证会发生的一项。' },
+        r: { en: '< 0 for buyers · most negative at the money · → −∞ as T → 0', zh: '买方 < 0 · 平价处最负 · T → 0 时 → −∞' } },
+      { l: 'ρ', e: 'Rho', z: { en: '1st order · ∂V/∂r', zh: '一阶 · ∂V/∂r' },
+        fx: 'ρ<sub>call</sub> = K T e<sup>−rT</sup> N(d₂)　　ρ<sub>put</sub> = −K T e<sup>−rT</sup> N(−d₂)',
+        k: { en: 'call / put, per +1% rate', zh: 'Call / Put，利率每 +1%' },
+        v: '$' + (c.rho / 100).toFixed(3) + ' / $' + (p.rho / 100).toFixed(3),
+        t: { en: 'Ignorable on short-dated contracts, <b>not ignorable on LEAPS</b> — there is a T sitting in the formula as a multiplier, so the effect scales with maturity.',
+             zh: '短期合约可以忽略，<b>LEAPS 不能忽略</b>——公式里有一个 T 作为乘数，影响随期限线性放大。' },
+        r: { en: 'call > 0 · put < 0 · scales linearly with T', zh: 'Call > 0 · Put < 0 · 随 T 线性放大' } },
+      { l: 'Vanna', e: 'Vanna', z: { en: '2nd order · ∂Δ/∂σ = ∂𝒱/∂S', zh: '二阶 · ∂Δ/∂σ = ∂𝒱/∂S' },
+        fx: 'Vanna = − e<sup>−qT</sup> φ(d₁) d₂ / σ',
+        k: { en: 'current value', zh: '当前值' },
+        v: c.vanna.toFixed(5),
+        t: { en: 'How a change in IV rewrites your <b>directional</b> exposure — equivalently, how a move in spot rewrites your vega. The core of skew trading. Near zero at the money, meaningful out of it.',
+             zh: 'IV 变动如何改写你的<b>方向</b>敞口——等价地，股价变动如何改写你的 vega。偏斜交易的核心。平价处接近零，虚值处显著。' },
+        r: { en: 'either sign · ≈ 0 at the money', zh: '可正可负 · 平价处 ≈ 0' } },
+      { l: 'Volga', e: 'Vomma', z: { en: '2nd order · ∂²V/∂σ²', zh: '二阶 · ∂²V/∂σ²' },
+        fx: 'Volga = 𝒱 · d₁ d₂ / σ',
+        k: { en: 'current value', zh: '当前值' },
+        v: c.volga.toFixed(4),
+        t: { en: 'The convexity of vega — how vega itself changes as vol moves. Positive out of the money, which is why wings gain disproportionately in a vol spike.',
+             zh: 'vega 的凸性——波动率变动时 vega 自己怎么变。虚值处为正，这正是波动率飙升时两翼收益不成比例的原因。' },
+        r: { en: '> 0 in the wings · ≈ 0 at the money', zh: '两翼 > 0 · 平价处 ≈ 0' } },
+      { l: 'Charm', e: 'Charm', z: { en: '2nd order · ∂Δ/∂t', zh: '二阶 · ∂Δ/∂t' },
+        fx: 'Charm = −q e<sup>−qT</sup> N(d₁) + e<sup>−qT</sup> φ(d₁) · [2(r−q)T − d₂σ√T] / (2Tσ√T)',
+        k: { en: 'delta drift per year', zh: 'Delta 每年漂移' },
+        v: c.charm.toFixed(5),
+        t: { en: 'Delta decay: how your directional exposure drifts purely because a day passed, with spot unchanged. This is why a hedge set on Friday is wrong on Monday even in a flat market.',
+             zh: 'Delta 衰减：股价不动、仅仅因为过了一天，你的方向敞口漂移了多少。这就是周五设好的对冲，到周一即使市场没动也已经不对了的原因。' },
+        r: { en: 'either sign · largest near expiry', zh: '可正可负 · 临近到期最大' } }
+    ];
+  }
+
+  /* ------------------------------------------------------- tiny plotting */
+  function fit(cv) {
+    var rect = cv.getBoundingClientRect();
+    var dpr = root.devicePixelRatio || 1;
+    var w = Math.max(1, Math.round(rect.width)), h = Math.max(1, Math.round(rect.height));
+    if (cv.width !== w * dpr || cv.height !== h * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+    return { ctx: ctx, w: w, h: h };
+  }
+  var CSSV = getComputedStyle(document.documentElement);
+  function col(n) { return CSSV.getPropertyValue(n).trim() || '#888'; }
+
+  function frame(cv, x0, x1, y0, y1) {
+    var f = fit(cv), l = 40, r = 10, t = 12, b = 24;
+    var iw = Math.max(1, f.w - l - r), ih = Math.max(1, f.h - t - b);
+    return {
+      ctx: f.ctx, l: l, t: t, iw: iw, ih: ih, x0: x0, x1: x1, y0: y0, y1: y1,
+      X: function (x) { return l + (x - x0) / ((x1 - x0) || 1) * iw; },
+      Y: function (y) { return t + ih - (y - y0) / ((y1 - y0) || 1) * ih; }
+    };
+  }
+  function grid(F, fx, fy) {
+    var ctx = F.ctx, i, v, px, py;
+    ctx.save();
+    ctx.strokeStyle = col('--line'); ctx.fillStyle = col('--text-3');
+    ctx.lineWidth = 1; ctx.font = '9.5px ' + col('--mono');
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    for (i = 0; i <= 4; i++) {
+      v = F.x0 + (F.x1 - F.x0) * i / 4; px = Math.round(F.X(v)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(px, F.t); ctx.lineTo(px, F.t + F.ih); ctx.stroke();
+      if (fx) ctx.fillText(fx(v), px, F.t + F.ih + 5);
+    }
+    ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+    for (i = 0; i <= 4; i++) {
+      v = F.y0 + (F.y1 - F.y0) * i / 4; py = Math.round(F.Y(v)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(F.l, py); ctx.lineTo(F.l + F.iw, py); ctx.stroke();
+      if (fy) ctx.fillText(fy(v), F.l - 5, py);
+    }
+    ctx.restore();
+  }
+  function curve(F, fn, color, w, dash) {
+    var ctx = F.ctx, n = 220, i, x, y, up = false;
+    ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = w || 1.8;
+    if (dash) ctx.setLineDash(dash);
+    ctx.lineJoin = 'round'; ctx.beginPath();
+    for (i = 0; i <= n; i++) {
+      x = F.x0 + (F.x1 - F.x0) * i / n; y = fn(x);
+      if (!isFinite(y)) { up = false; continue; }
+      if (!up) { ctx.moveTo(F.X(x), F.Y(y)); up = true; } else ctx.lineTo(F.X(x), F.Y(y));
+    }
+    ctx.stroke(); ctx.restore();
+  }
+  function vline(F, x, color) {
+    var ctx = F.ctx, px = Math.round(F.X(x)) + 0.5;
+    ctx.save(); ctx.strokeStyle = color; ctx.lineWidth = 1.2; ctx.setLineDash([4, 4]);
+    ctx.beginPath(); ctx.moveTo(px, F.t); ctx.lineTo(px, F.t + F.ih); ctx.stroke(); ctx.restore();
+  }
+  function legend(F, items) {
+    var ctx = F.ctx, x = F.l + 6, y = F.t + 8;
+    ctx.save(); ctx.font = '9.5px ' + col('--mono'); ctx.textBaseline = 'middle';
+    items.forEach(function (it) {
+      ctx.strokeStyle = it[1]; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x, y); ctx.lineTo(x + 12, y); ctx.stroke();
+      ctx.fillStyle = col('--text-2'); ctx.textAlign = 'left';
+      ctx.fillText(it[0], x + 16, y);
+      x += 16 + ctx.measureText(it[0]).width + 12;
+    });
+    ctx.restore();
+  }
+
+  /* ------------------------------------------------------------ rendering */
+  var lang = 'en';
+  function L(o) { return (o && typeof o === 'object') ? (o[lang] || o.en) : o; }
+  /* 10px SF Mono runs ~6.2px per glyph; reserve that much box width so the
+     absolutely-positioned value label always fits inside its own token. */
+  function tok(sym, val, hint) {
+    if (val == null) return '<span class="tok" title="' + (hint || '') + '">' + sym + '</span>';
+    var w = Math.ceil(String(val).length * 6.2) + 6;
+    return '<span class="tok val" style="min-width:' + w + 'px" title="' + (hint || '') + '">' +
+           sym + '<span class="v">' + val + '</span></span>';
+  }
+  var op = function (s) { return '<span class="op">' + s + '</span>'; };
+  var fn2 = function (s) { return '<span class="fn">' + s + '</span>'; };
+  var n2 = function (x, d) { return isFinite(x) ? x.toFixed(d == null ? 2 : d) : '—'; };
+
+  function renderDuo() {
+    var host = $('engDuo'); if (!host) return;
+    host.innerHTML = Object.keys(TK).map(function (k) {
+      var d = TK[k], up = d.chg >= 0;
+      return '<div class="tk' + (k === ST.tk ? ' on' : '') + '">' +
+        '<div class="sym">' + k + '</div><div class="co">' + d.name + '</div>' +
+        '<div class="px">$' + d.S.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '</div>' +
+        '<div class="chg" style="color:' + (up ? 'var(--up)' : 'var(--down)') + '">' +
+        (up ? '+' : '') + d.chg.toFixed(2) + '　' + (up ? '+' : '') + d.chgP.toFixed(2) + '%</div>' +
+        '<dl>' + d.rows.map(function (r) {
+          return '<dt>' + (FIN.T[r[0]] ? L(FIN.T[r[0]]) : r[0]) + '</dt><dd>' + r[1] + '</dd>';
+        }).join('') + '</dl></div>';
+    }).join('');
+  }
+
+  function renderGloss() {
+    var host = $('engGloss'); if (!host) return;
+    root.__engLang = lang;
+    host.innerHTML = gloss().map(function (g) {
+      return '<div class="gi"><div class="g1"><span class="sy">' + g[0] + '</span>' +
+        '<span class="nm">' + L(g[1]) + '</span></div>' +
+        '<div class="de">' + L(g[2]) + '</div>' +
+        '<div class="rg">' + L(FIN.T.engCurrent) + ' ' + L(g[3]) + ' · ' + L(FIN.T.engDomain) + ' ' + L(g[4]) + '</div></div>';
+    }).join('');
+  }
+
+  function renderEqs(c, p, T) {
+    var S = ST.S, K = ST.K, v = ST.sig, r = ST.r, q = ST.q;
+    var dfq = Math.exp(-q * T), dfr = Math.exp(-r * T);
+
+    $('engEqD1').innerHTML =
+      tok('d<sub>1</sub>', n2(c.d1, 4)) + op('=') +
+      '<span class="frac"><span class="n">' + fn2('ln') + '(' + tok('S', n2(S, 0)) + ' / ' + tok('K', n2(K, 0)) + ')' +
+      op('+') + '( ' + tok('r', (r * 100).toFixed(1) + '%') + op('−') + tok('q', (q * 100).toFixed(2) + '%') +
+      op('+') + tok('σ', (v * 100).toFixed(0) + '%') + '<sup>2</sup>/2 ) ' + tok('T', n2(T, 4)) + '</span>' +
+      '<span class="d">' + tok('σ', (v * 100).toFixed(0) + '%') + ' <span class="sqrt">√' + tok('T', n2(T, 4)) + '</span></span></span>';
+
+    $('engEqD2').innerHTML =
+      tok('d<sub>2</sub>') + op('=') + tok('d<sub>1</sub>', n2(c.d1, 4)) + op('−') +
+      tok('σ', (v * 100).toFixed(0) + '%') + ' <span class="sqrt">√' + tok('T', n2(T, 4)) + '</span>' +
+      op('=') + '<span class="tok hi">' + n2(c.d2, 4) + '</span>';
+
+    $('engEqC').innerHTML =
+      tok('C') + op('=') + tok('S', n2(S)) + tok('e<sup>−qT</sup>', n2(dfq, 4)) +
+      fn2('N') + '(' + tok('d<sub>1</sub>', n2(c.Nd1, 4)) + ')' + op('−') +
+      tok('K', n2(K)) + tok('e<sup>−rT</sup>', n2(dfr, 4)) +
+      fn2('N') + '(' + tok('d<sub>2</sub>', n2(c.Nd2, 4)) + ')' +
+      op('=') + '<span class="tok hi">$' + n2(c.price) + '</span>';
+
+    $('engEqP').innerHTML =
+      tok('P') + op('=') + tok('K', n2(K)) + tok('e<sup>−rT</sup>', n2(dfr, 4)) +
+      fn2('N') + '(' + tok('−d<sub>2</sub>', n2(ncdf(-c.d2), 4)) + ')' + op('−') +
+      tok('S', n2(S)) + tok('e<sup>−qT</sup>', n2(dfq, 4)) +
+      fn2('N') + '(' + tok('−d<sub>1</sub>', n2(ncdf(-c.d1), 4)) + ')' +
+      op('=') + '<span class="tok hi">$' + n2(p.price) + '</span>';
+
+    var lhs = c.price - p.price, rhs = S * dfq - K * dfr;
+    $('engEqPar').innerHTML =
+      tok('C', n2(c.price)) + op('−') + tok('P', n2(p.price)) + op('=') +
+      tok('S', n2(S)) + tok('e<sup>−qT</sup>', n2(dfq, 4)) + op('−') +
+      tok('K', n2(K)) + tok('e<sup>−rT</sup>', n2(dfr, 4));
+    $('engParCheck').innerHTML =
+      (lang === 'zh' ? '左边 ' : 'left ') + '<b>' + n2(lhs, 4) + '</b>' +
+      (lang === 'zh' ? '　右边 ' : '　right ') + '<b>' + n2(rhs, 4) + '</b>' +
+      '　' + (lang === 'zh' ? '误差 ' : 'residual ') + '<b>' + Math.abs(lhs - rhs).toExponential(1) + '</b> ✓';
+
+    $('engEqTaylor').innerHTML =
+      'Δ' + fn2('V') + op('≈') + tok('Δ', n2(c.delta, 4)) + op('·') + fn2('dS') +
+      op('+') + '<span class="frac"><span class="n">1</span><span class="d">2</span></span>' +
+      tok('Γ', n2(c.gamma, 6)) + op('·') + '(' + fn2('dS') + ')<sup>2</sup>' +
+      op('+') + tok('𝒱', n2(c.vega / 100, 3)) + op('·') + fn2('dσ') +
+      op('+') + tok('Θ', n2(c.theta / 365, 3)) + op('·') + fn2('dt');
+
+    /* Black-Scholes PDE, rearranged. Theta MUST be the annualised value here;
+       feeding the per-day display number in would miss by a factor of 365. */
+    var lhs2 = c.theta + 0.5 * v * v * S * S * c.gamma + (r - q) * S * c.delta;
+    var rhs2 = r * c.price;
+    $('engEqGT').innerHTML =
+      tok('Θ', n2(c.theta, 2)) + op('+') +
+      '<span class="frac"><span class="n">1</span><span class="d">2</span></span>' +
+      tok('σ', (v * 100).toFixed(0) + '%') + '<sup>2</sup>' + tok('S', n2(S)) + '<sup>2</sup>' + tok('Γ', n2(c.gamma, 6)) +
+      op('+') + '(' + tok('r') + op('−') + tok('q') + ')' + tok('S', n2(S)) + tok('Δ', n2(c.delta, 4)) +
+      op('=') + tok('r', (r * 100).toFixed(1) + '%') + tok('V', n2(c.price));
+    $('engGtCheck').innerHTML =
+      (lang === 'zh' ? '左边 ' : 'left ') + '<b>' + n2(lhs2, 4) + '</b>' +
+      (lang === 'zh' ? '　右边 rV ' : '　right rV ') + '<b>' + n2(rhs2, 4) + '</b>' +
+      '　' + (lang === 'zh' ? '误差 ' : 'residual ') + '<b>' + Math.abs(lhs2 - rhs2).toExponential(1) + '</b> ✓<br>' +
+      '<span style="color:var(--warn)">' +
+      (lang === 'zh'
+        ? 'Θ 是年化值。Gamma 越大，Theta 必然越负——这是恒等式，不是经验规律。'
+        : 'Θ here is annualised. Larger gamma forces more negative theta — an identity, not a rule of thumb.') +
+      '</span>';
+  }
+
+  function renderGreeks(c, p, T) {
+    var host = $('engGreeks'); if (!host) return;
+    host.innerHTML = greekCards(c, p, T).map(function (g) {
+      return '<div class="gk"><div class="gh"><span class="gl">' + g.l + '</span>' +
+        '<span class="ge">' + g.e + '</span><span class="gz">' + L(g.z) + '</span></div>' +
+        '<div class="gb"><div class="gfx">' + g.fx + '</div>' +
+        '<div class="gv"><span class="k">' + L(g.k) + '</span><span class="n">' + g.v + '</span></div>' +
+        '<div class="gp">' + L(g.t) + '</div>' +
+        '<div class="gr">' + L(g.r) + '</div></div></div>';
+    }).join('');
+  }
+
+  function renderCharts(T) {
+    var S = ST.S, K = ST.K, v = ST.sig, r = ST.r, q = ST.q;
+    var d = TK[ST.tk], lo = d.Smin, hi = d.Smax, i;
+    var money = function (x) { return x >= 1000 ? (x / 1000).toFixed(1) + 'k' : x.toFixed(0); };
+
+    /* 1 — price vs spot at several maturities */
+    var mats = [7, 30, 90, 365], top = 0;
+    mats.forEach(function (dd) {
+      for (i = 0; i <= 40; i++) {
+        var x = lo + (hi - lo) * i / 40;
+        top = Math.max(top, bs('C', x, K, dd / 365, r, q, v).price);
+      }
+    });
+    var F1 = frame($('engC1'), lo, hi, 0, top * 1.06);
+    grid(F1, money, function (y) { return money(y); });
+    curve(F1, function (x) { return Math.max(x - K, 0); }, col('--text-3'), 1.4, [4, 3]);
+    var cols = [col('--info'), col('--up'), col('--gold'), col('--brand')];
+    mats.forEach(function (dd, j) {
+      curve(F1, function (x) { return bs('C', x, K, dd / 365, r, q, v).price; }, cols[j], 1.7);
+    });
+    vline(F1, S, col('--brand'));
+    legend(F1, [['7d', cols[0]], ['30d', cols[1]], ['90d', cols[2]], ['1y', cols[3]]]);
+
+    /* 2 — delta and gamma, gamma normalised so both fit one axis */
+    var gMax = 0;
+    for (i = 0; i <= 60; i++) {
+      var xg = lo + (hi - lo) * i / 60;
+      gMax = Math.max(gMax, bs('C', xg, K, T, r, q, v).gamma);
+    }
+    var F2 = frame($('engC2'), lo, hi, -0.05, 1.08);
+    grid(F2, money, function (y) { return y.toFixed(1); });
+    curve(F2, function (x) { return bs('C', x, K, T, r, q, v).delta; }, col('--info'), 2);
+    curve(F2, function (x) { return gMax > 0 ? bs('C', x, K, T, r, q, v).gamma / gMax : 0; }, col('--gold'), 2);
+    vline(F2, S, col('--brand'));
+    legend(F2, [['Δ', col('--info')], ['Γ (norm)', col('--gold')]]);
+
+    /* 3 — vega and theta, each normalised to its own extreme */
+    var vMax = 0, tMax = 0;
+    for (i = 0; i <= 60; i++) {
+      var xv = lo + (hi - lo) * i / 60, o = bs('C', xv, K, T, r, q, v);
+      vMax = Math.max(vMax, o.vega); tMax = Math.max(tMax, Math.abs(o.theta));
+    }
+    var F3 = frame($('engC3'), lo, hi, -1.08, 1.08);
+    grid(F3, money, function (y) { return y.toFixed(1); });
+    curve(F3, function (x) { return vMax > 0 ? bs('C', x, K, T, r, q, v).vega / vMax : 0; }, col('--violet'), 2);
+    curve(F3, function (x) { return tMax > 0 ? bs('C', x, K, T, r, q, v).theta / tMax : 0; }, col('--down'), 2);
+    vline(F3, S, col('--brand'));
+    legend(F3, [['𝒱 (norm)', col('--violet')], ['Θ (norm)', col('--down')]]);
+
+    /* 4 — the time dimension */
+    var dmax = 365, gM = 0, vM = 0, tM = 0;
+    for (i = 1; i <= dmax; i++) {
+      var o4 = bs('C', S, K, i / 365, r, q, v);
+      gM = Math.max(gM, o4.gamma); vM = Math.max(vM, o4.vega); tM = Math.max(tM, Math.abs(o4.theta));
+    }
+    var F4 = frame($('engC4'), 1, dmax, 0, 1.08);
+    grid(F4, function (x) { return x.toFixed(0) + 'd'; }, function (y) { return y.toFixed(1); });
+    curve(F4, function (x) { return gM > 0 ? bs('C', S, K, x / 365, r, q, v).gamma / gM : 0; }, col('--gold'), 2);
+    curve(F4, function (x) { return tM > 0 ? Math.abs(bs('C', S, K, x / 365, r, q, v).theta) / tM : 0; }, col('--down'), 2);
+    curve(F4, function (x) { return vM > 0 ? bs('C', S, K, x / 365, r, q, v).vega / vM : 0; }, col('--violet'), 2);
+    vline(F4, ST.days, col('--brand'));
+    legend(F4, [['Γ', col('--gold')], ['|Θ|', col('--down')], ['𝒱', col('--violet')]]);
+  }
+
+  function render() {
+    var T = ST.days / 365;
+    var c = bs('C', ST.S, ST.K, T, ST.r, ST.q, ST.sig);
+    var p = bs('P', ST.S, ST.K, T, ST.r, ST.q, ST.sig);
+
+    $('engLS').textContent = ST.S.toFixed(2);
+    $('engLK').textContent = ST.K.toFixed(2);
+    $('engLT').textContent = ST.days + 'd';
+    $('engLV').textContent = (ST.sig * 100).toFixed(0) + '%';
+    $('engLR').textContent = (ST.r * 100).toFixed(1) + '%';
+    $('engSpotBox').textContent = '$' + ST.S.toFixed(2);
+    $('engPxC').textContent = '$' + c.price.toFixed(2);
+    $('engPxP').textContent = '$' + p.price.toFixed(2);
+
+    renderDuo();
+    renderGloss();
+    renderEqs(c, p, T);
+    renderGreeks(c, p, T);
+    renderCharts(T);
+  }
+
+  function loadTicker(k) {
+    var d = TK[k];
+    ST.tk = k; ST.S = d.S; ST.K = d.Kdef; ST.sig = d.sig; ST.r = d.r; ST.q = d.q; ST.days = 30;
+    var rs = $('engRS'), rk = $('engRK');
+    rs.min = d.Smin; rs.max = d.Smax; rs.step = d.step; rs.value = d.S;
+    rk.min = d.Smin; rk.max = d.Smax; rk.step = d.step; rk.value = d.Kdef;
+    $('engRT').value = 30;
+    $('engRV').value = Math.round(d.sig * 100);
+    $('engRR').value = Math.round(d.r * 1000);
+    render();
+  }
+
+  function readControls() {
+    ST.S = parseFloat($('engRS').value);
+    ST.K = parseFloat($('engRK').value);
+    ST.days = parseInt($('engRT').value, 10);
+    ST.sig = parseFloat($('engRV').value) / 100;
+    ST.r = parseFloat($('engRR').value) / 1000;
+    render();
+  }
+
+  /* Called by app.js applyStatic() so the section follows the page language. */
+  FIN.engineRefresh = function (l) {
+    if (l) lang = l;
+    try { render(); } catch (e) { if (root.console) console.error('engine render failed:', e); }
+  };
+
+  function init() {
+    if (!$('engRS')) return;
+    ['engRS', 'engRK', 'engRT', 'engRV', 'engRR'].forEach(function (id) {
+      $(id).addEventListener('input', readControls);
+    });
+    $('engTicker').addEventListener('click', function (ev) {
+      var b = ev.target.closest('[data-tk]'); if (!b) return;
+      [].forEach.call(this.children, function (n) { n.classList.toggle('on', n === b); });
+      loadTicker(b.getAttribute('data-tk'));
+    });
+    loadTicker('SNDK');
+    var rt;
+    root.addEventListener('resize', function () {
+      clearTimeout(rt);
+      rt = setTimeout(function () { try { renderCharts(ST.days / 365); } catch (e) { /* offscreen */ } }, 150);
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+}(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
 </body>
 </html>
