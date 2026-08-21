@@ -8025,6 +8025,243 @@ IV_PERCENTILE:{zh:{
 
 });
 
+/* ---- batch 7: strength — RSI family, stochastics, money flow ---- */
+Object.assign(FIN.FXZH, {
+
+SLOWKD:{zh:{
+0:'先算未成熟随机值 RSV：收盘价在 N 根高低区间中的相对位置。',
+1:'第一次平滑得到 FASTK。',
+2:'第二次平滑得到 K。',
+3:'第三次平滑得到 D。慢速 KD 比标准 KDJ 多做了一次平滑，因此更钝、假信号更少。',
+5:'默认 N=9、P1=3、P2=3、P3=5。',
+7:'一个值得知道的等价关系：当 P1 = P2 = 3 时，这里的 K 线与 KDJ 的 D 线**完全相同**。所以同时挂 KDJ 和慢速 KD，你实际上是在看同一条线的两个副本，不构成互相印证。'},en:{
+3:'One more smoothing pass than standard KDJ, hence duller and with fewer false signals.',
+7:'With P1 = P2 = 3 this K line is identical to KDJ\'s D line. Running both is looking at the same series twice, not confirmation.'}},
+STOCHRSI:{zh:{
+0:'第一步：先算出常规 RSI。',
+2:'第二步：对 **RSI 本身** 再套一次随机指标公式——把 RSI 在它自己最近 SL 根的高低区间里归一化。',
+4:'K 是对上一步的平滑。',
+5:'D 是 K 的再平滑。',
+7:'默认 RL = SL = 14，P1 = P2 = 3。',
+8:'关键理解：STOCH 衡量的是 RSI 在**它自己近期区间**中的排名，而不是价格的排名。这就是它比 RSI 灵敏得多的原因——RSI 从 55 涨到 65 可能毫不起眼，但如果这段时间 RSI 一直在 50–65 之间波动，StochRSI 就会直接冲到 100。代价是它极易触及 0 和 100 两端，超买超卖信号泛滥，必须配合趋势过滤使用。'},en:{
+8:'It ranks RSI within RSI\'s own recent range, not price within price\'s. That is why it is far more sensitive — and why it pins at 0 and 100 constantly, so it needs a trend filter.'}},
+SRSI:{zh:{
+0:'先取一条 6 周期 EMA 作为基准线。',
+2:'UP 取收盘价高于该基准的部分。',
+3:'TOT 取偏离基准的绝对值。',
+5:'再套用 RSI 的比值结构：向上偏离占总偏离的比例 × 100。',
+7:'重要警告：这**既不是** Stochastic RSI，**也不是** RSI。',
+8:'它只是把 RSI 的**算术结构**套用在"价格减 EMA"这个偏离量上，',
+9:'本质上是一个归一化的乖离率振荡器。命名极易混淆，看到 SRSI 时务必确认软件用的是哪个定义——三种同名指标含义完全不同。'},en:{
+7:'This is NOT Stochastic RSI and it is NOT RSI.',
+9:'It applies RSI arithmetic to the price-minus-EMA deviation — a normalised bias oscillator. The name collides with two other indicators, so always check which definition your platform means.'}},
+CRSI:{zh:{
+0:'第一分量：3 周期的超短期价格 RSI，捕捉即时超买超卖。',
+2:'第二分量先构造"连续涨跌天数"：连涨 k 天记 +k，',
+3:'连跌 k 天记 −k，',
+4:'平盘记 0。',
+5:'再对这个连涨连跌序列取 2 周期 RSI。这一项捕捉的是**持续性**——连续同向的天数越多，均值回归的压力越大。',
+7:'第三分量：把当日单根收益率',
+8:'放到过去 100 根收益率中求百分位排名。这一项捕捉的是**幅度的相对极端程度**。',
+10:'三者取平均。Connors 的设计思路是从三个正交的角度衡量超卖：价位、持续性、幅度。三者同时极端才是高置信度信号，这比单一 RSI 稳健得多，也是它专为短线均值回归策略设计的原因。'},en:{
+5:'This leg captures persistence — the longer the one-way streak, the greater the mean-reversion pressure.',
+10:'Three orthogonal views of oversold: level, persistence, magnitude. Requiring all three to be extreme is far more robust than a single RSI.'}},
+WMSR:{zh:{
+0:'先取 N 根内的最高价。',
+1:'和最低价。',
+3:'%R = −100 ×（最高价 − 收盘）÷ 区间高度。注意负号：收盘越靠近区间顶部，值越接近 0。',
+5:'默认 N = 14，刻度从 −100（区间底部）到 0（区间顶部）。这个"倒过来"的刻度是初学者最常搞错的地方——−20 是超买，−80 是超卖。',
+7:'等价关系：%R = RSV − 100，也就是 KDJ 里**未经平滑**的 %K 平移 100。因此 %R 与 KDJ 本质是同一个量，只是 %R 不做平滑，反应更快也更毛糙。'},en:{
+5:'The inverted scale trips up most beginners: −20 is overbought, −80 is oversold.',
+7:'%R is the unsmoothed %K of KDJ shifted by 100 — the same quantity, faster and rougher because it skips the smoothing.'}},
+CCI:{zh:{
+0:'先取典型价格（高、低、收的均值）。',
+1:'再取它的 N 周期均线。',
+2:'MD 是典型价格对均线的**平均绝对偏差**——注意是平均绝对偏差，不是标准差。用绝对值而非平方，使它对极端值不那么敏感。',
+4:'CCI = 偏离 ÷（0.015 × 平均绝对偏差），衡量当前价格偏离均值多少个"平均偏差单位"。',
+6:'默认 N = 14。',
+7:'0.015 这个常数是人为选定的，目的是让大约 70–80% 的读数落在 ±100 以内。它没有任何理论依据，纯粹是经验校准。',
+8:'必须记住 CCI **没有上下界**：真实市场里 ±300 完全正常。所以"CCI 超过 100 就是超买"是错的——在强趋势里 CCI 可以长期停留在 200 以上。'},en:{
+2:'Mean absolute deviation, not standard deviation — using absolutes rather than squares makes it less sensitive to outliers.',
+7:'The 0.015 constant has no theoretical basis; it is an empirical calibration to put most readings inside ±100.',
+8:'CCI is unbounded. ±300 is routine, so "above 100 means overbought" is simply wrong in a trend.'}},
+CMO:{zh:{
+0:'SU 累加 N 根内所有上涨幅度。',
+1:'SD 累加所有下跌幅度的绝对值。',
+3:'CMO =（上涨总量 − 下跌总量）÷ 两者之和 × 100，落在 −100 到 +100。',
+5:'默认 N = 9。',
+7:'等价关系：CMO = 2 × 简单 RSI − 100。也就是说它只是把 RSI 的 0–100 刻度线性拉伸到 −100 到 +100，信息量完全相同。',
+8:'与 RSI 唯一的实质差别是这里用**未平滑的简单求和**，而标准 RSI 用 Wilder 平滑。因此 CMO 更灵敏也更抖。'},en:{
+7:'CMO = 2 × simple RSI − 100 — the same information on a stretched scale.',
+8:'The only substantive difference is unsmoothed sums instead of Wilder smoothing, which makes it jumpier.'}},
+TSI:{zh:{
+0:'先取相邻收盘价的变化。',
+2:'分子做两次 EMA（先 25 后 13）。两次平滑让正负变化互相抵消，只留下持续的方向性。',
+3:'分母对变化的**绝对值**做同样两次平滑。绝对值不会互相抵消，所以分母始终大于等于分子的绝对值。',
+5:'两者相除再乘 100，天然落在 −100 到 +100。',
+6:'TSIMA 是信号线。 TSI 的巧妙之处在于：震荡行情里分子因正负抵消而趋近于零，分母不受影响，读数自然回到零轴附近；而单边趋势中分子几乎等于分母，读数被推向 ±100。因此它天然地区分了"有方向"和"没方向"，这是单次平滑的动量指标做不到的。'},en:{
+2:'Double smoothing lets opposite moves cancel, leaving only persistent direction.',
+3:'The denominator smooths absolute values, which never cancel, so it always dominates the numerator.',
+6:'In a chop the numerator cancels toward zero while the denominator does not, pulling TSI to the centre; in a one-way trend the two nearly match and it pins near ±100. It separates "direction" from "no direction" by construction.'}},
+MFI:{zh:{
+0:'先取典型价格。',
+1:'乘以成交量得到该根的资金流金额。',
+3:'典型价格上升的根，其资金流计入正向。',
+4:'下降的根计入负向。这一步用价格方向给成交量定符号，与 OBV 思路相同，但 MFI 用的是典型价格而非收盘价，且加权了金额而非只数股数。',
+6:'资金比 = 正向 ÷ 负向。',
+7:'再套用 RSI 的归一化公式压缩到 0–100。',
+9:'默认 N = 14。 一句话概括：MFI 就是"带成交量的 RSI"。它与 RSI 的背离常被视为更可靠——价格创新高但 MFI 不创新高，说明推动这波新高的资金量在减少。'},en:{
+4:'Volume signed by price direction, like OBV, but using typical price and weighting by money rather than share count.',
+9:'MFI is RSI with volume. A divergence carries more weight than an RSI divergence because it says the money behind the move is shrinking.'}},
+RVGI:{zh:{
+0:'CO 是 K 线实体（收 − 开）。',
+1:'HL 是 K 线全幅（高 − 低）。',
+3:'SWMA 是对称加权平均（权重 1:2:2:1 再除以 6），是一个四根的小型平滑器，中间权重高、两端低。',
+5:'RVGI = 平滑后实体 ÷ 平滑后全幅，衡量"整根波动中有多大比例转化成了实体"。',
+6:'信号线再做一次同样的对称平滑。',
+8:'默认 N = 10，实际取值大致在 −1 到 +1。 核心直觉：牛市里收盘倾向于靠近最高价（实体占全幅比例高且为正），熊市里收盘倾向于靠近最低价。RVGI 就是把这个直觉量化。它衡量的是"力度的转化效率"，与衡量幅度的动量指标互补。'},en:{
+3:'A four-bar symmetric smoother weighted 1:2:2:1 — heaviest in the middle, light at both ends.',
+8:'Bulls close near the high, bears close near the low. RVGI quantifies exactly that, measuring conversion efficiency rather than magnitude.'}},
+BOP:{zh:{
+0:'多空力量对比 = 实体 ÷ 全幅，即收盘相对开盘的移动占整根振幅的比例。',
+2:'没有平滑、没有回看窗口、没有任何参数——它是全书最简单的指标之一。',
+3:'由构造天然限制在 −1 到 +1。',
+5:'等于 +1：开在最低、收在最高，即光头光脚大阳线，多方全程压制空方。',
+6:'等于 −1：开在最高、收在最低。',
+7:'等于 0：收盘等于开盘，即十字星，多空完全均衡。 因为完全不平滑，单根 BOP 噪音极大，实用上必须自己再取均线。它的价值在于纯粹：不含任何滞后，是对"这一根到底谁赢了"最直接的量化。'},en:{
+2:'No smoothing, no lookback, no parameters — one of the simplest indicators here.',
+7:'Being entirely unsmoothed makes a single bar very noisy; average it yourself. Its value is purity: zero lag, a direct answer to who won this bar.'}},
+VRSI:{zh:{
+0:'先取成交量的相邻变化。',
+2:'再套 RSI 的结构：成交量上升部分占总变化的比例 × 100。',
+4:'同时画出 6、12、24 三个周期。',
+6:'务必看清：这是把 RSI 套用在**成交量**上，不是价格。',
+7:'因此 50 的含义是"成交量持平"，**不是**"市场中性"。这是最容易误读的一点：VRSI 高只说明成交量在放大，完全不指示价格方向——放量上涨和放量暴跌会给出同样高的读数。它必须与价格指标配合才有意义。'},en:{
+7:'50 means volume is flat, NOT that the market is neutral. A high reading says volume is expanding and says nothing about direction — a volume surge into a crash reads the same as one into a breakout.'}},
+ROC:{zh:{
+0:'先取 N 根之前的收盘价作为基准。',
+2:'ROC =（当前 − 基准）÷ 基准 × 100，即 N 根内的百分比涨跌幅（N = 12）。',
+3:'ROCMA 是它的 6 周期均线，作为信号线。',
+5:'大于 0 表示价格高于 N 根之前的水平。',
+6:'等于 15 表示比 12 根之前高 15%。 因为除以了基准价格，ROC 是**百分比**口径，可以跨品种比较——这是它相对于 MI（价格单位）的关键优势。注意 ROC 的分母是过去的价格，所以基期价格极低时读数会被放大失真，看长周期 ROC 时要留意基期是否处在异常低位。'},en:{
+6:'Being a percentage makes ROC comparable across instruments, unlike price-unit momentum. Watch the base: an unusually low reference price inflates the reading.'}}
+
+});
+
+/* ---- batch 8: strength tail — momentum, bias and rank oscillators ---- */
+Object.assign(FIN.FXZH, {
+
+MTM:{zh:{
+0:'动量 = 当前收盘 − N 根之前的收盘（N = 12），单位是**价格**而非百分比。',
+1:'MTMMA 是它的 6 周期均线。',
+3:'基准取 N 根之前的那一根。',
+5:'与 ROC 的关系：ROC = MTM ÷ 基准价 × 100。也就是说 ROC 就是把 MTM 归一化成百分比。因为 MTM 保留价格单位，它**不能跨品种比较**，也不能跨时间比较同一只股票——股价从 10 元涨到 100 元后，同样 5 元的 MTM 意义完全不同。'},en:{
+5:'ROC is simply MTM normalised by the base price. Because MTM keeps price units it cannot be compared across instruments, or even across time for one instrument once the price level has changed.'}},
+
+OSC:{zh:{
+0:'振荡量 = 100 ×（收盘 − N 周期均线），N = 20。',
+1:'OSCEMA 是它的 6 周期 EMA。',
+3:'务必注意这个 ×100：它是把**绝对价差**乘以一百，',
+4:'**不是**百分比。这是极易误读的一点——数值 500 不代表 500%，只代表价格高出均线 5 元。',
+5:'对比 BIAS，后者除以了均线，才是真正归一化的百分比版本。需要跨品种比较时应该用 BIAS 而不是 OSC。'},en:{
+4:'A reading of 500 means the price is 5 currency units above the average, not 500%.',
+5:'BIAS divides by the average and is the properly normalised version. Use it when comparing across instruments.'}},
+
+DPO:{zh:{
+0:'先算位移量 = ⌊N/2⌋ + 1（N = 20 时为 11）。',
+2:'DPO = 当前收盘 − **向前平移** shift 根的均线值。注意均线是被回移的，不是当前的均线。',
+3:'MADPO 是 DPO 的均线。',
+5:'这个位移正是 DPO 的全部意义：普通均线滞后于价格，把它回移半个窗口后，均线就**居中对齐**于它所概括的那段数据，',
+6:'而不是落后于它。结果是 DPO 剔除了趋势成分，只留下价格围绕趋势的周期性波动——它是用来找**周期长度**的，不是用来判断趋势方向的。代价是最后 shift 根无法计算，所以 DPO 天然"缺一截右端"，不能用于实时信号。'},en:{
+5:'Displacing the average back by half the window centres it on the data it summarises instead of lagging behind it.',
+6:'That removes the trend and leaves the cycle around it — DPO is a tool for finding cycle LENGTH, not direction. The displacement also means the last few bars cannot be computed, so it is not a real-time signal.'}},
+
+BIAS:{zh:{
+0:'先取 N 周期简单均线。',
+2:'乖离率 =（收盘 − 均线）÷ 均线 × 100，即价格偏离均线的**百分比**。',
+4:'常用三条：BIAS6、BIAS12、BIAS24。',
+6:'A 股大盘股日线的经验阈值：',
+7:'BIAS6 超过 ±6% 视为偏离过大；',
+8:'BIAS12 超过 ±8%；',
+9:'BIAS24 超过 ±12%。',
+10:'但请注意这些只是**约定俗成**而非常数：高波动的小盘股、题材股完全可以长期维持更大的乖离。使用前应针对具体标的用历史分布重新校准，直接套用会在强势股上过早卖出。'},en:{
+10:'These are conventions, not constants. A volatile small cap can sustain much larger deviations, so recalibrate per symbol from its own history rather than importing the numbers.'}},
+
+B3612:{zh:{
+0:'B36 = 3 周期均线 − 6 周期均线。',
+1:'B612 = 6 周期均线 − 12 周期均线。',
+3:'重要澄清：尽管名字里有 Bias，这两个量**不是**乖离率——',
+4:'它们没有除以任何东西，单位仍是价格。',
+5:'真正的乖离率需要除以均线并乘 100。因此 B3612 不能跨品种比较，它的用途是观察短中期均线之间的收敛与发散（与 MACD 的 DIF 思路相同），而不是判断偏离程度。'},en:{
+4:'Nothing is divided by anything — the units are still price.',
+5:'So B3612 cannot be compared across instruments. Its use is watching short and medium averages converge and diverge, like MACD\'s DIF, not measuring stretch.'}},
+
+DBCD:{zh:{
+0:'先取 5 周期乖离率，注意这里**没有**乘 100，所以是小数形式。',
+1:'DIF 取乖离率相对 16 根之前的变化，衡量"偏离程度本身在扩大还是收敛"。',
+2:'再用 Wilder 平滑，窗口 W = 76，α = 1/76——这是一个非常长的平滑。',
+3:'MM 是 5 周期均线。',
+5:'由于 α 极小，平滑的有效重心大约在 76 根之前。',
+6:'首个有效值需要约 95 根预热数据。这意味着 DBCD 在图表左端很长一段是不可信的，且它对近期变化的反应极慢——它被设计成一个超长周期的背离检测器，不适合任何短线用途。'},en:{
+6:'Roughly 95 bars of warm-up before the first trustworthy value, and it reacts very slowly by design. It is a long-horizon divergence detector, not a timing tool.'}},
+
+SRDM:{zh:{
+0:'MOVE 取高点变化与低点变化中较大的绝对值，作为该根的区间位移幅度。',
+2:'当区间中枢上移时，把位移记为向上分量 DMZ。',
+3:'下移时记为向下分量 DMF。同一根只能计入一边。',
+5:'分别对两个分量取 10 周期均值。',
+6:'得到平滑后的上下动能。',
+8:'SRDM =（上 − 下）÷ 两者中的较大者。除以较大者而不是两者之和，是为了让结果严格落在 −1 到 +1，且在一方为零时直接取到端点。',
+9:'ASRDM 再做 30 周期 Wilder 平滑。这条慢线才是实际使用的信号线，SRDM 本身波动过大。'},en:{
+8:'Dividing by the larger of the two rather than their sum keeps the result strictly within ±1 and pins it to the endpoint when one side is zero.'}},
+
+RCI:{zh:{
+0:'在最近 N 根收盘价内做两次排名：',
+1:'价格排名：最高的收盘记 1，最低记 N，并列取平均。',
+2:'时间排名：最近的一根记 1，最老的记 N。',
+3:'d 是两个排名之差。',
+5:'RCI 就是斯皮尔曼秩相关系数的公式，再乘 100。',
+7:'它衡量的是"价格顺序"与"时间顺序"的相关性，取值 −100 到 +100。',
+8:'等于 +100 表示越靠近现在价格越高，即完美的单调上涨。',
+9:'等于 −100 表示完美的单调下跌。',
+10:'默认同时画 5、25、50 三条。RCI 的独特之处在于它**只看顺序不看幅度**：一根涨停和一根微涨在排名上贡献相同。这让它对异常值天然免疫，但也意味着它无法区分温和上涨和暴力拉升。'},en:{
+7:'Spearman\'s rank correlation between price order and time order.',
+10:'RCI reads ORDER, not magnitude — a limit-up bar and a marginally higher bar contribute identically. That makes it immune to outliers and blind to the size of a move.'}},
+
+MASS:{zh:{
+0:'先取每根的振幅。',
+1:'对振幅做一次 EMA。',
+2:'再做一次 EMA。',
+3:'MI 是"一次平滑 ÷ 二次平滑"这个比值在 M 根内的**累加和**（M = 10）。',
+5:'由于该比值总在 1 附近徘徊，MI 的数值自然就在 M 附近徘徊——这一点决定了它的阈值必须随 M 缩放。',
+6:'教科书里"27 触发反转"的说法建立在 M = 25 的前提上；',
+7:'本页 M = 10，等价触发值约为 10.8，',
+8:'确认线约 10.6。请务必**换算**而不要直接套用 27——直接套用会导致这个指标永远不触发。质量指标衡量的是振幅的扩张（而非方向），它提示"波动在放大、可能变盘"，不告诉你往哪变。'},en:{
+5:'Because the ratio hovers near 1, the index hovers near M, so any threshold must be rescaled with M.',
+8:'Importing 27 from the textbook while running M = 10 means the indicator can never fire. Mass measures range expansion, not direction.'}},
+
+VROC:{zh:{
+0:'基准取 M 根之前的成交量。',
+2:'VROC =（当前量 − 基准量）÷ 基准量 × 100（M = 12）。',
+4:'等于 0 表示今日成交量与 M 根之前那一根**单根**相等。这是关键：基准是单独一根，不是平均值，所以如果那一根恰好是异常放量或异常缩量，读数会严重失真。',
+5:'等于 +200 表示今日量是那一根的三倍。',
+6:'下限是 −100%（成交量不可能为负），上限无穷。这种不对称意味着 VROC 的正值可以极大而负值最多到 −100，做统计分析时要注意这个天然偏斜。'},en:{
+4:'The base is a single bar, not an average, so an abnormal reference bar distorts the reading badly.',
+6:'Floored at −100% but unbounded above — a built-in asymmetry to keep in mind for any statistical use.'}},
+
+ADTM:{zh:{
+0:'DTM 衡量买方推力：只在今日开盘高于昨日开盘时计算，取"最高价减开盘"与"开盘涨幅"中较大者。',
+1:'DBM 衡量卖方推力：只在开盘走低时计算，逻辑对称。用开盘价作为基准是 ADTM 的特色——它认为开盘跳空反映了隔夜信息的力度。',
+3:'分别在 P = 23 根内累加。',
+5:'ADTM =（买方 − 卖方）÷ 两者中较大者，落在 −1 到 +1。',
+6:'等价的分段写法：谁大就除以谁，相等时取 0。',
+7:'ADTM_MA 是 8 周期均线。',
+9:'惯例阈值：大于 +0.5 视为超买，小于 −0.5 视为超卖。同样建议按标的历史分布校准，不要直接套用。'},en:{
+1:'Using the open as the reference is what distinguishes ADTM — it treats the opening gap as the force of overnight information.',
+9:'Calibrate the ±0.5 convention against the instrument\'s own history rather than importing it.'}}
+
+});
+
 /* FXZH-BATCHES */
 }(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
