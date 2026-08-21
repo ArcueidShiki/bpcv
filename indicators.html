@@ -8540,6 +8540,412 @@ OPT_VOLPCR:{zh:{
 
 });
 
+/* ---- batch 11: breadth ---- */
+Object.assign(FIN.FXZH, {
+
+ADR_SPX:{zh:{
+0:'A 是当日收涨的成分股数量。',
+1:'B 是收跌的数量。',
+3:'涨跌比 = A ÷ B。它衡量的是**参与广度**：指数涨了，是所有股票都在涨，还是只有几只权重股在拉？',
+5:'大于 1 表示上涨家数多于下跌家数。',
+6:'常取 10 日均线平滑。注意这是**比值**，天然不对称（上不封顶、下限为 0），做平均前应先取对数，否则均值会被高值拉偏。'},en:{
+3:'Breadth: is the index rising because everything is rising, or because a few heavyweights are?',
+6:'It is a ratio, so it is asymmetric — take logs before averaging or the mean is dragged by the upside.'}},
+
+ADD_SPX:{zh:{
+0:'A 是标普 500 中收涨的家数。',
+1:'B 是收跌家数。',
+2:'U 是平盘家数，两边都不计入。',
+4:'涨跌家数差 = A − B。与比值版本相比，差值保留了"规模"信息但受成分股总数影响。',
+6:'取值范围在 ±(A+B) 之间，标普实际有效样本约 470–500。',
+7:'累计涨跌线 = 逐日累加 ADD，这是最经典的长周期广度指标：它与指数背离（指数新高但累计线不创新高）往往预示上涨已由少数权重股支撑。',
+8:'广度推力筛选：连续 k 日 ADD/(A+B) 大于 0.80，被视为强势启动信号（Zweig 推力的变体）。'},en:{
+7:'The cumulative A/D line diverging from the index — index at new highs while the line is not — is the classic warning that the advance has narrowed to a few heavyweights.'}},
+
+ADD_IXIC:{zh:{
+0:'纳斯达克综合指数收涨家数。',
+1:'收跌家数。',
+3:'差值 = A − B。',
+5:'关键警告：纳指的成分股数量**不固定**，历史上在约 2,000 到 5,000 之间大幅变动，',
+6:'因此不同年代的 ADD 绝对值**不可比**——2000 年的 +500 与 2020 年的 +500 代表完全不同的广度。',
+7:'做多年研究时必须改用归一化形式 ADD ÷(A+B)，把它变成一个与样本量无关的比例。'},en:{
+6:'A +500 reading in 2000 and in 2020 describe different breadth because the population changed.',
+7:'Any multi-year study must use the normalised form.'}},
+
+ADD_DJI:{zh:{
+0:'道指成分股收涨家数。',
+1:'收跌家数。',
+3:'差值 = A − B，且 A + B 最多 30。',
+5:'因此它只有 **31 个可能取值**（−30 到 +30），且步长为 2——它是一个粗糙的阶梯。',
+6:'更重要的是统计意义：即使是一枚公平硬币，n = 30 时的抽样噪音约为 ±5.5，',
+7:'相当于满量程的 18%。也就是说，道指 ADD 读数在 ±5 以内基本无法与随机噪音区分。用 30 只股票衡量"市场广度"在统计上是很脆弱的。'},en:{
+7:'A fair coin at n = 30 produces about ±5.5 of noise, 18% of full scale — readings inside ±5 are statistically indistinguishable from chance.'}},
+
+ADD_HSI:{zh:{
+0:'恒指成分股收涨家数。',
+1:'收跌家数。',
+2:'平盘家数（部分 H 股成交清淡，容易平盘）不计入。',
+4:'差值 = A − B，约 82 只成分中有效样本通常 55–75 只。',
+6:'注意成分股数量在 2020 至 2023 年间从 50 只扩容到 82 只，',
+7:'因此跨越这段时间的**累计**形式是断裂的——扩容本身就会让累计线产生位移，不能当作市场信号解读。'},en:{
+7:'The 2020–2023 expansion from 50 to 82 members breaks any cumulative series across that window; the shift is mechanical, not a market signal.'}},
+
+ADD_HSTECH:{zh:{
+0:'恒生科技指数收涨家数。',
+1:'收跌家数。',
+3:'差值 = A − B，A + B 最多 30。',
+5:'三十只成分股共享同一组因子（中国互联网监管、融资环境），因此分布是**双峰**的：',
+6:'读数聚集在 ±26 附近，很少停留在 0 附近——要么一起涨，要么一起跌。',
+7:'权重虽然设了 8% 上限，前五大仍占约 35%。这意味着"广度指标"在这里几乎不提供独立于指数本身的信息，有效样本量远小于 30。'},en:{
+6:'Readings cluster near ±26 and rarely sit near zero — they all move together.',
+7:'The effective sample size is far below 30, so this breadth series adds little information beyond the index itself.'}},
+
+ADR_IXIC:{zh:{
+0:'纳指收涨家数。',
+1:'收跌家数。',
+3:'比值 = A ÷ B。',
+5:'比值形式的最大优点是**无量纲**：不受成分股数量从约 2,000 到 5,000',
+6:'再到约 3,300 的历史变动影响，因此可以跨年代比较——这正是差值版本做不到的。',
+7:'但它不对称：上方无界、下方以 0 为界。若要取平均，应先取 ln(ADR)，否则均值会被上行极值系统性拉高。',
+8:'结构性提醒：纳指涨跌比的长期均值**低于** 1.0，因为微型股尾部长期跑输。把 1.0 当作中性线会长期误判为"偏空"。'},en:{
+7:'Asymmetric: unbounded above, floored at zero. Average ln(ADR), not ADR.',
+8:'The long-run mean sits BELOW 1.0 because of the micro-cap tail, so treating 1.0 as neutral biases every reading bearish.'}},
+
+ADR_DJI:{zh:{
+0:'道指收涨家数。',
+1:'收跌家数，两者合计最多 30。',
+3:'比值 = A ÷ B。',
+5:'可取值只有 1/29、2/28 …… 29/1 这些离散点，是一个阶跃函数。',
+6:'在极端处，**一只股票的差别会造成巨大跳变**：',
+7:'27/3 = 9.0，28/2 = 14.0，29/1 = 29.0，30/0 则直接无定义。这种爆炸性使道指 ADR 在极端行情下的数值几乎无法解读，必须改看差值或百分比形式。'},en:{
+7:'One stock changes the ratio enormously at the extremes, and 30/0 is undefined — the ratio becomes unreadable exactly when the market is most interesting.'}},
+
+ADR_HSI:{zh:{
+0:'恒指收涨家数。',
+1:'收跌家数。',
+2:'平盘不计入。',
+4:'比值 = A ÷ B。',
+6:'约 82 只成分中的有效样本通常为 55–75 只，',
+7:'成交清淡日会明显下降——样本变小意味着读数噪音变大，低成交日的极端读数要打折看待。',
+8:'比值的无量纲性使它能够**跨越** 50 至 82 的扩容，',
+9:'而差值版本在那段时间是断裂的。这是选择比值而非差值的实际理由。'},en:{
+7:'A thinner sample on quiet days means noisier readings; discount extremes printed on low turnover.',
+9:'Being scale-free lets the ratio survive the constituent expansion that breaks the spread version.'}},
+
+ADR_HSTECH:{zh:{
+0:'恒生科技收涨家数。',
+1:'收跌家数，合计最多 30。',
+3:'比值 = A ÷ B。',
+5:'由于三十只股票同涨同跌，B 经常只有个位数：',
+6:'26/4 = 6.5，28/2 = 14.0，30/0 无定义。',
+7:'可取值集合少于三十个，且经验分布是**双峰**的，',
+8:'并不以 1 为中心。因此常规的"大于 1 看多"解读在这里几乎没有信息量——它只是重复了指数本身的涨跌。'},en:{
+8:'The distribution is bimodal rather than centred on 1, so the usual "above 1 is bullish" reading merely restates the index move.'}},
+
+MCL:{zh:{
+0:'DIF 取标普 500 的净上涨家数（本实现中硬编码为标普）。',
+1:'快线用 19 周期 EMA（约 10% 平滑系数）。',
+2:'慢线用 39 周期 EMA（约 5%）。',
+4:'麦克莱伦振荡器 = 快线 − 慢线。结构与 MACD 完全相同，只是输入换成了广度而非价格。它衡量的是"广度的动量"：广度在改善还是恶化。',
+6:'累加得到麦克莱伦累计指数，是其长周期伴随指标。',
+8:'⚠ 重要差异：标准的麦克莱伦使用**比率调整**后的净上涨家数，',
+9:'即 RANA =(A − B)÷(A + B)× 1000，而本实现用的是原始家数。',
+10:'因此教科书里的 ±100 阈值**不适用于**本页数值。要用阈值，必须先在本页的历史分布上重新校准。'},en:{
+4:'Same construction as MACD with breadth substituted for price: it measures the momentum of participation.',
+10:'The textbook ±100 thresholds do not transfer to raw counts; recalibrate against this page\'s own distribution.'}},
+
+'SPX>MA200':{zh:{
+0:'a 是收盘价高于自身 200 日均线的成分股数量。',
+1:'b 是成分股总数 500。',
+3:'比例 × 100，画在 0–100 区间。它回答一个很朴素的问题：市场里有多少比例的股票**自己**处在长期上升趋势中。',
+5:'参考区间：高于 80 表示参与度极广，',
+6:'50 表示恰好一半的股票在牛市趋势中，',
+7:'低于 20 通常出现在恐慌性出清阶段，历史上常与中期底部同步。',
+9:'注意底层实现返回的是 0–1 的比率，图表上乘以 100 显示。'},en:{
+3:'How much of the market is itself in a long-term uptrend, independent of the cap-weighted index.',
+7:'Below 20 usually marks a washout and has historically coincided with intermediate lows.'}},
+
+'NDX>MA200':{zh:{
+0:'纳斯达克 100 中收盘价高于 200 日均线的成分股数量。',
+1:'成分股总数 100。',
+3:'比例 × 100。',
+5:'因为恰好 100 只，粒度正好是**每只股票 1 个百分点**，',
+6:'所以这个序列只能取整数值。这是一个巧合带来的便利：读数 63 就是字面意义上的 63 只股票。',
+8:'底层返回 0–1 比率，图表乘 100 显示。'},en:{
+6:'A convenient coincidence: a reading of 63 literally means 63 stocks.'}},
+
+'IXIC>MA200':{zh:{
+0:'纳斯达克综合指数中收盘价高于 200 日均线的成分股数量。',
+1:'成分股总数约 3,000 以上。',
+3:'比例 × 100。',
+5:'关键提醒：因为分母包含了**整个微型股尾部**，',
+6:'这个序列的历史中位数远低于 50。',
+7:'因此看到 45 不能直接判断为"偏弱"——必须先知道它自身的历史基准率。这是所有宽基广度指标共同的陷阱：中性线不在 50。',
+9:'底层返回 0–1 比率，图表乘 100 显示。'},en:{
+7:'A reading of 45 is not "weak" until you know the base rate. Broad-universe breadth series do not have their neutral line at 50.'}},
+
+'DJI>MA200':{zh:{
+0:'道指中收盘价高于 200 日均线的成分股数量。',
+1:'成分股总数 30。',
+3:'比例 × 100。',
+5:'只有 31 个可能取值，步长 100/30 = 3.33 个百分点。',
+6:'也就是**一只股票 = 3.33 个百分点**。这么粗的粒度意味着它无法反映细微的广度变化，只适合看极端状态。',
+8:'底层返回 0–1 比率，图表乘 100 显示。'},en:{
+6:'One stock equals 3.33 percentage points — too coarse for subtle shifts, useful only at extremes.'}},
+
+'SOX>MA200':{zh:{
+0:'费城半导体指数中收盘价高于 200 日均线的成分股数量。',
+1:'成分股总数 30。',
+3:'比例 × 100。',
+5:'30 只成分股，粒度同样是 3.33 个百分点。',
+6:'但与道指不同的是，这些成分股共享**同一个产业周期**，',
+7:'因此该序列的行为接近**方波**：要么绝大多数在均线上，要么绝大多数在下，中间过渡很快。半导体是强周期行业，这个形态本身就是行业属性的体现。',
+9:'底层返回 0–1 比率，图表乘 100 显示。'},en:{
+7:'Sharing one industrial cycle makes the series behave like a square wave — mostly all above or all below, with fast transitions.'}},
+
+'N225>MA200':{zh:{
+0:'日经 225 中收盘价高于 200 日均线的成分股数量。',
+1:'成分股总数 225。',
+3:'比例 × 100。',
+5:'重要结构差异：日经指数本身是**价格加权**的，',
+6:'因此指数点位被少数高价股主导（例如优衣库母公司）。',
+7:'而这个广度序列是等权重的对应物，',
+8:'所以它**可以长期与指数背离**，这是构造上的必然而非异常。日经涨而广度不涨，往往只是几只高价股在动。'},en:{
+8:'Long divergences from the index are structural, not anomalies: the Nikkei is price-weighted while this series is equal-weighted.'}},
+
+'HSI>MA200':{zh:{
+0:'恒指中收盘价高于 200 日均线的成分股数量。',
+1:'成分股总数约 80。',
+3:'比例 × 100。',
+5:'典型行为：该序列可以连续六到十二个月停留在 20 以下，',
+6:'远长于任何美股广度指标的同类状态，',
+7:'原因是这个市场的政策与流动性体制具有很强的**持续性**——',
+8:'不像美股那样均值回归。因此用美股经验中的"低于 20 即将反弹"来交易港股广度，会在长熊市中反复抄底失败。'},en:{
+8:'Importing the US intuition that "below 20 means a bounce is near" fails here, because policy regimes in this market persist far longer.'}},
+
+'HSTECH>MA200':{zh:{
+0:'恒生科技指数中收盘价高于 200 日均线的成分股数量。',
+1:'成分股总数 30。',
+3:'比例 × 100。',
+5:'30 只成分股，步长 3.33 个百分点。成分股全部是中国互联网与硬件公司，',
+6:'共享几乎相同的监管与融资环境暴露，',
+7:'因此实际的横截面相关性经常超过 0.8——',
+8:'这意味着**有效样本量远小于 30**。统计上它更接近"一只股票"而非"三十只股票"，',
+9:'把它当作独立的广度确认信号是有误导性的。'},en:{
+8:'Realised cross-sectional correlation above 0.8 means the effective sample is a small fraction of 30.',
+9:'Treating it as independent breadth confirmation is misleading — statistically it behaves closer to one name than thirty.'}},
+
+'HXC>MA200':{zh:{
+0:'纳斯达克中国金龙指数中收盘价高于 200 日均线的成分股数量。',
+1:'成分股约 65 只在美上市的中概股 ADR。',
+3:'比例 × 100。',
+5:'这些成分股共享同一套退市与审计监管风险、',
+6:'同一条地缘政治新闻流以及同一批投资者，',
+7:'因此该序列基本上是指数本身的平滑滞后副本——它几乎不提供指数之外的独立信息。想用广度来确认中概股行情时，这一点必须先想清楚。',
+9:'底层返回 0–1 比率，图表乘 100 显示。'},en:{
+7:'One regulatory regime, one headline stream, one investor base — the series is close to a smoothed, delayed copy of the index and adds little independent information.'}}
+
+});
+
+/* ---- batch 12: pressure/support channels + the remaining specials ---- */
+Object.assign(FIN.FXZH, {
+
+BBIBOLL:{zh:{
+0:'先算多空指数 BBI（3/6/12/24 四条均线的平均）。',
+2:'σ 取 **BBI 这条已平滑曲线** 的样本标准差（N = 11），而不是收盘价的标准差。这是它与布林带最本质的差别。',
+4:'上轨 = BBI + 6σ。',
+5:'下轨 = BBI − 6σ。',
+7:'对比：标准布林带取**收盘价**的 σ，乘数 M = 2。',
+8:'而 BBIBOLL 取的是 BBI 的 σ。由于 BBI 本身已经平滑掉大部分波动，它的标准差比收盘价的标准差小约 5–8 倍，',
+9:'所以这里必须用异常大的乘数 6 才能得到宽度相当的通道。看到"6 倍标准差"不要惊讶——它不是更宽松，只是分母不同。'},en:{
+2:'The deviation of the SMOOTHED line, not of the close — the essential difference from Bollinger.',
+9:'BBI\'s own deviation is roughly 5–8× smaller than the close\'s, which is why the multiplier has to be 6. It is not a looser band, just a different base.'}},
+BBW:{zh:{
+0:'先取收盘价的总体标准差（20 周期）。',
+1:'中轨为 20 周期均线。',
+2:'上下轨为中轨 ± 2σ。',
+4:'带宽 =（上轨 − 下轨）÷ 中轨。',
+5:'化简后等于 2 × W × σ ÷ 中轨——注意上下轨相减时中轨被消掉了，只剩标准差与价格之比。',
+7:'因此它是一个**纯比率**：0.08 表示 2σ 带宽相当于价格的 8%。',
+8:'除以中轨这一步是关键，它让带宽可以跨品种、跨年代直接比较——这是布林带本身做不到的。极低的带宽（历史分位数低位）常被用作"波动率压缩、变盘临近"的信号。'},en:{
+5:'The middle band cancels in the subtraction, leaving the ratio of deviation to price.',
+8:'Dividing by the middle band is what makes it comparable across instruments and across decades, which the raw bands are not.'}},
+CDP:{zh:{
+0:'所有输入都来自**前一根** K 线：',
+1:'前一根的高、低、收。这意味着当日所有价位在开盘前就已经确定。',
+3:'CDP 是枢轴中枢，取前一根的典型价格。',
+5:'最高值 = 中枢 + 前一根振幅，视为向上突破位。',
+6:'近高值 = 2×中枢 − 前低。',
+7:'近低值 = 2×中枢 − 前高。',
+8:'最低值 = 中枢 − 前一根振幅，视为向下突破位。',
+10:'每个价位在当根 K 线内**恒定不变**，',
+11:'这就是这些线画成水平阶梯的原因。实用价值正在于此：开盘前就知道今天的关键价位，可以提前挂单，不需要盘中临时判断。'},en:{
+1:'Every level is fixed before the session opens.',
+11:'That is the practical value: you know today\'s levels in advance and can place orders ahead of time rather than deciding mid-session.'}},
+CKS:{zh:{
+0:'先用 Wilder 平滑求 ATR（P = 10）。',
+2:'初步空头止损 = P 根最高价 − 1 倍 ATR。',
+3:'初步多头止损 = P 根最低价 + 1 倍 ATR。',
+5:'再对初步止损取 Q 根的极值（Q = 9）：空头止损取这 9 根候选值的**最大值**。',
+6:'多头止损取候选值的最小值。',
+8:'第二次取极值就是**棘轮机制**：空头止损只有在整个 9 根候选历史都下移之后才能下移，',
+9:'因此它不会因为单根 K 线的波动而突然放松。这是与简单 ATR 追踪止损的关键区别——后者会随每根 ATR 抖动而时紧时松，失去止损应有的确定性。'},en:{
+9:'A plain ATR trail loosens and tightens with every bar; the second pass makes this one move only when the whole recent history of candidates has moved.'}},
+DC:{zh:{
+0:'上轨 = 最近 N 根的最高价。',
+1:'下轨 = 最近 N 根的最低价。',
+2:'中轨为两者均值。',
+4:'默认 N = 20（著名的海龟交易系统用 20 根入场、10 根出场）。',
+6:'请注意它**没有任何平滑、平均或统计处理**——',
+7:'通道本身就是近期价格的极值。这是它最大的优点：不存在参数拟合，也不存在滞后争议，突破就是字面意义上的"创 N 根新高"。代价是极值对单根异常 K 线完全没有抵抗力。'},en:{
+7:'No fitting and no lag debate — a breakout literally means a new N-bar extreme. The cost is zero resistance to a single outlier bar.'}},
+ENE:{zh:{
+0:'先取 M 周期均线。',
+2:'上轨 = 均线 ×(1 + 11%)。',
+3:'下轨 = 均线 ×(1 − 9%)。注意上下幅度**不相等**，这是有意设计：上涨行情的空间通常大于下跌。',
+4:'ENE 取上下轨的均值。',
+6:'因此 ENE **不等于**均线——由于 M1 ≠ M2，中线是偏斜的。',
+7:'具体而言这里 ENE = 均线 × 1.01，即比均线高 1%。这是一个容易被忽略的细节：如果你以为中线就是均线并据此判断多空，会有 1% 的系统性偏差。'},en:{
+3:'The two percentages differ deliberately: upside room is usually larger than downside.',
+7:'So the midline sits 1% above the moving average. Mistaking it for the average introduces a systematic 1% bias.'}},
+KC:{zh:{
+0:'中线用 20 周期 EMA。',
+2:'真实波幅，含跳空。',
+3:'ATR 在本实现中用**简单平均**，',
+4:'而不是 Wilder 平滑——与经典肯特纳通道略有差异，数值会略有不同。',
+6:'上轨 = 中线 + 2 ATR。',
+7:'下轨 = 中线 − 2 ATR。',
+9:'关键区别：通道宽度由**真实波幅**驱动，因此跳空和涨跌停都被计入，',
+10:'而布林带用的是收盘价的标准差，完全看不到跳空。这就是为什么在跳空频繁的品种上，肯特纳通道比布林带更能反映真实风险，也是 TTM Squeeze 要用这两者做比较的原因。'},en:{
+10:'Bollinger uses the deviation of closes and is blind to gaps. That is why Keltner reflects real risk better on gap-prone instruments, and why TTM Squeeze compares the two.'}},
+MIKE:{zh:{
+0:'先取典型价格。',
+1:'再取 M 根内的最高价与最低价。',
+3:'弱压力 = 2×典型价 − 最低价。',
+4:'中压力 = 典型价 +（最高 − 最低）。',
+5:'强压力 = 2×最高 − 最低。',
+7:'弱支撑 = 2×典型价 − 最高价。',
+8:'中支撑 = 典型价 −（最高 − 最低）。',
+9:'强支撑 = 2×最低 − 最高。',
+11:'六条线全部由**同样的三个数**（典型价、区间高、区间低）',
+12:'每根重算得到。因此它们之间的间距是固定的比例关系，本质上是把区间按倍数向外投射。这类"压力支撑位"没有成交量或持仓依据，只是几何外推——请把它当作参考刻度而非真实的市场结构。'},en:{
+12:'All six are geometric projections of the same three numbers, with no volume or positioning behind them. Treat them as a reference scale, not as real market structure.'}},
+PPSW:{zh:{
+0:'先取更高时间框架的窗口（日线取 W = 5，',
+1:'即一个交易周；源码会根据图表周期自动决定 W）。',
+3:'取窗口内的最高、最低和窗口开盘价。',
+5:'Woodie 枢轴 =（前窗口高 + 前窗口低 + 2×开盘）÷ 4。注意它给**开盘价双倍权重**，这正是 Woodie 版本与标准枢轴的唯一区别——标准版用收盘价且不加权。',
+7:'一档阻力与支撑。',
+8:'二档在枢轴基础上加减整个窗口振幅。',
+9:'三档进一步外推。',
+10:'四档再加一个振幅。越往外的档位越依赖几何外推、越少实际依据，通常只有 PP、R1、S1 具有实用参考价值。'},en:{
+5:'Woodie double-weights the OPEN — the only difference from the standard pivot, which uses the close unweighted.',
+10:'The outer levels are pure geometric extrapolation; in practice only PP, R1 and S1 carry much weight.'}},
+CVLT:{zh:{
+0:'先对每根振幅（高 − 低）做 EMA 平滑。',
+2:'蔡金波动率 = 平滑振幅相对 M 根之前的百分比变化。',
+4:'读作："经过平滑的高低振幅，比 M 根之前宽了百分之多少"。',
+5:'请注意它的基础量是**日内振幅**，不是收盘到收盘的收益率。这是它与标准历史波动率的根本区别：CVLT 衡量的是"盘中波动在扩张还是收缩"，完全不涉及方向，也不受跳空影响（跳空发生在两根之间，不在振幅内）。'},en:{
+5:'The base quantity is the intraday spread, not close-to-close return. It measures range expansion and is blind to both direction and gaps.'}},
+HSLC:{zh:{
+0:'先取两根之间的价格变化。',
+1:'RMS 是这个变化量的均方根（L = 50），可以理解为它的典型幅度。',
+2:'x = 变化量 ÷ RMS，即把动量表示成"多少个标准差单位"。归一化之后才能套用固定阈值。',
+4:'软限幅用 tanh，即反 Fisher 变换：它把整条实轴平滑地压缩到 −1 到 +1，越接近边界压缩越强，但**永远不会真正截断**。',
+5:'硬限幅直接把超出 ±1 的部分削平，超出的部分信息全部丢失。',
+7:'FIR6 是一个六阶对称加权滤波器（权重 1:2:3:3:2:1），用于最后平滑。',
+9:'软限幅结果。',
+10:'硬限幅结果。两者对比正是这个指标存在的意义：观察"平滑压缩"与"粗暴截断"对同一信号的不同影响。',
+12:'注意此处的 "limiter" 指**信号限幅**（电子工程术语），与股票的涨跌停限制毫无关系。'},en:{
+4:'tanh compresses the whole real line into ±1, squeezing harder near the edges but never actually truncating.',
+12:'"Limiter" here is signal clipping in the electronics sense, not a price limit.'}},
+IC:{zh:{
+0:'转换线：9 根区间的中点。',
+1:'基准线：26 根区间的中点。',
+2:'迟行线：把当前收盘价画到 **26 根之前**的位置，用于回看确认。',
+3:'先行带 A：转换线与基准线的中点，画到 **26 根之后**。',
+4:'先行带 B：52 根区间的中点，同样前移 26 根。',
+6:'两条先行带之间的区域即"云"。',
+7:'先行带 A 在 B 之上时云为多头云。',
+9:'关键提醒：一目均衡表的所有"平均"都是**区间中点**（最高加最低除以二）， 而不是收盘价的平均。这是它与所有均线系统的根本差异——中点对极值敏感、对收盘价不敏感，因此它描述的是"波动区间的中枢"而非"平均成本"。另外要注意：云被前移了 26 根，因此图表右侧的云是**已知**的，这是一目均衡表少数具有前瞻性的部分。'},en:{
+9:'Every average is a MIDPOINT of the high-low range, not a mean of closes — the fundamental difference from every moving-average system. The cloud is displaced 26 bars forward, so the cloud to the right of price is already known — the one genuinely forward-looking element.'}},
+MICD:{zh:{
+0:'先取单根动量。',
+1:'用 Wilder 平滑（P = 3）。',
+2:'DIF 取两条不同周期均线之差，注意都作用在**昨天**的 AMI 上。',
+3:'MICD 是 DIF 的再平滑，作为信号线。',
+5:'那个 [1] 位移意味着每一次平均都取自昨日值，整体又多了一根滞后。',
+6:'一个有意思的等价关系：由于 SMA(C − C[1], N) 会**望远镜式地相消**为 (C − C[−N])÷N，',
+7:'DIF 在算术上非常接近两个 ROC 读数之差的缩放版本。也就是说这个看起来复杂的指标，本质上仍然是动量的差分，只是被多层平滑包装了。'},en:{
+6:'SMA of one-bar differences telescopes to (C − C[−N])/N.',
+7:'So this apparently elaborate indicator is arithmetically close to a scaled difference of two ROC readings, wrapped in several smoothing layers.'}},
+NINE:{zh:{
+0:'上升结构：收盘价高于 4 根之前的收盘，且必须**连续**成立。',
+1:'下降结构：收盘价低于 4 根之前的收盘，同样要求连续。',
+3:'计数即条件连续成立的根数。',
+4:'达到 9 才算一个完整结构——这就是"神奇九转"的来源。',
+6:'注意只有真正走到 9 的序列才会被标记，',
+7:'1 到 9 的数字是**事后回填**到那九根上的。进行中的序列超过 5 之后才会显示。',
+8:'任何一根打破条件，计数立即归零。这个"必须连续"的要求是 TD 序列的核心，也意味着它天然带有回填特性——你在历史图上看到的完美九转，在当时的第 6 根上是无法确认的。'},en:{
+7:'The 1–9 labels are back-filled onto the nine bars once the run completes.',
+8:'Which means a perfect setup visible in hindsight was not confirmable at bar six in real time.'}},
+RC:{zh:{
+0:'变化率 = 当前收盘 ÷ M 根之前的收盘，是**比值**而非百分比（M = 50）。',
+1:'ARC 再对它做同样 50 周期的 Wilder 平滑。',
+3:'ARC 大于 1 表示价格平均而言高于约 50 根之前的水平。',
+5:'注意有效记忆约为 M（回看）+ M（平滑）≈ 100 根。这意味着它对近期变化极不敏感，是一个长周期的趋势状态判断工具，用它做择时会严重滞后。'},en:{
+5:'Effective memory is the lookback plus the smoothing, about 100 bars — a long-horizon regime read, badly lagged for timing.'}},
+RCCD:{zh:{
+0:'先取 59 根的价格比值。',
+1:'Wilder 平滑一次。',
+2:'再取两条均线之差（21 与 28）。',
+3:'再 Wilder 平滑一次得到最终值。',
+5:'从原始收盘价到最终画出的线，中间一共经过**五次平滑运算**。',
+6:'首个有效值需要约 200 根预热数据。',
+7:'输出量级通常在千分之几。三点合起来的含义是：这个指标极度平滑、极度滞后、数值极小，它只适合观察超长周期的动能背离，任何短中期用途都不合适。'},en:{
+7:'Extremely smoothed, heavily lagged and tiny in magnitude — suitable only for very long-horizon divergence, nothing shorter.'}},
+SRMI:{zh:{
+0:'下跌时：除以**旧价格**（M 根之前的价格）。',
+1:'持平时为 0。',
+2:'上涨时：除以**新价格**（当前价格）。',
+4:'注意分母会**切换**：下跌用旧价，上涨用新价。',
+5:'这个不对称设计的目的是让结果严格落在 −1 到 +1 之间——因为上涨时分母更大，涨幅再大也不会突破 1。',
+7:'一个具体例子说明它的性质：上涨 100% 读数为 +0.50，而随后回撤 50%（正好抵消）读数为 −0.50。两者绝对值相同——这正是设计意图：让"涨一倍"和"跌一半"这对互逆操作在指标上对称，而普通百分比做不到（+100% 与 −50%）。'},en:{
+5:'The switch is what bounds the result: on a rise the denominator is the larger number, so no move can exceed 1.',
+7:'A +100% move reads +0.50 and the offsetting −50% move reads −0.50 — the two inverse operations become symmetric, which plain percentages never are.'}},
+SVSI:{zh:{
+0:'先取一条 6 周期 EMA 作为多空分界。',
+2:'收盘在 EMA 之上的根，其成交量计入 UP，用**线性加权**平均。',
+3:'在 EMA 之下的计入 DN。',
+5:'VSI = UP ÷(UP + DN)× 100，落在 0–100。',
+7:'注意用的是线性加权平均（WMA），因此最近几根的权重明显更高，反应比等权平均快。',
+8:'参考线 80/50/20。它衡量的是"成交量集中在均线上方还是下方"，与 RSI 衡量价格强弱不同——放量下跌会把它压得很低，即使价格跌幅不大。'},en:{
+8:'It measures whether volume is occurring above or below the average, not price strength. Heavy selling drives it down even when the price decline is modest.'}},
+UTBOT:{zh:{
+0:'止损距离 = K × ATR（K = 1，N = 10，Wilder ATR）。',
+2:'价格在止损上方且前一根也在上方：止损只能上移，取较大者。',
+3:'价格在止损下方且前一根也在下方：止损只能下移。',
+4:'刚上穿止损：止损重置为 收盘 − nLoss。',
+5:'否则重置为 收盘 + nLoss。',
+7:'收盘由下向上穿越止损线即买入信号。',
+8:'由上向下穿越即卖出信号。',
+10:'关键特征：止损是从**收盘价**起算的，而不是从波段极值起算。这与 Chandelier、SAR 等以极值为锚的追踪止损有本质区别——以收盘为锚意味着它对影线不敏感，不容易被长上影洗出去，但相应地在急速反转时会退让更多。'},en:{
+10:'The stop trails from the CLOSE, never from the swing extreme. That makes it insensitive to wicks — harder to shake out, but it concedes more on a sharp reversal.'}},
+WF:{zh:{
+0:'上分形的判定（P = 2）：',
+1:'中间那根的最高价不低于左侧两根，且**严格高于**右侧两根。',
+3:'下分形对称：',
+4:'中间那根最低价不高于左侧两根，且严格低于右侧两根。',
+6:'注意一侧用"不低于"、另一侧用"严格大于"——这个不对称是刻意的：',
+7:'它保证一段平顶只会被标记**一次**，而不是平顶上每一根都标记。若两侧都用非严格比较，横盘区域会产生大量重复标记。',
+9:'标记的绘制偏移量取收盘价 21 周期标准差的 0.2 倍，使标记随波动率自适应地远离 K 线。',
+11:'最重要的一点：分形标记**必须等到枢轴之后 P 根才能画出来**，',
+12:'因为判定需要右侧两根的数据。这个滞后是**定义决定的**，不是实现缺陷——任何声称能实时给出分形信号的做法都是在偷看未来。'},en:{
+7:'One side strict, one side loose: that asymmetry is what marks a flat top once instead of on every bar of the plateau.',
+12:'The lag is definitional, not an implementation choice — the right-hand bars are required to make the judgement. Any "real-time fractal" is looking ahead.'}}
+
+});
+
 /* FXZH-BATCHES */
 }(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
