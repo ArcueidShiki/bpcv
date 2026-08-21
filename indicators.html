@@ -7547,6 +7547,342 @@ TOTALASSETRATE_FY:{zh:{
 
 });
 
+/* ---- batch 4: trend — moving averages and directional systems ---- */
+Object.assign(FIN.FXZH, {
+
+EMA:{zh:{
+0:'平滑系数 α = 2/(n+1)。n 越大 α 越小，新数据的权重越低，线越平滑也越滞后。',
+1:'递归定义：今天的 EMA = α×今天收盘 +(1−α)×昨天的 EMA。它只需要昨天的值和今天的价格，不需要保存整个窗口，这是它计算上远优于 SMA 的原因。',
+2:'前 n 根用简单移动平均作为起始种子，否则递归没有起点。',
+4:'常用周期组：5/10/20/60/120/250，分别对应约一周、两周、一月、一季、半年、一年。',
+5:'重心大约在 (n−1)/2 根之前，与同周期 SMA 相同——所以 EMA 并不比 SMA "更快"，它快的是对**新价格**的反应，不是整体重心。',
+6:'k 根之前那根 K 线的权重是 α(1−α)^k：指数衰减但**永远不会真正归零**。这意味着 EMA 有无限长的记忆，很久以前的极端价格仍在以极小的权重影响今天的值。'},en:{
+1:'Recursive: it needs only yesterday\'s value and today\'s price, not the whole window — which is why it is cheaper than an SMA.',
+5:'Centre of mass matches an SMA of the same n. EMA is faster to react to NEW prices, not lighter overall.',
+6:'Weights decay exponentially but never reach zero, so an EMA has infinite memory — a distant spike still nudges today\'s value.'}},
+
+WMA:{zh:{
+0:'加权移动平均：最近一根权重 n，往前依次递减到 1，再除以权重总和。它是线性递减加权，而 EMA 是指数递减。',
+2:'分母是三角数 n(n+1)/2，也就是 1+2+…+n，用来把权重归一化。',
+3:'重心在 (n−1)/3 根之前，',
+4:'而 SMA 和 EMA 都是 (n−1)/2。',
+5:'以 n=9 为例：WMA 重心 2.67 根，SMA/EMA 是 4.0 根。所以同周期下 WMA 明显更贴近价格、更少滞后，代价是更容易被单根异常 K 线带偏。',
+6:'默认 n = 9。'},en:{
+0:'Linearly decreasing weights, in contrast to the EMA\'s exponential decay.',
+5:'At n = 9 the WMA sits 2.67 bars back against 4.0 for SMA/EMA — less lag, but more sensitive to a single outlier bar.'}},
+
+DEMA:{zh:{
+0:'先做一次 n 周期 EMA。',
+1:'再对这条 EMA 做一次同周期 EMA，得到"两次平滑"的结果。E2 比 E1 更滞后。',
+3:'DEMA = 2·E1 − E2。',
+4:'把它改写成 E1 +(E1 − E2) 就一目了然了：(E1 − E2) 正是这次平滑造成的**滞后量估计**，把它加回去，等于对滞后做了一次补偿。',
+6:'默认 n = 9。特别注意：DEMA **不是**"EMA 的 EMA"，',
+7:'而是一条 EMA 加上一个滞后修正项。代价是修正会放大噪音——震荡行情里 DEMA 的假信号明显多于 EMA。'},en:{
+4:'(E1 − E2) estimates the lag that smoothing introduced; adding it back compensates for it.',
+7:'The correction amplifies noise, so DEMA produces more false signals than a plain EMA in a chop.'}},
+
+TEMA:{zh:{
+0:'第一次 EMA。',
+1:'对 E1 再做一次 EMA。',
+2:'对 E2 再做第三次 EMA。',
+4:'TEMA = 3(E1 − E2) + E3，',
+5:'展开即 3E1 − 3E2 + E3。',
+6:'这是 1 −(1 − EMA)³ 的展开式，',
+7:'含义是把 EMA 算子当作一个**二阶**滞后修正来使用，',
+8:'比 DEMA 的一阶修正更进一步。',
+10:'默认 n = 9。',
+11:'DEMA 做一次修正，TEMA 做两次。修正阶数越高，滞后越小，但对噪音的放大也越严重——TEMA 在趋势里很漂亮，在震荡里会来回抽打。'},en:{
+6:'The expansion of 1 − (1 − EMA)³, i.e. the EMA operator used as a second-order lag correction.',
+11:'Higher-order correction means less lag and more noise amplification — TEMA looks excellent in a trend and whipsaws badly in a range.'}},
+
+HMA:{zh:{
+0:'第一步：用半周期 WMA 的两倍减去全周期 WMA。这个差值把滞后几乎完全抵消掉，但结果非常毛糙。',
+1:'第二步：对上一步的结果再做一次 √n 周期的 WMA，把平滑度补回来。',
+3:'默认 n = 9，对应 WMA(4)、WMA(9)，最后用 WMA(3) 平滑。',
+5:'第一步（做差）负责消除滞后。',
+6:'第二步（√n 的 WMA）负责恢复平滑。Hull 的巧妙之处在于用 √n 而不是 n 做最终平滑——既压住了噪音，又没有把刚刚消掉的滞后重新引入。'},en:{
+0:'The difference cancels most of the lag but leaves a very rough series.',
+6:'The trick is smoothing with √n rather than n — enough to tame the noise without reintroducing the lag just removed.'}},
+
+LSMA:{zh:{
+0:'对最近 n 根收盘价做最小二乘直线拟合，',
+1:'即找一条直线 C ≈ a + b·k 使得所有点到它的垂直距离平方和最小。',
+3:'b 是斜率，含义是"每根 K 线的平均价格变化"。',
+4:'a 是截距。',
+6:'LSMA 取这条拟合直线在**今天**这一点的值，',
+7:'等价于"预测值减去一个斜率"。',
+9:'默认 n = 25。TSF（时间序列预测）= a + b·n，就是同一条直线**往前推一根**的值。所以 LSMA 与 TSF 的差恰好是一个 b，两者形状完全相同、只差一个平移。'},en:{
+1:'The straight line minimising the sum of squared vertical distances to the last n closes.',
+9:'TSF is the same fitted line one bar ahead, so TSF − LSMA is exactly the slope b — identical shape, shifted.'}},
+
+VWMA:{zh:{
+0:'成交量加权移动平均：用成交量作为权重对收盘价加权。放量的那根 K 线在均线中说话更响。',
+2:'默认 n = 20。',
+4:'把它和同周期的普通 SMA 放在一起对比才有意义：',
+5:'VWMA 在 SMA 上方 → 大成交量集中在**高价位**成交，说明买盘在高位是认真的。',
+6:'VWMA 在 SMA 下方 → 大成交量集中在**低价位**成交，说明抛压主要出现在低位。',
+7:'真正的信号是两者的差值 VWMA − SMA，它衡量"钱在哪个价位上"，而单看 VWMA 本身与 SMA 差别不大。'},en:{
+5:'Heavy volume printed at the high prices — buyers were serious up there.',
+7:'The spread is the signal: it measures where the money actually traded, which a VWMA alone does not reveal.'}},
+
+TWAP:{zh:{
+0:'锚点：日内数据上是每个交易日的第一根 K 线，',
+1:'日线及以上是每年的第一根。',
+2:'k 是自锚点以来经过的 K 线根数。',
+4:'TWAP = 锚点至今所有收盘价的简单平均，随时间不断累积。',
+6:'关键特征：每根 K 线权重完全相同，**完全不考虑成交量**。',
+7:'对比 VWAP = Σ(C×V)/ΣV。两者的差别就是"时间平均"与"成交量平均"之别：TWAP 假装每个时刻同等重要，VWAP 承认成交集中的时刻更重要。机构拆单时选 TWAP 还是 VWAP，本质是选择在时间上均匀铺开还是跟随市场真实成交节奏。'},en:{
+7:'TWAP treats every moment as equally important; VWAP admits that moments with more trading matter more. Choosing between them as an execution algo is choosing between spreading evenly over time and following the market\'s actual rhythm.'}},
+
+BBI:{zh:{
+0:'多空指数 = 3、6、12、24 四条简单均线的算术平均，把不同周期揉成一条线。',
+2:'把四条 SMA 展开后，每根 K 线的实际权重是阶梯式的：',
+3:'最近 1–3 根，每根约 15.6%（因为它同时出现在全部四条均线里）。',
+4:'第 4–6 根，每根约 7.3%（出现在三条里）。',
+5:'第 7–12 根，每根约 3.1%。',
+6:'第 13–24 根，每根约 1.0%。',
+7:'重心约在 5.1 根之前，因此它的快慢大致相当于一条 EMA(11)。BBI 的价值不在于比单条均线更准，而在于它把"短中长周期是否一致"压缩成了一条线。'},en:{
+3:'The most recent bars carry the most weight because they appear in all four averages at once.',
+7:'BBI is not more accurate than one average; it compresses "do the short, medium and long horizons agree" into a single line.'}},
+
+GMMA:{zh:{
+0:'短期组（交易者）：EMA 3、5、8、10、12、15。',
+1:'长期组（投资者）：EMA 30、35、40、45、50、60。',
+3:'短期组宽度 = EMA3 − EMA15，衡量短线交易者内部的分歧程度。',
+4:'长期组宽度 = EMA30 − EMA60，衡量长线投资者内部的分歧程度。',
+5:'两组的间距 = 短期组均值 − 长期组均值。',
+7:'读法的核心是**几何形态**而不是任何单条线：两组都收窄并纠缠 = 分歧消失、变盘临近；短期组穿越长期组且两组同时张开 = 趋势确立；长期组保持张开而短期组回踩后重新张开 = 趋势中的健康回调，通常是顺势加仓点。'},en:{
+7:'The geometry is the signal, not any single line: both groups compressed means a pending resolution; both fanned out after a cross means the trend is established.'}},
+
+ADX:{zh:{
+0:'先算相邻两根 K 线的上沿变化：今天最高价减昨天最高价。',
+1:'再算下沿变化：昨天最低价减今天最低价。注意方向定义，down 为正表示今天更低。',
+3:'+DM 只在"上沿扩张幅度大于下沿扩张且为正"时取值，否则为 0。',
+4:'−DM 反之。两者不可能同时为正——这一步把"今天更像上涨还是更像下跌"二选一地判定了。',
+6:'真实波幅，包含跳空。',
+7:'用 Wilder 平滑（α = 1/14）对 TR 求均值。',
+9:'+DI = 平滑后的 +DM 占真实波幅的百分比，即"向上的动能占总波动的多少"。',
+10:'−DI 同理。',
+12:'DX = 两者之差的绝对值除以两者之和，衡量方向的**不平衡程度**。取绝对值意味着它只关心趋势有多强，不关心是涨是跌。',
+13:'ADX 是 DX 的平滑值。这是最关键的一点：**ADX 不指示方向**，只指示趋势强度。ADX 上升表示趋势在增强（上涨下跌皆可），低于 20 通常视为无趋势的震荡市，此时所有趋势跟随策略都会亏钱。'},en:{
+4:'They cannot both be positive — this step forces a choice between "more like an up bar" and "more like a down bar".',
+12:'The absolute value means DX cares only how one-sided the move is, not which side.',
+13:'ADX does NOT indicate direction, only trend strength. Below 20 is a range, where every trend-following system bleeds.'}},
+
+DMI:{zh:{
+0:'n 根 K 线的真实波幅之和。',
+2:'HD = 今日最高 − 昨日最高。',
+3:'LD = 昨日最低 − 今日最低。',
+5:'DMP 累加"向上动能"：只在 HD 为正且大于 LD 时计入。',
+6:'DMM 累加"向下动能"：只在 LD 为正且大于 HD 时计入。同一根 K 线只能计入其中一边。',
+8:'PDI = 向上动能占真实波幅的百分比。',
+9:'MDI = 向下动能占真实波幅的百分比。PDI 上穿 MDI 是经典的多头信号，反之为空头。',
+11:'ADX 是两者差异程度的平滑值，仍然只表示强度不表示方向。',
+12:'ADXR =（当前 ADX + m 根之前的 ADX）/2，被称为"评估线"。它比 ADX 更钝，用途是过滤 ADX 自身的抖动——ADX 上穿 ADXR 常被当作趋势确立的确认。'},en:{
+6:'A single bar can only contribute to one side.',
+12:'ADXR is deliberately duller than ADX; an ADX crossing above it is used as confirmation that a trend has taken hold.'}},
+
+DDI:{zh:{
+0:'先取高低价之和作为这根 K 线的"中枢"，与前一根比较。',
+1:'span 取高点变化与低点变化中较大的绝对值，作为这根 K 线的偏移幅度。',
+3:'中枢上移时，把 span 记为向上偏离 DMZ。',
+4:'中枢下移时，记为向下偏离 DMF。',
+6:'DIZ = 13 根内向上偏离占总偏离的比例。',
+7:'DIF = 向下偏离占比，恒等于 1 − DIZ。',
+9:'DDI = DIZ − DIF，因此天然被限制在 −1 到 +1 之间，正值表示这段时间向上偏离占主导。',
+10:'ADDI 是对 DDI 的平滑（α = 10/30）。',
+11:'AD 再对 ADDI 做 5 周期简单平滑。三层平滑意味着 DDI 系统反应很慢，它的定位是过滤噪音后的中期方向判断，不适合做短线信号。'},en:{
+9:'Bounded to −1…+1 by construction, since DIZ and DIF sum to 1.',
+11:'Three layers of smoothing make this a slow, mid-horizon direction filter rather than a short-term signal.'}},
+
+AROON:{zh:{
+0:'AROON_UP 衡量"距离最近一次 n 周期新高过去了多久"，换算成 0–100。刚创新高时为 100。',
+1:'AROON_DOWN 同理，衡量距离最近一次新低有多久。',
+3:'默认 n = 14。',
+4:'今天就创了 n 根新高 ⇒ 间隔为 0 ⇒ UP = 100。',
+5:'最高点出现在窗口最边缘 ⇒ 间隔 n−1 ⇒ 值为 100/n ≈ 7.1。',
+7:'注意间隔只能取 0 到 n−1 这 n 个整数，',
+8:'所以每条线只有 n 个可能取值（默认 14 个），以 100/n ≈ 7.1 为步长跳变，是**离散阶梯**而非连续曲线。',
+9:'并且它永远到不了 0，下限就是 100/n。Aroon 的独特之处在于它衡量的是"时间"而不是"价格幅度"——它回答的是"多久没创新高了"，这是其他动量指标不提供的视角。'},en:{
+8:'Each line takes only n discrete values, stepping by 100/n — it is a staircase, not a smooth curve.',
+9:'Aroon measures TIME rather than price magnitude: how long since a new extreme, a view no other momentum indicator offers.'}}
+
+});
+
+/* ---- batch 5: trend — oscillators, stops and state machines ---- */
+Object.assign(FIN.FXZH, {
+
+SI:{zh:{
+0:'先算今日高/低价相对昨收的偏离，以及本根 K 线的振幅。',
+1:'D 是昨日实体（昨收与昨开之差）的绝对值。',
+3:'X 综合了收盘变化、当日实体、昨日实体三部分，是"这根 K 线到底推动了多少"的加权度量。',
+4:'K 取 A、B 中较大者，代表相对昨收的最大偏离。',
+5:'M 再与本根振幅比较取大者。',
+7:'R 的取值分三种情况：当 A 最大时，',
+8:'当 B 最大时，',
+9:'当振幅最大时。这三支分别对应"向上跳空主导""向下跳空主导""正常波动主导"，目的是让分母始终反映当根最主要的波动来源。',
+11:'SI 是把上述量归一化后的摆动值，n 是涨跌停幅度除数。SI 单根意义不大，它的用途是累加成 ASI——用累计值来确认价格趋势是否被真实的波动结构支撑。'},en:{
+9:'The three branches correspond to an up gap, a down gap, and an ordinary range dominating, so the denominator always reflects the bar\'s main source of movement.',
+11:'A single SI reading means little; it is designed to be accumulated into ASI, where the running total confirms whether price structure supports the trend.'}},
+
+MI:{zh:{
+0:'先取 m 根之前到今天的价格差，m = 12。这就是最原始的动量定义：现在比过去高多少。',
+1:'再用 Wilder 平滑（α = 1/12）对这个差值求均值，滤掉单根噪音。',
+3:'注意它**无上下界**，且以标的自身的价格单位计价——$500 的股票和 $5 的股票，MI 数值天然不可比。',
+4:'MI 大于 0 等价于"价格高于 12 根之前的水平"。它的过零点就是中期趋势方向的切换点。'},en:{
+3:'Unbounded and quoted in the instrument\'s own price units, so it is not comparable between a $500 stock and a $5 one.'}},
+
+TRIX:{zh:{
+0:'第一次 EMA 平滑。',
+1:'第二次。',
+2:'第三次，p = 12。三重平滑的目的是彻底滤掉短期噪音，只留下主趋势。',
+4:'TRIX 取三重平滑后序列的**单根百分比变化率**。注意是变化率而不是差值，',
+5:'TRMA 是 TRIX 的 20 周期均线，作为信号线。',
+7:'因为取的是百分比变化，',
+8:'TRIX 以百分数计价，',
+9:'所以它**可以跨品种比较**——这正是它相对 MI、DMA 这类以价格单位计价的指标的关键优势。三重平滑的代价是滞后很大，TRIX 的定位是中长期趋势确认而非择时。'},en:{
+9:'Being a percentage makes TRIX comparable across instruments, unlike MI or DMA which are quoted in price units. The cost of triple smoothing is heavy lag.'}},
+
+DMA:{zh:{
+0:'D 是短期均线与长期均线之差（10 与 50）。这与 MACD 的 DIF 是同一个思路，只是用 SMA 而非 EMA。',
+1:'DMA 是对 D 的再平滑，作为信号线。',
+3:'D 大于 0 表示 10 日均线在 50 日均线之上，即短期动能强于长期。',
+4:'D − DMA 承载的信息与 MACD 柱状图完全相同：两线的距离及其变化。',
+6:'注意它以标的价格单位计价、无上下界，因此不能跨品种比较，也不存在"超买超卖"阈值。'},en:{
+0:'The same idea as MACD\'s DIF line, built from simple rather than exponential averages.',
+6:'Price-unit quoted and unbounded, so there is no cross-instrument comparison and no overbought threshold.'}},
+
+PRICEOSC:{zh:{
+0:'价格振荡器把两条均线的差值除以均线本身，换算成百分比，从而消除价格量级的影响。',
+2:'短期 12，长期 26。',
+4:'请特别注意分母：这里除的是**快线**，',
+5:'而教科书里的 PPO 除的是**慢线**。',
+6:'因此本页这个变体的数值尺度与标准 PPO 略有差异，跨软件对比阈值时要留意这一点，不要直接套用别处的超买超卖水平。'},en:{
+6:'The scale therefore differs slightly from the textbook PPO — do not carry overbought thresholds across from another platform.'}},
+
+FO:{zh:{
+0:'TSF 是 n 根最小二乘拟合直线在当前 K 线处的取值，',
+1:'即把收盘价对 K 线序号做线性回归后取端点。',
+3:'FOSC 衡量今日收盘相对**昨天那条回归线的预测值**偏离了百分之多少，n = 5。',
+4:'SIG 是 FOSC 的 3 周期均线。',
+6:'FOSC 大于 0 表示今天的收盘价高于昨天的回归线所预测的水平，',
+7:'也就是价格跑在自己的趋势前面了。它衡量的是"相对自身趋势的偏离"，因此在强趋势中也会频繁回到零轴附近——这与衡量绝对涨跌的动量指标有本质区别。'},en:{
+7:'It measures deviation from the instrument\'s OWN trend, so it returns to zero even in a strong trend — unlike momentum indicators that measure absolute change.'}},
+
+SAR:{zh:{
+0:'前 4 根用于初始化：',
+1:'用这几根的实体累计判断初始方向。',
+2:'看多时用区间最低价作为起始 SAR，看空时用最高价。',
+3:'AF 是加速因子，起始 2%，硬上限 20%。',
+5:'上涨阶段：',
+6:'SAR 每根向极值点靠近一段，靠近的比例就是 AF。这就是"抛物线"的来源——AF 递增使 SAR 追赶速度越来越快。',
+7:'但 SAR 不得进入最近两根 K 线的价格区间，防止被正常波动打掉。',
+9:'下跌阶段对称。',
+10:'同样向下方极值靠近。',
+11:'同样受前两根限制。',
+13:'每创出一次新极值，AF 增加一档，直到上限。',
+14:'价格触及 SAR 时立即反手：SAR 跳到已跟踪的极值处，AF 重置。这就是 Stop and Reverse 的含义——它假设你永远持仓，不是多头就是空头。',
+16:'EP 是自上次翻转以来的最高价或最低价。SAR 的致命弱点是震荡市：AF 不断重置和翻转，会连续被打止损。它只适合明确的趋势行情。'},en:{
+6:'AF rising is what makes the trail parabolic — the stop chases faster the longer the trend runs.',
+14:'Stop AND Reverse: it assumes you are always in the market, long or short.',
+16:'Its fatal weakness is a range, where repeated flips stop you out again and again. It suits established trends only.'}},
+
+SUPER_TREND:{zh:{
+0:'注意这里的 ATR 用简单平均而非 Wilder 平滑，与经典 ATR 略有差异。',
+1:'MID 取当根的中价。',
+2:'上轨 = 中价 + 3 倍 ATR。',
+3:'下轨 = 中价 − 3 倍 ATR。倍数越大，翻转越不敏感、假信号越少但滞后越大。',
+5:'核心是一个状态机，从上轨开始：',
+6:'当前跟随上轨时：',
+7:'收盘突破上一根的 ST 值则翻转，改为跟随下轨。',
+8:'否则 ST 只能取上轨与上一根 ST 的较小值——**只允许向下棘轮**。',
+9:'当前跟随下轨时：',
+10:'收盘跌破则翻转回上轨。',
+11:'否则只允许向上棘轮。',
+13:'这两个 min/max 钳制正是让轨道线在同一段趋势内保持单调的关键：没有它，轨道会随 ATR 波动来回抖动，止损位就会时紧时松，失去意义。'},en:{
+8:'Ratchets one way only.',
+13:'The clamps are what keep the line monotone within a leg — without them the stop would loosen and tighten with every ATR wiggle and stop being a stop.'}},
+
+ALLIGAT:{zh:{
+0:'三条线都建立在中价而非收盘价上。',
+2:'下颚：13 周期平滑，右移 8 根，最慢。',
+3:'牙齿：8 周期，右移 5 根。',
+4:'嘴唇：5 周期，右移 3 根，最快。',
+6:'均使用 Wilder 平滑，α = 1/n。',
+7:'"右移 k 根"意味着画在第 i 根位置上的值其实是用第 i−k 根的数据算出来的。这个位移是 Alligator 的精髓：它人为制造了三条线的间隔，让"缠绕（鳄鱼睡觉，无趋势）"与"张口（鳄鱼进食，趋势启动）"两种形态在视觉上极易分辨。代价是位移意味着这条线**不能**用作实时信号——它天然向右延伸到未来。'},en:{
+7:'The displacement is the point: it manufactures separation so that "sleeping" (entwined, no trend) and "feeding" (fanned, trending) are visually unmistakable. The cost is that a displaced line cannot be used as a real-time signal.'}},
+
+TSF:{zh:{
+0:'对最近 n 根收盘价做最小二乘直线拟合（n = 9）。',
+1:'得到斜率 b 与截距 a。',
+3:'LREG 是这条回归线在当前 K 线处的值。',
+4:'TSF 再沿同一斜率往前延伸 k 根（k = 6）。',
+6:'所以 TSF 本质是把回归线端点**外推到未来 k 根**，',
+7:'但画在今天这根 K 线的位置上。理解这一点很关键：TSF 显示的是"如果当前趋势按现有斜率持续，k 根之后会到哪"，它是一个条件预测而非事实，趋势一旦转向，这个外推会立刻失效。'},en:{
+7:'TSF shows where the current slope would put price k bars out — a conditional projection, not a fact. It breaks the moment the slope changes.'}},
+
+TOWER:{zh:{
+0:'原始宝塔线用六种分支决定每根柱子的颜色与范围：',
+1:'延续上涨，红。',
+2:'转跌但未破前前根，红。',
+3:'跌破前前根的那一段，绿。',
+4:'延续下跌，绿。',
+5:'转涨但未破前前根，绿。',
+6:'涨破前前根的那一段，红。',
+8:'把六个分支全部展开后，颜色规则会坍缩成一条极简的判据：',
+9:'收盘 ≥ 前前根收盘为红，否则为绿。',
+10:'这意味着上涨途中单根阴线并不会翻色，',
+11:'必须跌破**两根之前**的收盘价才翻绿——这正是宝塔线过滤噪音的机制。',
+13:'因此本页直接把这个量做成柱状图：',
+14:'TOWER = C − C₋₂，其符号与原始颜色规则完全等价。',
+16:'但必须说明：这忠实于所引用的源实现，而源实现本身是一个两根 K 线的近似。',
+17:'经典宝塔线的翻转条件是收盘价突破**整个前一段塔体**，',
+18:'而塔体可能横跨很多根 K 线，',
+19:'所以传统画法过滤掉的噪音比这里两个版本都要多。使用时请知悉这个简化。'},en:{
+9:'All six branches collapse to a single rule: red when the close is at or above the close two bars back.',
+19:'The classical 宝塔线 flips only when the close breaks the entire prior tower body, which may span many bars, so it filters more noise than either version here.'}},
+
+HADIFF:{zh:{
+0:'平均 K 线的收盘取开、高、低、收四价均值，比真实收盘更平滑。',
+1:'平均 K 线的开盘是递归定义的：上一根 ha 开盘与 ha 收盘的均值。递归是平均 K 线能"连成一片"的原因，也意味着它带有记忆。',
+3:'HADIFF 就是平均 K 线的**实体长度**（收减开），正值为阳线。',
+4:'HADMA 是它的 3 周期均线。',
+6:'由于 haO 本身是过去 haC 的滚动平均，',
+7:'HADIFF 实际上是"平均价格相对自身递归基线的偏离"的平滑版本。这解释了它为什么比普通 K 线实体更少反复：它比较的不是当根开收，而是当根与历史基线的关系。代价是平均 K 线的开收价**不是真实成交价**，不能直接用来下单或计算盈亏。'},en:{
+7:'Which is why it flips far less often than a real candle body — it compares the bar to a recursive baseline rather than to its own open. Note that Heikin-Ashi opens and closes are NOT tradable prices; never size a stop off them directly.'}},
+
+SQUEEZE:{zh:{
+0:'第一部分是压缩检测（n = 20）：',
+1:'布林上轨用收盘价的标准差。',
+2:'肯特纳上轨用真实波幅的 EMA。两者衡量波动的方式不同：标准差看收盘价离散度，ATR 看含跳空的实际振幅。',
+3:'取两者之差。',
+4:'当布林带被**收缩进**肯特纳通道内部（差值为负），即判定为"挤压中"。含义是：收盘价的离散度已经小于实际波动幅度，市场在极度压缩——这种状态不可持续，通常以一次方向性突破结束。',
+6:'第二部分是动量：',
+7:'先取区间中值。',
+8:'再与均线平均，得到一个综合基准。',
+9:'最后对"价格减基准"做线性回归取端点，得到振荡值。',
+11:'OSC 的符号给方向，斜率给加速度。标准用法是：挤压结束（由 ON 转 OFF）的那一刻，看 OSC 的符号决定做多还是做空。注意挤压本身**不预测方向**，它只预测"要动了"。'},en:{
+4:'Bollinger contracting inside Keltner means close-to-close dispersion has fallen below actual range — an unstable state that usually resolves in a directional break.',
+11:'The squeeze predicts that something will move, not which way. The oscillator sign supplies the direction at the moment the squeeze releases.'}},
+
+FISHER:{zh:{
+0:'以中价为输入。',
+1:'先把中价归一化到 0–1 区间，表示它在 n 根窗口内所处的相对位置（n = 9）。',
+3:'再做平滑，并钳制在 ±0.999 以内——这一步必不可少，因为下一步的对数在 ±1 处发散。',
+4:'核心变换：0.5·ln((1+v)/(1−v))，这就是反双曲正切 artanh。',
+5:'信号线取前一根的 FISHER 值。',
+7:'对数项的作用是把 (−1, 1) 区间映射到整条实数轴，',
+8:'因此靠近区间边缘的值会被**极度拉伸**。其效果是：价格处在区间中部时 Fisher 变化平缓，一旦接近极值就急剧放大，把原本平缓的转折点变成尖锐的峰——这是 Fisher 变换的全部意义，它让拐点在视觉上无法被忽略。',
+10:'两种边界情况被刻意区分处理：窗口内高低价完全相等（真正的横盘）时取 z = 0；',
+11:'而前 n−1 根窗口尚未填满的情况则留空，',
+12:'不做填充。原因是：如果也填 0，会向两个递归式喂入 −0.5，',
+13:'从而在**数据尚不存在的位置**制造出一根虚假的 −3 尖峰。这是实现层面的细节，但它决定了指标开头那几根是否可信。'},en:{
+3:'The clamp is mandatory — the logarithm diverges at ±1.',
+8:'Fisher moves gently mid-range and explodes near the extremes, turning a gradual turn into a sharp spike. That is the entire point of the transform.',
+13:'Filling the warm-up bars with zero would manufacture a false −3 spike on data that does not exist yet.'}}
+
+});
+
 /* FXZH-BATCHES */
 }(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
