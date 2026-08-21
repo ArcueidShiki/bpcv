@@ -14,6 +14,16 @@ It emits two files:
                 meanings (ROC is Rate of Change in indicators and Return on
                 Collateral in options).
 
+  lessons.json  the 305 guided lessons, stripped to their static skeleton.
+                Every `run`/`grade` is a JavaScript closure and cannot be
+                serialised, so the native side reimplements one handler per
+                FAMILY (13 with an act step, plus the 3 hand-written lessons)
+                rather than per lesson. What IS exported is everything that
+                does not need the engine: the prose, the quiz options, the
+                parameter spec, and — importantly — the tape config with the
+                seed the JavaScript search already resolved, so the native app
+                never repeats the 160-try search.
+
   golden.json   reference values read out of the JavaScript engine. The
                 Swift port is a transliteration, so these are the numbers
                 its tests assert against. Without them the same lesson can
@@ -42,6 +52,90 @@ GOLDEN_TAPES = [
     {"name": "trend", "regime": "trend_up", "seed": "golden-trend", "bars": 90, "p0": 100.0},
     {"name": "range", "regime": "range", "seed": "golden-range", "bars": 90, "p0": 100.0},
 ]
+
+
+# Two things are recorded per family rather than per lesson: the raw numeric
+# result of `run` at the default parameter, and the FULLY RENDERED grade text.
+# The rendered text is the one that catches the failure this port is most
+# likely to have — Swift's number formatting differing from JavaScript's
+# toFixed/toLocaleString produces a lesson that looks right and states a
+# different figure. A string equality assertion catches that; a tolerance on
+# a float does not.
+LESSON_EXPORT_JS = r"""()=>{
+  const scalars = (v, depth) => {
+    /* Keep only leaves a test can assert on. Nested i18n tables are dropped:
+       their text is checked through the rendered grade body instead. */
+    if (v == null) return null;
+    const t = typeof v;
+    if (t === 'number') return Number.isFinite(v) ? v : null;
+    if (t === 'boolean' || t === 'string') return v;
+    if (depth > 1 || typeof v !== 'object' || Array.isArray(v)) return undefined;
+    const o = {};
+    Object.keys(v).forEach(k => {
+      const r = scalars(v[k], depth + 1);
+      if (r !== undefined) o[k] = r;
+    });
+    return Object.keys(o).length ? o : undefined;
+  };
+
+  const out = { lessons: [], golden: {}, rejected: (PG.REJECTED || []).length };
+
+  PG.LESSONS.forEach(l => {
+    const steps = l.steps.map(s => {
+      const o = { kind: s.kind, title: s.title, body: s.body };
+      if (s.kind === 'pick') {
+        o.options = s.options.map(x => ({ ok: !!x.ok, label: x.label, why: x.why }));
+      }
+      if (s.kind === 'act') {
+        o.ui = s.ui || null;
+        if (s.param) o.param = s.param;
+      }
+      return o;
+    });
+    out.lessons.push({
+      id: l.id, entryId: l.entryId || null, kind: l.kind, fam: l.fam || null,
+      bucket: l.bucket || null, generated: !!l.generated,
+      title: l.title, blurb: l.blurb, tape: l.tape,
+      overlays: l.overlays || ['ma20'], steps: steps,
+      close: l.close, link: l.link
+    });
+  });
+
+  /* One golden per family: the first lesson that carries an act step. The
+     hand-written three are keyed by id because they are not family-generated. */
+  const seen = {};
+  PG.LESSONS.forEach(l => {
+    const act = l.steps.filter(s => s.kind === 'act');
+    if (!act.length) return;
+    const key = l.generated ? ('fam:' + l.fam) : ('lesson:' + l.id);
+    if (seen[key]) return;
+    seen[key] = true;
+
+    const tape = PG.Sim.tape(l.tape);
+    const cases = act.map((step, ix) => {
+      const p = {};
+      if (step.param) p[step.param.key] = step.param.def;
+      let res, err = null;
+      try { res = step.run(tape, p, l); } catch (e) { err = String(e); res = {}; }
+      let grade = null;
+      try {
+        const g = step.grade(res, p, tape, l);
+        grade = { pass: !!g.pass, titleZh: g.title.zh, titleEn: g.title.en,
+                  bodyZh: g.body.zh, bodyEn: g.body.en };
+      } catch (e) { err = (err || '') + ' grade:' + String(e); }
+      return { stepIndex: l.steps.indexOf(step), ui: step.ui || null,
+               param: p, result: scalars(res, 0) || {}, grade: grade, error: err };
+    });
+
+    out.golden[key] = {
+      lesson: l.id, tape: l.tape,
+      tapeCheck: { first: tape.bars[0].c, last: tape.bars[tape.n - 1].c, n: tape.n },
+      cases: cases
+    };
+  });
+
+  return out;
+}"""
 
 
 def sha(path: pathlib.Path) -> str:
@@ -129,16 +223,24 @@ def export() -> dict:
             return out;}""",
             GOLDEN_TAPES,
         )
-        page.close()
+        # Lessons. The static skeleton only — see the module docstring for
+        # why the closures cannot come along.
+        page2 = browser.new_page()
+        page2.goto("file://" + str(REPO / "playground.html"))
+        page2.wait_for_timeout(4000)
+        lessons = page2.evaluate(LESSON_EXPORT_JS)
+        page2.close()
         browser.close()
 
     meta = {
         "sources": {name: sha(REPO / name) for name in PAGES},
         "playground": sha(REPO / "playground.html"),
         "entries": len(content),
+        "lessons": len(lessons["lessons"]),
         "note": "regenerate with tools/export_pack.py whenever a handbook changes",
     }
-    return {"meta": meta, "content": content, "golden": golden}
+    return {"meta": meta, "content": content, "golden": golden,
+            "lessons": lessons}
 
 
 def main() -> int:
@@ -157,16 +259,42 @@ def main() -> int:
         encoding="utf-8",
     )
 
+    (out_dir / "lessons.json").write_text(
+        json.dumps({"meta": data["meta"], "lessons": data["lessons"]["lessons"],
+                    "golden": data["lessons"]["golden"]},
+                   ensure_ascii=False, separators=(",", ":")),
+        encoding="utf-8",
+    )
+
     counts: dict[str, int] = {}
     for row in data["content"].values():
         counts[row["src"]] = counts.get(row["src"], 0) + 1
     print(f"entries : {data['meta']['entries']}  {counts}")
     for name, digest in data["meta"]["sources"].items():
         print(f"  {name:18s} sha {digest}")
-    print(f"written : {out_dir}/content.json, {out_dir}/golden.json")
+    lessons = data["lessons"]
+    print(f"lessons : {len(lessons['lessons'])}  golden families {len(lessons['golden'])}")
+    print(f"written : {out_dir}/content.json, {out_dir}/golden.json, {out_dir}/lessons.json")
     missing = [k for k, v in data["content"].items() if not v["formula"]]
     if missing:
         print(f"WARNING entries with no formula: {missing[:5]}")
+
+    # A silently smaller export means the native app ships fewer lessons than
+    # the web and nothing else notices, so these are failures rather than
+    # warnings.
+    problems = []
+    if lessons["rejected"]:
+        problems.append(f"{lessons['rejected']} lesson(s) rejected by the seed search")
+    if len(lessons["lessons"]) < 305:
+        problems.append(f"only {len(lessons['lessons'])} lessons exported, expected 305")
+    broken = [k for k, v in lessons["golden"].items()
+              if any(c["error"] or c["grade"] is None for c in v["cases"])]
+    if broken:
+        problems.append(f"golden run/grade failed for: {broken}")
+    if problems:
+        for line in problems:
+            print(f"ERROR {line}")
+        return 1
     return 0
 
 
