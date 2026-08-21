@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Guided trading simulator — learn order types, indicator timing and option structures by trading scripted market regimes, with the counterfactual replayed on the identical price path.">
+<title>Trading Playground · 交易模拟训练场</title>
+<style>/* =============================================================================
+   playground.css — same moomoo-inspired flat terminal theme as the handbooks.
+   Self-contained: no external requests, works from file://.
+   ============================================================================= */
+:root {
+  --brand: #FF7A00; --brand-press: #E86E00;
+  --info: #2E9BFF; --violet: #8C6EFF;
+  --bg: #0E0F13; --surface: #16181E; --surface-2: #1C1F27; --surface-3: #232733;
+  --line: #262A33; --line-2: #333A46;
+  --text: #EAECEF; --text-2: #99A1AD; --text-3: #626A78;
+  --up: #00B96B; --down: #FA4D56; --warn: #FFA53D; --gold: #FFC53D;
+  --r-sm: 6px; --r-md: 8px; --r-lg: 10px;
+  --mono: "SF Mono", SFMono-Regular, ui-monospace, "JetBrains Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+               "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  font-variant-numeric: tabular-nums; -webkit-font-smoothing: antialiased;
+  font-size: 14px; line-height: 1.62;
+}
+body.lang-zh { line-height: 1.78; }
+a { color: inherit; text-decoration: none; }
+h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.02em; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+::-webkit-scrollbar { width: 9px; height: 9px; }
+::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 6px; }
+.wrap { max-width: 1500px; margin: 0 auto; padding: 0 20px; }
+.mono { font-family: var(--mono); }
+
+/* ---------------- top bar ---------------- */
+.topbar { position: sticky; top: 0; z-index: 60; border-bottom: 1px solid var(--line);
+  background: rgba(14,15,19,.94); backdrop-filter: blur(12px); }
+.topbar .wrap { display: flex; align-items: center; gap: 16px; height: 54px; }
+.brand { display: flex; align-items: center; gap: 8px; font-size: 16px; }
+.brand .logo { display: grid; place-items: center; width: 26px; height: 26px;
+  border-radius: 7px; background: var(--brand); color: #17110A; font-size: 14px; font-weight: 800; }
+.brand-text { font-weight: 600; } .brand-text b { font-weight: 800; }
+.spacer { flex: 1; }
+.tb-link { font-size: 13.5px; font-weight: 500; color: var(--text-2); white-space: nowrap; }
+.tb-link:hover { color: var(--text); }
+.tb-ext { color: var(--text-3); }
+.lang-btn { border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text);
+  border-radius: var(--r-sm); padding: 6px 12px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: inherit; }
+.lang-btn:hover { border-color: var(--brand); color: var(--brand); }
+
+/* ---------------- hero / lesson picker ---------------- */
+.hero { padding: 30px 0 18px; }
+.hero h1 { font-size: clamp(26px, 4vw, 40px); line-height: 1.08; letter-spacing: -0.03em; font-weight: 800; }
+.hero p { margin: 12px 0 0; max-width: 84ch; font-size: 14.5px; color: var(--text-2); }
+.eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--brand); margin-bottom: 6px; }
+
+.lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 20px; }
+.lcard { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface);
+  padding: 14px 16px; cursor: pointer; transition: border-color .15s, transform .1s; text-align: left; font-family: inherit; }
+.lcard:hover { border-color: var(--brand); }
+.lcard:active { transform: translateY(1px); }
+.lcard.done { border-left: 3px solid var(--up); }
+.lcard .lh { display: flex; align-items: baseline; gap: 8px; margin-bottom: 5px; }
+.lcard .lno { font-family: var(--mono); font-size: 11px; color: var(--text-3); }
+.lcard h3 { font-size: 14.5px; color: var(--text); }
+.lcard p { margin: 0; font-size: 12.4px; color: var(--text-2); line-height: 1.55; }
+.lcard .ltags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 9px; }
+.tag { font-size: 10px; font-weight: 700; border-radius: 3px; padding: 2px 7px; letter-spacing: .02em; }
+.tag-ord { color: var(--info); background: rgba(46,155,255,.14); }
+.tag-ind { color: var(--brand); background: rgba(255,122,0,.14); }
+.tag-opt { color: var(--violet); background: rgba(140,110,255,.15); }
+.tag-done { color: var(--up); background: rgba(0,185,107,.14); }
+
+/* ---------------- the lab ---------------- */
+.lab { display: none; margin-top: 18px; }
+.lab.on { display: block; }
+.lab-grid { display: grid; grid-template-columns: 1fr 380px; gap: 14px; align-items: start; }
+.panel { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface); overflow: hidden; }
+.panel-h { display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  padding: 11px 14px; border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.panel-h h3 { font-size: 14px; }
+.panel-h .sub { font-size: 11.5px; color: var(--text-3); font-family: var(--mono); }
+.panel-b { padding: 14px; }
+canvas { display: block; width: 100%; background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-md); }
+.legend { display: flex; flex-wrap: wrap; gap: 13px; margin-top: 8px; font-size: 11px; color: var(--text-3); }
+.legend i { display: inline-block; width: 13px; height: 2px; margin-right: 5px; vertical-align: middle; }
+
+/* step / progress */
+.steps { display: flex; gap: 5px; margin-bottom: 12px; }
+.stepdot { flex: 1; height: 3px; border-radius: 2px; background: var(--line-2); }
+.stepdot.on { background: var(--brand); }
+.stepdot.ok { background: var(--up); }
+
+.stepbody { font-size: 13.6px; color: var(--text-2); line-height: 1.72; }
+.stepbody b { color: var(--text); }
+.stepbody .warnline { color: var(--warn); }
+.stepbody ul { margin: 8px 0; padding-left: 20px; }
+.stepbody li { margin: 4px 0; }
+.stepbody code { font-family: var(--mono); font-size: 12.4px; color: var(--gold); }
+
+.choices { display: grid; gap: 8px; margin-top: 12px; }
+.choice { border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-2);
+  border-radius: var(--r-md); padding: 11px 13px; cursor: pointer; font-family: inherit;
+  font-size: 13px; text-align: left; line-height: 1.55; transition: border-color .15s; }
+.choice:hover { border-color: var(--brand); color: var(--text); }
+.choice.sel { border-color: var(--brand); }
+.choice.right { border-color: var(--up); background: rgba(0,185,107,.08); color: var(--text); }
+.choice.wrong { border-color: var(--down); background: rgba(250,77,86,.08); color: var(--text); }
+.choice .ck { font-family: var(--mono); font-size: 11px; color: var(--text-3); margin-right: 7px; }
+
+.ctrl { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px; margin-top: 10px; }
+.ctrl label { font-size: 11.5px; font-weight: 600; color: var(--text-2); }
+.ctrl output { font-family: var(--mono); font-size: 12.5px; color: var(--text); }
+.ctrl input[type=range] { grid-column: 1 / -1; width: 100%; accent-color: var(--brand); height: 18px; }
+.seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: var(--r-sm); overflow: hidden; flex-wrap: wrap; }
+.seg button { border: 0; border-right: 1px solid var(--line); background: var(--surface-3);
+  color: var(--text-2); font-family: inherit; font-size: 11.5px; font-weight: 600;
+  padding: 6px 11px; cursor: pointer; }
+.seg button:last-child { border-right: 0; }
+.seg button.on { background: var(--brand); color: #17110A; }
+
+.btn { border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text-2);
+  border-radius: var(--r-sm); padding: 8px 15px; font-size: 12.5px; font-weight: 600;
+  cursor: pointer; font-family: inherit; }
+.btn:hover { border-color: var(--brand); color: var(--text); }
+.btn.primary { background: var(--brand); border-color: var(--brand); color: #17110A; }
+.btn.primary:hover { background: var(--brand-press); color: #17110A; }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.cta { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+
+/* readouts */
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.kpi { border: 1px solid var(--line); background: var(--surface-2); border-radius: var(--r-sm); padding: 8px 10px; }
+.kpi .k { font-size: 10.5px; font-weight: 600; letter-spacing: .03em; color: var(--text-3); text-transform: uppercase; }
+.kpi .v { font-family: var(--mono); font-size: 15px; font-weight: 700; margin-top: 2px; }
+.kpi.wide { grid-column: 1 / -1; }
+.v-up { color: var(--up); } .v-dn { color: var(--down); } .v-gold { color: var(--gold); }
+.v-acc { color: var(--brand); } .v-info { color: var(--info); }
+
+/* verdict */
+.verdict { border-radius: var(--r-md); padding: 13px 15px; margin-top: 13px; font-size: 13.2px; line-height: 1.7; }
+.verdict.pass { border: 1px solid rgba(0,185,107,.4); background: rgba(0,185,107,.08); }
+.verdict.fail { border: 1px solid rgba(250,77,86,.4); background: rgba(250,77,86,.08); }
+.verdict h4 { font-size: 13.5px; margin-bottom: 5px; }
+.verdict.pass h4 { color: var(--up); } .verdict.fail h4 { color: var(--down); }
+.verdict b { color: var(--text); }
+
+/* counterfactual table */
+.cf { width: 100%; border-collapse: collapse; font-size: 12.6px; margin-top: 10px; }
+.cf th { text-align: left; padding: 7px 10px; background: var(--surface-2); border-bottom: 1px solid var(--line);
+  font-size: 10.5px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--text-3); }
+.cf td { padding: 7px 10px; border-bottom: 1px solid var(--line); color: var(--text-2); }
+.cf td.num { font-family: var(--mono); text-align: right; }
+.cf tr.you td { background: rgba(255,122,0,.06); }
+.cf td b { color: var(--text); }
+
+.note { font-size: 11.6px; color: var(--text-3); line-height: 1.6; margin-top: 10px;
+  border-top: 1px solid var(--line); padding-top: 9px; }
+.fill-log { font-family: var(--mono); font-size: 11.4px; color: var(--text-2); line-height: 1.85; margin-top: 8px; }
+.fill-log .ev { color: var(--text-3); }
+
+footer { margin-top: 56px; border-top: 1px solid var(--line); padding: 22px 0 44px;
+  font-size: 12px; color: var(--text-3); }
+footer p { margin: 0 0 8px; max-width: 92ch; }
+footer a { color: var(--text-2); text-decoration: underline; text-underline-offset: 2px; }
+
+@media (max-width: 1080px) {
+  .lab-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 780px) {
+  .tb-link { display: none; } .tb-cv { display: inline; }
+  .hero { padding: 22px 0 14px; }
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="logo">▶</span><span class="brand-text">Trading<b>Playground</b></span></a>
+    <div class="spacer"></div>
+    <a class="tb-link tb-ext" href="indicators.html">↔ <span data-t="navInd">Indicators</span></a>
+    <a class="tb-link tb-ext" href="options.html">↔ <span data-t="navOpt">Options</span></a>
+    <a class="tb-link tb-ext" href="orders.html">↔ <span data-t="navOrd">Order Types</span></a>
+    <a class="tb-link tb-ext" href="math.html">↔ <span data-t="navMath">Math</span></a>
+    <a class="tb-link tb-cv" href="cv.html">← <span data-t="backToCv">Back to CV</span></a>
+    <button class="lang-btn" id="langBtn"><span id="langLabel">EN</span></button>
+  </div>
+</div>
+
+<div class="wrap" id="top">
+
+  <!-- ============================================== lesson picker ============ -->
+  <section id="picker">
+    <header class="hero">
+      <div class="eyebrow" data-t="ebPlay">Guided practice</div>
+      <h1 data-t="title">Trading Playground</h1>
+      <p data-t="subtitle"></p>
+      <div class="kpis" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr));max-width:640px;margin-top:18px">
+        <div class="kpi"><div class="k" data-t="kLessons">Lessons</div><div class="v" id="statTotal">0</div></div>
+        <div class="kpi"><div class="k" data-t="kDone">Completed</div><div class="v v-up" id="statDone">0</div></div>
+        <div class="kpi"><div class="k" data-t="kScore">Best score</div><div class="v v-gold" id="statScore">—</div></div>
+      </div>
+    </header>
+    <div class="lessons" id="lessonGrid"></div>
+    <p class="note" style="border:0;margin-top:18px" data-th="pickerNote"></p>
+  </section>
+
+  <!-- ================================================== the lab ============= -->
+  <section class="lab" id="lab">
+    <div class="panel" style="margin-bottom:14px">
+      <div class="panel-h">
+        <button class="btn" id="backBtn">←&nbsp;<span data-t="allLessons">All lessons</span></button>
+        <h3 id="labTitle">—</h3>
+        <span class="sub" id="labMeta"></span>
+        <div class="spacer" style="flex:1"></div>
+        <span class="tag" id="labTag"></span>
+      </div>
+    </div>
+
+    <div class="lab-grid">
+      <!-- chart column -->
+      <div>
+        <div class="panel">
+          <div class="panel-h">
+            <h3 id="chartTitle" data-t="chartTitle">Price</h3>
+            <span class="sub" id="chartSub"></span>
+            <div class="spacer" style="flex:1"></div>
+            <div class="seg" id="ovToggle"></div>
+          </div>
+          <div class="panel-b">
+            <canvas id="cMain" style="height:340px"></canvas>
+            <div class="legend" id="mainLegend"></div>
+            <canvas id="cSub" style="height:120px;margin-top:10px"></canvas>
+            <div class="legend" id="subLegend"></div>
+          </div>
+        </div>
+
+        <div class="panel" id="fillPanel" style="margin-top:14px;display:none">
+          <div class="panel-h"><h3 data-t="fillTitle">What actually happened</h3><span class="sub" id="fillSub"></span></div>
+          <div class="panel-b">
+            <div id="cfWrap"></div>
+            <div class="fill-log" id="fillLog"></div>
+            <p class="note" data-th="fillNote"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- lesson column -->
+      <aside>
+        <div class="panel">
+          <div class="panel-h">
+            <h3 id="stepTitle">—</h3>
+            <div class="spacer" style="flex:1"></div>
+            <span class="sub" id="stepCount"></span>
+          </div>
+          <div class="panel-b">
+            <div class="steps" id="stepDots"></div>
+            <div class="stepbody" id="stepBody"></div>
+            <div id="stepUI"></div>
+            <div class="cta" id="stepCta"></div>
+            <div id="stepVerdict"></div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:14px">
+          <div class="panel-h"><h3 data-t="acctTitle">Account</h3><span class="sub" id="acctSub"></span></div>
+          <div class="panel-b"><div class="kpis" id="acctKpis"></div></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <footer>
+    <p data-th="footNote1"></p>
+    <p data-th="footNote2"></p>
+    <p style="opacity:.72" data-th="footNote3"></p>
+  </footer>
+</div>
+
+<script>/* =============================================================================
+   sim.js — the playground's execution engine.
+
+   Purpose-built and compact, but the FILL SEMANTICS are ported from the order
+   handbook rather than reinvented, because the lessons teach exactly those
+   mechanics and a softer model would contradict the page it links from:
+
+     1. a triggered stop is clamped NO BETTER than a gapped open
+     2. a stop-limit above the gapped open fills NOTHING
+     3. a resting limit takes a fraction of the bar's volume unless price
+        trades THROUGH it
+     4. sweep cost grows with size — sublinear in bps, superlinear in dollars
+     5. a trailing stop locks a LEVEL; the fill is whatever the book pays
+
+   Every scenario is driven by a seed keyed to its id, so the counterfactual
+   is replayed on the IDENTICAL price path. Comparing a right and a wrong
+   action across two different random draws would be noise, not a lesson.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var PG = root.PG = root.PG || {};
+  var S = PG.Sim = {};
+
+  /* ------------------------------------------------------------------ rng */
+  function rng(seed) {
+    var h = 1779033703 ^ String(seed).length;
+    for (var i = 0; i < String(seed).length; i++) {
+      h = Math.imul(h ^ String(seed).charCodeAt(i), 3432918353);
+      h = (h << 13) | (h >>> 19);
+    }
+    var s = h >>> 0;
+    return function () {
+      s = (s + 0x6D2B79F5) >>> 0;
+      var t = Math.imul(s ^ (s >>> 15), 1 | s);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  S.rng = rng;
+  function gauss(r) {
+    var u = 0, v = 0;
+    while (u === 0) u = r();
+    while (v === 0) v = r();
+    return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.283185307179586 * v);
+  }
+
+  /* --------------------------------------------------------------- regimes
+     Each regime is a drift/vol schedule plus optional scripted events. The
+     shapes are the ones the lessons need to talk about, not a general market
+     model — a scenario is a teaching instrument. */
+  var REGIMES = {
+    /* a steady uptrend with ordinary pullbacks */
+    trend_up: function (i, n, r, st) {
+      return { drift: 0.0011, vol: 0.008 };
+    },
+    /* a range: mean-reverting around the starting level */
+    range: function (i, n, r, st) {
+      var pull = (st.p0 - st.px) / st.p0 * 0.09;
+      return { drift: pull, vol: 0.007 };
+    },
+    /* quiet drift, then a violent overnight gap DOWN partway through */
+    gap_down: function (i, n, r, st) {
+      return { drift: 0.0004, vol: 0.0055 };
+    },
+    /* volatility compression, then an expansion break upward */
+    squeeze_break: function (i, n, r, st) {
+      var t = i / n;
+      if (t < 0.62) return { drift: 0.0002, vol: 0.0022 };
+      return { drift: 0.0026, vol: 0.011 };
+    },
+    /* flat into an event, then a large one-bar move */
+    event: function (i, n, r, st) {
+      return { drift: 0.0001, vol: 0.004 };
+    }
+  };
+
+  /* Build a bar series. Scripted events are applied at fixed indices so a
+     lesson can rely on them existing. */
+  S.tape = function (opt) {
+    var n = opt.bars || 120, r = rng(opt.seed), p = opt.p0 || 100;
+    var st = { p0: opt.p0 || 100, px: p }, bars = [], i;
+    var gapAt = opt.gapAt, gapPct = opt.gapPct || 0, evAt = opt.eventAt, evPct = opt.eventPct || 0;
+    for (i = 0; i < n; i++) {
+      var f = (REGIMES[opt.regime] || REGIMES.range)(i, n, r, st);
+      var o = p;
+      /* a scripted gap moves the OPEN away from the prior close, and the
+         prices in between never trade — that is what makes it a gap */
+      if (gapAt != null && i === gapAt) o = p * (1 + gapPct);
+      if (evAt != null && i === evAt) o = p * (1 + evPct * 0.35);
+      var drift = f.drift, vol = f.vol;
+      if (evAt != null && i === evAt) { drift += evPct * 0.65; vol *= 2.2; }
+      var c = o * (1 + drift + vol * gauss(r));
+      var hi = Math.max(o, c) * (1 + Math.abs(gauss(r)) * vol * 0.55);
+      var lo = Math.min(o, c) * (1 - Math.abs(gauss(r)) * vol * 0.55);
+      /* U-shaped session volume, heavier on the extremes */
+      var u = i / Math.max(1, n - 1);
+      var vshape = 0.55 + 1.9 * (Math.pow(u - 0.5, 2) * 4);
+      var v = Math.round((7000 + 5200 * r()) * vshape * (1 + Math.abs(c / o - 1) * 26));
+      bars.push({ i: i, o: o, h: hi, l: lo, c: c, v: v });
+      p = c; st.px = p;
+    }
+    return { n: n, bars: bars, seed: opt.seed, regime: opt.regime };
+  };
+
+  /* ------------------------------------------------------------------ book
+     A 40-level ladder around the bar, thin at the touch and thickening
+     outward — enough to make size cost money. */
+  function ladder(bar, side, seed, ref) {
+    var r = rng(seed + ':' + bar.i), lv = [], k;
+    var mid = ref == null ? bar.c : ref;
+    var tick = Math.max(0.01, mid * 0.0001);
+    var base = side === 'buy' ? mid + tick / 2 : mid - tick / 2;
+    for (k = 0; k < 40; k++) {
+      var px = side === 'buy' ? base + k * tick : base - k * tick;
+      var sz = Math.round((90 + 260 * r()) * (1 + k * 0.42));
+      lv.push({ px: px, sz: sz });
+    }
+    return lv;
+  }
+  S.ladder = ladder;
+
+  /* Walk the ladder. Returns the size-weighted average and how far it went.
+     Cost in bps grows roughly as sqrt(size) — sublinear in bps, superlinear
+     in dollars, which is the whole argument in the ORDER_BOOK entry. */
+  /* `ref` is the price the order is executing AGAINST — the close for a
+     resting market order, the trigger level for a stop. Sweeping a stop off
+     the bar close can fill it better than its own level, which is backwards. */
+  S.sweep = function (bar, side, qty, seed, ref) {
+    var lv = ladder(bar, side, seed, ref), left = qty, notional = 0, done = 0, k = 0;
+    for (; k < lv.length && left > 0; k++) {
+      var take = Math.min(left, lv[k].sz);
+      notional += take * lv[k].px; left -= take; done += take;
+    }
+    var overflow = false;
+    if (left > 0) {
+      /* beyond the modelled ladder, charge a square-root impact rather than
+         pretending depth exists */
+      overflow = true;
+      var last = lv[lv.length - 1].px;
+      var extra = last * (side === 'buy' ? 1 : -1) * 0.0009 * Math.sqrt(left / 1000);
+      notional += left * (last + extra); done += left; left = 0;
+    }
+    var px = notional / Math.max(1, done);
+    var mid = ref == null ? bar.c : ref;
+    return { px: px, qty: done, levels: k, overflow: overflow,
+             bps: (side === 'buy' ? 1 : -1) * (px - mid) / mid * 10000 };
+  };
+
+  /* ------------------------------------------------------------- order fills
+     Each returns { filled, px, events[], residual }. `side` is the EXIT side
+     for protective orders (a long is protected by a sell). */
+  var E = S.ENGINE = {};
+
+  E.MKT = function (tape, o) {
+    var i = o.at || 0, s = S.sweep(tape.bars[i], o.side, o.qty, tape.seed);
+    return { filled: s.qty, px: s.px, residual: 0, at: i, sweep: s,
+             events: [[i, 'market order swept ' + s.levels + ' levels']] };
+  };
+
+  E.STP = function (tape, o) {
+    var b = tape.bars, i, ev = [];
+    for (i = o.from || 0; i < tape.n; i++) {
+      var hit = o.side === 'sell' ? b[i].l <= o.stop : b[i].h >= o.stop;
+      if (!hit) continue;
+      ev.push([i, 'stop triggered at ' + o.stop.toFixed(2)]);
+      /* the bar already opened beyond the level, so the market the order meets
+         is the gapped open, not the level it was written at */
+      var through0 = o.side === 'sell' ? b[i].o < o.stop : b[i].o > o.stop;
+      var ref = through0 ? b[i].o : o.stop;
+      var s = S.sweep(b[i], o.side, o.qty, tape.seed, ref);
+      var px = s.px;
+      /* MECHANIC 1 — the bar already OPENED beyond the level, so the fill is
+         clamped no better than that gapped open. This is the line that turns
+         "my stop was 98 and I got 94" into arithmetic. */
+      var through = through0;
+      if (through) {
+        px = o.side === 'sell' ? Math.min(px, b[i].o) : Math.max(px, b[i].o);
+        ev.push([i, 'gapped open ' + b[i].o.toFixed(2) + ' — fill clamped no better than it']);
+      }
+      return { filled: o.qty, px: px, residual: 0, at: i, sweep: s, events: ev };
+    }
+    return { filled: 0, px: null, residual: o.qty, at: null,
+             events: [[null, 'stop never triggered']] };
+  };
+
+  E.STL = function (tape, o) {
+    var b = tape.bars, i, ev = [];
+    for (i = o.from || 0; i < tape.n; i++) {
+      var hit = o.side === 'sell' ? b[i].l <= o.stop : b[i].h >= o.stop;
+      if (!hit) continue;
+      ev.push([i, 'stop triggered at ' + o.stop.toFixed(2)]);
+      /* MECHANIC 2 — if the bar OPENED beyond the limit the order is pushed
+         out and left resting. Above the gapped open it fills nothing at all. */
+      var openedBeyond = o.side === 'sell' ? b[i].o < o.limit : b[i].o > o.limit;
+      var start = i;
+      if (openedBeyond) {
+        ev.push([i, 'market gapped past the limit — order left resting']);
+        start = i + 1;
+      }
+      var rest = E.LMT(tape, { side: o.side, qty: o.qty, limit: o.limit, from: start });
+      rest.events = ev.concat(rest.events);
+      rest.at = rest.at == null ? null : rest.at;
+      return rest;
+    }
+    return { filled: 0, px: null, residual: o.qty, at: null,
+             events: [[null, 'stop never triggered']] };
+  };
+
+  E.LMT = function (tape, o) {
+    var b = tape.bars, left = o.qty, fills = [], i, ev = [];
+    for (i = o.from || 0; i < tape.n && left > 0; i++) {
+      var fillable = o.side === 'sell' ? b[i].h >= o.limit : b[i].l <= o.limit;
+      if (!fillable) continue;
+      var tick = Math.max(0.01, b[i].c * 0.0001);
+      var through = o.side === 'sell' ? b[i].h > o.limit + tick / 2 : b[i].l < o.limit - tick / 2;
+      /* MECHANIC 3 — price merely TOUCHING your level gets you a slice of the
+         bar's volume (the queue-priority stand-in); trading THROUGH you fills
+         the lot. */
+      var take = through ? left : Math.min(left, Math.max(100, Math.round(b[i].v * 0.06)));
+      fills.push({ i: i, px: o.limit, qty: take });
+      ev.push([i, (through ? 'traded through — ' : 'touched only — ') + take + ' @ ' + o.limit.toFixed(2)]);
+      left -= take;
+    }
+    var got = fills.reduce(function (a, f) { return a + f.qty; }, 0);
+    if (!got) ev.push([null, 'limit never reached — nothing filled']);
+    else if (left > 0) ev.push([null, left + ' shares still resting at the close']);
+    return { filled: got, px: got ? o.limit : null, residual: left,
+             at: fills.length ? fills[0].i : null, fills: fills, events: ev };
+  };
+
+  /* MECHANIC 5 — the level ratchets in your favour and never retreats, then
+     the fill is an ordinary market order with the same gap clamp. */
+  E.TS = function (tape, o) {
+    var b = tape.bars, i, ext = null, stop = null, ev = [];
+    for (i = o.from || 0; i < tape.n; i++) {
+      if (o.side === 'sell') {
+        ext = ext == null ? b[i].h : Math.max(ext, b[i].h);
+        var cand = ext - o.trail;
+        stop = stop == null ? cand : Math.max(stop, cand);
+        if (b[i].l <= stop) {
+          ev.push([i, 'trail level ' + stop.toFixed(2) + ' reached']);
+          var res = E.STP(tape, { side: 'sell', qty: o.qty, stop: stop, from: i });
+          res.events = ev.concat(res.events);
+          res.level = stop;
+          return res;
+        }
+      } else {
+        ext = ext == null ? b[i].l : Math.min(ext, b[i].l);
+        var cd = ext + o.trail;
+        stop = stop == null ? cd : Math.min(stop, cd);
+        if (b[i].h >= stop) {
+          var r2 = E.STP(tape, { side: 'buy', qty: o.qty, stop: stop, from: i });
+          r2.events = ev.concat(r2.events); r2.level = stop;
+          return r2;
+        }
+      }
+    }
+    return { filled: 0, px: null, residual: o.qty, at: null, level: stop,
+             events: [[null, 'trail never reached']] };
+  };
+
+  /* ------------------------------------------------------------ indicators */
+  var I = S.IND = {};
+  I.sma = function (a, n) {
+    var out = [], s = 0, i;
+    for (i = 0; i < a.length; i++) {
+      s += a[i]; if (i >= n) s -= a[i - n];
+      out.push(i >= n - 1 ? s / n : null);
+    }
+    return out;
+  };
+  I.ema = function (a, n) {
+    var k = 2 / (n + 1), out = [], prev = null, i;
+    for (i = 0; i < a.length; i++) {
+      if (i < n - 1) { out.push(null); continue; }
+      if (prev == null) {
+        var s = 0, j; for (j = i - n + 1; j <= i; j++) s += a[j];
+        prev = s / n;
+      } else prev = a[i] * k + prev * (1 - k);
+      out.push(prev);
+    }
+    return out;
+  };
+  I.boll = function (a, n, w) {
+    var mid = I.sma(a, n), up = [], dn = [], i, j;
+    for (i = 0; i < a.length; i++) {
+      if (mid[i] == null) { up.push(null); dn.push(null); continue; }
+      var s = 0; for (j = i - n + 1; j <= i; j++) s += Math.pow(a[j] - mid[i], 2);
+      var sd = Math.sqrt(s / n);
+      up.push(mid[i] + w * sd); dn.push(mid[i] - w * sd);
+    }
+    return { mid: mid, up: up, dn: dn };
+  };
+  I.rsi = function (a, n) {
+    var out = [null], au = 0, ad = 0, i;
+    for (i = 1; i < a.length; i++) {
+      var d = a[i] - a[i - 1], u = Math.max(d, 0), w = Math.abs(d);
+      if (i <= n) { au += u / n; ad += w / n; out.push(i === n ? (ad ? au / ad * 100 : 50) : null); }
+      else { au = (au * (n - 1) + u) / n; ad = (ad * (n - 1) + w) / n; out.push(ad ? au / ad * 100 : 50); }
+    }
+    return out;
+  };
+  I.atr = function (bars, n) {
+    var tr = [], i;
+    for (i = 0; i < bars.length; i++) {
+      tr.push(i === 0 ? bars[i].h - bars[i].l
+        : Math.max(bars[i].h - bars[i].l,
+                   Math.abs(bars[i].h - bars[i - 1].c),
+                   Math.abs(bars[i].l - bars[i - 1].c)));
+    }
+    return I.sma(tr, n);
+  };
+
+  /* -------------------------------------------------------------- options */
+  function ncdf(x) {
+    var b1 = .31938153, b2 = -.356563782, b3 = 1.781477937, b4 = -1.821255978,
+        b5 = 1.330274429, p = .2316419, c = .39894228, t;
+    if (x >= 0) { t = 1 / (1 + p * x); return 1 - c * Math.exp(-x * x / 2) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1); }
+    t = 1 / (1 - p * x); return c * Math.exp(-x * x / 2) * t * (t * (t * (t * (t * b5 + b4) + b3) + b2) + b1);
+  }
+  S.ncdf = ncdf;
+  S.bs = function (type, Sp, K, T, r, v) {
+    if (!(T > 0) || !(v > 0)) return Math.max(0, type === 'C' ? Sp - K : K - Sp);
+    var sq = Math.sqrt(T), d1 = (Math.log(Sp / K) + (r + v * v / 2) * T) / (v * sq), d2 = d1 - v * sq;
+    return type === 'C' ? Sp * ncdf(d1) - K * Math.exp(-r * T) * ncdf(d2)
+                        : K * Math.exp(-r * T) * ncdf(-d2) - Sp * ncdf(-d1);
+  };
+  S.money = function (x) {
+    var s = x < 0 ? '−' : '';
+    return s + '$' + Math.abs(x).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+}(typeof globalThis !== 'undefined' ? globalThis : this));
+</script>
+
+<script>/* =============================================================================
+   plot.js — the playground's chart layer. Candles, overlays, markers and the
+   annotations a lesson needs to point at a specific bar.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var PG = root.PG = root.PG || {};
+  var P = PG.Plot = {};
+  var CSSV = getComputedStyle(document.documentElement);
+  function col(n) { return CSSV.getPropertyValue(n).trim() || '#888'; }
+  P.col = col;
+
+  function fit(cv) {
+    var r = cv.getBoundingClientRect(), dpr = root.devicePixelRatio || 1;
+    var w = Math.max(1, Math.round(r.width)), h = Math.max(1, Math.round(r.height));
+    if (cv.width !== w * dpr || cv.height !== h * dpr) { cv.width = w * dpr; cv.height = h * dpr; }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, w, h);
+    return { ctx: ctx, w: w, h: h };
+  }
+
+  P.frame = function (cv, n, y0, y1) {
+    var f = fit(cv), l = 6, rp = 52, t = 10, b = 20;
+    var iw = Math.max(1, f.w - l - rp), ih = Math.max(1, f.h - t - b);
+    return {
+      ctx: f.ctx, w: f.w, h: f.h, l: l, t: t, iw: iw, ih: ih, n: n, y0: y0, y1: y1,
+      X: function (i) { return l + (i + 0.5) / Math.max(1, n) * iw; },
+      BW: Math.max(1.5, iw / Math.max(1, n) * 0.62),
+      Y: function (y) { return t + ih - (y - y0) / ((y1 - y0) || 1) * ih; }
+    };
+  };
+
+  P.grid = function (F, fmt) {
+    var ctx = F.ctx, i, v, py;
+    ctx.save();
+    ctx.strokeStyle = col('--line'); ctx.fillStyle = col('--text-3');
+    ctx.lineWidth = 1; ctx.font = '10px ' + col('--mono');
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    for (i = 0; i <= 4; i++) {
+      v = F.y0 + (F.y1 - F.y0) * i / 4; py = Math.round(F.Y(v)) + 0.5;
+      ctx.beginPath(); ctx.moveTo(F.l, py); ctx.lineTo(F.l + F.iw, py); ctx.stroke();
+      ctx.fillText((fmt || function (x) { return x.toFixed(2); })(v), F.l + F.iw + 6, py);
+    }
+    ctx.restore();
+  };
+
+  P.candles = function (F, bars) {
+    var ctx = F.ctx;
+    ctx.save();
+    bars.forEach(function (b, i) {
+      var up = b.c >= b.o, cl = up ? col('--up') : col('--down');
+      var x = F.X(i);
+      ctx.strokeStyle = cl; ctx.fillStyle = cl; ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(Math.round(x) + 0.5, F.Y(b.h)); ctx.lineTo(Math.round(x) + 0.5, F.Y(b.l));
+      ctx.stroke();
+      var yo = F.Y(b.o), yc = F.Y(b.c);
+      ctx.fillRect(x - F.BW / 2, Math.min(yo, yc), F.BW, Math.max(1, Math.abs(yc - yo)));
+    });
+    ctx.restore();
+  };
+
+  P.line = function (F, arr, color, w, dash) {
+    var ctx = F.ctx, up = false, i;
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineWidth = w || 1.6; ctx.lineJoin = 'round';
+    if (dash) ctx.setLineDash(dash);
+    ctx.beginPath();
+    for (i = 0; i < arr.length; i++) {
+      if (arr[i] == null || !isFinite(arr[i])) { up = false; continue; }
+      if (!up) { ctx.moveTo(F.X(i), F.Y(arr[i])); up = true; }
+      else ctx.lineTo(F.X(i), F.Y(arr[i]));
+    }
+    ctx.stroke(); ctx.restore();
+  };
+
+  P.hline = function (F, y, color, label, dash) {
+    var ctx = F.ctx, py = Math.round(F.Y(y)) + 0.5;
+    ctx.save();
+    ctx.strokeStyle = color; ctx.lineWidth = 1.3; ctx.setLineDash(dash || [5, 4]);
+    ctx.beginPath(); ctx.moveTo(F.l, py); ctx.lineTo(F.l + F.iw, py); ctx.stroke();
+    if (label) {
+      ctx.setLineDash([]); ctx.fillStyle = color;
+      ctx.font = '10px ' + col('--mono'); ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+      ctx.fillText(label, F.l + 4, py - 3);
+    }
+    ctx.restore();
+  };
+
+  P.vband = function (F, i0, i1, fill) {
+    var ctx = F.ctx;
+    ctx.save(); ctx.fillStyle = fill;
+    var x0 = F.X(i0) - F.BW / 2, x1 = F.X(i1) + F.BW / 2;
+    ctx.fillRect(x0, F.t, Math.max(1, x1 - x0), F.ih);
+    ctx.restore();
+  };
+
+  P.marker = function (F, i, y, color, text, below) {
+    var ctx = F.ctx, x = F.X(i), py = F.Y(y);
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    var dy = below ? 9 : -9;
+    ctx.moveTo(x, py + (below ? 4 : -4));
+    ctx.lineTo(x - 4.5, py + dy); ctx.lineTo(x + 4.5, py + dy);
+    ctx.closePath(); ctx.fill();
+    if (text) {
+      ctx.font = '10px ' + col('--mono'); ctx.textAlign = 'center';
+      ctx.textBaseline = below ? 'top' : 'bottom';
+      ctx.fillText(text, x, py + (below ? 13 : -13));
+    }
+    ctx.restore();
+  };
+
+  P.bars = function (F, vals, color) {
+    var ctx = F.ctx;
+    ctx.save(); ctx.fillStyle = color;
+    vals.forEach(function (v, i) {
+      if (v == null) return;
+      var y = F.Y(v), y0 = F.Y(F.y0);
+      ctx.fillRect(F.X(i) - F.BW / 2, Math.min(y, y0), F.BW, Math.abs(y0 - y));
+    });
+    ctx.restore();
+  };
+
+  P.range = function (arr, pad) {
+    var lo = Infinity, hi = -Infinity;
+    arr.forEach(function (v) {
+      if (v == null || !isFinite(v)) return;
+      lo = Math.min(lo, v); hi = Math.max(hi, v);
+    });
+    if (!isFinite(lo)) { lo = 0; hi = 1; }
+    var p = (hi - lo) * (pad == null ? 0.08 : pad) + 1e-9;
+    return [lo - p, hi + p];
+  };
+}(typeof globalThis !== 'undefined' ? globalThis : this));
+</script>
+
+<script>/* =============================================================================
+   lessons.js — the scenarios.
+
+   A lesson is: a fixed-seed tape + an ordered list of steps. Step kinds:
+     info  prose, then Next
+     pick  multiple choice; the wrong answers are the misconceptions the
+           handbook entries warn about, and each carries its own explanation
+     act   a parameterised action run through the engine, graded, and shown
+           against the counterfactual REPLAYED ON THE SAME TAPE
+
+   Text is bilingual inline: {en, zh}.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var PG = root.PG = root.PG || {};
+  var S = PG.Sim, M = S.money;
+
+  function pctFmt(x) { return (x >= 0 ? '+' : '') + (x * 100).toFixed(2) + '%'; }
+
+  /* ======================================================= 1 · stop vs gap */
+  var stopGap = {
+    id: 'stop-gap',
+    kind: 'ord',
+    title: { en: 'The stop that did not protect you', zh: '那个没能保护你的止损' },
+    blurb: {
+      en: 'You are long 2,000 shares with a stop below the market. Overnight the stock gaps through it. Find out what a stop actually promises — and what a stop-limit does instead.',
+      zh: '你持有 2,000 股，并在下方挂了止损。隔夜股价跳空穿过它。看清止损究竟承诺了什么——以及止损限价单会做什么。'
+    },
+    tape: { regime: 'gap_down', seed: 'stop-gap-v1', bars: 90, p0: 100, gapAt: 58, gapPct: -0.061 },
+    entry: { px: 100, qty: 2000 },
+    overlays: ['ma20'],
+    steps: [
+      { kind: 'info',
+        title: { en: 'The position', zh: '当前持仓' },
+        body: {
+          en: 'You are <b>long 2,000 shares at $100.00</b>. The tape below is the next 90 bars — you can see all of it, which a real trader cannot, because the point here is the mechanics rather than the prediction.<br><br>Somewhere in this session the stock <b>gaps down</b>: it opens far below the previous close and never trades the prices in between. That is the event every protective order is judged on.',
+          zh: '你<b>以 $100.00 持有 2,000 股多头</b>。下面是接下来 90 根 K 线——你能看到全部，而真实交易者不能，因为这里要讲的是机制而不是预测。<br><br>这段行情中股价会<b>向下跳空</b>：开盘远低于前收，中间那些价格<b>从未成交过</b>。所有保护性订单都要在这个事件上接受检验。'
+        } },
+      { kind: 'pick',
+        title: { en: 'What does a stop promise?', zh: '止损承诺了什么？' },
+        body: { en: 'You place a <b>sell stop at $98.00</b>. Which statement is true?',
+                zh: '你挂了一张 <b>$98.00 的卖出止损</b>。下面哪句话是对的？' },
+        options: [
+          { ok: false,
+            label: { en: 'It sells my shares at $98.00.', zh: '它会以 $98.00 卖出我的股票。' },
+            why: { en: 'No. A stop is a TRIGGER, not a price. Once touched it becomes a market order, and your $98.00 appears nowhere in the fill.',
+                   zh: '错。止损是一个**触发器**，不是一个成交价。一旦触及它就变成市价单，而你的 $98.00 在成交环节完全不出现。' } },
+          { ok: false,
+            label: { en: 'It sells at $98.00 or better, never worse.', zh: '它会以 $98.00 或更好的价格成交，绝不会更差。' },
+            why: { en: 'That is a LIMIT order. A stop has no floor at all — that is precisely the difference, and precisely what a gap exposes.',
+                   zh: '那是**限价单**。止损完全没有下限——这正是两者的区别，也正是跳空会暴露的地方。' } },
+          { ok: true,
+            label: { en: 'It becomes a market order at $98.00 and fills wherever the book is.', zh: '它在 $98.00 变成市价单，成交在盘口当时的任何价格上。' },
+            why: { en: 'Correct. The stop decides WHEN, never WHERE. Everything that follows in this lesson is a consequence of that one sentence.',
+                   zh: '正确。止损决定**何时**，从不决定**在哪**。这一课后面的一切都是这句话的推论。' } }
+        ] },
+      { kind: 'act', ui: 'stopLevel',
+        title: { en: 'Place your stop', zh: '设置你的止损' },
+        body: { en: 'Choose the level and run the tape. The engine triggers on the first bar that touches it, then sweeps the book — with the same gap clamp the order handbook describes.',
+                zh: '选择价位并运行行情。引擎会在首根触及的 K 线上触发，然后扫盘成交——采用与订单手册所述完全相同的跳空钳制规则。' },
+        param: { key: 'stop', min: 90, max: 99.5, step: 0.05, def: 98, label: { en: 'Stop level', zh: '止损价位' } },
+        run: function (tape, p) {
+          return S.ENGINE.STP({ n: tape.n, bars: tape.bars, seed: tape.seed },
+            { side: 'sell', qty: 2000, stop: p.stop, from: 0 });
+        },
+        grade: function (res, p, tape) {
+          var slip = res.filled ? (p.stop - res.px) : 0;
+          var pass = res.filled > 0 && slip > 0.5;
+          return {
+            pass: pass,
+            title: pass ? { en: 'Filled far below your level — exactly the point', zh: '成交价远低于你的价位——这正是重点' }
+                        : { en: 'Try a level the gap actually crosses', zh: '换一个会被跳空穿过的价位' },
+            body: pass
+              ? { en: 'Your stop said <b>' + p.stop.toFixed(2) + '</b>. You were filled at <b>' + res.px.toFixed(2) +
+                      '</b> — <b class="mono">' + slip.toFixed(2) + '</b> per share worse, or <b>' + M(slip * 2000) +
+                      '</b> on 2,000 shares. Nothing malfunctioned. The market opened below your level and the prices in between never existed.',
+                  zh: '你的止损写着 <b>' + p.stop.toFixed(2) + '</b>，实际成交在 <b>' + res.px.toFixed(2) +
+                      '</b>——每股差 <b class="mono">' + slip.toFixed(2) + '</b>，2,000 股合计 <b>' + M(slip * 2000) +
+                      '</b>。没有任何东西出故障：市场开在你的价位下方，中间那些价格根本不存在。' }
+              : { en: 'Set the stop somewhere the gap will cross so the mechanic is visible.',
+                  zh: '把止损设在跳空会穿过的位置，才能看到这个机制。' }
+          };
+        } },
+      { kind: 'act', ui: 'compare',
+        title: { en: 'The same gap, four instructions', zh: '同一个跳空，四种指令' },
+        body: { en: 'Now the counterfactual — <b>replayed on the identical tape</b>, so any difference is the instruction and not a different random draw.',
+                zh: '现在看反事实对照——<b>在完全相同的行情上重放</b>，因此任何差异都来自指令本身，而不是另一次随机抽样。' },
+        run: function (tape, p) {
+          var t = { n: tape.n, bars: tape.bars, seed: tape.seed };
+          var gapOpen = tape.bars[58].o;
+          var last = tape.bars[tape.n - 1].c;
+          var defs = [
+            { k: { en: 'Sell stop 98.00', zh: '卖出止损 98.00' }, you: true,
+              r: S.ENGINE.STP(t, { side: 'sell', qty: 2000, stop: 98, from: 0 }) },
+            { k: { en: 'Stop-limit 98.00 / limit 97.85', zh: '止损限价 98.00 / 限价 97.85' },
+              r: S.ENGINE.STL(t, { side: 'sell', qty: 2000, stop: 98, limit: 97.85, from: 0 }) },
+            { k: { en: 'Stop-limit 98.00 / limit ' + (gapOpen - 0.1).toFixed(2),
+                   zh: '止损限价 98.00 / 限价 ' + (gapOpen - 0.1).toFixed(2) },
+              r: S.ENGINE.STL(t, { side: 'sell', qty: 2000, stop: 98, limit: gapOpen - 0.1, from: 0 }) },
+            { k: { en: 'No stop at all', zh: '完全不设止损' },
+              r: { filled: 2000, px: last, residual: 0, at: tape.n - 1, events: [] } }
+          ];
+          var table = {
+            head: [{ en: 'Instruction', zh: '指令' }, { en: 'Filled', zh: '成交股数' },
+                   { en: 'Fill price', zh: '成交价' }, { en: 'P/L vs $100', zh: '相对 $100 盈亏' }],
+            rows: defs.map(function (d) {
+              var pl = d.r.filled ? (d.r.px - 100) * d.r.filled : 0;
+              return { you: d.you, cells: [
+                { v: d.k },
+                { v: d.r.filled ? d.r.filled.toLocaleString() : '0' },
+                { v: d.r.px == null ? '—' : d.r.px.toFixed(2) },
+                { v: d.r.filled ? S.money(pl) : '—', tone: pl >= 0 ? 'up' : 'down' } ] };
+            })
+          };
+          return { table: table, rows: defs, gapOpen: gapOpen, last: last };
+        },
+        grade: function (res) {
+          var stl = res.rows[1].r;
+          return {
+            pass: true,
+            title: { en: 'Read the middle row twice', zh: '中间那一行请读两遍' },
+            body: {
+              en: 'The stop-limit at <b>97.85</b> filled <b>' + stl.filled + ' shares</b>. It sits <i>above</i> the gapped open of <b>' +
+                  res.gapOpen.toFixed(2) + '</b>, and above the gapped open you get nothing at all — you still hold the entire position while believing you were protected. ' +
+                  'Drop the limit below that open and it fills at almost exactly what the plain stop got. <b>The floor only bites when your own size drives the sweep below it.</b>',
+              zh: '限价 <b>97.85</b> 的止损限价单成交了 <b>' + stl.filled + ' 股</b>。它位于跳空开盘价 <b>' +
+                  res.gapOpen.toFixed(2) + '</b> 的<i>上方</i>，而高于跳空开盘价就<b>什么都得不到</b>——你以为自己已经止损，实际上仓位一股未动。' +
+                  '把限价放到开盘价之下，它成交的价格与普通止损几乎一样。<b>那个"保护性下限"只有在你自己的规模把扫盘价压到它以下时才真正起作用。</b>'
+            }
+          };
+        } }
+    ],
+    close: {
+      en: 'A stop guarantees an exit but not a price. A stop-limit guarantees a price but not an exit. In a gap you must choose which of the two you are willing to lose — there is no instruction that keeps both.',
+      zh: '止损保证你能出场，但不保证价格。止损限价保证价格，但不保证能出场。面对跳空，你必须选择放弃哪一个——<b>不存在两者都能保住的指令</b>。'
+    },
+    link: 'orders.html#e-STOP'
+  };
+
+  /* ==================================================== 2 · range vs break */
+  var rangeFade = {
+    id: 'range-fade',
+    kind: 'ind',
+    title: { en: 'Reading the regime before the signal', zh: '先判断行情体制，再谈信号' },
+    blurb: {
+      en: 'The same breakout rule that prints money in a trend bleeds in a range. Identify the regime from the indicators, then choose an entry that matches it.',
+      zh: '在趋势里赚钱的突破规则，到了震荡市就会持续失血。先从指标判断体制，再选择与之匹配的入场方式。'
+    },
+    tape: { regime: 'range', seed: 'range-fade-v3', bars: 120, p0: 100 },
+    overlays: ['boll', 'rsi'],
+    steps: [
+      { kind: 'info',
+        title: { en: 'What is in front of you', zh: '你面前的是什么' },
+        body: {
+          en: 'Bollinger Bands (20, 2σ) on the price, RSI (14) below. Before choosing any entry, the first job is naming the regime — because <b>the same rule has opposite expectancy in different regimes</b>.<br><br>Look at three things: is the middle band sloping or flat, is price alternating between the two edges, and is RSI swinging across 50 without reaching an extreme?',
+          zh: '价格上叠加布林带（20, 2σ），下方是 RSI(14)。在选择任何入场方式之前，第一件事是**给行情体制命名**——因为<b>同一条规则在不同体制下的期望值是相反的</b>。<br><br>看三件事：中轨是在倾斜还是走平；价格是否在两条边轨之间来回；RSI 是否在 50 上下摆动而没有到达极值。'
+        } },
+      { kind: 'pick',
+        title: { en: 'Name the regime', zh: '给这段行情命名' },
+        body: { en: 'From the two charts, what is this?', zh: '从这两张图看，这是什么行情？' },
+        options: [
+          { ok: false, label: { en: 'An uptrend — buy strength.', zh: '上升趋势——追强势。' },
+            why: { en: 'The middle band is flat and price keeps returning to it. A trend has a sloping mean and price that stays on one side of it.',
+                   zh: '中轨走平，且价格不断回到中轨。趋势的特征是均线有斜率、且价格持续待在它的一侧。' } },
+          { ok: true, label: { en: 'A range — price oscillates around a flat mean.', zh: '震荡市——价格围绕走平的均值来回。' },
+            why: { en: 'Correct. Flat middle band, price alternating between the edges, RSI crossing 50 repeatedly without pinning. In this regime the edges are where the odds are, and the middle is the target.',
+                   zh: '正确。中轨走平、价格在两边轨之间交替、RSI 反复穿越 50 且不贴边。在这种体制下，**边缘才是胜率所在，中轨是目标**。' } },
+          { ok: false, label: { en: 'A squeeze about to break — buy the breakout.', zh: '压缩即将突破——买突破。' },
+            why: { en: 'A squeeze shows bands narrowing steadily. Here the bandwidth is roughly constant — the market is not compressing, it is oscillating.',
+                   zh: '压缩形态的特征是带宽持续收窄。这里带宽大致恒定——市场不是在压缩，而是在震荡。' } }
+        ] },
+      { kind: 'act', ui: 'fadeDepth',
+        title: { en: 'Choose your entry', zh: '选择你的入场' },
+        body: { en: 'Place a <b>resting buy limit</b> some distance below the middle band, then exit at the middle band. Deeper is a better price but a lower chance of being reached — that trade-off is the whole exercise.<br><br>The fill model is the handbook\'s: price merely <i>touching</i> your level gets you a slice of the bar\'s volume; trading <i>through</i> you fills the lot.',
+                zh: '在中轨下方一定距离挂一张<b>买入限价单</b>，到中轨止盈。挂得越深价格越好，但被触及的概率越低——这个取舍就是本练习的全部。<br><br>成交模型采用手册的规则：价格仅仅<i>触及</i>你的价位时只能拿到当根成交量的一部分；<i>穿透</i>你时才全部成交。' },
+        param: { key: 'depth', min: 0.2, max: 2.4, step: 0.1, def: 1.0,
+                 label: { en: 'Entry depth (σ below mid)', zh: '入场深度（中轨下方 σ）' } },
+        run: function (tape, p) {
+          var cl = tape.bars.map(function (b) { return b.c; });
+          var bb = S.IND.boll(cl, 20, 2);
+          var start = 24;
+          var sd = (bb.up[start] - bb.mid[start]) / 2;
+          var lim = bb.mid[start] - p.depth * sd;
+          var t = { n: tape.n, bars: tape.bars, seed: tape.seed };
+          var buy = S.ENGINE.LMT(t, { side: 'buy', qty: 1000, limit: lim, from: start });
+          var exitAt = null, exitPx = null, i;
+          if (buy.filled) {
+            for (i = buy.at + 1; i < tape.n; i++) {
+              if (bb.mid[i] != null && tape.bars[i].h >= bb.mid[i]) { exitAt = i; exitPx = bb.mid[i]; break; }
+            }
+          }
+          if (buy.filled && exitAt == null) { exitAt = tape.n - 1; exitPx = tape.bars[tape.n - 1].c; }
+          var pl = buy.filled ? (exitPx - lim) * buy.filled : 0;
+          return { limit: lim, buy: buy, exitAt: exitAt, exitPx: exitPx, pl: pl, bb: bb, start: start };
+        },
+        grade: function (res, p) {
+          var pass = res.buy.filled > 0 && res.pl > 0;
+          return {
+            pass: pass,
+            title: pass ? { en: 'Filled and mean-reverted', zh: '成交并完成均值回归' }
+                        : (res.buy.filled ? { en: 'Filled, but it did not come back in time', zh: '成交了，但没能及时回到中轨' }
+                                          : { en: 'Never reached — a good price you did not get', zh: '从未触及——一个你没拿到的好价格' }),
+            body: res.buy.filled
+              ? { en: 'Limit at <b>' + res.limit.toFixed(2) + '</b> · filled <b>' + res.buy.filled + '</b> of 1,000 · exit at <b>' +
+                      res.exitPx.toFixed(2) + '</b> · P/L <b>' + M(res.pl) + '</b>.<br>Note the partial: a resting limit is a place in a queue, and on the bars that merely touched your level you received a slice, not the lot.',
+                  zh: '限价 <b>' + res.limit.toFixed(2) + '</b>，1,000 股中成交 <b>' + res.buy.filled + '</b> 股，' +
+                      '在 <b>' + res.exitPx.toFixed(2) + '</b> 出场，盈亏 <b>' + M(res.pl) + '</b>。<br>注意部分成交：挂单是队列里的一个位置，在那些只是"触及"你价位的 K 线上，你拿到的是一部分而不是全部。' }
+              : { en: 'The limit at <b>' + res.limit.toFixed(2) + '</b> was never reached. Depth bought you a better price and cost you the trade — the opportunity cost that only shows up in implementation shortfall, never in a slippage report.',
+                  zh: '挂在 <b>' + res.limit.toFixed(2) + '</b> 的限价单从未被触及。深度为你换来更好的价格，代价是这笔交易根本没发生——这份机会成本只会出现在实施缺口里，永远不会出现在滑点报告里。' }
+          };
+        } },
+      { kind: 'act', ui: 'compare',
+        title: { en: 'Fade the edge, or buy the breakout?', zh: '在边缘反手，还是买突破？' },
+        body: { en: 'Both rules, run on the <b>same range tape</b>. The breakout rule buys a close above the upper band and exits on a close back below it.',
+                zh: '两条规则，在<b>同一段震荡行情</b>上运行。突破规则在收盘价站上上轨时买入，在收盘跌回上轨下方时出场。' },
+        run: function (tape, p) {
+          var cl = tape.bars.map(function (b) { return b.c; });
+          var bb = S.IND.boll(cl, 20, 2), i, trades = [], pos = null, pl = 0, wins = 0;
+          for (i = 24; i < tape.n; i++) {
+            if (bb.up[i] == null) continue;
+            if (!pos && cl[i] > bb.up[i]) pos = { px: cl[i], i: i };
+            else if (pos && cl[i] < bb.up[i]) {
+              var d = cl[i] - pos.px; pl += d * 1000; if (d > 0) wins++;
+              trades.push(d); pos = null;
+            }
+          }
+          if (pos) { var d2 = cl[tape.n - 1] - pos.px; pl += d2 * 1000; if (d2 > 0) wins++; trades.push(d2); }
+          /* the fade rule, same tape, mid-band exit */
+          var fpl = 0, fn = 0, fw = 0, j, sd0;
+          for (i = 24; i < tape.n; i++) {
+            if (bb.dn[i] == null) continue;
+            if (tape.bars[i].l <= bb.dn[i]) {
+              for (j = i + 1; j < tape.n; j++) {
+                if (bb.mid[j] != null && tape.bars[j].h >= bb.mid[j]) {
+                  var g = bb.mid[j] - bb.dn[i]; fpl += g * 1000; fn++; if (g > 0) fw++; i = j; break;
+                }
+              }
+              if (j >= tape.n) break;
+            }
+          }
+          var mk = function (nm, o) {
+            return { cells: [{ v: nm }, { v: String(o.n) }, { v: String(o.w) },
+              { v: S.money(o.pl), tone: o.pl >= 0 ? 'up' : 'down' }] };
+          };
+          return {
+            breakout: { pl: pl, n: trades.length, wins: wins },
+            fade: { pl: fpl, n: fn, wins: fw },
+            table: {
+              head: [{ en: 'Rule', zh: '规则' }, { en: 'Trades', zh: '交易笔数' },
+                     { en: 'Winners', zh: '盈利笔数' }, { en: 'Net P/L', zh: '净盈亏' }],
+              rows: [
+                mk({ en: 'Buy the breakout', zh: '买突破' }, { n: trades.length, w: wins, pl: pl }),
+                mk({ en: 'Fade the lower band', zh: '在下轨反手' }, { n: fn, w: fw, pl: fpl })
+              ]
+            }
+          };
+        },
+        grade: function (res) {
+          return {
+            pass: true,
+            title: { en: 'The rule is not good or bad — it is matched or unmatched', zh: '规则本身无所谓好坏，只有匹配与不匹配' },
+            body: {
+              en: 'Buying breakouts in this range: <b>' + res.breakout.n + '</b> trades, <b>' + res.breakout.wins +
+                  '</b> winners, net <b>' + M(res.breakout.pl) + '</b>. Fading the lower band to the middle: <b>' +
+                  res.fade.n + '</b> trades, <b>' + res.fade.wins + '</b> winners, net <b>' + M(res.fade.pl) + '</b>.<br><br>' +
+                  'The breakout rule is not broken. It is a <b>trend</b> rule, and every false break in a range is it doing exactly what it was designed to do, in a market that does not reward it. This is why regime identification comes before signal selection.',
+              zh: '在这段震荡行情里买突破：<b>' + res.breakout.n + '</b> 笔交易，<b>' + res.breakout.wins +
+                  '</b> 笔盈利，净额 <b>' + M(res.breakout.pl) + '</b>。在下轨反手做到中轨：<b>' +
+                  res.fade.n + '</b> 笔交易，<b>' + res.fade.wins + '</b> 笔盈利，净额 <b>' + M(res.fade.pl) + '</b>。<br><br>' +
+                  '突破规则本身没有坏掉。它是一条<b>趋势</b>规则，震荡市里每一次假突破都是它在<b>严格按照设计执行</b>，只是市场不为此付钱。这就是为什么<b>体制识别必须排在信号选择之前</b>。'
+            }
+          };
+        } }
+    ],
+    close: {
+      en: 'An indicator does not tell you what to do. It tells you which regime you are in, and the regime decides which rule has positive expectancy. Choosing the rule first and hunting for a regime that fits it is how backtests get overfitted.',
+      zh: '指标不会告诉你该做什么。它告诉你身处哪种体制，而体制决定了哪条规则具有正期望。先选规则、再去找能配合它的行情，正是回测过拟合的由来。'
+    },
+    link: 'indicators.html#ind-BOLL'
+  };
+
+  /* ==================================================== 3 · IV crush event */
+  var ivCrush = {
+    id: 'iv-crush',
+    kind: 'opt',
+    title: { en: 'Right on direction, still lost money', zh: '方向做对了，钱还是亏了' },
+    blurb: {
+      en: 'Earnings tomorrow, implied volatility elevated. Buy a call and be right about the move — then watch the volatility term you ignored take the profit back.',
+      zh: '明天财报，隐含波动率高企。买入认购、并且方向判断正确——然后看着你忽略的那个波动率项把利润拿回去。'
+    },
+    tape: { regime: 'event', seed: 'iv-crush-v2', bars: 60, p0: 100, eventAt: 40, eventPct: 0.072 },
+    overlays: ['ma20'],
+    opt: { K: 100, T0: 21 / 365, ivBefore: 0.86, ivAfter: 0.42, r: 0.04 },
+    steps: [
+      { kind: 'info',
+        title: { en: 'The setup', zh: '情景设定' },
+        body: {
+          en: 'Spot <b>$100</b>. Earnings land at bar 40. The front-month implied volatility is <b>86%</b> while the month behind it prices <b>42%</b> — that spread is the market charging for one dated catalyst, and it is not an opinion about direction.<br><br>Variance is additive in time, so the event\'s own variance can be stripped out of the front month. What the market has priced is roughly <b>±6.5%</b> on the print.',
+          zh: '现价 <b>$100</b>，财报在第 40 根出炉。近月隐含波动率 <b>86%</b>，而次月只有 <b>42%</b>——这个差额是市场为<b>一个有确定日期的催化剂</b>收取的费用，它不包含任何方向观点。<br><br>方差随时间可加，因此可以把事件方差从近月中剥离出来。市场对这次财报定价的波动幅度约为 <b>±6.5%</b>。'
+        } },
+      { kind: 'pick',
+        title: { en: 'What has to happen for a long call to win?', zh: '买入认购要赚钱，必须发生什么？' },
+        body: { en: 'You buy the at-the-money call before the print. Which condition does it actually need?',
+                zh: '你在财报前买入平价认购。它真正需要满足的条件是哪一个？' },
+        options: [
+          { ok: false, label: { en: 'The stock goes up.', zh: '股价上涨。' },
+            why: { en: 'Not enough. Up by less than the priced move and the volatility collapse still takes more than the delta gains. Direction is necessary and not sufficient.',
+                   zh: '不够。涨幅小于市场已定价的幅度时，波动率崩塌拿走的会多过 Delta 赚到的。方向是必要条件，不是充分条件。' } },
+          { ok: true, label: { en: 'The stock moves up by MORE than the move already priced in.', zh: '股价上涨的幅度**超过市场已经定价的幅度**。' },
+            why: { en: 'Correct. You are not betting on direction against zero, you are betting against the ±6.5% the market already charged you for. Anything less and vega hands the profit back.',
+                   zh: '正确。你不是在与"零"比较方向，而是在与市场**已经向你收费的 ±6.5%** 比较。低于这个幅度，vega 就会把利润交回去。' } },
+          { ok: false, label: { en: 'Implied volatility rises after the print.', zh: '财报公布后隐含波动率上升。' },
+            why: { en: 'It essentially never does. Once the uncertainty resolves the front month reverts to the curve — that reversion is the crush, and it is the one term you can count on.',
+                   zh: '这基本不会发生。不确定性一旦兑现，近月就回归到曲线上——这个回归就是崩塌，而它是唯一可以指望必然发生的一项。' } }
+        ] },
+      { kind: 'act', ui: 'structure',
+        title: { en: 'Choose a structure and run the event', zh: '选择结构，然后运行财报' },
+        body: { en: 'All three are priced off the same chain and run through the <b>same price path</b> and the <b>same volatility crush</b>.',
+                zh: '三种结构都基于同一条期权链定价，并穿过<b>完全相同的价格路径</b>与<b>完全相同的波动率崩塌</b>。' },
+        param: { key: 'struct', kind: 'seg',
+                 label: { en: 'Structure', zh: '结构' },
+                 opts: [
+                   { id: 'call', label: { en: 'Long 100C', zh: '买入 100 认购' } },
+                   { id: 'spread', label: { en: 'Call spread 100/108', zh: '认购价差 100/108' } },
+                   { id: 'stock', label: { en: '100 shares', zh: '100 股正股' } }
+                 ] },
+        run: function (tape, p) {
+          var o = ivCrush.opt, ev = 40;
+          var S0 = tape.bars[ev - 1].c, S1 = tape.bars[ev].c;
+          var Tb = o.T0, Ta = o.T0 - 1 / 365;
+          function px(K, T, iv, sp) { return S.bs('C', sp, K, T, o.r, iv); }
+          var out = { S0: S0, S1: S1, move: (S1 - S0) / S0 };
+          out.call = { before: px(100, Tb, o.ivBefore, S0), after: px(100, Ta, o.ivAfter, S1) };
+          out.spreadBefore = px(100, Tb, o.ivBefore, S0) - px(108, Tb, o.ivBefore * 0.94, S0);
+          out.spreadAfter = px(100, Ta, o.ivAfter, S1) - px(108, Ta, o.ivAfter * 0.94, S1);
+          /* named `pnl`, not `rows` — `rows` is the comparison-table key and the
+             collision made the renderer treat this object as a row list */
+          out.pnl = {
+            call: (out.call.after - out.call.before) * 100,
+            spread: (out.spreadAfter - out.spreadBefore) * 100,
+            stock: (S1 - S0) * 100
+          };
+          out.table = {
+            head: [{ en: 'Structure', zh: '结构' }, { en: 'Before', zh: '事件前' },
+                   { en: 'After', zh: '事件后' }, { en: 'P/L', zh: '盈亏' }],
+            rows: [
+              { cells: [{ v: { en: 'Long 100C', zh: '买入 100 认购' } },
+                        { v: out.call.before.toFixed(2) }, { v: out.call.after.toFixed(2) },
+                        { v: S.money(out.pnl.call), tone: out.pnl.call >= 0 ? 'up' : 'down' }] },
+              { cells: [{ v: { en: 'Call spread 100/108', zh: '认购价差 100/108' } },
+                        { v: out.spreadBefore.toFixed(2) }, { v: out.spreadAfter.toFixed(2) },
+                        { v: S.money(out.pnl.spread), tone: out.pnl.spread >= 0 ? 'up' : 'down' }] },
+              { cells: [{ v: { en: '100 shares', zh: '100 股正股' } },
+                        { v: S0.toFixed(2) }, { v: S1.toFixed(2) },
+                        { v: S.money(out.pnl.stock), tone: out.pnl.stock >= 0 ? 'up' : 'down' }] }
+            ]
+          };
+          out.noCrush = (px(100, Ta, o.ivBefore, S1) - out.call.before) * 100;
+          out.pick = p.struct || 'call';
+          return out;
+        },
+        grade: function (res, p) {
+          var got = res.pnl[res.pick];
+          var pass = got > 0;
+          return {
+            pass: pass,
+            title: pass ? { en: 'Positive — but look at what it cost to get there', zh: '盈利——但请看清楚代价' }
+                        : { en: 'Direction right, money lost', zh: '方向对了，钱亏了' },
+            body: {
+              en: 'The stock moved <b class="mono">' + pctFmt(res.move) + '</b> on the print — <b>up</b>, and less than the ±6.5% the chain had priced. ' +
+                  'Your ' + res.pick + ' returned <b>' + M(got) + '</b>.<br><br>' +
+                  'The long call was worth <b>' + res.call.before.toFixed(2) + '</b> before and <b>' + res.call.after.toFixed(2) + '</b> after. ' +
+                  'Had implied volatility <i>not</i> collapsed, that same move would have paid <b>' + M(res.noCrush) + '</b>. ' +
+                  'The difference is the crush, and it is <b>always ≤ 0 for a long option regardless of direction</b>.',
+              zh: '财报当根股价变动 <b class="mono">' + pctFmt(res.move) + '</b>——方向<b>向上</b>，但幅度小于期权链已定价的 ±6.5%。' +
+                  '你选择的结构收益为 <b>' + M(got) + '</b>。<br><br>' +
+                  '那张认购期权公布前值 <b>' + res.call.before.toFixed(2) + '</b>，公布后值 <b>' + res.call.after.toFixed(2) + '</b>。' +
+                  '如果隐含波动率<i>没有</i>崩塌，同样这一段涨幅本可以赚到 <b>' + M(res.noCrush) + '</b>。' +
+                  '两者之差就是 IV 崩塌，而它对多头期权<b>恒为负，与方向无关</b>。'
+            }
+          };
+        } },
+      { kind: 'act', ui: 'compare',
+        title: { en: 'All three, one print', zh: '三种结构，同一次财报' },
+        body: { en: 'Same move, same crush, same tape.', zh: '同样的波动、同样的崩塌、同样的行情。' },
+        run: function (tape, p) {
+          return ivCrush.steps[2].run(tape, { struct: 'call' });
+        },
+        grade: function (res) {
+          return {
+            pass: true,
+            title: { en: 'Why the spread survives', zh: '为什么价差活了下来' },
+            body: {
+              en: 'The long call carries full vega and eats the whole crush. The <b>call spread</b> sold most of that vega back — the short 108 leg loses value on the crush too, and that loss is <i>your gain</i>, so the package barely notices. ' +
+                  'The <b>stock</b> has no vega at all and simply keeps the move.<br><br>' +
+                  'This is the quantitative form of the rule you already read in the handbook: <b>high IV → buy spreads, low IV → buy single legs</b>. It was never about being clever; it is about whether you can afford to be long vega into a scheduled collapse.',
+              zh: '买入认购持有全部 vega，因而承受了完整的崩塌。<b>认购价差</b>把大部分 vega 卖了回去——卖出的 108 那条腿在崩塌中同样贬值，而这个贬值<b>是你的收益</b>，所以整个组合几乎不受影响。' +
+                  '<b>正股</b>完全没有 vega，因此原封不动地拿到了这段涨幅。<br><br>' +
+                  '这就是你在手册里读到的那条规则的量化形态：<b>高 IV 买价差，低 IV 买单腿</b>。它从来不是什么技巧，而是在问：<b>你是否承担得起在一次注定发生的崩塌之前做多 vega</b>。'
+            }
+          };
+        } }
+    ],
+    close: {
+      en: 'Before any earnings trade, solve for the move that gets you back to flat: Δ·x + ½Γ·x² = |ν·Δσ| + |Θ·Δt|. The answer is usually close to the implied move itself, which means the market has already charged you for the gap you were hoping for.',
+      zh: '在任何财报交易之前，先解出让你回到打平所需的波动幅度：Δx + ½Γx² = |ν·Δσ| + |Θ·Δt|。答案通常非常接近市场隐含的波动幅度本身——也就是说，<b>你所期待的那个跳空，市场已经向你收过费了</b>。'
+    },
+    link: 'options.html#e-IV_CRUSH'
+  };
+
+  PG.LESSONS = [stopGap, rangeFade, ivCrush];
+
+  /* Entry-id → lesson-id. A card only gets a "practise this" button when its
+     id appears here; a button on 280 cards that lands nowhere is worse than
+     no button at all. */
+  PG.ENTRY_MAP = {
+    indicators: { BOLL: 'range-fade', MA: 'range-fade', RSI: 'range-fade', CHOP: 'range-fade', ATR: 'range-fade' },
+    options: { IV_CRUSH: 'iv-crush', VOL_TERM: 'iv-crush', LONG_CALL: 'iv-crush',
+               LONG_CALL_SPREAD: 'iv-crush', VEGA: 'iv-crush', ZERO_DTE: 'iv-crush' },
+    orders: { STOP: 'stop-gap', STOP_LIMIT: 'stop-gap', MARKET: 'stop-gap',
+              TRAILING_STOP: 'stop-gap', SLIPPAGE: 'stop-gap', LIMIT: 'range-fade' }
+  };
+}(typeof globalThis !== 'undefined' ? globalThis : this));
+</script>
+
+<script>/* =============================================================================
+   app.js — the lesson state machine and the UI around it.
+
+   One lesson at a time; one step at a time. A step is entered, rendered,
+   acted on, graded, and only then does Next unlock. Progress is stored per
+   lesson id so a deep link can drop straight into an unfinished one.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var PG = root.PG, S = PG.Sim, P = PG.Plot;
+  var $ = function (id) { return document.getElementById(id); };
+  var lang = 'en';
+  function L(o) { return (o && typeof o === 'object' && (o.en || o.zh)) ? (o[lang] || o.en) : o; }
+
+  var T = {
+    navInd: { en: 'Indicators', zh: '指标手册' },
+    navOpt: { en: 'Options', zh: '期权手册' },
+    navOrd: { en: 'Order Types', zh: '订单类型' },
+    navMath: { en: 'Math', zh: '数学手册' },
+    backToCv: { en: 'Back to CV', zh: '返回简历' },
+    ebPlay: { en: 'Guided practice', zh: '引导式练习' },
+    title: { en: 'Trading Playground', zh: '交易模拟训练场' },
+    subtitle: {
+      en: 'Scripted market regimes, a real fill model, and the counterfactual replayed on the identical price path. Each lesson takes a claim from one of the handbooks and makes you trade it — the wrong answers are the misconceptions, not filler.',
+      zh: '预设的行情体制、真实的成交模型，以及在完全相同价格路径上重放的反事实对照。每一课都取自三本手册中的一个结论，并让你亲手交易它——错误选项都是真实存在的误解，不是凑数的干扰项。'
+    },
+    kLessons: { en: 'Lessons', zh: '课程数' },
+    kDone: { en: 'Completed', zh: '已完成' },
+    kScore: { en: 'Best score', zh: '最好成绩' },
+    allLessons: { en: 'All lessons', zh: '全部课程' },
+    chartTitle: { en: 'Price', zh: '价格' },
+    fillTitle: { en: 'What actually happened', zh: '实际发生了什么' },
+    acctTitle: { en: 'Account', zh: '账户' },
+    next: { en: 'Next', zh: '下一步' },
+    run: { en: 'Run the tape', zh: '运行行情' },
+    again: { en: 'Try another value', zh: '换个数值再试' },
+    finish: { en: 'Finish lesson', zh: '完成本课' },
+    replay: { en: 'Replay lesson', zh: '重做本课' },
+    readEntry: { en: 'Read the handbook entry', zh: '阅读手册条目' },
+    stepOf: { en: 'Step %1 of %2', zh: '第 %1 步 / 共 %2 步' },
+    correct: { en: 'Correct', zh: '回答正确' },
+    notQuite: { en: 'Not quite', zh: '不对' },
+    lessonDone: { en: 'Lesson complete', zh: '本课完成' },
+    pickerNote: {
+      en: 'Every scenario runs on a <b>fixed seed</b>, so the "what if you had done the other thing" comparison is replayed on the <b>same</b> price path. Comparing two different random draws would make the difference noise rather than a lesson.',
+      zh: '每个场景都使用<b>固定随机种子</b>，因此"如果你当时做了另一个选择"的对照是在<b>同一条</b>价格路径上重放的。用两次不同的随机抽样做对比，差异就只是噪音，而不是一堂课。'
+    },
+    fillNote: {
+      en: 'Fills use the order handbook\'s semantics: a triggered stop is clamped no better than a gapped open, a stop-limit above that open fills nothing, and a resting limit takes a slice of the bar\'s volume unless price trades through it.',
+      zh: '成交采用订单手册的语义：触发的止损被钳制为不优于跳空开盘价；高于该开盘价的止损限价单一股不成交；挂单限价单在价格仅仅触及时只拿到当根成交量的一部分，除非价格穿透它。'
+    },
+    footNote1: {
+      en: 'This is a teaching simulator, not a backtester and not a broker. Prices are generated from a seeded process shaped into named regimes; the order book is a modelled ladder, not a real one. Nothing here is a claim about any specific instrument.',
+      zh: '这是一个教学模拟器，不是回测工具，也不是券商终端。价格由带种子的过程生成并塑造成指定的行情体制；订单簿是建模出来的阶梯，不是真实盘口。本页任何内容都不构成对具体标的的判断。'
+    },
+    footNote2: {
+      en: 'What the simulator deliberately does NOT model: hidden and iceberg liquidity, quotes that vanish as you reach for them, queue position within a price level, and the borrow market. All four move real fills, and three of them move them against you.',
+      zh: '模拟器<b>刻意不建模</b>的部分：隐藏单与冰山储备、你一伸手就撤走的报价、同一价位内部的排队位置，以及融券市场。这四项都会影响真实成交，其中三项的方向对你不利。'
+    },
+    footNote3: {
+      en: 'Educational material. Not investment advice, and not a simulation you should size a real position from.',
+      zh: '教学材料，不构成投资建议，也不应据此决定任何真实仓位。'
+    }
+  };
+  function t(k) { var e = T[k]; return e ? (e[lang] || e.en) : k; }
+
+  /* ------------------------------------------------------------- progress */
+  var PROG = {};
+  try { PROG = JSON.parse(localStorage.getItem('pg.progress') || '{}'); } catch (e) { PROG = {}; }
+  function save() { try { localStorage.setItem('pg.progress', JSON.stringify(PROG)); } catch (e) { /* private mode */ } }
+
+  /* ---------------------------------------------------------------- state */
+  var cur = null, stepIx = 0, tape = null, lastRun = null, stepDone = false, score = 0;
+
+  /* ------------------------------------------------------------- rendering */
+  function renderPicker() {
+    var g = $('lessonGrid');
+    g.innerHTML = PG.LESSONS.map(function (ls, i) {
+      var done = PROG[ls.id] && PROG[ls.id].done;
+      var tagCls = ls.kind === 'ord' ? 'tag-ord' : ls.kind === 'ind' ? 'tag-ind' : 'tag-opt';
+      var tagTxt = ls.kind === 'ord' ? (lang === 'zh' ? '订单类型' : 'Order types')
+                 : ls.kind === 'ind' ? (lang === 'zh' ? '指标与体制' : 'Indicators')
+                 : (lang === 'zh' ? '期权结构' : 'Option structure');
+      return '<button class="lcard' + (done ? ' done' : '') + '" data-ls="' + ls.id + '">' +
+        '<div class="lh"><span class="lno">' + String(i + 1).padStart(2, '0') + '</span>' +
+        '<h3>' + L(ls.title) + '</h3></div>' +
+        '<p>' + L(ls.blurb) + '</p>' +
+        '<div class="ltags"><span class="tag ' + tagCls + '">' + tagTxt + '</span>' +
+        (done ? '<span class="tag tag-done">' + (lang === 'zh' ? '已完成 ' : 'done ') + (PROG[ls.id].score || 0) + '/' + countGraded(ls) + '</span>' : '') +
+        '</div></button>';
+    }).join('');
+    $('statTotal').textContent = PG.LESSONS.length;
+    $('statDone').textContent = PG.LESSONS.filter(function (l) { return PROG[l.id] && PROG[l.id].done; }).length;
+    var best = PG.LESSONS.reduce(function (a, l) { return a + ((PROG[l.id] && PROG[l.id].score) || 0); }, 0);
+    var tot = PG.LESSONS.reduce(function (a, l) { return a + countGraded(l); }, 0);
+    $('statScore').textContent = best ? best + '/' + tot : '—';
+  }
+  function countGraded(ls) {
+    return ls.steps.filter(function (s) { return s.kind === 'pick' || s.kind === 'act'; }).length;
+  }
+
+  function open(id) {
+    var ls = PG.LESSONS.filter(function (l) { return l.id === id; })[0];
+    if (!ls) return false;
+    cur = ls; stepIx = 0; score = 0; lastRun = null;
+    tape = S.tape(ls.tape);
+    $('picker').style.display = 'none';
+    $('lab').classList.add('on');
+    $('labTitle').textContent = L(ls.title);
+    $('labMeta').textContent = ls.tape.regime + ' · seed ' + ls.tape.seed + ' · ' + tape.n + ' bars';
+    var tg = $('labTag');
+    tg.className = 'tag ' + (ls.kind === 'ord' ? 'tag-ord' : ls.kind === 'ind' ? 'tag-ind' : 'tag-opt');
+    tg.textContent = ls.kind === 'ord' ? (lang === 'zh' ? '订单类型' : 'Order types')
+                   : ls.kind === 'ind' ? (lang === 'zh' ? '指标与体制' : 'Indicators')
+                   : (lang === 'zh' ? '期权结构' : 'Option structure');
+    if (history.replaceState) history.replaceState(null, '', '#lesson=' + id);
+    renderStep();
+    return true;
+  }
+
+  function back() {
+    cur = null; $('lab').classList.remove('on'); $('picker').style.display = '';
+    if (history.replaceState) history.replaceState(null, '', location.pathname);
+    renderPicker();
+  }
+
+  function renderStep() {
+    var st = cur.steps[stepIx];
+    stepDone = st.kind === 'info';
+    lastRun = null;
+    $('stepTitle').textContent = L(st.title);
+    $('stepCount').textContent = t('stepOf').replace('%1', stepIx + 1).replace('%2', cur.steps.length);
+    $('stepDots').innerHTML = cur.steps.map(function (_, i) {
+      return '<div class="stepdot' + (i < stepIx ? ' ok' : i === stepIx ? ' on' : '') + '"></div>';
+    }).join('');
+    $('stepBody').innerHTML = L(st.body);
+    $('stepVerdict').innerHTML = '';
+    $('fillPanel').style.display = 'none';
+    $('stepUI').innerHTML = '';
+    if (st.kind === 'pick') renderPick(st);
+    else if (st.kind === 'act') renderAct(st);
+    renderCta();
+    draw();
+    renderAcct();
+  }
+
+  function renderPick(st) {
+    $('stepUI').innerHTML = '<div class="choices">' + st.options.map(function (o, i) {
+      return '<button class="choice" data-opt="' + i + '"><span class="ck">' +
+        String.fromCharCode(65 + i) + '</span>' + L(o.label) + '</button>';
+    }).join('') + '</div>';
+  }
+
+  function renderAct(st) {
+    var h = '';
+    if (st.param) {
+      if (st.param.kind === 'seg') {
+        h += '<div style="margin-top:12px"><div class="ctrl"><label>' + L(st.param.label) + '</label></div>' +
+          '<div class="seg" id="segParam">' + st.param.opts.map(function (o, i) {
+            return '<button data-v="' + o.id + '"' + (i === 0 ? ' class="on"' : '') + '>' + L(o.label) + '</button>';
+          }).join('') + '</div></div>';
+      } else {
+        h += '<div class="ctrl"><label>' + L(st.param.label) + '</label>' +
+          '<output id="pOut">' + st.param.def + '</output>' +
+          '<input type="range" id="pRange" min="' + st.param.min + '" max="' + st.param.max +
+          '" step="' + st.param.step + '" value="' + st.param.def + '"></div>';
+      }
+    }
+    $('stepUI').innerHTML = h;
+    if (st.param && st.param.kind !== 'seg') {
+      $('pRange').addEventListener('input', function () { $('pOut').textContent = this.value; draw(); });
+    }
+    if (st.param && st.param.kind === 'seg') {
+      $('segParam').addEventListener('click', function (e) {
+        var b = e.target.closest('[data-v]'); if (!b) return;
+        [].forEach.call(this.children, function (c) { c.classList.toggle('on', c === b); });
+      });
+    }
+  }
+
+  function paramVal(st) {
+    var p = {};
+    if (!st.param) return p;
+    if (st.param.kind === 'seg') {
+      var on = $('segParam') && $('segParam').querySelector('.on');
+      p[st.param.key] = on ? on.getAttribute('data-v') : st.param.opts[0].id;
+    } else {
+      p[st.param.key] = parseFloat($('pRange') ? $('pRange').value : st.param.def);
+    }
+    return p;
+  }
+
+  function renderCta() {
+    var st = cur.steps[stepIx], h = '';
+    if (st.kind === 'act') {
+      h += '<button class="btn primary" id="runBtn">' + t('run') + '</button>';
+    }
+    var last = stepIx === cur.steps.length - 1;
+    h += '<button class="btn' + (st.kind === 'act' ? '' : ' primary') + '" id="nextBtn"' +
+         (stepDone ? '' : ' disabled') + '>' + (last ? t('finish') : t('next')) + '</button>';
+    if (cur.link) h += '<a class="btn" href="' + cur.link + '">' + t('readEntry') + '</a>';
+    $('stepCta').innerHTML = h;
+    if ($('runBtn')) $('runBtn').addEventListener('click', doRun);
+    if ($('nextBtn')) $('nextBtn').addEventListener('click', doNext);
+  }
+
+  function doRun() {
+    var st = cur.steps[stepIx], p = paramVal(st);
+    var res = st.run(tape, p);
+    lastRun = { res: res, p: p };
+    var g = st.grade(res, p, tape);
+    if (g.pass && !stepDone) score++;
+    stepDone = true;
+    $('stepVerdict').innerHTML =
+      '<div class="verdict ' + (g.pass ? 'pass' : 'fail') + '"><h4>' + L(g.title) + '</h4>' + L(g.body) + '</div>';
+    renderFills(st, res);
+    renderCta();
+    draw();
+    renderAcct();
+  }
+
+  function doNext() {
+    if (!stepDone) return;
+    if (stepIx === cur.steps.length - 1) {
+      PROG[cur.id] = { done: true, score: Math.max(score, (PROG[cur.id] && PROG[cur.id].score) || 0) };
+      save();
+      $('stepVerdict').innerHTML =
+        '<div class="verdict pass"><h4>' + t('lessonDone') + ' · ' + score + '/' + countGraded(cur) + '</h4>' +
+        L(cur.close) + '</div>';
+      $('stepCta').innerHTML =
+        '<button class="btn primary" id="backBtn2">' + t('allLessons') + '</button>' +
+        '<button class="btn" id="replayBtn">' + t('replay') + '</button>' +
+        (cur.link ? '<a class="btn" href="' + cur.link + '">' + t('readEntry') + '</a>' : '');
+      $('backBtn2').addEventListener('click', back);
+      $('replayBtn').addEventListener('click', function () { open(cur.id); });
+      return;
+    }
+    stepIx++; renderStep();
+  }
+
+  /* ----------------------------------------------------------- fill tables */
+  /* A comparison step supplies its own {head, rows}; the renderer knows
+     nothing about what is being compared. Coupling this to one lesson's
+     result shape is what broke iv-crush. */
+  function renderFills(st, res) {
+    if (res && res.table && res.table.rows) {
+      var tb = res.table;
+      var html = '<table class="cf"><thead><tr>' + tb.head.map(function (h, i) {
+        return '<th' + (i ? ' style="text-align:right"' : '') + '>' + L(h) + '</th>';
+      }).join('') + '</tr></thead><tbody>';
+      tb.rows.forEach(function (r) {
+        html += '<tr' + (r.you ? ' class="you"' : '') + '>' + r.cells.map(function (c, i) {
+          var style = c.tone ? ' style="color:var(--' + c.tone + ')"' : '';
+          return i === 0 ? '<td><b>' + L(c.v) + '</b></td>'
+                         : '<td class="num"' + style + '>' + L(c.v) + '</td>';
+        }).join('') + '</tr>';
+      });
+      html += '</tbody></table>';
+      $('cfWrap').innerHTML = html;
+      $('fillLog').innerHTML = '';
+      $('fillPanel').style.display = '';
+      $('fillSub').textContent = lang === 'zh' ? '同一条行情，逐条重放' : 'same tape, replayed per instruction';
+      return;
+    }
+    if (res.events) {
+      $('cfWrap').innerHTML = '';
+      $('fillLog').innerHTML = res.events.map(function (e) {
+        return '<div><span class="ev">' + (e[0] == null ? '   —' : ('bar ' + String(e[0]).padStart(3, ' '))) +
+          '</span>  ' + e[1] + '</div>';
+      }).join('');
+      $('fillPanel').style.display = '';
+      $('fillSub').textContent = lang === 'zh' ? '成交事件流' : 'fill event log';
+    }
+  }
+
+  /* ---------------------------------------------------------------- charts */
+  function draw() {
+    if (!cur || !tape) return;
+    var bars = tape.bars, cl = bars.map(function (b) { return b.c; });
+    var ov = cur.overlays || [];
+    var series = [], lo = [], hi = [];
+    bars.forEach(function (b) { lo.push(b.l); hi.push(b.h); });
+    var rg = P.range(lo.concat(hi), 0.06);
+    var F = P.frame($('cMain'), tape.n, rg[0], rg[1]);
+    P.grid(F);
+
+    var bb = null;
+    if (ov.indexOf('boll') >= 0) {
+      bb = S.IND.boll(cl, 20, 2);
+      P.line(F, bb.up, P.col('--info'), 1.3);
+      P.line(F, bb.dn, P.col('--info'), 1.3);
+      P.line(F, bb.mid, P.col('--gold'), 1.5);
+    }
+    if (ov.indexOf('ma20') >= 0) P.line(F, S.IND.sma(cl, 20), P.col('--gold'), 1.6);
+    P.candles(F, bars);
+
+    var st = cur.steps[stepIx];
+    /* live preview of the level the user is choosing */
+    if (st.kind === 'act' && st.ui === 'stopLevel' && $('pRange')) {
+      var v = parseFloat($('pRange').value);
+      P.hline(F, v, P.col('--down'), (lang === 'zh' ? '止损 ' : 'stop ') + v.toFixed(2));
+      P.hline(F, cur.entry.px, P.col('--text-3'), (lang === 'zh' ? '成本 ' : 'entry ') + cur.entry.px.toFixed(2), [2, 3]);
+    }
+    if (st.kind === 'act' && st.ui === 'fadeDepth' && $('pRange') && bb) {
+      var d = parseFloat($('pRange').value), i0 = 24;
+      var sd = (bb.up[i0] - bb.mid[i0]) / 2;
+      P.hline(F, bb.mid[i0] - d * sd, P.col('--up'), (lang === 'zh' ? '买入限价 ' : 'buy limit ') + (bb.mid[i0] - d * sd).toFixed(2));
+    }
+    if (cur.tape.gapAt != null) {
+      P.vband(F, cur.tape.gapAt - 0.5, cur.tape.gapAt + 0.5, 'rgba(250,77,86,.14)');
+      P.marker(F, cur.tape.gapAt, bars[cur.tape.gapAt].h, P.col('--down'), lang === 'zh' ? '跳空' : 'gap');
+    }
+    if (cur.tape.eventAt != null) {
+      P.vband(F, cur.tape.eventAt - 0.5, cur.tape.eventAt + 0.5, 'rgba(255,165,61,.16)');
+      P.marker(F, cur.tape.eventAt, bars[cur.tape.eventAt].h, P.col('--warn'), lang === 'zh' ? '财报' : 'print');
+    }
+    /* the fill that actually happened */
+    if (lastRun && lastRun.res) {
+      var r = lastRun.res;
+      if (r.at != null && r.px != null) {
+        P.marker(F, r.at, r.px, P.col('--brand'), (lang === 'zh' ? '成交 ' : 'fill ') + r.px.toFixed(2), true);
+      }
+      if (r.exitAt != null) P.marker(F, r.exitAt, r.exitPx, P.col('--up'), lang === 'zh' ? '止盈' : 'exit');
+      if (r.buy && r.buy.at != null) P.marker(F, r.buy.at, r.limit, P.col('--brand'), lang === 'zh' ? '买入' : 'buy', true);
+    }
+
+    var leg = [];
+    if (ov.indexOf('boll') >= 0) leg.push(['#2E9BFF', 'BOLL(20,2)'], ['#FFC53D', lang === 'zh' ? '中轨' : 'middle band']);
+    if (ov.indexOf('ma20') >= 0) leg.push(['#FFC53D', 'MA20']);
+    leg.push(['#FF7A00', lang === 'zh' ? '你的成交' : 'your fill']);
+    $('mainLegend').innerHTML = leg.map(function (x) {
+      return '<span><i style="background:' + x[0] + '"></i>' + x[1] + '</span>';
+    }).join('');
+
+    /* sub pane */
+    var sub = $('cSub');
+    if (ov.indexOf('rsi') >= 0) {
+      sub.style.display = '';
+      var G = P.frame(sub, tape.n, 0, 100);
+      P.grid(G, function (v) { return v.toFixed(0); });
+      P.hline(G, 70, P.col('--line-2'), '70', [3, 3]);
+      P.hline(G, 30, P.col('--line-2'), '30', [3, 3]);
+      P.line(G, S.IND.rsi(cl, 14), P.col('--violet'), 1.6);
+      $('subLegend').innerHTML = '<span><i style="background:#8C6EFF"></i>RSI(14)</span>';
+    } else {
+      sub.style.display = '';
+      var vv = bars.map(function (b) { return b.v; });
+      var vr = P.range(vv.concat([0]), 0.02);
+      var H = P.frame(sub, tape.n, 0, vr[1]);
+      P.grid(H, function (v) { return (v / 1000).toFixed(0) + 'k'; });
+      P.bars(H, vv, 'rgba(153,161,173,.45)');
+      $('subLegend').innerHTML = '<span><i style="background:#99A1AD"></i>' + (lang === 'zh' ? '成交量' : 'volume') + '</span>';
+    }
+  }
+
+  function renderAcct() {
+    var k = [];
+    if (cur.entry) {
+      k.push(['<span>' + (lang === 'zh' ? '持仓' : 'Position') + '</span>',
+        cur.entry.qty.toLocaleString() + (lang === 'zh' ? ' 股' : ' sh'), '']);
+      k.push([lang === 'zh' ? '成本' : 'Entry', '$' + cur.entry.px.toFixed(2), '']);
+    }
+    var last = tape.bars[tape.n - 1].c, first = tape.bars[0].o;
+    k.push([lang === 'zh' ? '当前价' : 'Last', '$' + last.toFixed(2), last >= first ? 'v-up' : 'v-dn']);
+    k.push([lang === 'zh' ? '区间变动' : 'Session', ((last / first - 1) * 100).toFixed(2) + '%', last >= first ? 'v-up' : 'v-dn']);
+    if (lastRun && lastRun.res && lastRun.res.px != null && cur.entry) {
+      var pl = (lastRun.res.px - cur.entry.px) * (lastRun.res.filled || 0);
+      k.push([lang === 'zh' ? '本次实现盈亏' : 'Realised', S.money(pl), pl >= 0 ? 'v-up' : 'v-dn']);
+    }
+    if (lastRun && lastRun.res && lastRun.res.pl != null) {
+      k.push([lang === 'zh' ? '本次盈亏' : 'Trade P/L', S.money(lastRun.res.pl), lastRun.res.pl >= 0 ? 'v-up' : 'v-dn']);
+    }
+    $('acctKpis').innerHTML = k.map(function (x) {
+      return '<div class="kpi"><div class="k">' + x[0] + '</div><div class="v ' + (x[2] || '') + '">' + x[1] + '</div></div>';
+    }).join('');
+    $('acctSub').textContent = cur.tape.regime;
+  }
+
+  /* -------------------------------------------------------------- wiring */
+  function applyLang() {
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.body.classList.toggle('lang-zh', lang === 'zh');
+    [].forEach.call(document.querySelectorAll('[data-t]'), function (n) { n.textContent = t(n.getAttribute('data-t')); });
+    [].forEach.call(document.querySelectorAll('[data-th]'), function (n) { n.innerHTML = t(n.getAttribute('data-th')); });
+    $('langLabel').textContent = lang === 'en' ? 'EN' : '中';
+  }
+
+  function init() {
+    try { var s = localStorage.getItem('pg.lang'); if (s === 'en' || s === 'zh') lang = s; } catch (e) { /* ignore */ }
+    applyLang(); renderPicker();
+
+    $('lessonGrid').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-ls]'); if (b) open(b.getAttribute('data-ls'));
+    });
+    $('backBtn').addEventListener('click', back);
+    $('stepUI').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-opt]'); if (!b) return;
+      var st = cur.steps[stepIx];
+      if (st.kind !== 'pick' || stepDone) return;
+      var ix = parseInt(b.getAttribute('data-opt'), 10), o = st.options[ix];
+      [].forEach.call(this.querySelectorAll('.choice'), function (c, i) {
+        c.classList.toggle('right', st.options[i].ok);
+        if (i === ix && !st.options[i].ok) c.classList.add('wrong');
+      });
+      if (o.ok) score++;
+      stepDone = true;
+      $('stepVerdict').innerHTML = '<div class="verdict ' + (o.ok ? 'pass' : 'fail') + '"><h4>' +
+        (o.ok ? t('correct') : t('notQuite')) + '</h4>' + L(o.why) + '</div>';
+      renderCta();
+    });
+
+    $('langBtn').addEventListener('click', function () {
+      lang = lang === 'en' ? 'zh' : 'en';
+      try { localStorage.setItem('pg.lang', lang); } catch (e) { /* ignore */ }
+      applyLang();
+      if (cur) { renderStep(); } else renderPicker();
+    });
+
+    /* deep link: #lesson=<id>, with a graceful fall back to the picker */
+    function fromHash() {
+      var m = /lesson=([a-z0-9-]+)/i.exec(location.hash || '');
+      if (m) {
+        if (open(m[1])) return;
+        back();            /* unknown id — show the picker rather than whatever
+                              lesson happened to be open already */
+        return;
+      }
+      if (cur) back(); else renderPicker();
+    }
+    fromHash();
+    root.addEventListener('hashchange', fromHash);
+
+    var rt;
+    root.addEventListener('resize', function () { clearTimeout(rt); rt = setTimeout(draw, 140); });
+  }
+
+  /* exposed for the headless playthrough test */
+  PG.debug = {
+    open: open, next: doNext, run: doRun,
+    pick: function (i) {
+      var b = $('stepUI').querySelector('[data-opt="' + i + '"]');
+      if (b) b.click();
+    },
+    setParam: function (v) {
+      if ($('pRange')) { $('pRange').value = v; $('pRange').dispatchEvent(new Event('input', { bubbles: true })); }
+      if ($('segParam')) {
+        var b = $('segParam').querySelector('[data-v="' + v + '"]');
+        if (b) b.click();
+      }
+    },
+    state: function () {
+      return { lesson: cur && cur.id, step: stepIx, steps: cur && cur.steps.length,
+               done: stepDone, score: score,
+               verdict: $('stepVerdict').textContent.slice(0, 60),
+               pass: !!$('stepVerdict').querySelector('.verdict.pass'),
+               fail: !!$('stepVerdict').querySelector('.verdict.fail') };
+    }
+  };
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+}(typeof globalThis !== 'undefined' ? globalThis : this));
+</script>
+</body>
+</html>

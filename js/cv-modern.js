@@ -368,17 +368,17 @@ function setupFallbackLanguageSelector() {
 // now live in one dropdown, mirroring the language selector on the right.
 const NAV_LABELS = {
   en: { menu: 'Menu', pdf: 'PDF Resume', indicators: 'Stock Indicators', options: 'Options Handbook',
-        orders: 'Order Types', journal: 'Trade Journal', tenbagger: '10-Bagger Watchlist', math: 'Math for Finance',
+        orders: 'Order Types', journal: 'Trade Journal', tenbagger: '10-Bagger Watchlist', math: 'Math for Finance', playground: 'Trading Playground',
         comicsCv: 'Comics CV', paint: 'Wuwa Paint', textfx: 'Text FX',
         demoCubes: 'Cube Tunnel', demoSpheres: 'Sphere Packing', demoShatter: 'Image Shatter',
         demoStorm: 'Thunderstorm' },
   zh: { menu: '菜单', pdf: 'PDF 简历', indicators: '股票指标手册', options: '期权教学手册',
-        orders: '订单类型手册', journal: '交易日志', tenbagger: '十倍股观察池', math: '金融数学手册',
+        orders: '订单类型手册', journal: '交易日志', tenbagger: '十倍股观察池', math: '金融数学手册', playground: '交易训练场',
         comicsCv: '漫画版简历', paint: '鸣潮涂鸦', textfx: '文字特效',
         demoCubes: '立方体隧道', demoSpheres: '小球堆积', demoShatter: '图像碎裂',
         demoStorm: '雷暴天气' },
   jp: { menu: 'メニュー', pdf: 'PDF 履歴書', indicators: '株式指標ハンドブック', options: 'オプション・ハンドブック',
-        orders: '注文タイプ', journal: 'トレード日誌', tenbagger: 'テンバガー候補リスト', math: '金融数学ハンドブック',
+        orders: '注文タイプ', journal: 'トレード日誌', tenbagger: 'テンバガー候補リスト', math: '金融数学ハンドブック', playground: 'トレード練習場',
         comicsCv: 'コミック履歴書', paint: '鳴潮ペイント', textfx: 'テキストFX',
         demoCubes: 'キューブトンネル', demoSpheres: 'スフィアパッキング', demoShatter: 'イメージシャッター',
         demoStorm: '雷雨' }
