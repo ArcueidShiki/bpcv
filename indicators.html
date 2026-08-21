@@ -7028,6 +7028,526 @@ footer { border-top: 1px solid var(--line); margin-top: 64px; padding: 26px 0 48
     }
 
   });
+
+/* ---- batch 1: balance sheet, cash flow, income statement ---- */
+Object.assign(FIN.FXZH, {
+
+TOTALASSETS_FQ:{zh:{
+0:'总资产是季末公司拥有的全部资源，属于时点数（存量），不是一段时间的流量。',
+2:'会计恒等式：资产 = 负债 + 所有者权益。这条式子永远成立，它意味着"资产"本身不区分这些钱是借来的还是股东投的。',
+4:'所以总资产单独看几乎没有意义——重资产行业天然数字大，不代表更好。它的价值全在做分母。',
+5:'ROA 用它做分母，衡量每一块钱资产创造多少利润。',
+6:'总资产周转率衡量每块钱资产能转出多少收入，是零售、制造这类薄利行业的核心效率指标。',
+8:'图上画成阶梯：财报日之前一直保持不变，公布时跳一次。'},en:{
+0:'A point-in-time level (a stock), not a flow across a period.',
+2:'The accounting identity. It means total assets says nothing about whether the money was borrowed or contributed by owners.',
+4:'On its own the level is close to meaningless — asset-heavy industries are simply bigger. Its value is as a denominator.',
+5:'ROA divides by it to ask what each dollar of assets earns.',
+6:'Asset turnover asks what each dollar of assets produces in sales — the core efficiency metric in thin-margin businesses.'}},
+
+TOTALASSETS_FY:{zh:{
+0:'年末口径的总资产，与季度版含义相同，只是每年一个数，更适合看多年结构变化。',
+2:'资产 = 负债 + 权益，年报同样成立。',
+5:'ROA：这块资产基数一年赚回多少。',
+6:'资产周转率：这块资产基数一年转出多少收入。',
+7:'权益/资产 = 1 −（负债/资产），即"自有资金占比"。这个比例越低，杠杆越高，顺风时放大收益，逆风时同样放大亏损。',
+9:'图上每个财年一级台阶。'},en:{
+0:'Year-end level. Same meaning as the quarterly version, one point per year, better for multi-year structure.',
+7:'Equity over assets is the un-leveraged share. The lower it is, the more leverage — which amplifies both directions, not just the good one.'}},
+
+SH_EQUITY_FQ:{zh:{
+0:'股东权益 = 总资产 − 总负债，也就是账面净资产：把所有东西卖掉、还清所有债之后，理论上归股东的部分。',
+3:'权益的逐期演进：上期权益 + 净利润 − 分红 − 回购 ± 其他综合收益 ± 增发。注意分红和回购会让权益减少——这不是变坏，是把钱还给股东。',
+6:'ROE 用它做分母：股东每投入一块钱账面净资产，一年赚回多少。',
+7:'每股净资产 = 权益 ÷ 总股本，是市净率 P/B 的分母。',
+9:'注意图上这条阶梯**可以向下**：大额回购或者亏损都会让净资产减少。'},en:{
+0:'Book value: what would be left for owners after selling everything and repaying every debt.',
+3:'How equity walks forward. Dividends and buybacks reduce it — that is capital being returned, not deterioration.',
+6:'ROE divides by it: what a dollar of book equity earns in a year.',
+9:'This step can go DOWN — a large buyback or a loss both shrink book value.'}},
+
+SH_EQUITY_FY:{zh:{
+0:'年末账面净资产。对长期持有者来说，这是复利的基数。',
+3:'ROE 就是这个基数的回报率。一家能长期维持高 ROE 并把利润留存再投的公司，权益本身就在复利增长。',
+4:'每股净资产：把净资产按股数摊薄。',
+5:'P/B = 股价 ÷ 每股净资产，衡量市场愿意为一块钱账面净资产付多少钱。',
+7:'剔除增发因素后，权益的增长率约等于留存利润的复利速度——这是"账面价值复利机器"的数学形式。',
+8:'图上每个财年一级台阶。'},en:{
+3:'ROE is the return on this base. A company that sustains a high ROE and retains earnings compounds the base itself.',
+5:'P/B is what the market pays for a dollar of book value.',
+7:'Ex-issuance, equity growth is retained earnings compounding.'}},
+
+NCA_FQ:{zh:{
+0:'总负债是季末公司欠出去的全部金额，含流动负债与非流动负债。',
+2:'由恒等式反推：负债 = 资产 − 权益。',
+4:'和总资产一样，绝对值没有意义，必须做成比率看。',
+5:'负债/权益（产权比率）：别人的钱与自己的钱之比。',
+6:'负债/资产（资产负债率）：整张资产负债表里有多大比例是借来的。',
+8:'注意本条目 id 为 NCA，但它声明的是总负债。图上按季度阶梯绘制。'},en:{
+2:'From the identity: liabilities are assets minus equity.',
+4:'Like total assets, the level alone means nothing; the ratios do the work.',
+5:'Debt-to-equity: other people\'s money per dollar of owners\'.',
+8:'The id says NCA but the series is total liabilities.'}},
+
+NCA_FY:{zh:{
+0:'年末总负债。看多年趋势时，重点不是绝对额而是杠杆结构是否在恶化。',
+2:'负债 = 资产 − 权益。',
+5:'每一块自有资金背后压着多少别人的钱。',
+6:'资产里有多大比例靠负债支撑。',
+8:'关键提醒：高而稳定的杠杆意味着固定的偿付义务，而经济下行不会因为你困难就减免利息。杠杆放大的是波动，不是收益率本身。',
+9:'本条目 id 为 NCA，实际是总负债。每个财年一级台阶。'},en:{
+8:'High, stable leverage means fixed obligations, and a downturn does not forgive them. Leverage amplifies variance, not expected return.'}},
+
+FCF_FY:{zh:{
+0:'自由现金流 = 经营活动现金流 − 资本开支。这是全年经营收到的现金，扣掉为了维持和扩张产能必须花出去的钱之后，真正剩下的自由资金。',
+2:'"自由"的含义很具体：这笔钱可以用来分红、回购、还债或扩张，而不需要再向外部融资。',
+6:'自由现金流收益率 = FCF ÷ 市值，可以直接与债券收益率对比，是估值的现金锚。它比市盈率更难被会计处理粉饰，因为现金流很难造假。'},en:{
+0:'Cash from operations minus the capital spending needed to maintain and grow the asset base.',
+2:'"Free" is literal: this is the money available for dividends, buybacks, debt paydown or growth without raising outside capital.',
+6:'FCF yield is directly comparable to a bond yield, and is harder to dress up with accounting choices than earnings.'}},
+
+OCF_FQ:{zh:{
+0:'单季经营活动产生的现金流：核心业务这一个季度实际收到多少现金。',
+2:'约等于净利润加回折旧摊销，再调整营运资本变动（应收、存货、应付）。折旧是不花现金的费用，所以要加回；应收和存货增加会占用现金，所以要减掉。',
+5:'经营现金流大于净利润，说明利润有真金白银支撑，质量较好。',
+6:'经营现金流长期小于净利润，要警惕：可能是应收账款收不回来，或者存货在积压——利润记在账上，钱没进门。这是财务暴雷最常见的前兆之一。',
+8:'图上按季度阶梯绘制，财报日跳变。'},en:{
+2:'Roughly net profit plus non-cash charges, adjusted for working capital. Depreciation is added back because it costs no cash; rising receivables and inventory are subtracted because they consume it.',
+5:'Cash above profit means the earnings are backed by money actually received.',
+6:'Cash persistently below profit is a warning: receivables not collected or inventory piling up. Profit on the page, no money through the door.'}},
+
+OCF_FY:{zh:{
+0:'全年经营活动现金流，季度噪音已被平滑掉。',
+2:'构成同季度版：净利润 + 折旧摊销等非现金费用 ± 营运资本变动。',
+5:'现金转化率 = 经营现金流 ÷ 净利润。优质生意这个比值应长期在 1 附近或以上；长期低于 1 说明账面利润没有变成现金。',
+6:'经营现金流是整个现金瀑布的顶端：经营现金流 − 资本开支 = 自由现金流。'},en:{
+5:'Cash conversion should sit near or above 1 for a quality business. Persistently below 1 means reported profit is not turning into money.',
+6:'Operating cash flow is the top of the waterfall; capex comes out of it to give free cash flow.'}},
+
+FCF_FQ:{zh:{
+0:'单季自由现金流 = 单季经营现金流 − 单季资本开支。',
+2:'这一个季度在维护和扩张资产之后剩下的现金。',
+4:'关键提醒：资本开支按季度非常不均匀，工厂、数据中心往往集中在某几个季度支付。',
+5:'所以要看滚动四个季度（TTM）的合计值，单季数字意义有限。',
+6:'处于重资本投入期的公司出现单季负自由现金流是正常的，不必然是风险信号——要看这笔投入未来是否形成产能。'},en:{
+4:'Capex is lumpy by quarter — plants and data centres are paid for in bursts.',
+5:'Read the trailing four quarters; a single quarter says little.',
+6:'One negative quarter during a heavy build is normal, not a warning.'}},
+
+TOTALREVENUE_FQ:{zh:{
+0:'单季营业收入：这一个季度确认的销售额。它位于利润表最顶端，所有成本费用都从这里往下扣。',
+2:'收入要看增速而不是绝对值——绝对值只反映公司体量。',
+3:'环比增速对比上一季度，反应快但受季节性干扰大。',
+4:'同比增速对比去年同一季度，正好抵消季节性（零售的 Q4、教育的暑期都会自动对齐），因此同比通常比环比更可信。',
+6:'图上按季度阶梯绘制：财报公布前保持水平，公布时跳一次。'},en:{
+0:'The top line of the income statement — everything else is subtracted from here.',
+2:'Read growth, not level; the level only tells you company size.',
+4:'Year-on-year lines up the same season, which is why it is usually the more trustworthy of the two.'}},
+
+NETPROFIT_FQ:{zh:{
+0:'单季净利润：收入扣掉全部成本、费用、利息、税以及一次性损益之后剩下的。',
+2:'它是"底线"——上面所有项目都已经扣完了。也正因为经过层层扣除，它最容易被一次性项目扰动（资产处置、减值、诉讼赔偿）。',
+3:'净利率 = 净利润 ÷ 收入，衡量每一块钱收入最终能留下多少。',
+4:'每股收益约等于净利润 ÷ 总股本，是市盈率的分母。',
+6:'图上按季度阶梯绘制。'},en:{
+2:'The bottom line — everything above has already been subtracted, which is also why one-offs distort it most.',
+3:'Net margin: how much of each sales dollar survives to the bottom.'}},
+
+DILUTEDEPS_FQ:{zh:{
+0:'稀释每股收益 = 当季净利润 ÷ 完全稀释后的股本。',
+2:'完全稀释股本把期权、限制性股票、可转债等潜在会变成股票的部分都算进去。',
+3:'因此稀释股本恒大于等于基本股本，稀释每股收益恒小于等于基本每股收益。看财报应以稀释口径为准，因为它反映了你的股份最终会被摊薄到什么程度。',
+5:'这也是市场用来对比预期的那个数字。',
+6:'超预期幅度 =（实际 − 一致预期）÷ |一致预期|。注意股价反应的是与预期的差，而不是利润本身的好坏——利润增长 30% 但预期是 40%，股价照样跌。'},en:{
+2:'The diluted count includes options, RSUs and convertibles that could become shares.',
+3:'So diluted EPS is always ≤ basic. Use the diluted figure — it reflects how far your stake will actually be diluted.',
+6:'The market reacts to the gap against consensus, not to the level: +30% growth against a +40% expectation still sells off.'}},
+
+GROSSPROFIT_FQ:{zh:{
+0:'单季毛利 = 单季收入 − 单季营业成本。',
+2:'注意它是一个金额，不是一个比率。',
+3:'毛利 ≈ 收入 × 毛利率，因此它其实是"收入"和"毛利率"两个变量的乘积。',
+5:'这意味着毛利金额本身几乎不提供收入和毛利率之外的增量信息。',
+6:'真正有信息量的是毛利率——它反映定价权和成本控制，而毛利金额还混着规模因素。'},en:{
+2:'A dollar amount, not a rate.',
+3:'Gross profit is essentially revenue multiplied by gross margin.',
+6:'The margin carries the signal — pricing power and cost control — while the dollar amount is confounded with size.'}},
+
+NIPC_FQ:{zh:{
+0:'归属于母公司股东的净利润 = 净利润 − 少数股东损益。',
+4:'只有母公司股东真正拥有的那一部分利润才计入这一行。',
+5:'当一家子公司被合并报表但母公司并非 100% 持股时，子公司 100% 的利润都会进入"净利润"，但只有母公司持股比例对应的部分能进入"归母净利润"。',
+8:'每股收益必须用归母净利润计算，而不是总净利润。控股结构复杂的公司（尤其是港股、A 股的集团公司），这两个数字可能差很多，用错会严重高估盈利能力。',
+10:'图上按季度阶梯绘制。'},en:{
+4:'Only the slice the parent\'s shareholders actually own.',
+5:'A consolidated but partly-owned subsidiary contributes 100% of its profit to net profit, but only the parent\'s share to this line.',
+8:'EPS must be computed from this line, not total net profit. In group structures the two can differ materially.'}},
+
+OPERATINGPROFIT_FQ:{zh:{
+0:'单季营业利润 = 收入 − 营业成本 − 经营费用（销售、管理、研发）。',
+2:'它位于财务费用和所得税之上。',
+3:'再往下扣掉净利息、所得税和一次性损益，才得到净利润。',
+5:'营业利润率 = 营业利润 ÷ 收入。',
+6:'因为剔除了资本结构（借了多少钱）和税率差异，它比净利润更能反映"这门生意本身"赚不赚钱——比较不同杠杆、不同税收地区的公司时尤其重要。',
+8:'图上按季度阶梯绘制。'},en:{
+2:'It sits above the financing and tax lines.',
+6:'Stripping out capital structure and tax rates makes it a cleaner read of the business itself — essential when comparing companies with different leverage or tax domiciles.'}},
+
+TOTALREVENUE_FY:{zh:{
+0:'全年营业收入：整个财年确认的销售总额。',
+2:'等于四个季度之和，季节性在年度口径下自动抵消。',
+5:'年度同比增速。',
+6:'三年复合增长率：把三年的总增长开三次方还原成年化速度。用 CAGR 而不是简单平均，是因为增长是乘性复利的——先涨 100% 再跌 50% 的复合增长是 0，不是 25%。',
+8:'图上每个财年一级台阶，年报公布时跳变。'},en:{
+2:'The four quarters summed; seasonality nets out.',
+6:'Compound annual growth, not an arithmetic average — growth compounds multiplicatively, so +100% then −50% is 0% CAGR, not +25%.'}},
+
+NETPROFIT_FY:{zh:{
+0:'全年净利润：整个财年扣除所有成本、利息、税和一次性项目后的底线。',
+2:'它是多个估值指标的分母。',
+3:'滚动市盈率 = 市值 ÷ 全年净利润。',
+4:'全年每股收益 = 全年净利润 ÷ 稀释股本。',
+6:'年度口径平滑掉了季度噪音，但要注意：',
+7:'一整年同样可能包含大额减值、重组费用或终止经营损益。看到净利润突然大幅波动时，先去翻附注确认是不是一次性项目，而不是直接当成经营恶化。'}},
+
+DILUTEDEPS_FY:{zh:{
+0:'全年稀释每股收益 = 全年净利润 ÷ 加权平均稀释股本。用加权平均是因为股本在年中可能发生变化。',
+2:'它是每股估值体系的锚。',
+3:'滚动市盈率 = 股价 ÷ 全年稀释每股收益。',
+4:'5–10 年的每股收益复合增长率，衡量的是每股盈利能力的增长速度。',
+6:'强调"每股"：对股东而言重要的不是公司总利润增长多少，而是分摊到你手上的那一份增长多少。持续增发扩张的公司，总利润涨了但每股收益可能原地踏步。'},en:{
+6:'Per-share is what matters to an owner. A company that grows total profit by issuing shares can leave EPS flat.'}},
+
+GROSSPROFIT_FY:{zh:{
+0:'全年毛利 = 全年收入 − 全年营业成本。',
+2:'仍然是金额 = 收入 × 毛利率。',
+4:'年度版本的优点仅在于平滑、可跨年比较。',
+5:'但真正的信号仍在毛利率这个比率上，',
+6:'而对股东最终能拿到什么而言，净利润和自由现金流比毛利重要得多——毛利之上还有销售、管理、研发、利息和税要扣。'}},
+
+NIPC_FY:{zh:{
+0:'全年归属于母公司股东的净利润 = 全年净利润 − 少数股东损益。',
+4:'滚动每股收益用这一行除以加权股本。',
+5:'你实际支付的市盈率倍数建立在这一行上，而不是总净利润。合并报表里少数股东权益占比高的公司，用总净利润算 P/E 会系统性低估估值。',
+7:'图上每个财年一级台阶。'},en:{
+5:'The multiple you actually pay rests on this line. Using total net profit for a group with large minority interests systematically understates the P/E.'}},
+
+OPERATINGPROFIT_FY:{zh:{
+0:'全年营业利润 = 全年收入 − 营业成本 − 经营费用。',
+2:'它止步于财务费用和税之上，含义接近 EBIT（息税前利润）。',
+3:'再扣净利息、所得税和一次性项目才到净利润。',
+5:'营业利润率 = 营业利润 ÷ 收入，是核心经营效率的年度读数。',
+6:'EV/EBIT ≈ 企业价值 ÷ 年度营业利润。选股筛选器常用它而不是 P/E，因为企业价值含负债、营业利润不受资本结构影响，两端口径一致，跨杠杆比较才成立。',
+8:'图上每个财年一级台阶。'},en:{
+2:'Stops above financing and tax — close in spirit to EBIT.',
+6:'Screens prefer EV/EBIT over P/E because enterprise value includes debt and operating profit is pre-financing, so both sides are consistent and the comparison survives different leverage.'}}
+
+});
+
+/* ---- batch 2: key indicators (profitability, margin, liquidity) ---- */
+Object.assign(FIN.FXZH, {
+
+ROE_FY:{zh:{
+0:'净资产收益率 = 净利润 ÷ 股东权益。股东每投入一块钱账面净资产，一年赚回多少。这是巴菲特最看重的单一指标。',
+2:'杜邦分解把 ROE 拆成三个可独立分析的来源：',
+3:'ROE = 净利率 × 资产周转率 × 权益乘数。三者相乘恒等于 ROE（分子分母层层约掉），所以任何 ROE 的变化都必然来自这三项之一。',
+4:'依次对应：赚钱能力、运营效率、杠杆水平。',
+6:'靠净利率或周转率撑起来的高 ROE 是真本事——前者是定价权，后者是运营效率。',
+7:'靠权益乘数（杠杆）撑起来的高 ROE 是伪装成质量的风险：借得越多，权益越薄，ROE 越好看，但下行时亏损同样被放大。看到高 ROE 必须先做这一步拆分。'},en:{
+3:'The three multiply to ROE identically, so any change in ROE must come from one of them.',
+7:'A high ROE built on leverage is risk wearing the costume of quality — thin equity flatters the ratio and magnifies losses on the way down.'}},
+
+ROE_FQ:{zh:{
+0:'季度 ROE：把单季净利润年化后除以股东权益。',
+2:'杜邦分解同年度版。',
+3:'分别对应盈利能力、效率、杠杆。',
+5:'季度口径是回报率的早期脉搏，但噪音大：单季权益是时点数，单季利润年化又会把季节性放大四倍。',
+6:'因此要看同比而不是环比，并且以年度 ROE 为准来确认趋势。'},en:{
+5:'The quarterly read is an early pulse but noisy: quarter-end equity is a snapshot and annualising one quarter multiplies its seasonality by four.'}},
+
+ROA_FY:{zh:{
+0:'总资产收益率 = 净利润 ÷ 总资产。每一块钱资产（无论来自股东还是债主）一年创造多少利润。',
+2:'ROA 的杜邦拆分只有两项：净利率 × 资产周转率——没有杠杆项。',
+4:'ROE = ROA × 权益乘数，也就是说 ROA 就是把杠杆剥掉之后的 ROE。两者放在一起看，差距有多大，杠杆就有多重。',
+6:'ROA 的绝对水平受行业绑定：银行天然低（资产表巨大），软件天然高（几乎没有实物资产），跨行业比较毫无意义。',
+7:'要在同业内比较，并且看 3–5 年趋势——趋势才承载信息。'},en:{
+4:'ROA is ROE with leverage stripped out. The gap between the two tells you how much leverage is doing the work.',
+6:'The level is industry-bound — banks are structurally low, software structurally high — so compare within an industry.'}},
+
+ROA_FQ:{zh:{
+0:'季度总资产收益率：单季净利润年化后除以总资产。',
+2:'简化杜邦：ROA = 净利率 × 资产周转率。',
+3:'即"每笔销售有多赚钱"乘以"每块钱资产能做出多少销售"。',
+5:'与 ROE 不同，这里没有杠杆项：分母是整个资产基数，不区分是借来的还是股东的。',
+6:'单季数据请看同比，不要看环比——环比会被季节性完全污染。'}},
+
+ROIC_FY:{zh:{
+0:'投入资本回报率 = 税后经营利润 ÷ 投入资本。',
+1:'NOPAT = 营业利润 ×（1 − 税率），即剔除融资影响后的税后经营利润。用营业利润而非净利润，是为了不让利息费用干扰"生意本身"的回报。',
+2:'投入资本 = 有息负债 + 权益 − 现金。减掉现金是关键：趴在账上的现金没有投入经营，不该算进分母，否则会低估真实回报率。',
+4:'价值创造的判据：ROIC 高于加权平均资本成本 WACC，公司才在创造价值。',
+5:'如果 ROIC 低于 WACC，那么公司每增长一块钱都在毁灭价值——增长本身不是好事，只有回报率高于资本成本的增长才是。这是很多"高增长故事"最终失败的数学原因。',
+7:'与只看权益的 ROE、看全部资产的 ROA 不同，ROIC 精确地只统计真正被投入使用的资本，',
+8:'不论它来自哪个渠道，也不含闲置资金。因此它是三者中最贴近"生意本身好不好"的一个。'},en:{
+1:'Operating profit, not net profit, so interest expense does not contaminate the return on the business itself.',
+2:'Cash is subtracted because idle cash is not deployed; leaving it in the denominator understates the true return.',
+5:'Below WACC, every dollar of growth destroys value. Growth is only good when it earns more than the capital costs — the mathematical reason many growth stories end badly.'}},
+
+GROSSMARGIN_FY:{zh:{
+0:'毛利率 =（收入 − 营业成本）÷ 收入。每一块钱销售里，扣掉直接成本后还剩多少。',
+2:'注意这里只扣了产品的直接成本，',
+3:'销售费用、营销、研发、管理费用都还没扣。所以毛利率高不代表最终赚钱。',
+5:'趋势比绝对水平重要：毛利率持续上行通常意味着定价权增强或成本下降；',
+6:'持续下行则往往是竞争加剧或原材料涨价的第一个信号。它是所有利润率里对经营环境变化最敏感的一个。'},en:{
+3:'Only direct product cost is removed — a high gross margin does not mean the business makes money.',
+6:'It is the margin most sensitive to a change in the competitive or cost environment, which is why it moves first.'}},
+
+GROSSMARGIN_FQ:{zh:{
+0:'季度毛利率 =（单季收入 − 单季营业成本）÷ 单季收入。',
+2:'同样只扣直接成本，',
+3:'经营、营销、研发、管理费用尚未扣除。',
+5:'季度毛利率是原材料涨价或产品降价**最先显现**的地方——比净利润早，也比管理层的措辞早。',
+6:'要看同比以剔除季节性的成本结构差异（比如淡旺季产能利用率不同会直接影响单位成本）。'},en:{
+5:'The quarterly margin is where an input-cost squeeze or a price cut shows up first — before net profit, and before management语言 changes.'}},
+
+CURRENTRATIO_FY:{zh:{
+0:'流动比率 = 流动资产 ÷ 流动负债，衡量一年内能变现的资产能否覆盖一年内要还的债。',
+2:'大于 1：短期资产足以覆盖短期债务。',
+3:'大致 1.5–3 通常比较舒服，但强烈依赖行业——零售businesses周转快，比率低也安全。',
+4:'小于 1：可能出现短期偿付压力，需要结合现金流和融资能力一起看。',
+5:'过高也不是好事：可能意味着大量资金闲置在低效资产上没有投入经营，是一种隐性的资本浪费。'},en:{
+3:'1.5–3 is usually comfortable, but it is strongly industry-dependent — fast-turning retailers are safe at lower levels.',
+5:'Very high is not automatically good: it can mean capital sitting idle in unproductive assets.'}},
+
+CURRENTRATIO_FQ:{zh:{
+0:'季末流动比率 = 流动资产 ÷ 流动负债。',
+2:'大于 1：短期资产覆盖短期债务。',
+3:'小于 1：短期偿付可能吃紧。',
+5:'季度快照会随营运资本周期波动——备货导致存货上升、账期变化导致应收波动、季节性应付款集中，',
+6:'都会让单个季度的比率明显偏离常态，',
+7:'因此单季数字容易误导，真正有用的是跨季度的**方向**：是在持续改善还是持续恶化。'}},
+
+QUICKRATIO_FY:{zh:{
+0:'速动比率 =（流动资产 − 存货）÷ 流动负债。',
+2:'又叫酸性测试比率。它就是把流动资产里流动性最差的一项——存货——剔除后的流动比率，',
+3:'因为存货未必能快速卖掉，',
+4:'更未必能按账面价值卖掉（服装、消费电子的过季存货往往要大幅折价）。',
+6:'约等于 1：可快速变现的资产刚好覆盖短期债务。',
+7:'小于 1：意味着必须先把存货卖出去才能还上短期债。',
+8:'速动比率与流动比率的差距，就是有多少流动性被压在存货里——差距越大，这家公司的短期偿付越依赖"卖得掉货"这个前提。'},en:{
+4:'And rarely at book value — out-of-season apparel and consumer electronics take steep markdowns.',
+8:'The gap between the two ratios is how much liquidity is locked in inventory, i.e. how much solvency depends on being able to sell it.'}},
+
+QUICKRATIO_FQ:{zh:{
+0:'季末速动比率 =（流动资产 − 存货）÷ 流动负债。',
+1:'约等于（现金 + 交易性金融资产 + 应收账款）÷ 流动负债，也就是只数"真正能快速变成钱"的部分。',
+3:'又称酸性测试。它剔除了流动资产中最慢、最不确定的存货，',
+4:'因而提出了一个更严格的问题：',
+5:'不靠卖存货，这家公司能不能还上一年内到期的债？',
+6:'对存货占比高的行业（零售、制造），这个比率比流动比率有意义得多。'},en:{
+5:'Can the company pay near-term bills WITHOUT having to sell stock first?',
+6:'For inventory-heavy sectors this is far more informative than the current ratio.'}},
+
+EBITTOREVENUE_FY:{zh:{
+0:'EBIT 利润率 = 息税前利润 ÷ 收入。',
+1:'EBIT 即营业利润 = 收入 − 营业成本 − 经营费用，',
+2:'位于利息和所得税之前。',
+4:'它夹在毛利率（只扣直接成本）和净利率（什么都扣完）之间：',
+5:'剥离了公司**怎么融资**（利息）和**在哪交税**（税率）这两个与经营能力无关的因素，',
+6:'因此是跨公司比较经营效率时最公允的口径——同样的生意，一家借钱多、一家注册在低税区，净利率会差很多，EBIT 利润率却可比。'},en:{
+6:'The fairest basis for comparing operating efficiency across companies: same business, different leverage or tax domicile, and net margin diverges while EBIT margin stays comparable.'}},
+
+NAPERSHARE_FY:{zh:{
+0:'每股净资产 = 股东权益 ÷ 总股本。',
+2:'也叫每股账面价值（BVPS）。',
+4:'估值用途：市净率 P/B = 股价 ÷ 每股净资产，衡量市场为一块钱账面净资产付多少钱。',
+6:'它随留存利润上升，随亏损、分红以及高于账面价格的回购而下降（溢价回购会减少每股净资产，但可能提升每股收益，两者方向相反）。',
+7:'最重要的提醒：这是一个**会计**意义上的净值，',
+8:'既不是市场价值，也不是清算价值。轻资产公司（软件、品牌）的真实价值大量存在于不入表的无形资产里，用 P/B 给它们估值会严重失真。'},en:{
+6:'Buybacks above book reduce book value per share while potentially raising EPS — the two move opposite ways.',
+8:'Asset-light businesses hold most of their value in intangibles that never reach the balance sheet, so P/B misprices them badly.'}},
+
+TAXRATE_FY:{zh:{
+0:'实际税率 = 所得税费用 ÷ 税前利润。',
+2:'它与法定税率不同，原因包括：',
+3:'税收抵免、税收优惠、以前年度亏损结转（拉低实际税率）；',
+4:'不可抵扣费用、海外税率结构、一次性事项（推高实际税率）。',
+6:'它主要是一个**盈利质量**的检查项，而不是驱动因素：',
+7:'如果某个季度的利润"超预期"主要来自异常偏低的税率，那么这份超预期质量很低且不可持续——下个季度税率回归正常，利润就会打回原形。看到超预期先看税率，是识别虚假beat的常用手法。'},en:{
+7:'A beat driven by an unusually low tax rate is low quality and will not repeat. Checking the tax line is a standard way to spot a hollow beat.'}}
+
+});
+
+/* ---- batch 3: turnover ratios, money flow, futures open interest ---- */
+Object.assign(FIN.FXZH, {
+
+CAPITALINFLOW:{zh:{
+0:'对成交明细里的每一笔成交，先判断是谁"主动"成交，再按金额分档。',
+1:'主动买入记 +1，主动卖出记 −1。关键在于：这个方向是**推断**出来的，不是交易所给的。常用 tick 规则（比上一笔价高算主动买）或报价规则（成交在卖一价算主动买）。',
+2:'再按成交金额分到超大单、大单、中单、小单四档，档位阈值由数据商自己定，各家不一致。',
+4:'每一档的净额 = 该档内所有成交的（方向 × 价格 × 数量）之和。',
+6:'资金流向就是四档净额相加。',
+8:'真正值得画出来的是累计形式，',
+9:'即从起点逐日累加。因为单日净流入噪音极大，累计曲线才能看出资金是在持续进场还是持续撤离。',
+},en:{
+1:'The aggressor side is INFERRED, not reported — via the tick rule or the quote rule. That inference is the weakest link in the whole metric.',
+9:'Single-day net flow is very noisy; only the cumulative curve shows whether money is persistently arriving or leaving.'}},
+
+ORDERINFLOW_XL:{zh:{
+0:'超大单的金额门槛由数据商定义。',
+1:'A 股常见口径：单笔成交金额 ≥ 100 万元，或成交股数 ≥ 20 万股。',
+3:'对每一笔金额超过门槛的成交，',
+4:'判断主动买（+1）或主动卖（−1）。再次强调：这个方向是推断的，不是观测到的。',
+6:'超大单净流入 = 这些成交的（方向 × 价格 × 数量）求和。',
+8:'跨股票比较时必须转成比率，因为绝对金额受股票市值影响巨大。',
+9:'超大单占比 = 超大单净流入 ÷ 当日总成交额。',
+},en:{
+4:'Inferred, not observed — this is the assumption everything downstream rests on.',
+9:'Absolute flow scales with market cap, so only the ratio is comparable across names.'}},
+
+ORDERINFLOW_L:{zh:{
+0:'大单：金额介于大单门槛与超大单门槛之间。',
+1:'A 股常见口径：20 万元 ≤ 单笔金额 < 100 万元。',
+3:'大单净流入 = 该档内成交的（方向 × 价格 × 数量）求和。',
+5:'方向依然由 tick 规则或报价规则推断。',
+6:'重要提醒：门槛由数据商设定，没有任何统一标准，',
+7:'而大单这一档恰恰是各家数据商分界差异最大的一档。因此不同软件上的"大单净流入"数值可能完全对不上，跨平台比较这个指标是没有意义的。',
+},en:{
+7:'This is the bucket whose boundaries differ most between vendors, so the same stock can show contradictory large-order flow on two platforms.'}},
+
+ORDERINFLOW_M:{zh:{
+0:'中单：金额介于中单门槛与大单门槛之间。',
+1:'A 股常见口径：4 万元 ≤ 单笔金额 < 20 万元。',
+3:'中单净流入 = 该档内成交的（方向 × 价格 × 数量）求和。',
+5:'从定义上讲它是一个**残差项**：',
+6:'既不够大到被认定为机构，也不够小到被认定为散户。正因为是残差，它的解释力最弱，通常不单独作为决策依据。',
+},en:{
+5:'Definitionally a residual — neither big enough to read as institutional nor small enough to read as retail, which is why it carries the least interpretive weight.'}},
+
+ORDERINFLOW_S:{zh:{
+0:'小单：金额低于中单门槛。',
+1:'A 股常见口径：单笔金额 < 4 万元。',
+3:'小单净流入 = 这些小额成交的（方向 × 价格 × 数量）求和。',
+5:'传统上把小单解读为散户行为。',
+6:'但在现代市场里，机构的算法拆单会把一笔大委托切成成百上千笔小成交，这些子单同样落在小单档里。',
+7:'这就是"小单 = 散户"这一解读的根本问题：你看到的小单里，很可能相当一部分正是机构在悄悄建仓。整套大单/小单分类的前提在算法交易普及后已经严重削弱。',
+},en:{
+6:'Algorithmic child orders slice one institutional order into hundreds of small prints that land in exactly this bucket.',
+7:'So "small = retail" can be precisely backwards. The whole size-bucket taxonomy weakened badly once algo execution became standard.'}},
+
+OPENINTEREST:{zh:{
+0:'持仓量 = 结算后仍未平仓的期货合约数量。',
+1:'它恒等于总多头持仓 = 总空头持仓——每一手多头必然对应一手空头，这是期货市场的零和结构。',
+3:'由交易所公布，通常 T+1。它是**存量**（时点数），不是流量，这一点与成交量截然不同：同一手合约反复买卖会推高成交量，但不改变持仓量。',
+5:'真正有意义的读法是把持仓量与价格放在一起看：',
+6:'价涨 + 持仓增 → 新多头进场，趋势得到增量资金确认。',
+7:'价涨 + 持仓减 → 空头在回补平仓。这种上涨是"被逼出来的"而非新资金看多，往往缺乏持续性。',
+8:'价跌 + 持仓增 → 新空头进场，下跌趋势被确认。',
+9:'价跌 + 持仓减 → 多头在止损离场，属于下跌的后期出清阶段，常在底部附近出现。',
+},en:{
+1:'Longs always equal shorts — the zero-sum structure of a futures market.',
+3:'A level, not a flow. Trading the same contract back and forth inflates volume but leaves open interest unchanged.',
+7:'A rally on falling OI is short covering — squeezed out rather than newly believed, and usually less durable.'}},
+
+POSITIONCHANGE:{zh:{
+0:'日增仓 = 今日持仓量 − 昨日持仓量。',
+2:'为正表示当日净新开仓（增仓）。',
+3:'为负表示当日净平仓（减仓）。',
+5:'与当日涨跌配合，构成期货最常用的四象限判读：',
+6:'增仓 + 上涨 = 多头增仓，新多头资金主动进场，看多。',
+7:'增仓 + 下跌 = 空头增仓，新空头资金主动进场，看空。',
+8:'减仓 + 上涨 = 空头减仓（空头回补），是被动买盘推动的上涨。',
+9:'减仓 + 下跌 = 多头减仓（多头止损离场）。注意后两种都是"平仓行为"驱动的价格变化，与前两种"新资金入场"在持续性上有本质区别。',
+},en:{
+9:'The last two are driven by position closing rather than new conviction, which is why they tend to be less durable than the first two.'}},
+
+FIXEDASSETSTO_FQ:{zh:{
+0:'季度固定资产周转率 = 单季收入 ÷ 固定资产净额。',
+2:'衡量每一块钱的厂房、设备在一个季度里做出了多少销售。',
+3:'数值越高说明资产被"压榨"得越充分，产能利用率越高。',
+5:'但要注意：分子是单季收入，分母是变化很慢的资产基数，',
+6:'因此数值本身偏小、季节性强，并且主要被产能利用率的波动主导。单季看意义有限，应看同比。',
+},en:{
+6:'One quarter of revenue over a slow-moving asset base: small, seasonal, and dominated by utilisation swings.'}},
+
+FIXEDASSETSTO_FY:{zh:{
+0:'年度固定资产周转率 = 全年收入 ÷ 固定资产净额。',
+2:'全年每一块钱厂房设备产生多少销售。',
+3:'这是一个结构性指标，反映这门生意有多重资产，',
+4:'以及现有资产基数被使用得是否充分。',
+6:'高且稳定说明轻资产或产能利用充分；偏低说明重资本。注意重资本本身不是缺点，但它意味着更高的固定成本和更差的下行弹性——需求下滑时折旧和维护费不会跟着降。',
+},en:{
+6:'Capital intensity is not itself a flaw, but it means higher fixed costs and worse downside flexibility — depreciation does not fall when demand does.'}},
+
+INVENTORYTO_FQ:{zh:{
+0:'季度存货周转率 = 单季营业成本 ÷ 平均存货。',
+1:'这里用营业成本而不是收入做分子，是因为存货记的是成本口径，分子分母必须同口径才可比。',
+3:'表示一个季度里存货被卖掉并补货了多少次。',
+4:'它的倒数是存货周转天数 ≈ 91 ÷ 周转率，读作"手上的货够卖多少天"。',
+6:'季节性极强：零售商在旺季前大量备货、旺季后清库存，',
+7:'所以单季数字波动很大，必须看同比。',
+},en:{
+1:'COGS, not revenue, because inventory is carried at cost — both sides of the ratio must be on the same basis.'}},
+
+INVENTORYTO_FY:{zh:{
+0:'年度存货周转率 = 全年营业成本 ÷ 平均存货。',
+1:'分子用营业成本而非收入，保证与存货的成本口径一致。',
+3:'表示一年内存货被完整卖掉并补货多少次。',
+4:'存货周转天数 = 365 ÷ 周转率，即一件货平均在仓库里待多少天。',
+6:'周转越快说明运营越精简、压在存货上的资金越少——存货是"已经花掉但还没变回现金"的钱。',
+7:'趋势比绝对值更重要，且只在同业内可比：珠宝店的周转率天然远低于生鲜超市。',
+},en:{
+6:'Inventory is cash already spent but not yet recovered, so faster turns mean less capital trapped.',
+7:'Only comparable within an industry — a jeweller turns far slower than a grocer by nature.'}},
+
+PAYABLETO_FQ:{zh:{
+0:'季度应付账款周转率 = 单季采购额（约等于营业成本）÷ 平均应付账款。',
+2:'表示一个季度里把供应商的欠款还清了几次。',
+3:'应付账款天数 ≈ 91 ÷ 周转率，即平均拖多少天才付款给供应商。',
+5:'周转率越低（天数越长）表示付款越慢，',
+6:'这会占用供应商的资金来补自己的现金流。适度是议价能力强的体现，过度则可能损害供应商关系，甚至是自身资金紧张的信号——要结合现金流一起判断是"强势"还是"没钱"。',
+},en:{
+6:'Stretching payables is supplier financing. Moderately it signals bargaining power; excessively it can signal distress — read it alongside cash flow to tell which.'}},
+
+PAYABLETO_FY:{zh:{
+0:'年度应付账款周转率 = 全年采购额（约等于营业成本）÷ 平均应付账款。',
+2:'一年内向供应商结清欠款的次数。',
+3:'应付账款周转天数 DPO = 365 ÷ 周转率，反映结构性的付款节奏。',
+5:'它是现金转换周期的关键一环：',
+6:'现金转换周期 = 存货天数 + 应收天数 − 应付天数。这个数字为负意味着公司先收到客户的钱、再付给供应商——等于用上下游的钱做免费营运资金，是极强的商业模式特征（典型如大型商超、平台电商）。',
+},en:{
+6:'A negative cash conversion cycle means customers pay before suppliers do — the business runs on other people\'s working capital, a hallmark of grocers and platform retailers.'}},
+
+RECEIVABLETO_FQ:{zh:{
+0:'季度应收账款周转率 = 单季收入 ÷ 平均应收账款。',
+2:'一个季度内把应收账款收回了几次。',
+3:'应收账款天数 DSO ≈ 91 ÷ 周转率，即平均多少天才收到货款。',
+5:'周转率下降（天数拉长）意味着客户付款变慢，',
+6:'这往往是需求走弱的早期信号；更糟的情况是公司为了做收入而放宽信用政策甚至提前确认收入——收入涨了、现金没进来。看到收入增长而应收增长更快时，要高度警惕。',
+},en:{
+6:'An early tell of demand weakness — or worse, revenue being bought with loose credit terms. Revenue growing slower than receivables is the pattern to fear.'}},
+
+RECEIVABLETO_FY:{zh:{
+0:'年度应收账款周转率 = 全年收入 ÷ 平均应收账款。',
+2:'一年内应收账款回收的次数。',
+3:'应收账款周转天数 DSO = 365 ÷ 周转率。',
+5:'它是对回款效率和客户信用质量的结构性观察。',
+6:'持续多年的下行趋势是严重的会计质量警告：它意味着账面上的收入正在越来越难变成现金，而这类问题通常在最终暴雷前已经在报表上显现了很久。',
+},en:{
+6:'A multi-year downtrend is a serious accounting-quality warning: reported revenue is converting to cash ever more slowly, and this usually shows up in the statements long before anything breaks.'}},
+
+TOTALASSETRATE_FY:{zh:{
+0:'总资产周转率 = 全年收入 ÷ 平均总资产。',
+2:'每一块钱总资产一年能产出多少销售额。',
+4:'它是杜邦分解中代表"运营效率"的那一项：',
+5:'ROE = 净利率 × 资产周转率 × 权益乘数。',
+6:'三项分别对应盈利能力、效率、杠杆。零售、分销这类薄利行业主要靠提高周转率来做出 ROE，而奢侈品、软件靠的是净利率——同样的 ROE 可以来自完全不同的商业模式。',
+},en:{
+6:'Thin-margin retailers manufacture ROE through turnover; luxury and software do it through margin. The same ROE can come from opposite business models.'}}
+
+});
+
+/* FXZH-BATCHES */
 }(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
 
