@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<meta name="description" content="Pricing page template for the handbooks and playground, wired for Stripe Payment Links. Not linked from the local build, which stays free and ungated.">
+<title>Pricing · 定价</title>
+<style>
+:root {
+  --bg:#0E0F13; --surface:#16181E; --surface-2:#1C1F27; --line:#262A33; --line-2:#333A46;
+  --text:#EAECEF; --text-2:#99A1AD; --text-3:#626A78;
+  --brand:#FF7A00; --brand-press:#E86E00; --info:#2E9BFF; --up:#00B96B; --warn:#FFA53D; --gold:#FFC53D;
+  --r:8px; --mono:"SF Mono",SFMono-Regular,ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-size:14px;line-height:1.62;
+  font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Hiragino Sans GB",sans-serif;
+  font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased}
+body.lang-zh{line-height:1.78}
+a{color:inherit;text-decoration:none}
+h1,h2,h3{margin:0;font-weight:700;letter-spacing:-.02em}
+.wrap{max-width:1120px;margin:0 auto;padding:0 22px}
+.topbar{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);
+  background:rgba(14,15,19,.94);backdrop-filter:blur(12px)}
+.topbar .wrap{display:flex;align-items:center;gap:16px;height:54px}
+.brand{display:flex;align-items:center;gap:8px;font-size:16px}
+.brand .logo{display:grid;place-items:center;width:26px;height:26px;border-radius:7px;
+  background:var(--brand);color:#17110A;font-size:14px;font-weight:800}
+.spacer{flex:1}
+.tb-link{font-size:13.5px;color:var(--text-2)}
+.tb-link:hover{color:var(--text)}
+.lang-btn{border:1px solid var(--line-2);background:var(--surface-2);color:var(--text);
+  border-radius:6px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit}
+
+.hero{padding:44px 0 20px}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--brand);margin-bottom:7px}
+.hero h1{font-size:clamp(26px,4vw,40px);line-height:1.08;letter-spacing:-.03em;font-weight:800}
+.hero p{margin:12px 0 0;max-width:76ch;color:var(--text-2);font-size:15px}
+
+.banner{border:1px solid var(--line-2);border-left:3px solid var(--warn);
+  background:rgba(255,165,61,.06);border-radius:var(--r);padding:13px 16px;margin-top:22px;
+  font-size:13px;color:var(--text-2)}
+.banner b{color:var(--text)}
+
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(268px,1fr));gap:14px;margin-top:26px}
+.plan{border:1px solid var(--line);border-radius:10px;background:var(--surface);padding:20px;display:flex;flex-direction:column}
+.plan.best{border-color:var(--brand)}
+.plan h3{font-size:16px}
+.plan .price{font-family:var(--mono);font-size:30px;font-weight:800;margin:10px 0 2px}
+.plan .per{font-size:12px;color:var(--text-3)}
+.plan .save{display:inline-block;margin-top:8px;font-size:10.5px;font-weight:700;color:var(--up);
+  background:rgba(0,185,107,.14);border-radius:3px;padding:2px 7px}
+.plan ul{list-style:none;margin:16px 0 0;padding:0;font-size:13px;color:var(--text-2);flex:1}
+.plan li{margin:7px 0;display:flex;gap:8px;align-items:flex-start}
+.plan li .ok{color:var(--up)} .plan li .no{color:var(--text-3)}
+.buy{display:block;margin-top:18px;text-align:center;border-radius:var(--r);padding:11px 14px;
+  font-size:13.5px;font-weight:700;border:1px solid var(--line-2);background:var(--surface-2);color:var(--text-2);cursor:pointer;font-family:inherit;width:100%}
+.buy.primary{background:var(--brand);border-color:var(--brand);color:#17110A}
+.buy.primary:hover{background:var(--brand-press)}
+.buy:disabled{opacity:.45;cursor:not-allowed}
+
+.methods{display:flex;gap:9px;flex-wrap:wrap;margin-top:26px;align-items:center}
+.method{display:flex;align-items:center;gap:7px;border:1px solid var(--line);background:var(--surface-2);
+  border-radius:6px;padding:7px 12px;font-size:12px;color:var(--text-2)}
+.method b{color:var(--text);font-weight:600}
+
+table.cmp{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
+table.cmp th{text-align:left;padding:9px 12px;background:var(--surface-2);border-bottom:1px solid var(--line);
+  font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--text-3)}
+table.cmp td{padding:9px 12px;border-bottom:1px solid var(--line);color:var(--text-2)}
+table.cmp td.c{text-align:center}
+.wrapbox{border:1px solid var(--line);border-radius:10px;overflow:hidden;margin-top:26px}
+
+footer{margin-top:52px;border-top:1px solid var(--line);padding:22px 0 46px;font-size:12px;color:var(--text-3)}
+footer p{margin:0 0 8px;max-width:92ch}
+code{font-family:var(--mono);font-size:12px;color:var(--gold)}
+@media(max-width:640px){.tb-link{display:none}}
+</style>
+</head>
+<body>
+
+<div class="topbar"><div class="wrap">
+  <a class="brand" href="playground.html"><span class="logo">▶</span><span>Trading<b>Playground</b></span></a>
+  <div class="spacer"></div>
+  <a class="tb-link" href="indicators.html">↔ <span data-t="navInd">Indicators</span></a>
+  <a class="tb-link" href="options.html">↔ <span data-t="navOpt">Options</span></a>
+  <a class="tb-link" href="playground.html">▶ <span data-t="navPlay">Playground</span></a>
+  <button class="lang-btn" id="langBtn"><span id="langLabel">EN</span></button>
+</div></div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="eyebrow" data-t="eb">Pricing</div>
+    <h1 data-t="title">The handbook stays free</h1>
+    <p data-t="sub"></p>
+  </header>
+
+  <div class="banner" data-th="localNote"></div>
+
+  <div class="plans">
+    <div class="plan">
+      <h3 data-t="freeTitle">Free</h3>
+      <div class="price">$0</div>
+      <div class="per" data-t="forever">forever</div>
+      <ul id="freeList"></ul>
+      <button class="buy" disabled data-t="current">Current plan</button>
+    </div>
+
+    <div class="plan best">
+      <h3 data-t="yearTitle">Pro — yearly</h3>
+      <div class="price">$29.99</div>
+      <div class="per" data-t="perYear">per year</div>
+      <span class="save" data-t="save2m">2 months free vs monthly</span>
+      <ul id="proList"></ul>
+      <button class="buy primary" data-buy="yearly" data-t="choose">Choose</button>
+    </div>
+
+    <div class="plan">
+      <h3 data-t="lifeTitle">Pro — lifetime</h3>
+      <div class="price">$39.99</div>
+      <div class="per" data-t="once">one payment</div>
+      <span class="save" data-t="bundle">bundle: every future lesson included</span>
+      <ul id="lifeList"></ul>
+      <button class="buy" data-buy="lifetime" data-t="choose">Choose</button>
+    </div>
+  </div>
+
+  <div class="methods" id="methods"></div>
+
+  <div class="wrapbox">
+    <table class="cmp">
+      <thead><tr>
+        <th data-t="thFeature">Feature</th>
+        <th class="c" data-t="thFree">Free</th>
+        <th class="c" data-t="thPro">Pro</th>
+      </tr></thead>
+      <tbody id="cmpBody"></tbody>
+    </table>
+  </div>
+
+  <footer>
+    <p data-th="footHow"></p>
+    <p data-th="footApple"></p>
+    <p style="opacity:.75" data-th="footLegal"></p>
+  </footer>
+</div>
+
+<script>/* =============================================================================
+   pricing.js
+
+   Checkout runs through Stripe PAYMENT LINKS, which is the only genuinely
+   backend-free Stripe integration: the link is a Stripe-hosted page, so no
+   secret key ever reaches the client and there is no server to run. Payment
+   Links carry card, Apple Pay, Google Pay, PayPal, Link and the local methods
+   enabled in the Stripe dashboard — which is how the requested wallets are
+   covered without writing a payment backend.
+
+   This page is NOT linked from the local build. The author's own machine runs
+   everything ungated, so nothing here gates anything; it exists so the hosted
+   build has a ready pricing surface.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var lang = 'en';
+
+  /* Replace with real links from the Stripe dashboard. Left blank on purpose:
+     a placeholder URL that looks real is worse than a button that says it is
+     not configured. */
+  var LINKS = { yearly: '', lifetime: '', monthly: '' };
+
+  var T = {
+    navInd: { en: 'Indicators', zh: '指标手册' },
+    navOpt: { en: 'Options', zh: '期权手册' },
+    navPlay: { en: 'Playground', zh: '训练场' },
+    eb: { en: 'Pricing', zh: '定价' },
+    title: { en: 'The handbook stays free', zh: '手册永久免费' },
+    sub: {
+      en: 'All 302 entries, the per-line bilingual annotations and the formula walkthroughs are free and stay free. What Pro buys is simulation depth — the full 305 lessons and the multi-leg option lab with live P/L.',
+      zh: '302 个条目、逐行中英注释、公式推导，全部免费且永久免费。付费买到的是模拟深度——完整 305 节课，以及带实时盈亏的多腿期权实验室。'
+    },
+    localNote: {
+      en: '<b>This page does nothing on a local build.</b> Everything on this machine runs ungated; the pricing surface exists for a hosted deployment. Nothing on the handbooks or the playground checks a licence.',
+      zh: '<b>本地运行时这一页不起任何作用。</b>这台机器上的全部功能都不受限；定价页是为将来托管部署准备的。手册与训练场都不会检查任何授权。'
+    },
+    freeTitle: { en: 'Free', zh: '免费' },
+    yearTitle: { en: 'Pro — yearly', zh: '专业版 · 年付' },
+    lifeTitle: { en: 'Pro — lifetime', zh: '专业版 · 永久' },
+    forever: { en: 'forever', zh: '永久' },
+    perYear: { en: 'per year', zh: '每年' },
+    once: { en: 'one payment', zh: '一次买断' },
+    save2m: { en: '2 months free vs monthly', zh: '相比月付省两个月' },
+    bundle: { en: 'bundle: every future lesson included', zh: '打包价：含今后新增的全部课程' },
+    choose: { en: 'Choose', zh: '选择' },
+    current: { en: 'Current plan', zh: '当前方案' },
+    notConfigured: { en: 'Checkout not configured', zh: '支付未配置' },
+    thFeature: { en: 'Feature', zh: '功能' },
+    thFree: { en: 'Free', zh: '免费' },
+    thPro: { en: 'Pro', zh: '专业版' },
+    footHow: {
+      en: 'Checkout uses <b>Stripe Payment Links</b> — a Stripe-hosted page, so no secret key reaches the browser and no backend is required. Enable card, Apple Pay, Google Pay, PayPal and Link in the Stripe dashboard and they appear automatically. Paste the generated URLs into <code>LINKS</code> in this file.',
+      zh: '结算使用 <b>Stripe Payment Links</b>——由 Stripe 托管的页面，密钥不会进入浏览器，也不需要任何后端。在 Stripe 后台启用银行卡、Apple Pay、Google Pay、PayPal 与 Link，它们会自动出现在结算页。把生成的链接填进本文件的 <code>LINKS</code> 即可。'
+    },
+    footApple: {
+      en: '<b>The iOS app does not use this page.</b> Apple requires in-app purchase for unlocking features inside an app, so the native build sells through StoreKit (which presents Apple Pay itself). Routing app features through Stripe would be grounds for rejection.',
+      zh: '<b>iOS App 不走这一页。</b>Apple 要求 App 内解锁功能必须使用内购，因此原生版通过 StoreKit 销售（Apple Pay 由它自己呈现）。把 App 功能改走 Stripe 会被审核拒绝。'
+    },
+    footLegal: {
+      en: 'Educational material. Not investment advice. Prices shown are placeholders for a deployment that does not yet exist.',
+      zh: '教学材料，不构成投资建议。此处价格为示例，对应的部署尚不存在。'
+    }
+  };
+  function t(k) { var e = T[k]; return e ? (e[lang] || e.en) : k; }
+
+  var FEATURES = [
+    { k: { en: 'All 302 handbook entries', zh: '全部 302 个手册条目' }, free: true },
+    { k: { en: 'Per-line bilingual annotations', zh: '逐行中英注释' }, free: true },
+    { k: { en: 'Starter lessons (13)', zh: '入门课程（13 节）' }, free: true },
+    { k: { en: 'Option payoff lab, up to two legs', zh: '期权损益图，最多两条腿' }, free: true },
+    { k: { en: 'All 305 lessons', zh: '全部 305 节课' }, free: false },
+    { k: { en: 'Multi-leg structures (condor, butterfly, calendar)', zh: '多腿结构（铁鹰、蝶式、日历）' }, free: false },
+    { k: { en: 'Live P/L and what-if on the payoff chart', zh: '损益图上的实时盈亏与情景推演' }, free: false },
+    { k: { en: 'Every future lesson', zh: '今后新增的全部课程' }, free: false }
+  ];
+
+  function L(o) { return o[lang] || o.en; }
+
+  function render() {
+    document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+    document.body.classList.toggle('lang-zh', lang === 'zh');
+    [].forEach.call(document.querySelectorAll('[data-t]'), function (n) { n.textContent = t(n.getAttribute('data-t')); });
+    [].forEach.call(document.querySelectorAll('[data-th]'), function (n) { n.innerHTML = t(n.getAttribute('data-th')); });
+    document.getElementById('langLabel').textContent = lang === 'en' ? 'EN' : '中';
+
+    function list(only) {
+      return FEATURES.filter(function (f) { return only ? f.free : true; }).map(function (f) {
+        var on = only ? true : true;
+        return '<li><span class="' + (f.free || !only ? 'ok' : 'no') + '">✓</span>' + L(f.k) + '</li>';
+      }).join('');
+    }
+    document.getElementById('freeList').innerHTML = FEATURES.filter(function (f) { return f.free; })
+      .map(function (f) { return '<li><span class="ok">✓</span>' + L(f.k) + '</li>'; }).join('');
+    var proItems = FEATURES.map(function (f) { return '<li><span class="ok">✓</span>' + L(f.k) + '</li>'; }).join('');
+    document.getElementById('proList').innerHTML = proItems;
+    document.getElementById('lifeList').innerHTML = proItems;
+
+    document.getElementById('cmpBody').innerHTML = FEATURES.map(function (f) {
+      return '<tr><td>' + L(f.k) + '</td><td class="c">' + (f.free ? '<span style="color:var(--up)">✓</span>' : '—') +
+        '</td><td class="c"><span style="color:var(--up)">✓</span></td></tr>';
+    }).join('');
+
+    var methods = [['Card', 'Visa · Mastercard · Amex'], ['Apple Pay', 'Safari · iOS'],
+                   ['Google Pay', 'Chrome · Android'], ['PayPal', 'via Stripe'], ['Link', 'Stripe one-click']];
+    document.getElementById('methods').innerHTML = methods.map(function (m) {
+      return '<span class="method"><b>' + m[0] + '</b> ' + m[1] + '</span>';
+    }).join('');
+
+    [].forEach.call(document.querySelectorAll('[data-buy]'), function (b) {
+      var key = b.getAttribute('data-buy');
+      if (!LINKS[key]) {
+        b.textContent = t('notConfigured');
+        b.disabled = true;
+        b.classList.remove('primary');
+      }
+    });
+  }
+
+  document.getElementById('langBtn').addEventListener('click', function () {
+    lang = lang === 'en' ? 'zh' : 'en';
+    try { localStorage.setItem('pricing.lang', lang); } catch (e) { /* private mode */ }
+    render();
+  });
+  [].forEach.call(document.querySelectorAll('[data-buy]'), function (b) {
+    b.addEventListener('click', function () {
+      var url = LINKS[b.getAttribute('data-buy')];
+      if (url) root.location.href = url;
+    });
+  });
+
+  try {
+    var saved = localStorage.getItem('pricing.lang');
+    if (saved === 'zh' || saved === 'en') lang = saved;
+  } catch (e) { /* no storage */ }
+  render();
+}(typeof globalThis !== 'undefined' ? globalThis : this));
+</script>
+</body>
+</html>
