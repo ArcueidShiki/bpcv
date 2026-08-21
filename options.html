@@ -1296,6 +1296,374 @@ footer p { margin: 0 0 8px; max-width: 100ch; }
 }(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
 <script>/* =============================================================================
+   fxzh — per-line formula annotations, keyed by entry id then language then the
+   ZERO-BASED line index of the formula string (blank lines count).
+   Formulas stay in English because that is how every platform labels them;
+   these notes explain each line in the reader's language.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var FIN = root.FIN = root.FIN || {};
+  FIN.FXZH = FIN.FXZH || {};
+
+/* ---- options batch 1: greeks + position metrics ---- */
+Object.assign(FIN.FXZH, {
+
+DELTA:{zh:{
+0:'认购 Delta 由 N(d₁) 折现而来，落在 0 到 +1 之间。',
+1:'认沽 Delta 由同一个 N(d₁) 减 1 得到，落在 −1 到 0。两者相差恰好一个 e^(−qT)，这正是平价关系的微分形式。',
+3:'d₁ 是标准化距离：股价距行权价有几个波动率单位。所有希腊字母都建立在它之上。',
+5:'组合 Delta = 各腿的（数量 × Delta × 合约乘数）之和。',
+6:'它等于**等效股数**——这是 Delta 最实用的读法：净 Delta 为 +59 就相当于此刻持有 59 股正股，无论你持有的是几张什么合约。风险管理应该以这个数字为准，而不是合约张数。'},en:{
+1:'The two differ by exactly e^(−qT), which is put-call parity in differential form.',
+6:'Position delta is the shares-equivalent. A net +59 delta behaves like 59 shares right now, whatever contracts produced it — size risk off this number, not off contract count.'}},
+
+GAMMA:{zh:{
+0:'Gamma 对认购和认沽**完全相同**——因为两者的 Delta 只差一个常数，求导后常数消失。',
+2:'n(x) 是标准正态密度，d₁ 定义见 Delta 条目。',
+3:'各输入的单位：S 为股价，σ 为小数形式的隐含波动率，T 为年，q 为股息率。',
+5:'实用近似：股价每涨 1 美元，Delta 增加约 Γ。',
+6:'组合 Gamma 乘以 100 后，读作"股价每变动 1 美元，等效股数变化多少股"。',
+8:'一次 ΔS 幅度的移动带来的凸性盈亏约为 ½·Γ·ΔS²×100（每张）。注意平方项：这就是为什么 Gamma 收益对大幅波动极其敏感，而对小幅震荡几乎无感。',
+10:'Gamma 在平价处最大，并按 1/√T 放大。',
+11:'时间减半，平价 Gamma 乘以 √2。',
+12:'实例：MU 880 认购的 Γ 从 45 天的 0.00154 涨到 14 天的 0.00279，再到 1 天的 0.01048——临近到期时 Gamma 是爆炸性的，这既是 0DTE 的全部魅力，也是它的全部危险。'},en:{
+0:'Identical for call and put, because their deltas differ by a constant that vanishes on differentiation.',
+8:'Note the square: gamma P/L is extremely sensitive to large moves and nearly blind to small ones.',
+12:'Gamma explodes into expiry — the entire attraction and the entire danger of a 0DTE.'}},
+
+THETA:{zh:{
+0:'认购 Theta 由三项构成：波动衰减项（负）、股息项、利率项。',
+1:'认沽的对应项符号不同。',
+3:'⚠ 那个 ÷365 不是装饰：本页把 Theta 报价为**每日历日**，',
+4:'而不是每交易日。这意味着一个周末要付出**两天**的时间价值，而不是零。很多人以为周末不衰减，实际上做市商会在周五收盘前就把周末的时间价值扣掉。',
+6:'每张合约每天的衰减 = Θ × 100。',
+7:'组合 Theta 为各腿加总。',
+9:'关键理解：Theta 只消耗**时间价值**，',
+10:'内在价值永远不衰减。一张深度实值期权的 Theta 很小，因为它几乎没有时间价值可以流失。',
+12:'平价期权的时间价值约为 0.7979·S·σ·√T，因此衰减速度正比于 1/√T。',
+13:'所以最后一周的每日成本远高于第一周：',
+14:'MU 880 认购的 Θ 从 45 天的 −1.155 恶化到 5 天的 −3.425、1 天的 −7.609。这条曲线的形状决定了买方"不要拿到最后"的基本纪律。'},en:{
+4:'A weekend costs two units of decay, not zero — market makers price it out before Friday\'s close.',
+10:'Deep in-the-money options have small theta because they have little extrinsic value left to lose.',
+14:'The shape of this curve is why buyers are told not to hold into the final week.'}},
+
+VEGA:{zh:{
+0:'Vega 对认购与认沽相同，且恒为正——买方无论买什么方向，都是波动率的多头。',
+2:'⚠ 那个 ÷100 很重要：本页把 Vega 报价为**每 1 个波动率点**',
+3:'（IV 从 82.33% 到 83.33%），而不是每 1.00 的小数波动率。',
+4:'有些平台报的是未除以 100 的数字，相差整整 100 倍。**下单前务必确认你的软件用的是哪个口径**，否则仓位规模会算错两个数量级。',
+6:'每张合约每波动点 = ν × 100。',
+7:'组合 Vega 为各腿加总。',
+8:'波动率变动 Δσ（以点计）带来的盈亏 ≈ 组合 Vega × Δσ。',
+10:'Vega 在平价处最大，并随 √T 增长：',
+11:'MU 880 认购从 14 天的 0.685 涨到 45 天的 1.218，比值 1.78 恰好等于 √(45/14)——这个 √T 关系就是 LEAPS 本质上是"波动率多头"的原因。',
+13:'⚠ 最重要的局限：Vega 并不是一个数的希腊字母，整条期权链构成一个**波动率曲面**。',
+14:'"所有 IV 同时平移"是模型的虚构；真实的波动率变动是偏斜变动和期限结构变动。因此用单一 Vega 去对冲一个跨期限、跨行权价的组合，会留下你看不见的敞口。'},en:{
+4:'Some platforms quote the undivided figure, 100× larger. Check yours before sizing.',
+11:'The √T relationship is why a LEAPS is fundamentally a long-volatility position.',
+14:'A parallel shift is the model\'s fiction. Real vol moves are skew and term-structure moves, so a single vega number leaves exposure you cannot see.'}},
+
+RHO:{zh:{
+0:'认购 Rho 为正：利率上升提高了"延迟支付行权价"的价值。',
+1:'认沽 Rho 为负，方向相反。',
+3:'⚠ ÷100 表示口径是**每 1 个百分点**的无风险利率变动（3.80% → 4.80%）。',
+4:'每张合约为 ρ × 100。',
+6:'关键对比：ρ 大致随 T **线性**增长，而每日 Theta 按 1/√T 收缩。',
+7:'这一个事实就解释了 Rho 的全部实务地位：短期期权可以完全忽略它，LEAPS 则必须认真对待。',
+9:'MU 880 认购的 ρ（每股）：1 天 0.0122，',
+10:'14 天 0.1603，',
+11:'45 天 0.4873，',
+12:'两年 6.03——两年期的利率敏感度是一天期的近 500 倍。',
+14:'平价关系精确地定义了 Rho 到底是什么：',
+15:'从 C − P = S·e^(−qT) − K·e^(−rT) 两边对 r 求导，',
+16:'得到 ρ_call − ρ_put = K·T·e^(−rT)/100。也就是说 Rho 本质上就是**持有成本项**，仅此而已——它不含任何关于方向或波动的信息。'},en:{
+7:'Rho scales with T while daily theta shrinks like 1/√T — the whole reason it is irrelevant short-dated and real for LEAPS.',
+16:'Differentiating parity in r shows rho is nothing more than the carry term; it carries no directional or volatility information.'}},
+
+BEP:{zh:{
+0:'盈亏平衡点的操作性定义：使到期损益恰好为零的那个终值股价。',
+1:'注意是**到期时**，不是持有期间——期权在到期前的市值曲线完全不同，盘中价格触及 BEP 并不代表你已经打平。',
+3:'本页用数值方法求解：在 1201 个网格点上算出到期损益，',
+4:'寻找符号变化处再线性插值。',
+5:'一个结构可以有 0 个、1 个或 2 个盈亏平衡点。',
+7:'常见结构的解析式（每股口径）：',
+8:'买认购：行权价 + 权利金。',
+9:'买认沽：行权价 − 权利金。',
+10:'卖认沽：行权价 − 收到的权利金。',
+11:'备兑认购：股票成本 − 收到的权利金。',
+12:'借记价差：买入腿行权价 ± 净支出。',
+13:'贷记价差：卖出腿行权价 ∓ 净收入。',
+14:'跨式/宽跨式：两侧各一个。',
+15:'铁鹰：卖出腿两侧各一个。',
+19:'⚠ 真正重要的不是 BEP 的绝对价位，而是它距离现价有**几个预期波动**：',
+20:'(BEP − S) ÷ (0.7979·S·σ·√T)。这个比值才回答"这笔交易需要市场走出多不寻常的一步才能赚钱"。BEP 看起来很近但需要 2 个标准差才能到达，与看起来很远却只需 0.5 个标准差，是完全不同的两笔生意。'},en:{
+1:'At expiry, not before — the mark-to-market curve before expiry is a different shape entirely.',
+20:'The absolute level matters far less than how many expected moves away it sits. That ratio is what says how unusual a move the trade requires.'}},
+
+POP:{zh:{
+0:'盈利概率是在**风险中性**对数正态测度下计算的，也就是给这些腿定价所用的同一个测度。',
+1:'它是模型的输出，不是预测。',
+3:'实现细节：',
+4:'终值股价的对数服从正态分布，漂移为 r − q。',
+5:'POP 是盈利区域上概率密度的积分，用 4000 个切片在 ±7σ 范围内数值求得。',
+7:'只有一个盈亏平衡点的结构可以化为闭式：',
+8:'买认购的 POP 等于在 BEP 处求得的 N(d₂)。',
+9:'卖认沽同理。',
+10:'两个平衡点的结构：',
+11:'POP 是股价落在两点之间的概率。',
+13:'⚠ 请注意漂移用的是 r − q。**你对方向的判断在这个公式里完全不出现**——两个人对同一个结构有截然相反的看法，算出来的 POP 一模一样。',
+15:'POP 不是什么：',
+16:'它不是"持有期间曾经盈利过"的概率——**路径被完全忽略**。',
+17:'它不是"你最终能把利润拿到手"的概率——你的止损、你的追加保证金通知都不在模型里。',
+18:'它更不是真实世界的概率——真实漂移不是无风险利率。高 POP 的策略（如卖深虚值认沽）往往伴随极不对称的亏损分布，POP 高不代表期望为正。'},en:{
+13:'Your directional view appears NOWHERE in the formula. Two traders with opposite views compute the same POP.',
+18:'A high POP often comes with a violently asymmetric loss distribution. It says nothing about expected value.'}},
+
+MAX_PL:{zh:{
+0:'最大盈利是到期损益在所有可能终值股价上的最大值。',
+1:'最大亏损是最小值。',
+3:'实现上在 1201 个网格点之外，还额外探测了 1e−6·S、0.2·S、0.5·S、4·S、12·S、60·S 等极端点，',
+4:'再比较 60·S 与 120·S 处的损益：',
+5:'如果仍在单调上升，就报告为 ∞ 而不是',
+6:'截取绘图窗口边缘的那个数。这个细节很重要——把"无限"错报成一个有限数，会让风险看起来是有界的。',
+8:'常见结构的闭式（每张 × 100）：',
+9:'买认购：盈利无限，亏损为权利金。',
+10:'裸卖认购：盈利为权利金，**亏损无限**。',
+11:'卖认沽：最大亏损发生在股价归零时。',
+12:'借记价差：最大盈利为价差宽度减支出。',
+13:'贷记价差：最大盈利为收入，最大亏损为宽度减收入。',
+14:'铁鹰同理。',
+15:'跨式：盈利无限，亏损为两腿权利金之和。',
+17:'⚠ 上面每一行都假设两条腿在到期时**干净地结算**。',
+18:'提前行权和钉价风险会打破这个假设：如果卖出腿被提前指派而买入腿还在，你会在一夜之间持有裸的正股头寸，"有限风险"当场失效。'},en:{
+6:'Reporting infinity honestly matters — a clipped finite number would make unbounded risk look bounded.',
+18:'Early assignment leaves you holding naked stock overnight while the long leg is still open, and the "defined risk" evaporates.'}},
+
+ROR:{zh:{
+0:'风险回报比 = 最大盈利 ÷ 风险资本。',
+2:'分母的选择规则值得知道：',
+3:'只有当损益向下有界且下行不无限时，才算"风险已定义"。',
+4:'此时风险取最大亏损的绝对值。',
+5:'否则退化为抵押品口径，那已经是 ROC 的领域。',
+6:'最大盈利无限时 ROR 报为 ∞。',
+8:'实例：买 970 认购、卖 1070 认购，净支出 16.00。',
+9:'价差宽度 100，最大盈利 8,400。',
+10:'风险即支出 1,600。',
+11:'ROR = 525%。',
+13:'⚠ ROR **不是**期望值：',
+14:'期望值需要对概率密度加权积分。',
+15:'在风险中性测度下，同样这个价差的期望值只有约 +2.57 美元（在 1,768 美元的支出上）。',
+16:'ROR 描述的是一个零期望赌局的**形状**，而不是它的价值。525% 的 ROR 听起来很诱人，但它同时意味着赢的概率很低——两者是同一枚硬币。',
+18:'因此 ROR 只应用于风险真正有界的结构：价差、蝶式、鹰式。',
+19:'裸卖或现金担保头寸的分母由券商决定，应改用 ROC。'},en:{
+15:'The same spread has an expected value of about +$2.57 on a $1,768 debit under the risk-neutral measure.',
+16:'ROR describes the SHAPE of a zero-expected-value bet, not its value. A 525% ROR is the same coin as a low probability of winning.'}},
+
+ROC:{zh:{
+0:'抵押品回报率 = 最大盈利 ÷ 所需抵押品。',
+2:'当头寸是**裸卖或现金担保**时使用——此时没有一对行权价把亏损框住，',
+3:'分母不是由算术决定的，而是由券商的政策决定的。',
+5:'本页用近似的 Reg-T 口径：',
+6:'每条卖出期权腿按 20% 股价加上实值部分计算，',
+7:'股票腿按 50% 计算。',
+9:'同一笔卖出 MU 975 认沽（股价 881.47，收权利金 116.50）：',
+10:'现金担保口径：占用 85,850，ROC = 13.57%。',
+11:'Reg-T 裸卖口径：占用 26,982，ROC = 43.2%。',
+12:'组合保证金口径（基于压力测试，各家不同）：占用更少，ROC 更高。',
+14:'⚠ 同一笔交易，三个都站得住脚的答案，没有一个是错的。',
+15:'分母是一项**政策**，而且它会随着头寸对你不利而**盘中重算**——这正是裸卖策略真正的风险所在：不是你算错了 ROC，而是市场下跌时券商会提高你的保证金要求，在最坏的时点逼你平仓。'},en:{
+14:'One trade, three defensible answers, none of them wrong.',
+15:'The denominator is a policy, and it is recomputed intraday as the position moves against you — which is the real risk of naked selling: a margin call forcing you out at the worst moment.'}}
+
+});
+
+/* ---- options batch 2: pricing ---- */
+Object.assign(FIN.FXZH, {
+
+IV:{zh:{
+0:'隐含波动率是使 Black-Scholes 理论价等于市场价的那个 σ。',
+1:'没有闭式解，只能数值求解：以 vega 为导数做牛顿迭代，失败时退回二分法。',
+3:'期权链层面的"总 IV"是按持仓量和 vega 加权的混合值，',
+4:'并插值到恒定 30 天期限——它描述的是**这只股票**，而不是某一张合约。',
+6:'把 IV 换算成预期波动幅度：1σ ≈ S × IV × √T。这是 IV 唯一直观的用法。',
+7:'MU 期权链 30 天：±208 美元，约 ±23.6%。',
+8:'MU 870 认购 3 天：±56 美元，约 ±6.4%。',
+10:'注意同一天的三个数字：链层面总 IV 82.33%，870 认购（3 天）70.49%，',
+11:'0DTE 单个行权价 113%–141%。',
+12:'三个数都是对的，只是**在描述三个不同的对象**。看到"这只股票的 IV"时，务必先问清楚是哪一个口径——这是期权数据中最常见的混淆来源。'},en:{
+6:'Converting IV into an expected move is the only intuitive use of the number.',
+12:'Three correct numbers describing three different objects. Always ask which one "the stock\'s IV" refers to.'}},
+
+HV:{zh:{
+0:'先取每日对数收益率。',
+1:'历史波动率 = 收益率标准差 × √252，年化，采用收盘到收盘口径。',
+2:'券商默认取 30 个交易日，等权重。',
+4:'MU 在 2026-08-06 的读数：',
+5:'HV(30) = 106.46%，而 IV(30) 只有 82.33%。',
+6:'IV 减 HV 为 −24.13 个点，比值 0.77——**隐含低于已实现**。这种情况下卖方在承担实际大于报价的风险，与常见的"卖方收溢价"直觉相反，通常出现在暴跌之后。',
+8:'一个重要的技术性质：单独一根 −12% 的交易日，',
+9:'其对 30 日年化 HV 的贡献就高达 37.0%。',
+10:'并且这份贡献会在它滚出 30 日窗口的那一天**整块消失**。这就是等权移动窗口的固有缺陷：HV 会在某一天毫无理由地"跳水"，而市场其实什么都没发生。看 HV 的突变时，先确认是不是某根极端 K 线刚刚出窗。'},en:{
+6:'Implied below realised — the seller is taking more risk than the quote pays for, which typically happens right after a crash.',
+10:'The contribution vanishes in one block the day it rolls out of the window. An equally-weighted window makes HV drop for no market reason at all.'}},
+
+IV_RANK:{zh:{
+0:'IV Rank 把当前 IV 在过去一年的最高与最低之间线性归一化。',
+1:'⚠ 它是一个**极值统计量**：整整一年的数据里，只有三个数字真正参与计算（当前、最高、最低）。',
+3:'MU 在 2026-08-06：IV 为 82.33%，IV Rank 为 54。',
+4:'反推可得：(82.33 − 45)/(114 − 45)×100 = 54.1。',
+5:'即这一年的 IV 大致在 45% 到 114% 之间。',
+7:'脆弱性演示——IV 完全不变，只在样本里多加一天：',
+8:'若历史上曾出现一次 190% 的读数，则 (82.33 − 45)/(190 − 45)×100 = 25.7。',
+9:'IV Rank 从 54 掉到 26，而这一天的数据早已过去，当前市场毫无变化。这就是为什么不能只看 IV Rank——它对单个历史极值极度敏感。'},en:{
+1:'A min/max statistic: out of a full year of data, only three numbers actually enter it.',
+9:'IV Rank halves on one day of data that has already passed and has no bearing on the present.'}},
+
+IV_PCTL:{zh:{
+0:'IV 百分位统计过去一年里有多少天的 IV 低于今天。',
+1:'⚠ 它是一个**计数统计量**：252 个观测**每一个都投一票**，这与只看三个数的 IV Rank 有本质区别。',
+3:'MU 在 2026-08-06：IV 百分位为 69%。',
+4:'即 252 个交易日中有 174 天的 IV 低于 82.33%。',
+5:'174 ÷ 252 = 69.0%。',
+7:'稳健性对照——同样加入那个 190% 的离群值：',
+8:'IV Rank 从 54 掉到 26，一天的数据造成 28 个点的位移。',
+9:'IV 百分位只从 69 变到 68.7，位移上限就是 1/252。这就是为什么实务上应该以 IV 百分位为主、IV Rank 为辅：前者是分布统计，后者是极值统计。'},en:{
+1:'A counting statistic: every one of the 252 observations votes once.',
+9:'One outlier can shift IV Rank by 28 points and IV Percentile by at most 1/252. Percentile is the distributional statistic; rank is an extreme-value one.'}},
+
+PREMIUM:{zh:{
+0:'"权利金"这个词在界面上对应两个完全不同的数字，务必分清。',
+1:'第一个是**价格**：报价 × 合约乘数 × 张数。',
+2:'MU 870 认购报价 31.06，即每张 3,106 美元，今天就要付出的现金。',
+4:'第二个是**溢价率**，与前者共用一个名字但含义完全不同：',
+5:'认购溢价率 =（行权价 + 权利金 − 现价）÷ 现价。',
+6:'认沽溢价率对称。',
+7:'它等于**盈亏平衡点到现价的距离**占现价的比例，',
+8:'只有在期权处于价内时，它才同时等于时间价值占现价的比例。',
+10:'MU 870 认购：(870 + 31.06 − 881.47)/881.47 = 2.22%。',
+11:'验证：盈亏平衡点 901.06 = 881.47 ×(1 + 2.22%)。所以溢价率回答的是"股价还要再涨多少百分比我才不亏"，这才是它真正有用的读法。'},en:{
+0:'Two entirely different numbers share this label on a broker screen.',
+11:'The percentage answers "how much further must the stock move before I stop losing" — the only reading that is actually useful.'}},
+
+INTRINSIC:{zh:{
+0:'认购的内在价值 = max(股价 − 行权价, 0)。',
+1:'认沽对称。',
+2:'⚠ 注意：不含波动率、不含利率、不含时间、**不含任何模型**。它是纯粹的算术，是期权价值中唯一确定无疑的部分。',
+4:'期权价格 = 内在价值 + 时间价值。',
+5:'MU 870 认购：31.06 = 11.47 + 19.59。',
+7:'一个实务细节：界面上的衍生字段是以 S = 881.47 计算的。',
+8:'881.47 − 870 = 11.47 ✓ 与界面吻合。',
+9:'885.55 − 870 = 15.55 ✗ 那是稍后的一个报价。',
+10:'券商界面上的各个字段是**独立刷新**的。',
+11:'在相信其余数字之前，先用内在价值反推出它用的是哪个标的价格——这是核对一屏数据是否自洽的最快方法。',
+13:'美式期权：价格恒大于等于内在价值，否则存在立即行权套利。',
+14:'欧式期权：深度价内的认沽**可以**低于内在价值，因为行权价要到期才拿到，需要折现。这是欧式与美式最实际的差别之一。'},en:{
+2:'No volatility, no rate, no time, no model — pure arithmetic, and the only part of an option\'s value that is certain.',
+11:'Fields refresh independently. Reproducing the intrinsic tells you which underlying reference the rest of the screen used.',
+14:'A deep in-the-money European put can trade below intrinsic because the strike is only received at expiry and must be discounted.'}},
+
+EXTRINSIC:{zh:{
+0:'时间价值 = 期权价格 − 内在价值。',
+1:'MU 870 认购的时间价值 19.59，占整个价格的 63%——买一张价内期权，六成的钱买的是时间而非内在价值。',
+3:'它由什么构成：',
+4:'大致等于 vega × IV，再加上利息持有成本，减去股息影响。',
+5:'MU 870 认购：0.3371 × 70.49 ≈ 23.8，再被 3 天的持有成本修正。',
+7:'它怎么消失：',
+8:'时间价值对时间的导数就是 Theta，此处为每股每天 −3.68，即每张每天 −368 美元。',
+9:'但注意：3 天 × 3.68 只有 11.05，而必须消失的是 19.59——所以 **Theta 会在最后几天加速约一倍**。线性外推 Theta 会严重低估临期损失。',
+10:'时间价值在到期时必然归零。对每一张曾经存在过的合约，无一例外。',
+12:'它在平价处最大，向两侧递减至零。这就是为什么"卖时间价值"的策略几乎都在平价附近开仓。'},en:{
+1:'63% of the price of an in-the-money option is time, not intrinsic.',
+9:'Three days of the current theta only accounts for 11.05 of the 19.59 that must disappear, so theta roughly doubles into expiry. Extrapolating it linearly badly understates the final days.'}},
+
+MONEYNESS:{zh:{
+0:'标签定义：',
+1:'认购：股价高于行权价为价内，接近为平价，低于为价外。',
+2:'认沽方向相反。',
+4:'简单价内度 = S ÷ K = 1.0132，即价内 1.32%。',
+5:'对数价内度 = ln(K/S)，它是所有波动率微笑图的横轴——用对数是为了让上下等比例的偏离在图上对称。',
+6:'标准化价内度（唯一可以跨到期日比较的形式）：',
+7:'就是 d₂。',
+8:'MU 870 认购代入后',
+9:'得到 0.1779，即**只价内了 0.18 个标准差**。这与"价内 1.32%"是同一件事的两种说法，但含义天差地别：1.32% 听起来很安全，0.18 个标准差则说明它极易变成价外。',
+10:'验证：N(d₂) = 0.571，与 Delta 0.5905 接近 ✓。',
+12:'交易台的惯例是**按 Delta 报价而不是按标签**："25 Delta 的认沽"。因为 Delta 已经把行权距离、剩余时间、波动率三者合并成了一个可比的数字，而"价外 5%"在不同期限下含义完全不同。'},en:{
+9:'"1.32% in the money" and "0.18 standard deviations in the money" describe the same fact and feel completely different. The second one is the honest measure.',
+12:'Delta already folds distance, time and volatility into one comparable number, while "5% out of the money" means different things at different expiries.'}},
+
+LEVERAGE:{zh:{
+0:'杠杆比率 = 股价 ÷ 期权价格。⚠ 它**完全不考虑 Delta**，这正是问题所在。',
+1:'MU 870 认购界面显示 28.83。',
+2:'用字段所取的快照价反推。',
+3:'用打印出的最新价重算为 28.38，两者的差异只是刷新时点不同。',
+5:'它声称的含义："一张合约控制了相当于自身成本 28.83 倍的股票"。',
+6:'名义敞口 = 股价 × 100 = 88,147 美元。',
+7:'成本 = 3,106 美元。',
+8:'相除确实等于 28.4，**算术没有错**。',
+10:'但它悄悄假设了一件不成立的事：期权与股票 1:1 同步变动。',
+11:'实际上期权只按 Δ = 0.5905 的比例跟随。',
+12:'真实敏感度 = 杠杆 × Δ = 17.02，这才是**有效杠杆**。',
+14:'⚠ 注意这里的陷阱：期权越便宜，杠杆比率**越高**——',
+15:'而越便宜通常意味着越可能到期归零。',
+16:'因此屏幕上"杠杆最高"的那张合约，恰恰是最接近一文不值的那张。把这个数字当作选择标准，等于系统性地挑选最可能归零的合约。'},en:{
+8:'The arithmetic is right; the assumption behind it is not.',
+16:'The most "leveraged" contract on any screen is the one closest to being worth nothing. Selecting on this number systematically picks the contracts most likely to expire worthless.'}},
+
+EFF_GEARING:{zh:{
+0:'有效杠杆 Ω = Δ × 股价 ÷ 期权价格 = Δ × 杠杆比率。它修正了杠杆比率忽略 Delta 的缺陷。',
+1:'MU 870 认购：0.5905 × 28.83 = 17.02。',
+3:'读作：标的每变动 1%，期权价格变动约 17.02%。',
+4:'验证：MU 涨 1% 即 +8.81，期权涨 8.81 × 0.5905 = +5.20，在 30.58 的基础上正是 +17.0% ✓。',
+6:'另一种更实用的等价表述：',
+7:'Delta 等效名义敞口 = Δ × S × 100 = 52,051 美元。',
+8:'付出的权利金 = 3,106 美元。',
+9:'相除得 16.8 倍——同一个数字，换成"每一美元权利金买到多少敞口"的说法。这个口径在做仓位管理时更直观。',
+11:'⚠ 关键局限：Ω 是**一阶弹性**，只在当前股价这一点上成立。',
+12:'由于 Gamma 为 0.0064，一次 +5%（44 点）的上涨会把 Δ 从 0.5905 推到约 0.87，',
+13:'因此大涨时实际杠杆**高于** 17，',
+14:'大跌时则远低于 17。Ω 是一条切线，不是收益曲线——用它线性外推大幅波动下的收益，会同时高估亏损和低估盈利。'},en:{
+9:'Exposure per dollar of premium — the more useful framing when sizing a position.',
+14:'Ω is a tangent line, not a payoff. Extrapolating it linearly across a large move overstates the loss and understates the gain.'}},
+
+MARK_PRICE:{zh:{
+0:'同一张合约，界面上会出现四个不同的数字：',
+1:'最新价：最近一次**成交**的价格，可能已经是几小时前的。',
+2:'中间价：买一卖一的均值，实时但在宽价差市场里噪音很大。',
+3:'标记价：券商的**官方估值价**。',
+4:'理论价：模型在券商波动率输入下的输出。',
+6:'界面上的"差异"是相对**最新价**算的，不是相对标记价：',
+7:'(32.9786 − 31.06)/31.06 = 6.18% ✓ 与界面吻合。',
+8:'若相对标记价则是 8.09%。',
+10:'⚠ 把这个差距换算成**波动率点**，才是唯一诚实的单位：',
+11:'vega 为每波动点 0.3371。',
+12:'差价 ÷ vega = 5.69 个波动点。',
+13:'即模型认为约 76.2%，市场成交在约 70.5%。',
+14:'一个听起来吓人的 6.18% 的"定价错误"，在 3 天期合约上只不过是不到 6 个波动点——属于正常噪音。价格百分比会夸大短期合约的分歧，波动率单位才可比。',
+16:'模型与市场出现分歧的四个来源，以及各自的方向：',
+17:'一、最新价过期 → 方向不定。成交 660 手而持仓仅 305，',
+18:'这个成交可能是几小时前的，而模型报的是实时曲面。',
+19:'二、买卖价差过宽 → 方向不定。29.80/33.40 的报价区间',
+20:'同时容得下 31.06 和 32.9786，两个都不算错。',
+21:'三、波动率输入偏高 → 模型**高于**市场，说明曲面偏高。',
+22:'本例正是上面算出的 5.69 个波动点。',
+23:'四、美式提前行权 → 模型**低于**市场。MU 是美式期权，',
+24:'欧式引擎无法为提前行权定价，因此会**低估**美式合约。',
+25:'所以这一项无法解释 32.9786 > 31.06 的现象——',
+26:'反而说明真实分歧比看到的**更大**，不是更小。这一项在深度价内认沽和除息日前的认购上影响最明显。',
+29:'实务要点：**标记价**决定你的浮动盈亏、保证金、强平线和账户净值。',
+30:'最新价只决定成交记录，其他什么都不决定。爆仓是按标记价算的，不是按最新价。'},en:{
+14:'A 6.18% "error" is under six vol points on a three-day contract — normal noise. Percentage differences exaggerate short-dated contracts; vol points are comparable.',
+26:'It means the true disagreement is larger, not smaller.',
+30:'Mark drives unrealised P/L, margin and liquidation. Last drives the tape and nothing else.'}}
+
+});
+
+/* FXZH-BATCHES */
+}(typeof globalThis !== 'undefined' ? globalThis : this));
+</script>
+
+<script>/* =============================================================================
    core.js — the options maths engine.
 
    Everything the page computes lives here: Black-Scholes pricing and greeks,
