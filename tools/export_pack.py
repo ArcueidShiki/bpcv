@@ -112,19 +112,41 @@ LESSON_EXPORT_JS = r"""()=>{
     seen[key] = true;
 
     const tape = PG.Sim.tape(l.tape);
-    const cases = act.map((step, ix) => {
-      const p = {};
-      if (step.param) p[step.param.key] = step.param.def;
-      let res, err = null;
-      try { res = step.run(tape, p, l); } catch (e) { err = String(e); res = {}; }
-      let grade = null;
-      try {
-        const g = step.grade(res, p, tape, l);
-        grade = { pass: !!g.pass, titleZh: g.title.zh, titleEn: g.title.en,
-                  bodyZh: g.body.zh, bodyEn: g.body.en };
-      } catch (e) { err = (err || '') + ' grade:' + String(e); }
-      return { stepIndex: l.steps.indexOf(step), ui: step.ui || null,
-               param: p, result: scalars(res, 0) || {}, grade: grade, error: err };
+
+    /* Three points per slider, not one. Most families carry a second grade
+       branch that only fires at an extreme — "never triggered", "never
+       reached", "no trades at all" — and those branches are exactly the
+       pass/fail string swaps this golden is for. Recording only the default
+       would verify each handler at a single point and leave every edge text
+       unchecked. */
+    const cases = [];
+    act.forEach(step => {
+      const key = step.param && step.param.key;
+      const settings = [];
+      if (step.param && typeof step.param.def === 'number') {
+        const seen = {};
+        [step.param.min, step.param.def, step.param.max].forEach(v => {
+          if (typeof v !== 'number' || seen[v]) return;
+          seen[v] = true;
+          const s = {}; s[key] = v; settings.push(s);
+        });
+      } else {
+        const s = {};
+        if (key) s[key] = step.param.def;
+        settings.push(s);
+      }
+      settings.forEach(p => {
+        let res, err = null;
+        try { res = step.run(tape, p, l); } catch (e) { err = String(e); res = {}; }
+        let grade = null;
+        try {
+          const g = step.grade(res, p, tape, l);
+          grade = { pass: !!g.pass, titleZh: g.title.zh, titleEn: g.title.en,
+                    bodyZh: g.body.zh, bodyEn: g.body.en };
+        } catch (e) { err = (err || '') + ' grade:' + String(e); }
+        cases.push({ stepIndex: l.steps.indexOf(step), ui: step.ui || null,
+                     param: p, result: scalars(res, 0) || {}, grade: grade, error: err });
+      });
     });
 
     out.golden[key] = {
