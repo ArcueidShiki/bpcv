@@ -7883,6 +7883,148 @@ FISHER:{zh:{
 
 });
 
+/* ---- batch 6: trend tail — oscillators, volatility, IV metrics ---- */
+Object.assign(FIN.FXZH, {
+
+AO:{zh:{
+0:'输入用中价而非收盘价，因为中价更能代表这根 K 线的整体位置。',
+2:'AO = 5 周期与 34 周期中价均线之差，衡量短期动能相对中期动能的强弱。',
+4:'画成零轴柱状图。Bill Williams 的原版规则是按"本根是否高于前一根"上色，',
+5:'这是它的经典配色——颜色表达的是**加速度**（动能在变强还是变弱）。',
+6:'本页简化为按符号上色（零上绿、零下红），',
+7:'因此请读柱子的**高度变化**而不是颜色来判断加速度。这是渲染上的取舍，指标数值本身未受影响。'},en:{
+5:'The canonical colouring encodes acceleration — whether momentum is building or fading.',
+7:'This page colours by sign instead, so read bar heights rather than colours for acceleration. The values themselves are unaffected.'}},
+
+EWO:{zh:{
+0:'艾略特波浪振荡器 = 5 与 34 周期收盘价 EMA 之差。',
+2:'同样画成零轴柱状图。',
+4:'与 AO 对比：AO 用中价的 SMA，EWO 用收盘价的 EMA。',
+5:'周期完全相同、构造完全相同，',
+6:'唯一的差别是平滑方式（SMA vs EMA）和价格输入（中价 vs 收盘）。两者在实盘中形态高度相似，不必同时使用。'},en:{
+6:'Same periods, same construction — only the averaging method and the price input differ. They look nearly identical in practice, so there is little point running both.'}},
+
+VOLAT:{zh:{
+0:'先取对数收益率。用对数而不是简单百分比，是因为对数收益可加：多期收益直接相加即可，而百分比收益必须连乘。',
+2:'再取 n 根的样本标准差（n = 20）。',
+3:'乘以 √252 年化，再乘 100 转成百分数。年化用 √t 而非 t，是因为方差随时间线性增长，标准差随时间开平方增长——这是随机游走最重要的性质之一。',
+5:'√252 对应日线；周线用 √52，月线用 √12。用错周期数会让波动率整体偏差数倍。',
+6:'实用速算：单日 1σ 波动幅度 ≈ 年化波动率 ÷ 16（因为 √252 ≈ 15.87）。年化 32% 的股票，日均波动约 2%。'},en:{
+0:'Log returns because they add across periods, while percentage returns must be multiplied.',
+3:'Scaling by √t rather than t: variance grows linearly with time, so standard deviation grows with its square root — the defining property of a random walk.',
+6:'Quick mental check: a 1-day 1σ move ≈ annual vol ÷ 16, since √252 ≈ 15.87.'}},
+
+HLVOL:{zh:{
+0:'先取 n 根内的最高价与最低价之差，即区间高度（n = 9）。',
+2:'再用区间高度的 EMA 除以价格的 EMA，换算成百分比。',
+4:'读作：近期的价格波动区间',
+5:'相当于近期均价的百分之多少。除以价格是关键一步——没有它，高价股的数值天然更大，跨品种无法比较。它与 ATR% 思路一致，区别在于 HLVOL 用区间高点低点，不含跳空。'},en:{
+5:'Dividing by price is what makes it comparable across instruments. Same idea as ATR%, except HLVOL uses the window range and therefore ignores gaps.'}},
+
+CHOP:{zh:{
+0:'震荡指数把"实际走过的路程"与"起点到终点的直线距离"作比。',
+2:'分子 ΣTR 是 n 根真实波幅之和，即价格实际走过的总路程。',
+3:'分母是窗口内最高与最低之差，即两个极值之间的直线距离。',
+5:'参考线：高于 61.8 视为震荡，低于 38.2 视为趋势。',
+6:'它必然落在 0–100 之间：因为总路程恒大于等于区间高度（下界），而极限情况下总路程最多为 n 倍区间（上界），取对数再除以 log(n) 正好把它归一化。核心直觉：同样从 A 走到 B，走直线的是趋势，来回折返的是震荡。CHOP 不判断方向，只判断"效率"，因此常用来决定该用趋势策略还是区间策略。'},en:{
+6:'Bounded by construction: total travel is at least the range and at most n times the range, and the logarithms normalise that into 0–100.'}},
+
+ER:{zh:{
+0:'分子是 n 根之间的净位移（终点减起点的绝对值）。',
+1:'分母是这 n 根逐根价格变化的绝对值之和，即实际走过的总路程。',
+3:'效率比 = 净位移 ÷ 总路程，天然落在 0 到 1 之间（n = 24）。',
+5:'等于 1 表示每一根都朝同一方向走，是一条完美直线。',
+6:'等于 0 表示价格绕了一圈回到原点。',
+7:'考夫曼自适应均线（AMA）用 ER 作为平滑系数的驱动：',
+8:'趋势明确（ER 高）时 α 变大、均线变快；震荡（ER 低）时 α 变小、均线变慢。这就是"自适应"的含义——用行情自身的效率来决定该快还是该慢，而不是固定一个周期。'},en:{
+8:'That is what "adaptive" means: the market\'s own efficiency sets the smoothing, instead of a fixed period chosen in advance.'}},
+
+RVI:{zh:{
+0:'先取收盘价的标准差（p1 = 10）。',
+2:'上涨日累积标准差，下跌日记 0，再做 EMA。',
+3:'下跌日累积标准差，上涨日记 0。',
+5:'RVI = 上行波动占总波动的比例 × 100，天然落在 0–100。',
+6:'RVIMA 是它的均线。',
+8:'注意它的接线方式与 RSI **完全相同**，',
+9:'唯一区别是累积的量从"价格变化幅度"换成了"标准差"。含义因此不同：RSI 问"涨的力度占多少"，RVI 问"波动发生在上涨日还是下跌日"。上涨伴随高波动通常是健康的突破，下跌伴随高波动才是恐慌。'},en:{
+9:'RSI asks how much of recent movement was up; RVI asks whether the volatility itself occurred on up days or down days.'}},
+
+RMI:{zh:{
+0:'先取 m 根之前到今天的动量（m = 5），而不是相邻两根的变化。',
+2:'取动量的正值部分。',
+3:'取动量的绝对值。',
+5:'RMI = 正动量均值 ÷ 总动量均值 × 100（n = 20）。',
+7:'关键性质：当 m = 1 时，它精确退化为用 SMA 平滑的 RSI。所以 RMI 就是"把比较基准从昨天挪到 m 天前"的 RSI——m 越大越平滑、越少假信号，但也越滞后。',
+8:'参考线 70/50/30，与 RSI 相同。'},en:{
+7:'With m = 1 it reduces exactly to an SMA-smoothed RSI. RMI is RSI with the comparison baseline pushed m bars back — smoother and later.'}},
+
+SMIE:{zh:{
+0:'先取相邻收盘价的变化。',
+2:'分子对变化量做两次 EMA 平滑（先快后慢，f = 5，s = 20）。',
+3:'分母对变化量的**绝对值**做同样的两次平滑。',
+5:'两者相除，结果天然落在 −1 到 +1 之间：因为分子的绝对值不可能超过分母。',
+6:'信号线再做一次 EMA。',
+8:'这就是 Blau 的真实强度指数（TSI），只是没有乘 100。',
+9:'注意源码里的嵌套顺序是先快后慢。双重平滑让它在保留方向敏感度的同时大幅压制噪音——分子会因正负抵消而变小，分母不会，因此震荡行情里读数自然趋近于零。'},en:{
+5:'Bounded to ±1 because the numerator can never exceed the denominator in absolute value.',
+9:'Double smoothing suppresses noise while keeping direction: the numerator shrinks through cancellation, the denominator does not, so a choppy market reads near zero by construction.'}},
+
+SMIEO:{zh:{
+0:'SMI 的定义同上。',
+1:'信号线同上。',
+3:'SMIEO = SMI − 信号线。',
+5:'参数 f=5、s=20、n=5。',
+6:'它就是 SMIE 的柱状图，不包含任何额外信息——如果已经在看 SMIE，就不需要再加这一条。同时看两者只会造成"两个指标互相确认"的错觉，实际上它们是同一个数。'},en:{
+6:'It is the histogram of SMIE and contains no other information. Running both creates a false sense of confirmation from what is arithmetically one number.'}},
+
+VMACD:{zh:{
+0:'把 MACD 的输入从收盘价换成成交量：12 与 26 周期成交量 EMA 之差。',
+1:'再取 9 周期 EMA 作为信号线。',
+2:'柱状图为两者之差。',
+4:'构造与 MACD 完全相同，只是把价格替换成了成交量。它衡量的是"放量还是缩量"的趋势，而非价格趋势。',
+5:'注意单位是股数或手数，',
+6:'因此纵轴尺度完全取决于个股，**不能跨品种比较**，也不存在通用阈值。用法是看它与价格 MACD 的配合：价格创新高而 VMACD 不配合，说明这波上涨没有增量成交支持。'},en:{
+6:'Units are shares, so the scale is instrument-specific — no cross-symbol comparison and no universal thresholds. Its use is in divergence against the price MACD.'}},
+
+EMV:{zh:{
+0:'先取"平均成交量 ÷ 当根成交量"，这是成交量的**倒数**关系：量越小这个值越大。',
+1:'再取中价相对前一根的百分比变化。',
+2:'再取当根振幅相对平均振幅的比值。',
+4:'三者相乘再平滑（n = 14）。这个乘积的含义是：价格移动的幅度，除以推动它所需的成交量。',
+5:'EMVA 是它的均线。',
+7:'EMV 高表示中价移动了很大一段距离，却只用了很少的成交量——即"移动很容易"。反过来，价格涨了但 EMV 很低，说明这一段上涨是靠巨量堆出来的，上方阻力沉重。它衡量的是价格移动的**成本**，这是纯价格指标和纯成交量指标都看不到的维度。'},en:{
+7:'A high reading means price travelled a long way on little volume — movement was cheap. Rising price on a low EMV means the advance had to be bought heavily, which is a sign of overhead supply.'}},
+
+IV:{zh:{
+0:'从市场上观察到的期权成交价出发，',
+2:'反解出使 Black-Scholes 理论价等于该市场价的那个 σ，就是隐含波动率。',
+3:'没有解析解，只能数值求解（牛顿法，失败时用二分法兜底）。',
+5:'图表惯例是取近月平价期权的 IV，',
+6:'或者对整个波动率曲面做插值得到恒定 30 天期限的 IV。这一点很重要：不同行权价、不同到期日的 IV 各不相同（波动率微笑/偏斜），所谓"这只股票的 IV"其实是一个约定俗成的汇总口径。',
+7:'与已实现波动率对比：IV − HV 就是方差风险溢价。这个差长期为正，意味着期权买方系统性地在为保险付费——这是期权卖方长期占优的数学来源，也是买方必须靠方向或时点取胜的原因。'},en:{
+6:'IV differs at every strike and expiry (the smile/skew), so "the stock\'s IV" is always a chosen summary convention.',
+7:'IV − HV is the variance risk premium. It is persistently positive, which is why systematic option buyers pay for insurance and sellers collect it.'}},
+
+IV_RANK:{zh:{
+0:'IV Rank 把当前 IV 在过去 n 根的最高、最低之间做线性归一化。',
+2:'n = 252 根（一个交易年）是行业惯例，',
+3:'也是平台 iv_rank() 的默认窗口。',
+5:'等于 100 表示当前 IV 正处于这一年的最高点。',
+6:'等于 0 表示处于最低点。',
+7:'致命弱点：它**只依赖两个数据点**——窗口内的最高值和最低值。去年某天的一次崩盘尖峰会把最高值抬得很高，此后一整年的 IV Rank 都会被压低，让你误以为"波动率很便宜"。这正是需要同时看 IV Percentile 的原因。'},en:{
+7:'It depends on exactly two data points — the window high and low. One crash spike a year ago inflates the high and suppresses every subsequent reading, making volatility look cheap when it is not.'}},
+
+IV_PERCENTILE:{zh:{
+0:'IV 百分位统计过去 n−1 根里有多少根的 IV **低于**今天，',
+1:'再除以总根数换成百分比。',
+3:'n = 252 根，同为行业惯例。',
+5:'等于 90 表示过去一年里有 90% 的交易日 IV 比今天低，也就是今天的 IV 处在历史高位。',
+6:'它使用了**完整分布**，',
+7:'因此单个离群尖峰不会像扭曲 IV Rank 那样扭曲它。实务建议：两个一起看。IV Rank 高而 IV Percentile 不高，说明当前只是接近某个孤立的历史尖峰；两者同时高，才是真正意义上的波动率贵。'},en:{
+7:'Using the full distribution means one outlier cannot distort it the way it distorts IV Rank. Read both: a high rank with a low percentile means you are merely near an isolated spike.'}}
+
+});
+
 /* FXZH-BATCHES */
 }(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
