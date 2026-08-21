@@ -1985,6 +1985,348 @@ VOL_OI_BY_STRIKE:{zh:{
 
 });
 
+/* ---- options batch 4: dealer-flow analysis + core concepts ---- */
+Object.assign(FIN.FXZH, {
+
+GEX:{zh:{
+0:'单个行权价的 Gamma 敞口 = Gamma × 持仓量 × 乘数 × S² × 0.01，单位是"标的每变动 1% 对应多少美元的股票"。',
+2:'Gamma 是该合约的 BS gamma。',
+3:'⚠ 持仓量是**日终快照**，滞后一个交易日。',
+4:'乘数为每张 100 股。',
+5:'S² × 0.01 这一项负责把"每 1 美元的 Delta 变化"换算成"每 1% 的美元敞口"，从而让不同价位的标的可比。',
+7:'⚠ 本页采用的符号约定是一个**假设，不是观测**：',
+8:'认购一侧假设做市商为多头，取正号。',
+9:'认沽一侧假设做市商为空头，取负号。',
+10:'净额为两者之和。这个假设来自"散户倾向于买认沽做保护、卖认购做备兑"的经验，但它无法被验证——真实的做市商持仓是不公开的。整个 GEX 分析的可靠性都建立在这一条假设上。',
+12:'总 GEX 是对所有行权价、所有未到期合约求和。',
+14:'体制判读：',
+15:'总额为正表示做市商净多 gamma，其对冲行为是**涨了卖、跌了买**，对价格起阻尼作用，市场倾向于收敛盘整。',
+16:'总额为负表示做市商净空 gamma，对冲行为变成**涨了买、跌了卖**，对价格起放大作用，波动被自我强化。这就是"负 gamma 环境下容易出现单边暴走"的机制解释。'},en:{
+10:'The dealer-positioning assumption cannot be verified — real dealer books are not public. The reliability of all GEX analysis rests on it.',
+16:'Which is the mechanism behind runaway one-way moves in a negative-gamma regime.'}},
+
+CALL_GEX:{zh:{
+0:'认购侧 Gamma 敞口，按本页约定恒为正。',
+2:'正号是**构造出来的**，',
+3:'来自"做市商持有客户卖出的认购，或据此做空头对冲"这一假设。',
+5:'认购侧总额为各行权价求和。',
+6:'不对称比率 = 认购侧总额 ÷ 认沽侧总额的绝对值，用来衡量两侧力量是否失衡。',
+8:'分开看比看净额多了什么：',
+9:'净额把两侧压成一根柱子，**隐藏了构成**。',
+10:'分列视图把两列分开画，',
+11:'能看出净额究竟由哪一侧产生、各自聚集在哪些行权价。',
+13:'⚠ 一个重要现象：某个行权价可能认购 GEX 很大而净额接近零，',
+14:'因为认沽那一列把它抵消掉了。但两侧的对冲压力**都是真实存在的**，',
+15:'净额里只剩下残差。所以只看净额会低估该价位的实际对冲流量。'},en:{
+15:'The hedging pressure is real on both sides; only the residual shows up in the net, so a net-only view understates the flow at that strike.'}},
+
+PUT_GEX:{zh:{
+0:'认沽侧 Gamma 敞口，按本页约定恒为负。',
+2:'负号同样是构造出来的，',
+3:'来自"做市商是客户所买保护性认沽的对手方（空头）"这一假设。',
+5:'认沽侧总额为各行权价求和。',
+6:'某个行权价的净额是两侧相加。',
+8:'⚠ 关键的数学事实：同一行权价、同一到期日的认购与认沽 **Gamma 完全相等**（由平价关系保证），',
+9:'因此两列的差异**只来自持仓量和符号约定**：',
+11:'净额可以化简为 Gamma ×（认购持仓 − 认沽持仓）× …。',
+13:'也就是说某一档的净额正负，纯粹取决于哪一侧持仓更多。',
+14:'⚠ 因此"认沽 GEX 很大且为负"是股票期权链的**常态**，',
+15:'而不是一个看空信号。把它读成看空，是这个指标最常见的误用。'},en:{
+8:'Call and put gamma are identical at the same strike and expiry, guaranteed by put-call parity.',
+15:'A large negative put GEX is the normal state of an equity chain, not a bearish reading — the most common misuse of this metric.'}},
+
+AGG_GEX:{zh:{
+0:'聚合 GEX 曲线对所有到期日、所有行权价求和，',
+1:'认购项减认沽项，',
+2:'再乘乘数与 S*² × 0.01。',
+4:'⚠ 注意 S* 是一个**假设的**标的价格，在整个绘图区间上扫描，',
+5:'每个合约的 gamma 都在 S* 处**重新计算**，',
+6:'S*² 的缩放也重新计算，然后再求和。',
+7:'曲线就是所有 (S*, AggGEX(S*)) 点的集合。',
+9:'⚠ 为什么这条曲线**不是**把柱状图连起来：',
+10:'柱状图上每根柱子用的是**今天的**股价处的 gamma。',
+11:'而曲线在 S* 处用的是**另一个股价**处的 gamma。',
+13:'只有当 S* 恰好等于当前股价时，曲线值才等于柱子之和。其他任何位置都不相等，',
+14:'因为股价移动会改变"哪些行权价处于平价"——',
+15:'而这张图要回答的问题恰恰就是"股价移动之后会怎样"。理解这个区别，才不会把静态柱状图当成动态预测。'},en:{
+13:'The curve equals the sum of the bars only at today\'s spot.',
+15:'Moving spot changes which strikes are at the money, and that is precisely the question the chart exists to answer.'}},
+
+GAMMA_FLIP:{zh:{
+0:'Gamma 翻转点是使聚合 GEX 曲线等于零的那个股价。',
+2:'用数值方法在曲线上寻找第一个符号变化：',
+4:'取相邻两点的值，',
+5:'若符号相反，',
+6:'按线性比例插值，',
+7:'得到翻转点位置。',
+9:'⚠ 若在绘图范围内没有符号变化，返回空值，',
+10:'这意味着"**视野内**没有翻转点"，而不是"不存在翻转点"。把 null 读成"没有翻转"是错误的——很可能只是绘图区间不够宽。',
+12:'两侧的体制截然不同：',
+13:'股价高于翻转点 → 净多 gamma → 对冲卖涨买跌 → 波动区间收敛。',
+14:'股价低于翻转点 → 净空 gamma → 对冲买涨卖跌 → 波动区间扩张。这解释了为什么市场跌破某个位置后波动会突然放大。',
+16:'到翻转点的距离 =（S − S_flip）÷ S，衡量当前体制还剩多少缓冲。这个百分比比翻转点的绝对价位更有用。'},en:{
+10:'A null means "no flip IN VIEW", not "no flip exists" — usually the plotted range is simply too narrow.',
+14:'Which is why volatility often expands abruptly once price breaks a particular level.'}},
+
+CALL_WALL:{zh:{
+0:'认购墙是使认购侧 Gamma 敞口最大的那个行权价。',
+2:'⚠ 请注意它**不是**：',
+3:'不是认购持仓量最大的行权价；',
+4:'不是认购成交量最大的行权价；',
+5:'也不是大家嘴上谈论的那个整数关口。三者经常不重合，混用会得出完全不同的结论。',
+7:'报出认购墙时必须同时说明两个隐藏参数：',
+8:'纳入了哪些到期日；',
+9:'显示了哪个行权价窗口。',
+10:'改变其中任何一个，墙都可能整个换到另一个行权价上去。',
+12:'使用前先做距离检验：',
+13:'|墙的行权价 − 现价| ÷ 现价。在近月周期权上若超过约 5%，',
+14:'那里的 gamma 已经微不足道，柱子高只是因为持仓量大，**不代表对冲压力**。这是把持仓量误当成 gamma 的典型场景。'},en:{
+5:'The three rarely coincide, and confusing them produces different conclusions.',
+14:'Beyond about 5% on a front weekly, gamma there is negligible and the bar reflects open interest rather than hedging pressure.'}},
+
+PUT_WALL:{zh:{
+0:'认沽墙是使认沽侧 Gamma 敞口绝对值最大的行权价。',
+2:'取绝对值是因为按本页约定认沽列恒为负。',
+5:'⚠ 在把它称作"支撑"之前，**必须**做一项交叉检验：',
+7:'如果墙在 Gamma 翻转点**上方**，价格到达那里时做市商是**多** gamma，',
+8:'对冲行为是逢跌买入 → 确实构成缓冲。',
+9:'如果墙在翻转点**下方**，价格到达时做市商是**空** gamma，',
+10:'对冲行为变成逢跌卖出 → 它是**加速器，不是支撑**。',
+12:'一道位于 gamma 翻转点下方的认沽墙不是"支撑力弱一些"，',
+13:'而是**功能整个反转**。所以必须把墙和翻转点一起报出来，否则宁可不报——单独给出"认沽墙在 X 位"的说法在下方体制中是危险的误导。'},en:{
+13:'It does not weakly support; it actively reverses function. Report the wall and the flip together or not at all.'}},
+
+VOL_SMILE:{zh:{
+0:'波动率微笑是把每个行权价各自的隐含波动率画在一起——每个点都是让模型价等于该合约市场价的那个 σ。',
+2:'横轴用对数价内度，使上下等比例偏离对称。',
+4:'本页采用的参数化形式：',
+5:'σ(K) = 平价波动率 ×(1 − 0.85m + 1.15m²)。',
+6:'−0.85m 是**偏斜**项：m 为负（下方行权价）时抬高波动率，反映市场为下跌保护付更高的价。',
+7:'+1.15m² 是**微笑**项：二次项让两翼同时抬高，反映极端行情下的肥尾。',
+9:'业界标准的偏斜度量：',
+10:'25Delta 风险逆转 = 25Delta 认沽波动率 − 25Delta 认购波动率，为正表示下行偏斜。',
+11:'25Delta 蝶式衡量两翼相对平价的凸起程度。用 Delta 而非行权价定义，是为了跨到期日可比。',
+13:'⚠ 为什么远端两翼的 IV 不可信：',
+14:'随着偏离加深，vega 趋于 0，因此 ∂σ/∂价格 = 1/vega 趋于无穷。',
+15:'对一张 vega ≈ 0.001 的合约反解 0.02 美元的报价，',
+16:'会得到四位数的隐含波动率。那是**算术假象，不是预测**。看到极端行权价上的天价 IV，先怀疑分母而不是市场。'},en:{
+11:'Defined by delta rather than strike so the measures stay comparable across expiries.',
+16:'A four-digit IV at a far wing is an arithmetic artefact. Suspect the denominator before believing the market.'}},
+
+VOL_TERM:{zh:{
+0:'期限结构是把各到期日的平价波动率对剩余期限作图。',
+2:'正向结构（常态）：近月低于远月，曲线上倾。',
+3:'反向结构（压力）：近月高于远月，通常意味着前端恐慌或有确定的事件。',
+5:'⚠ 关键性质：**方差随时间可加**，这正是把事件从背景中剥离出来的办法：',
+6:'总方差 = 基础方差 + 事件方差。',
+7:'因此事件方差 =（近月 σ² − 基础 σ²）× 近月期限。',
+8:'这就是市场为那个有确定日期的催化剂额外收取的方差。',
+10:'两个到期日之间的**远期波动率**：',
+11:'σ_fwd² =（σ₂²T₂ − σ₁²T₁）÷（T₂ − T₁）。',
+12:'⚠ 这才是日历价差实际交易的东西，而不是屏幕上那两个报价数字。很多人以为买日历价差是在赌"近月跌、远月涨"，实际赌的是这个远期波动率。',
+14:'日历价差的盈亏驱动：',
+15:'空头近月 vega × 近月波动变化 减去 多头远月 vega × 远月波动变化。',
+16:'⚠ 它需要**斜率**保持或变陡，而不只是近月下跌——如果远月同步下跌，价差照样亏钱。这是日历价差最常被误解的一点。'},en:{
+12:'This is what a calendar spread actually trades, not the two quoted numbers.',
+16:'It needs the SLOPE to hold or steepen, not just the front to fall. If the back drops with it, the spread still loses.'}},
+
+ZERO_DTE:{zh:{
+0:'0DTE 指剩余天数为零——合约在今天收盘时结算。',
+2:'日内的剩余期限（年）：',
+3:'剩余分钟数 ÷（390 × 252）。',
+4:'还剩 60 分钟时 T ≈ 0.00061 年。这个极小的 T 是理解 0DTE 一切行为的钥匙。',
+6:'两个平价希腊字母都按 1/√T 爆炸：',
+7:'Gamma 趋于理论最大值。',
+8:'Theta 同样发散（公式为年化口径，除以 98,280 得到每分钟）。',
+10:'平价 0DTE 合约的剩余时间价值：',
+11:'约 0.7979·S·σ·√T。',
+12:'⚠ 注意这**就是整个头寸的价值**——下面没有任何内在价值作为垫底。所以 0DTE 平价合约归零是常态而非意外。',
+14:'16:00 结算时只剩内在价值：',
+15:'认购取 max(S−K, 0)，认沽对称。',
+17:'做市商在行权价 K 处的对冲需求：',
+18:'需要交易的股数 ≈ Gamma × 持仓 × 100 × 股价变动。',
+19:'⚠ 由于此时 Gamma 处于最大值，这一项也处于最大值——这就是 0DTE 大量堆积时，尾盘容易出现剧烈单边走势的直接原因。'},en:{
+4:'That tiny T is the key to every behaviour of a 0DTE contract.',
+12:'That IS the entire position — there is no intrinsic underneath it, which is why an at-the-money 0DTE going to zero is normal rather than surprising.',
+19:'Gamma is at its maximum here, so the hedging term is too — the direct cause of violent late-session moves when 0DTE volume piles up.'}},
+
+IV_CRUSH:{zh:{
+0:'⚠ 方差随时间可加，这是把事件从基础波动中分离出来的唯一正确方法：',
+1:'近月总方差 = 基础方差 + 事件方差。',
+2:'因此事件方差 =（近月 σ² − 基础 σ²）× 近月期限。',
+3:'开方后得到市场隐含的单日事件波动幅度（占股价的比例）。这才是"市场预期财报会跳多少"的正确算法。',
+5:'⚠ 财报公布后，近月波动率回归的是**曲线**，而不是零：',
+6:'大致回到第二个到期日的水平，并按新价格重新定位。',
+8:'穿越事件的多头期权盈亏：',
+9:'四项之和，其中',
+10:'第三项就是 IV 崩塌，',
+11:'并且对多头而言它**恒为负，与方向无关**。这就是"方向猜对了还是亏钱"的全部数学原因。',
+13:'因此在买入之前必须先算：需要多大的跳空才能打平？',
+14:'解方程 Δx + ½Γx² = |ν·Δσ| + |Θ·Δt| 求 x。',
+15:'⚠ **在买之前算，不是买完之后**。这个 x 通常非常接近市场隐含的事件波动幅度本身——也就是说，市场已经把这个跳空price 进去了，你需要的是超出市场预期的跳空。',
+17:'期限结构上的典型特征：',
+18:'近月远高于次月，而曲线其余部分平坦。看到这个形状就知道有一个确定日期的事件被 price 在近月里。'},en:{
+11:'Always ≤ 0 for a long, regardless of direction — the entire mathematical reason "right on direction, still lost money" happens.',
+15:'Do this BEFORE you buy. The answer is usually close to the implied event move itself, meaning the market has already priced the gap you are hoping for.'}},
+
+UNUSUAL_ACTIVITY:{zh:{
+0:'异动期权本质上是一条**过滤后的成交打印流**：所有超过规模或金额门槛的期权成交，',
+1:'并按其相对报价的成交位置打上标签。',
+3:'成交在卖价附近 → 标记为主动买入。',
+4:'成交在买价附近 → 标记为主动卖出。',
+5:'⚠ 成交在中间价、大宗交叉或场内撮合 → 属于**事先谈好的**交易，这个标签几乎不含信息。看到 MID/CROSS 标签时不应做方向推断。',
+7:'权利金金额 = 价格 × 张数 × 100。',
+9:'⚠ 所谓"情绪标签"只是一个**两位查表**，不是任何形式的推断：',
+10:'认购在卖价为看多，在买价为看空。',
+11:'认沽在卖价为看空，在买价为看多。它完全没有考虑这笔交易在整个头寸中扮演什么角色。',
+13:'⚠ 是开仓还是平仓？**从成交流里无法知道**，只能等次日早晨的持仓变化来确认：',
+14:'持仓变化约等于成交规模则为开仓；持仓几乎不变则是平仓或做市商撮合。',
+16:'⚠ 你永远看不到的三件事：这笔交易的**另一条腿**、配套的**股票对冲**，',
+17:'以及它被加进去的那个**已有头寸**。一笔看似看多的大额认购买入，完全可能是某个复杂结构中的一条腿，或是空头头寸的平仓。'},en:{
+5:'A MID/CROSS tag means the trade was pre-negotiated, so no directional inference should be drawn from it.',
+11:'A two-bit lookup, not an inference — it knows nothing about the role the trade plays in a position.',
+17:'A large bullish-looking call buy can easily be one leg of a structure, or the closing of a short.'}},
+
+TOP_OPTIONS:{zh:{
+0:'排行榜本质上就是同一条期权链，按不同的列各排一次序。',
+2:'成交量：今日成交张数。',
+3:'成交额：金额口径，不是张数——这两列的排序结果经常截然不同。',
+4:'按成交量排的持仓量。',
+5:'日持仓增减：相对上一交易日的张数变化。',
+6:'持仓金额：已投入的资本规模。',
+7:'持仓金额增减：**新投入**的资本。',
+8:'涨跌幅：合约自身的价格动量。',
+9:'IV：逐行的隐含波动率水平。',
+11:'这些榜单免费附送两个衍生数字：',
+12:'某一行的成交均价 = 成交额 ÷（成交量 × 100）。',
+13:'平均单笔规模 = 成交量 ÷ 成交笔数。后者能区分"一笔大单"与"上万笔小单"。',
+15:'⚠ 最有价值的用法是**交叉比对**：',
+16:'成交量排名高 + 成交额排名低 → 廉价彩票，典型的散户流量。',
+17:'成交量排名低 + 成交额排名高 → 少量、大额、昂贵的合约，是真正的资金规模。只看单一榜单会系统性地把前者误认为后者。',
+19:'另外每次都要留意界面上的提示："当前为延迟报价"。'},en:{
+17:'Reading a single ranking systematically mistakes retail lottery flow for institutional size.'}},
+
+ASSIGNMENT:{zh:{
+0:'行权方式：',
+1:'美式可在到期前任一交易日行权（美股个股期权）。',
+2:'欧式只能在到期日行权（指数期权，通常现金结算）。',
+4:'一张股票期权（乘数 100）被指派后，账户里实际发生什么：',
+5:'卖出的认购被指派 → **交出 100 股**，同时收到 K × 100 现金。若你没有股票，就会变成 100 股的空头。',
+6:'卖出的认沽被指派 → 买入 100 股，付出 K × 100 现金。',
+7:'买方行权则是镜像，由你主动发起。',
+9:'⚠ OCC 的例外行权：收盘时价内 ≥ 0.01 美元即自动行权。',
+10:'⚠ 指派给哪个空头是**随机或按比例分配**的，由清算会员决定，**不是先进先出**。所以"我的仓位建得早所以不会被指派"是错误的想法。',
+12:'两种通常理性的提前行权情形：',
+13:'一、除息日前的认购：',
+14:'先算剩余时间价值。',
+15:'当股息大于剩余时间价值时行权划算。',
+16:'例：时间价值 0.15，股息 0.62 > 0.15 → 行权。这就是为什么除息日前一天，深度价内认购的卖方最容易被指派。',
+17:'二、深度价内认沽的利息考量：',
+18:'当提前收到行权价所赚的利息大于剩余时间价值时行权。',
+19:'例：1.88 对 0.90 → 行权。高利率环境下这种情况明显增多。'},en:{
+5:'If you do not hold the shares, this leaves you short 100.',
+10:'Allocation is random or pro-rata, not FIFO — being early into the position does not protect you.',
+16:'Which is why short deep in-the-money calls are most likely to be assigned the day before an ex-dividend date.'}},
+
+PIN_RISK:{zh:{
+0:'"钉住"指收盘价与你卖出的那个行权价相差仅几美分。',
+2:'⚠ 真正的问题不在价格，而在**信息延迟**：',
+3:'16:00 收盘打印，报价屏熄灭。',
+4:'17:30 之前，买方仍可向 OCC 提交与常规相反的行权指令。',
+5:'周末 OCC 完成分配，券商在周六或周日通知你。',
+6:'周一开盘时，你手上多出来的头寸按开盘价计价——而此时距离周五收盘已经过了**两天的新闻**。你在这两天里既不知道自己有没有头寸，也无法交易。',
+8:'自动行权门槛同样是价内 0.01 美元。',
+9:'⚠ 相反指令：买方可以**放弃**一张价内期权，也可以**行权**一张价外期权。',
+10:'两种情况都真实发生过，并且**都无法从成交流中预测**。',
+12:'一张被钉住的卖出认购的隔夜敞口：',
+13:'若被指派 → 从周五收盘起持有 100 股空头，按周一开盘计价。',
+14:'若未被指派 → 无头寸。',
+15:'期望绝对盈亏的量级包含一个 p(1−p) 因子，',
+16:'⚠ 而这个 p 你根本不知道——这正是钉住风险的本质：它不是一个可以定价的风险，而是一个信息缺失。',
+18:'唯一真正的对冲是**不要待在那里**：在 16:00 之前把卖出腿平掉。多付一点平仓成本，换掉一个无法计量的周末敞口，通常是划算的。'},en:{
+6:'You spend two days neither knowing whether you have a position nor being able to trade it.',
+16:'You do not know p — which is the whole point. Pin risk is not a priceable risk, it is missing information.',
+18:'Paying a little to close beats carrying an unquantifiable weekend exposure.'}},
+
+LIQUIDITY:{zh:{
+0:'价差 = 卖价 − 买价。',
+1:'中间价为两者均值。',
+2:'价差百分比以中间价为分母。',
+4:'完整来回的成本：',
+5:'价差 × 100 × 张数，**进场付一次、出场再付一次**。',
+6:'并且是**每条腿**各付一次——所以一个铁鹰（四条腿）来回要付**八次**价差。这是多腿策略最容易被低估的成本。',
+8:'诚实的估值方式：',
+9:'多头头寸按**买价**计价（你实际能卖到的价）。',
+10:'空头头寸按**卖价**计价（你实际要付出的平仓成本）。',
+11:'⚠ 用中间价计价会**永远**高估盈亏，高估的幅度正好是（价差 ÷ 2）× 100 × 张数。账户里显示的浮盈里有一部分是永远拿不到的。',
+13:'成交究竟发生在哪里：',
+14:'该行的成交均价 = 成交额 ÷（成交量 × 100）。',
+15:'⚠ 如果中间价离成交均价很远，说明这个报价是**装饰性的**——挂在那里但没人在那个价上成交。',
+17:'本页使用的流动性筛选下限：',
+18:'该行持仓 ≥ 500，当日成交 ≥ 100，',
+19:'单腿价差不超过中间价的 5%，价差策略不超过净额的 8%。'},en:{
+6:'And once per leg — an iron condor pays it eight times on a full round trip. The most underestimated cost in multi-leg trading.',
+11:'Mid-price marks overstate P/L by half the spread, always. Part of the unrealised gain on screen can never be collected.',
+15:'If the mid sits far from the VWAP, the quote is decorative — posted, but not where anyone trades.'}},
+
+PROB_ANALYSIS:{zh:{
+0:'概率分析建立在**风险中性**对数正态分布上——也就是给你正在看的这条期权链定价的同一个测度。',
+1:'终值股价的对数服从正态分布，漂移为 r − q − σ²/2。',
+3:'高于某价位的概率由标准正态分布函数给出。',
+6:'±nσ 的边界：',
+7:'上下界与中位数都由同一个 μ 出发。',
+9:'落在某个区间内的概率 = 两个尾概率之差。',
+11:'⚠ 这里有一个必须讲清楚的不对称性：',
+12:'**中位数严格小于均值**：中位数 = S·e^((r−q−σ²/2)T)，而均值 = S·e^((r−q)T)。',
+13:'MU 在 105 天、σ = 82.33% 下：中位数约 812.6，而现价 885.55。',
+14:'⚠ 也就是说分布的中心位于现价**下方 8.2%**。这来自 −σ²/2·T 这一项，是对数正态分布的数学性质，**不是任何看空观点**。波动率越高、时间越长，这个偏移越大。很多人看到"中位数低于现价"就以为模型在看空，这是误读。'},en:{
+14:'That is −σ²/2·T, a property of the lognormal, not a view. The higher the volatility and the longer the horizon, the larger the offset.'}},
+
+EXPECTED_MOVE:{zh:{
+0:'预期波动幅度有两种等价算法，衡量的都是**平均绝对波动**：',
+2:'一、跨式近似（期权链界面通常这样报）：',
+3:'平价认购加平价认沽的价格之和。',
+4:'不少交易台用 0.85 倍跨式作为更贴合实证的估计。',
+6:'二、闭式解：',
+7:'EM = S·σ·√T × 0.7979，其中 0.7979 = √(2/π)。',
+8:'⚠ 这是零漂移对数正态下 E|S_T − S| 的精确值，即 **0.80σ，不是 1σ**。',
+10:'为什么它不等于一个标准差：',
+11:'1σ 描述的是一个**区间**，覆盖 68.27% 的结果。',
+12:'EM 描述的是波动的**平均大小**，对正态分布而言等于 σ 的 √(2/π) ≈ 0.7979 倍。',
+13:'因此实际波动落在 EM 以内的概率约为 57.5%，不是 68%。混淆这两者会系统性高估安全边际。',
+15:'MU 实例，S = 885.55，σ = 82.33%，T = 14/365：',
+16:'1σ = ±142.8（±16.12%）。',
+17:'EM = ±113.9（±12.86%）。两者相差约 20%，在做仓位判断时不是小数目。',
+19:'⚠ 每次都值得跑的一个检验：',
+20:'比值 = |盈亏平衡点 − 现价| ÷ EM。',
+21:'小于 1 表示你需要的波动在市场已经付费的范围之内。',
+22:'大于 1 表示你需要的波动**超过市场已经定价的幅度**——这笔交易要求市场比自己的预期更极端才能赚钱。'},en:{
+13:'Conflating the two systematically overstates the margin of safety.',
+22:'You need more than the market has already priced — the trade requires the market to be more extreme than its own expectation.'}},
+
+TA_ON_OPTIONS:{zh:{
+0:'整个问题的答案只取决于一件事：**这个指标是算在哪条价格序列上的**？',
+2:'（a）算在**标的**上 → 完全适用，无需任何修改。',
+3:'你预测的是股价 S，期权只是你事后选择的收益结构包装。这是绝大多数技术分析在期权上的正确用法。',
+5:'（b）算在**期权自身**的价格序列上 → 大多无效，因为',
+6:'C = f(S, σ, T, r)，其变化由四项驱动。',
+7:'期权价格里的"趋势"主要由 Δ·dS 和 Θ·dt 主导，而不是对该合约的供需。',
+8:'RSI 会因为合约单纯变老（Θ）而**机械性地**下行——它测到的不是超卖，是时间流逝。',
+9:'均线金叉可能仅由 dσ 造成，而 dS 完全为零。',
+10:'序列本身**非平稳**：每个时点的 T、σ 和价内度都不同，前后不可比。',
+11:'并且单个行权价的成交量往往太薄，撑不起 14 或 26 周期的窗口。',
+13:'（c）真正的期权原生序列，在股票上没有对应物：',
+14:'逐行权价的成交量与持仓量、持仓变化、',
+15:'IV 及其排名与百分位、认沽认购比、偏斜、期限结构。这些才是应该在期权上做分析的对象。',
+17:'（d）合理的分工：',
+18:'对股票做技术分析 → 判断方向与时点 → 决定**做哪个方向**。',
+19:'做波动率分析 → 判断贵还是便宜 → 决定**用哪种结构**。',
+20:'看希腊字母 → 判断单张合约的敞口 → 决定**下多大仓位**。'},en:{
+8:'RSI drifts down mechanically on any contract that simply gets older — it is measuring time passing, not selling pressure.',
+15:'These are the series worth analysing on an option.'}}
+
+});
+
 /* FXZH-BATCHES */
 }(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
