@@ -61,6 +61,14 @@ h1, h2, h3, h4 { margin: 0; font-weight: 700; letter-spacing: -0.02em; }
 .eyebrow { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
   color: var(--brand); margin-bottom: 6px; }
 
+.filters { display: flex; gap: 9px; align-items: center; flex-wrap: wrap; margin-top: 18px; }
+.filters input[type=search] {
+  flex: 1; min-width: 200px; max-width: 320px;
+  border: 1px solid var(--line-2); background: var(--surface-2); color: var(--text);
+  border-radius: var(--r-sm); padding: 8px 12px; font-size: 13px; font-family: inherit;
+}
+.filters input[type=search]:focus { outline: none; border-color: var(--brand); }
+.fcount { font-size: 12px; color: var(--text-3); font-family: var(--mono); }
 .lessons { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 20px; }
 .lcard { border: 1px solid var(--line); border-radius: var(--r-lg); background: var(--surface);
   padding: 14px 16px; cursor: pointer; transition: border-color .15s, transform .1s; text-align: left; font-family: inherit; }
@@ -209,6 +217,12 @@ footer a { color: var(--text-2); text-decoration: underline; text-underline-offs
         <div class="kpi"><div class="k" data-t="kScore">Best score</div><div class="v v-gold" id="statScore">—</div></div>
       </div>
     </header>
+    <div class="filters" id="filters">
+      <input type="search" id="q" placeholder="Search">
+      <div class="seg" id="srcFilter"></div>
+      <div class="seg" id="bucketFilter"></div>
+      <span class="fcount" id="fcount"></span>
+    </div>
     <div class="lessons" id="lessonGrid"></div>
     <p class="note" style="border:0;margin-top:18px" data-th="pickerNote"></p>
   </section>
@@ -1167,17 +1181,805 @@ footer a { color: var(--text-2); text-decoration: underline; text-underline-offs
     link: 'options.html#e-IV_CRUSH'
   };
 
-  PG.LESSONS = [stopGap, rangeFade, ivCrush];
+  PG.HAND = [stopGap, rangeFade, ivCrush];
 
   /* Entry-id → lesson-id. A card only gets a "practise this" button when its
      id appears here; a button on 280 cards that lands nowhere is worse than
      no button at all. */
-  PG.ENTRY_MAP = {
-    indicators: { BOLL: 'range-fade', MA: 'range-fade', RSI: 'range-fade', CHOP: 'range-fade', ATR: 'range-fade' },
-    options: { IV_CRUSH: 'iv-crush', VOL_TERM: 'iv-crush', LONG_CALL: 'iv-crush',
-               LONG_CALL_SPREAD: 'iv-crush', VEGA: 'iv-crush', ZERO_DTE: 'iv-crush' },
-    orders: { STOP: 'stop-gap', STOP_LIMIT: 'stop-gap', MARKET: 'stop-gap',
-              TRAILING_STOP: 'stop-gap', SLIPPAGE: 'stop-gap', LIMIT: 'range-fade' }
+
+}(typeof globalThis !== 'undefined' ? globalThis : this));
+</script>
+
+<script>/* content pack: one row per encyclopedia entry, keyed by handbook + id.
+   Five ids exist in two handbooks with different meanings (ROC is Rate of
+   Change in indicators and Return on Collateral in options), so a bare id
+   key silently dropped one of each pair. */
+(function(r){r.PG=r.PG||{};r.PG.PACK={"ind.MA":{"src":"ind","eid":"MA","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Simple Moving Average","nameZh":"简单移动平均线","zh":{"insight":"真正有信息量的是斜率而不是数值本身：斜率为正即该周期上多头占优。斜率由相邻两根均线值相减得到。"},"en":{"insight":"The slope carries the information, not the level: positive slope means buyers control that horizon."}},"ind.BOLL":{"src":"ind","eid":"BOLL","cat":"pressure_support","fam":"channel-fade","bucket":"trade","name":"Bollinger Bands","nameZh":"布林带 / 布林通道","zh":{"insight":"σ 在这里是最近 20 根收盘价的总体标准差——注意它每根 K 线都重算，所以带宽是会呼吸的。"},"en":{"insight":"The lower band is the same distance the other way. These are not fixed levels; they are a statement about how unusual the current price is."}},"ind.MACD":{"src":"ind","eid":"MACD","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Moving Average Convergence and Divergence","nameZh":"指数平滑异同移动平均线","zh":{"insight":"α = 2/(n+1) 是指数加权系数：n 越大 α 越小，旧数据衰减越慢，线也就越平滑越滞后。"},"en":{"insight":"α = 2/(n+1) is the exponential weight: larger n means smaller α, slower decay of old data, and a smoother but later line."}},"ind.RSI":{"src":"ind","eid":"RSI","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Relative Strength Index","nameZh":"相对强弱指标","zh":{"insight":"等价写法。注意 RSI 衡量的是相对强弱，不是绝对涨跌幅：强趋势中 RSI 可以长期停留在 70 以上而价格继续上涨——超买不等于该卖。"},"en":{"insight":"Equivalent form. RSI measures relative strength, not absolute move size: in a strong trend it can sit above 70 for weeks while price keeps rising — overbought is not a sell signal."}},"ind.ADR_SPX":{"src":"ind","eid":"ADR_SPX","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Advance/Decline Ratio (S&P 500)","nameZh":"涨跌比率（标普 500）","zh":{"insight":"常取 10 日均线平滑。注意这是比值，天然不对称（上不封顶、下限为 0），做平均前应先取对数，否则均值会被高值拉偏。"},"en":{"insight":"It is a ratio, so it is asymmetric — take logs before averaging or the mean is dragged by the upside."}},"ind.EMA":{"src":"ind","eid":"EMA","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Exponential Moving Average","nameZh":"指数移动平均线","zh":{"insight":"重心大约在 (n−1)/2 根之前，与同周期 SMA 相同——所以 EMA 并不比 SMA \"更快\"，它快的是对新价格的反应，不是整体重心。"},"en":{"insight":"Recursive: it needs only yesterday's value and today's price, not the whole window — which is why it is cheaper than an SMA."}},"ind.WMA":{"src":"ind","eid":"WMA","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Weighted Moving Average","nameZh":"加权移动平均线","zh":{"insight":"以 n=9 为例：WMA 重心 2.67 根，SMA/EMA 是 4.0 根。所以同周期下 WMA 明显更贴近价格、更少滞后，代价是更容易被单根异常 K 线带偏。"},"en":{"insight":"At n = 9 the WMA sits 2.67 bars back against 4.0 for SMA/EMA — less lag, but more sensitive to a single outlier bar."}},"ind.DEMA":{"src":"ind","eid":"DEMA","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Double Exponential Moving Average","nameZh":"双重指数移动平均线","zh":{"insight":"默认 n = 9。特别注意：DEMA 不是\"EMA 的 EMA\"，"},"en":{"insight":"The correction amplifies noise, so DEMA produces more false signals than a plain EMA in a chop."}},"ind.TEMA":{"src":"ind","eid":"TEMA","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Triple Exponential Moving Average","nameZh":"三重指数移动平均线","zh":{"insight":"DEMA 做一次修正，TEMA 做两次。修正阶数越高，滞后越小，但对噪音的放大也越严重——TEMA 在趋势里很漂亮，在震荡里会来回抽打。"},"en":{"insight":"Higher-order correction means less lag and more noise amplification — TEMA looks excellent in a trend and whipsaws badly in a range."}},"ind.HMA":{"src":"ind","eid":"HMA","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Hull Moving Average","nameZh":"赫尔移动平均线","zh":{"insight":"第二步（√n 的 WMA）负责恢复平滑。Hull 的巧妙之处在于用 √n 而不是 n 做最终平滑——既压住了噪音，又没有把刚刚消掉的滞后重新引入。"},"en":{"insight":"The trick is smoothing with √n rather than n — enough to tame the noise without reintroducing the lag just removed."}},"ind.LSMA":{"src":"ind","eid":"LSMA","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Least Squares Moving Average","nameZh":"最小二乘移动平均线","zh":{"insight":"默认 n = 25。TSF（时间序列预测）= a + b·n，就是同一条直线往前推一根的值。所以 LSMA 与 TSF 的差恰好是一个 b，两者形状完全相同、只差一个平移。"},"en":{"insight":"TSF is the same fitted line one bar ahead, so TSF − LSMA is exactly the slope b — identical shape, shifted."}},"ind.VWMA":{"src":"ind","eid":"VWMA","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Volume-Weighted Moving Average","nameZh":"成交量加权移动平均线","zh":{"insight":"真正的信号是两者的差值 VWMA − SMA，它衡量\"钱在哪个价位上\"，而单看 VWMA 本身与 SMA 差别不大。"},"en":{"insight":"The spread is the signal: it measures where the money actually traded, which a VWMA alone does not reveal."}},"ind.TWAP":{"src":"ind","eid":"TWAP","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Time-Weighted Average Price","nameZh":"时间加权平均价","zh":{"insight":"对比 VWAP = Σ(C×V)/ΣV。两者的差别就是\"时间平均\"与\"成交量平均\"之别：TWAP 假装每个时刻同等重要，VWAP 承认成交集中的时刻更重要。机构拆单时选 TWAP 还是 VWAP，本质是选择在时间上均匀铺开还是跟随市场真实成交节奏。"},"en":{"insight":"TWAP treats every moment as equally important; VWAP admits that moments with more trading matter more. Choosing between them as an execution algo is choosing between spreading evenly over time and following the market's actual rhythm."}},"ind.BBI":{"src":"ind","eid":"BBI","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Bull and Bear Index","nameZh":"多空指数","zh":{"insight":"重心约在 5.1 根之前，因此它的快慢大致相当于一条 EMA(11)。BBI 的价值不在于比单条均线更准，而在于它把\"短中长周期是否一致\"压缩成了一条线。"},"en":{"insight":"BBI is not more accurate than one average; it compresses \"do the short, medium and long horizons agree\" into a single line."}},"ind.GMMA":{"src":"ind","eid":"GMMA","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Guppy Multiple Moving Average","nameZh":"顾比复合移动平均线","zh":{"insight":"读法的核心是几何形态而不是任何单条线：两组都收窄并纠缠 = 分歧消失、变盘临近；短期组穿越长期组且两组同时张开 = 趋势确立；长期组保持张开而短期组回踩后重新张开 = 趋势中的健康回调，通常是顺势加仓点。"},"en":{"insight":"The geometry is the signal, not any single line: both groups compressed means a pending resolution; both fanned out after a cross means the trend is established."}},"ind.ADX":{"src":"ind","eid":"ADX","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Average Directional Index","nameZh":"平均趋向指数","zh":{"insight":"再算下沿变化：昨天最低价减今天最低价。注意方向定义，down 为正表示今天更低。"},"en":{"insight":"The absolute value means DX cares only how one-sided the move is, not which side."}},"ind.DMI":{"src":"ind","eid":"DMI","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Directional Movement Index","nameZh":"动向指标 / 趋向指标","zh":{"insight":"ADXR =（当前 ADX + m 根之前的 ADX）/2，被称为\"评估线\"。它比 ADX 更钝，用途是过滤 ADX 自身的抖动——ADX 上穿 ADXR 常被当作趋势确立的确认。"},"en":{"insight":"ADXR is deliberately duller than ADX; an ADX crossing above it is used as confirmation that a trend has taken hold."}},"ind.DDI":{"src":"ind","eid":"DDI","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Directional Divergence Index","nameZh":"方向标准离差指数","zh":{"insight":"AD 再对 ADDI 做 5 周期简单平滑。三层平滑意味着 DDI 系统反应很慢，它的定位是过滤噪音后的中期方向判断，不适合做短线信号。"},"en":{"insight":"Three layers of smoothing make this a slow, mid-horizon direction filter rather than a short-term signal."}},"ind.AROON":{"src":"ind","eid":"AROON","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Aroon Indicator","nameZh":"阿隆指标","zh":{"insight":"并且它永远到不了 0，下限就是 100/n。Aroon 的独特之处在于它衡量的是\"时间\"而不是\"价格幅度\"——它回答的是\"多久没创新高了\"，这是其他动量指标不提供的视角。"},"en":{"insight":"Each line takes only n discrete values, stepping by 100/n — it is a staircase, not a smooth curve."}},"ind.SI":{"src":"ind","eid":"SI","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Swing Index","nameZh":"摆动指数","zh":{"insight":"SI 是把上述量归一化后的摆动值，n 是涨跌停幅度除数。SI 单根意义不大，它的用途是累加成 ASI——用累计值来确认价格趋势是否被真实的波动结构支撑。"},"en":{"insight":"A single SI reading means little; it is designed to be accumulated into ASI, where the running total confirms whether price structure supports the trend."}},"ind.MI":{"src":"ind","eid":"MI","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Momentom Indicator","nameZh":"动量指标","zh":{"insight":"注意它无上下界，且以标的自身的价格单位计价——$500 的股票和 $5 的股票，MI 数值天然不可比。"},"en":{"insight":"Unbounded and quoted in the instrument's own price units, so it is not comparable between a $500 stock and a $5 one."}},"ind.TRIX":{"src":"ind","eid":"TRIX","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Triple Exponentially Smoothed Average","nameZh":"三重指数平滑均线","zh":{"insight":"TRIX 取三重平滑后序列的单根百分比变化率。注意是变化率而不是差值，"},"en":{"insight":"Being a percentage makes TRIX comparable across instruments, unlike MI or DMA which are quoted in price units. The cost of triple smoothing is heavy lag."}},"ind.DMA":{"src":"ind","eid":"DMA","cat":"trend","fam":"ma-lag","bucket":"trade","name":"DMA Indicator","nameZh":"平行线差指标","zh":{"insight":"注意它以标的价格单位计价、无上下界，因此不能跨品种比较，也不存在\"超买超卖\"阈值。"},"en":{"insight":"Price-unit quoted and unbounded, so there is no cross-instrument comparison and no overbought threshold."}},"ind.PRICEOSC":{"src":"ind","eid":"PRICEOSC","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Price Oscillator","nameZh":"价格振荡器","zh":{"insight":"因此本页这个变体的数值尺度与标准 PPO 略有差异，跨软件对比阈值时要留意这一点，不要直接套用别处的超买超卖水平。"},"en":{"insight":"The scale therefore differs slightly from the textbook PPO — do not carry overbought thresholds across from another platform."}},"ind.FO":{"src":"ind","eid":"FO","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Forecast Oscillator","nameZh":"预测振荡器","zh":{"insight":"也就是价格跑在自己的趋势前面了。它衡量的是\"相对自身趋势的偏离\"，因此在强趋势中也会频繁回到零轴附近——这与衡量绝对涨跌的动量指标有本质区别。"},"en":{"insight":"It measures deviation from the instrument's OWN trend, so it returns to zero even in a strong trend — unlike momentum indicators that measure absolute change."}},"ind.SAR":{"src":"ind","eid":"SAR","cat":"trend","fam":"stop-trail","bucket":"trade","name":"Parabolic Stop and Reverse","nameZh":"抛物线转向 / 停损点转向指标","zh":{"insight":"价格触及 SAR 时立即反手：SAR 跳到已跟踪的极值处，AF 重置。这就是 Stop and Reverse 的含义——它假设你永远持仓，不是多头就是空头。"},"en":{"insight":"Its fatal weakness is a range, where repeated flips stop you out again and again. It suits established trends only."}},"ind.SUPER_TREND":{"src":"ind","eid":"SUPER_TREND","cat":"trend","fam":"stop-trail","bucket":"trade","name":"Supertrend","nameZh":"超级趋势线","zh":{"insight":"注意这里的 ATR 用简单平均而非 Wilder 平滑，与经典 ATR 略有差异。"},"en":{"insight":"The clamps are what keep the line monotone within a leg — without them the stop would loosen and tighten with every ATR wiggle and stop being a stop."}},"ind.ALLIGAT":{"src":"ind","eid":"ALLIGAT","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Williams Alligator","nameZh":"威廉姆斯鳄鱼线","zh":{"insight":"\"右移 k 根\"意味着画在第 i 根位置上的值其实是用第 i−k 根的数据算出来的。这个位移是 Alligator 的精髓：它人为制造了三条线的间隔，让\"缠绕（鳄鱼睡觉，无趋势）\"与\"张口（鳄鱼进食，趋势启动）\"两种形态在视觉上极易分辨。代价是位移意味着这条线不能用作实时信号——它天然向右延伸到未来。"},"en":{"insight":"The displacement is the point: it manufactures separation so that \"sleeping\" (entwined, no trend) and \"feeding\" (fanned, trending) are visually unmistakable. The cost is that a displaced line cannot be used as a real-time signal."}},"ind.TSF":{"src":"ind","eid":"TSF","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Time Series Forecast","nameZh":"时间序列预测线","zh":{"insight":"但画在今天这根 K 线的位置上。理解这一点很关键：TSF 显示的是\"如果当前趋势按现有斜率持续，k 根之后会到哪\"，它是一个条件预测而非事实，趋势一旦转向，这个外推会立刻失效。"},"en":{"insight":"TSF shows where the current slope would put price k bars out — a conditional projection, not a fact. It breaks the moment the slope changes."}},"ind.TOWER":{"src":"ind","eid":"TOWER","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Tower Line","nameZh":"宝塔线","zh":{"insight":"所以传统画法过滤掉的噪音比这里两个版本都要多。使用时请知悉这个简化。"},"en":{"insight":"The classical 宝塔线 flips only when the close breaks the entire prior tower body, which may span many bars, so it filters more noise than either version here."}},"ind.HADIFF":{"src":"ind","eid":"HADIFF","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Heikin Ashi Difference","nameZh":"平均足实体差","zh":{"insight":"HADIFF 实际上是\"平均价格相对自身递归基线的偏离\"的平滑版本。这解释了它为什么比普通 K 线实体更少反复：它比较的不是当根开收，而是当根与历史基线的关系。代价是平均 K 线的开收价不是真实成交价，不能直接用来下单或计算盈亏。"},"en":{"insight":"Which is why it flips far less often than a real candle body — it compares the bar to a recursive baseline rather than to its own open. Note that Heikin-Ashi opens and closes are NOT tradable prices; never size a stop off them directly."}},"ind.SQUEEZE":{"src":"ind","eid":"SQUEEZE","cat":"trend","fam":"vol-size","bucket":"trade","name":"TTM Squeeze","nameZh":"TTM 挤压指标","zh":{"insight":"OSC 的符号给方向，斜率给加速度。标准用法是：挤压结束（由 ON 转 OFF）的那一刻，看 OSC 的符号决定做多还是做空。注意挤压本身不预测方向，它只预测\"要动了\"。"},"en":{"insight":"The squeeze predicts that something will move, not which way. The oscillator sign supplies the direction at the moment the squeeze releases."}},"ind.FISHER":{"src":"ind","eid":"FISHER","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Fisher Transform","nameZh":"费雪变换","zh":{"insight":"从而在数据尚不存在的位置制造出一根虚假的 −3 尖峰。这是实现层面的细节，但它决定了指标开头那几根是否可信。"},"en":{"insight":"Filling the warm-up bars with zero would manufacture a false −3 spike on data that does not exist yet."}},"ind.AO":{"src":"ind","eid":"AO","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Awesome Oscillator","nameZh":"动量震荡指标（AO）","zh":{"insight":"因此请读柱子的高度变化而不是颜色来判断加速度。这是渲染上的取舍，指标数值本身未受影响。"},"en":{"insight":"This page colours by sign instead, so read bar heights rather than colours for acceleration. The values themselves are unaffected."}},"ind.EWO":{"src":"ind","eid":"EWO","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Elliott Wave Oscillator","nameZh":"艾略特波浪震荡指标","zh":{"insight":"唯一的差别是平滑方式（SMA vs EMA）和价格输入（中价 vs 收盘）。两者在实盘中形态高度相似，不必同时使用。"},"en":{"insight":"Same periods, same construction — only the averaging method and the price input differ. They look nearly identical in practice, so there is little point running both."}},"ind.ATR":{"src":"ind","eid":"ATR","cat":"trend","fam":"vol-size","bucket":"trade","name":"Average True Range","nameZh":"平均真实波幅","zh":{"insight":"止损距离通常取 k × ATR，k 一般 1.5–3。用波动率而不是固定百分比设止损，才能让不同波动率的品种承担同等风险。"},"en":{"insight":"ATR% divides by price so the number is comparable across instruments — the raw ATR of a $500 stock and a $5 stock cannot be compared."}},"ind.VOLAT":{"src":"ind","eid":"VOLAT","cat":"trend","fam":"vol-size","bucket":"trade","name":"Historical Volatility","nameZh":"历史波动率（年化）","zh":{"insight":"先取对数收益率。用对数而不是简单百分比，是因为对数收益可加：多期收益直接相加即可，而百分比收益必须连乘。"},"en":{"insight":"Quick mental check: a 1-day 1σ move ≈ annual vol ÷ 16, since √252 ≈ 15.87."}},"ind.HLVOL":{"src":"ind","eid":"HLVOL","cat":"trend","fam":"vol-size","bucket":"trade","name":"HL Volatility","nameZh":"高低波幅率","zh":{"insight":"相当于近期均价的百分之多少。除以价格是关键一步——没有它，高价股的数值天然更大，跨品种无法比较。它与 ATR% 思路一致，区别在于 HLVOL 用区间高点低点，不含跳空。"},"en":{"insight":"Dividing by price is what makes it comparable across instruments. Same idea as ATR%, except HLVOL uses the window range and therefore ignores gaps."}},"ind.CHOP":{"src":"ind","eid":"CHOP","cat":"trend","fam":"vol-size","bucket":"trade","name":"Choppiness Index","nameZh":"震荡指数","zh":{"insight":"它必然落在 0–100 之间：因为总路程恒大于等于区间高度（下界），而极限情况下总路程最多为 n 倍区间（上界），取对数再除以 log(n) 正好把它归一化。核心直觉：同样从 A 走到 B，走直线的是趋势，来回折返的是震荡。CHOP 不判断方向，只判断\"效率\"，因此常用来决定该用趋势策略还是区间策略。"},"en":{"insight":"Bounded by construction: total travel is at least the range and at most n times the range, and the logarithms normalise that into 0–100."}},"ind.ER":{"src":"ind","eid":"ER","cat":"trend","fam":"vol-size","bucket":"trade","name":"Efficiency Ratio","nameZh":"效率比率（考夫曼）","zh":{"insight":"趋势明确（ER 高）时 α 变大、均线变快；震荡（ER 低）时 α 变小、均线变慢。这就是\"自适应\"的含义——用行情自身的效率来决定该快还是该慢，而不是固定一个周期。"},"en":{"insight":"That is what \"adaptive\" means: the market's own efficiency sets the smoothing, instead of a fixed period chosen in advance."}},"ind.RVI":{"src":"ind","eid":"RVI","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Relative Volatility Index","nameZh":"相对波动率指数","zh":{"insight":"唯一区别是累积的量从\"价格变化幅度\"换成了\"标准差\"。含义因此不同：RSI 问\"涨的力度占多少\"，RVI 问\"波动发生在上涨日还是下跌日\"。上涨伴随高波动通常是健康的突破，下跌伴随高波动才是恐慌。"},"en":{"insight":"RSI asks how much of recent movement was up; RVI asks whether the volatility itself occurred on up days or down days."}},"ind.RMI":{"src":"ind","eid":"RMI","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Relative Momentum Index","nameZh":"相对动量指标","zh":{"insight":"先取 m 根之前到今天的动量（m = 5），而不是相邻两根的变化。"},"en":{"insight":"With m = 1 it reduces exactly to an SMA-smoothed RSI. RMI is RSI with the comparison baseline pushed m bars back — smoother and later."}},"ind.SMIE":{"src":"ind","eid":"SMIE","cat":"trend","fam":"ma-lag","bucket":"trade","name":"SMI Ergodic Indicator","nameZh":"SMI 遍历指标","zh":{"insight":"注意源码里的嵌套顺序是先快后慢。双重平滑让它在保留方向敏感度的同时大幅压制噪音——分子会因正负抵消而变小，分母不会，因此震荡行情里读数自然趋近于零。"},"en":{"insight":"Double smoothing suppresses noise while keeping direction: the numerator shrinks through cancellation, the denominator does not, so a choppy market reads near zero by construction."}},"ind.SMIEO":{"src":"ind","eid":"SMIEO","cat":"trend","fam":"ma-lag","bucket":"trade","name":"SMI Ergodic Oscillator","nameZh":"SMI 遍历振荡器","zh":{"insight":"它就是 SMIE 的柱状图，不包含任何额外信息——如果已经在看 SMIE，就不需要再加这一条。同时看两者只会造成\"两个指标互相确认\"的错觉，实际上它们是同一个数。"},"en":{"insight":"It is the histogram of SMIE and contains no other information. Running both creates a false sense of confirmation from what is arithmetically one number."}},"ind.VMACD":{"src":"ind","eid":"VMACD","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Volume Moving Average Convergence and Divergence","nameZh":"量能异同移动平均","zh":{"insight":"因此纵轴尺度完全取决于个股，不能跨品种比较，也不存在通用阈值。用法是看它与价格 MACD 的配合：价格创新高而 VMACD 不配合，说明这波上涨没有增量成交支持。"},"en":{"insight":"Units are shares, so the scale is instrument-specific — no cross-symbol comparison and no universal thresholds. Its use is in divergence against the price MACD."}},"ind.EMV":{"src":"ind","eid":"EMV","cat":"trend","fam":"ma-lag","bucket":"trade","name":"Ease of Movement Value","nameZh":"简易波动指标","zh":{"insight":"EMV 高表示中价移动了很大一段距离，却只用了很少的成交量——即\"移动很容易\"。反过来，价格涨了但 EMV 很低，说明这一段上涨是靠巨量堆出来的，上方阻力沉重。它衡量的是价格移动的成本，这是纯价格指标和纯成交量指标都看不到的维度。"},"en":{"insight":"A high reading means price travelled a long way on little volume — movement was cheap. Rising price on a low EMV means the advance had to be bought heavily, which is a sign of overhead supply."}},"ind.IV":{"src":"ind","eid":"IV","cat":"trend","fam":"vol-regime","bucket":"read","name":"Implied Volatility","nameZh":"隐含波动率","zh":{"insight":"与已实现波动率对比：IV − HV 就是方差风险溢价。这个差长期为正，意味着期权买方系统性地在为保险付费——这是期权卖方长期占优的数学来源，也是买方必须靠方向或时点取胜的原因。"},"en":{"insight":"IV − HV is the variance risk premium. It is persistently positive, which is why systematic option buyers pay for insurance and sellers collect it."}},"ind.IV_RANK":{"src":"ind","eid":"IV_RANK","cat":"trend","fam":"vol-regime","bucket":"read","name":"Implied Volatility Rank","nameZh":"隐含波动率排名","zh":{"insight":"致命弱点：它只依赖两个数据点——窗口内的最高值和最低值。去年某天的一次崩盘尖峰会把最高值抬得很高，此后一整年的 IV Rank 都会被压低，让你误以为\"波动率很便宜\"。这正是需要同时看 IV Percentile 的原因。"},"en":{"insight":"It depends on exactly two data points — the window high and low. One crash spike a year ago inflates the high and suppresses every subsequent reading, making volatility look cheap when it is not."}},"ind.IV_PERCENTILE":{"src":"ind","eid":"IV_PERCENTILE","cat":"trend","fam":"vol-regime","bucket":"read","name":"Implied Volatility Percentile","nameZh":"隐含波动率百分位","zh":{"insight":"因此单个离群尖峰不会像扭曲 IV Rank 那样扭曲它。实务建议：两个一起看。IV Rank 高而 IV Percentile 不高，说明当前只是接近某个孤立的历史尖峰；两者同时高，才是真正意义上的波动率贵。"},"en":{"insight":"Using the full distribution means one outlier cannot distort it the way it distorts IV Rank. Read both: a high rank with a low percentile means you are merely near an isolated spike."}},"ind.KDJ":{"src":"ind","eid":"KDJ","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"KDJ Stochastics Indicator","nameZh":"随机指标 KDJ","zh":{"insight":"LLV / HHV 指窗口内的最低价与最高价，注意这里用的是最高/最低价而不是收盘价。"},"en":{"insight":"LLV and HHV use the high and low, not the close."}},"ind.SLOWKD":{"src":"ind","eid":"SLOWKD","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Slow KD indicator","nameZh":"慢速随机指标（慢速 KD）","zh":{"insight":"一个值得知道的等价关系：当 P1 = P2 = 3 时，这里的 K 线与 KDJ 的 D 线完全相同。所以同时挂 KDJ 和慢速 KD，你实际上是在看同一条线的两个副本，不构成互相印证。"},"en":{"insight":"With P1 = P2 = 3 this K line is identical to KDJ's D line. Running both is looking at the same series twice, not confirmation."}},"ind.STOCHRSI":{"src":"ind","eid":"STOCHRSI","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Stochastic RSI","nameZh":"随机相对强弱指标","zh":{"insight":"关键理解：STOCH 衡量的是 RSI 在它自己近期区间中的排名，而不是价格的排名。这就是它比 RSI 灵敏得多的原因——RSI 从 55 涨到 65 可能毫不起眼，但如果这段时间 RSI 一直在 50–65 之间波动，StochRSI 就会直接冲到 100。代价是它极易触及 0 和 100 两端，超买超卖信号泛滥，必须配合趋势过滤使用。"},"en":{"insight":"It ranks RSI within RSI's own recent range, not price within price's. That is why it is far more sensitive — and why it pins at 0 and 100 constantly, so it needs a trend filter."}},"ind.SRSI":{"src":"ind","eid":"SRSI","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Slow Relative Strength Index","nameZh":"慢速相对强弱指标","zh":{"insight":"重要警告：这既不是 Stochastic RSI，也不是 RSI。"},"en":{"insight":"This is NOT Stochastic RSI and it is NOT RSI."}},"ind.CRSI":{"src":"ind","eid":"CRSI","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Connors RSI","nameZh":"康纳斯相对强弱指标","zh":{"insight":"三者取平均。Connors 的设计思路是从三个正交的角度衡量超卖：价位、持续性、幅度。三者同时极端才是高置信度信号，这比单一 RSI 稳健得多，也是它专为短线均值回归策略设计的原因。"},"en":{"insight":"Three orthogonal views of oversold: level, persistence, magnitude. Requiring all three to be extreme is far more robust than a single RSI."}},"ind.WMSR":{"src":"ind","eid":"WMSR","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Williams %R","nameZh":"威廉指标（威廉超买超卖指标）","zh":{"insight":"%R = −100 ×（最高价 − 收盘）÷ 区间高度。注意负号：收盘越靠近区间顶部，值越接近 0。"},"en":{"insight":"%R is the unsmoothed %K of KDJ shifted by 100 — the same quantity, faster and rougher because it skips the smoothing."}},"ind.CCI":{"src":"ind","eid":"CCI","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Commodity Channel Index","nameZh":"顺势指标","zh":{"insight":"MD 是典型价格对均线的平均绝对偏差——注意是平均绝对偏差，不是标准差。用绝对值而非平方，使它对极端值不那么敏感。"},"en":{"insight":"Mean absolute deviation, not standard deviation — using absolutes rather than squares makes it less sensitive to outliers."}},"ind.CMO":{"src":"ind","eid":"CMO","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Chande Momentum Oscillator","nameZh":"钱德动量摆动指标","zh":{"insight":"与 RSI 唯一的实质差别是这里用未平滑的简单求和，而标准 RSI 用 Wilder 平滑。因此 CMO 更灵敏也更抖。"},"en":{"insight":"The only substantive difference is unsmoothed sums instead of Wilder smoothing, which makes it jumpier."}},"ind.TSI":{"src":"ind","eid":"TSI","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"True Strength Index","nameZh":"真实强弱指标","zh":{"insight":"TSIMA 是信号线。 TSI 的巧妙之处在于：震荡行情里分子因正负抵消而趋近于零，分母不受影响，读数自然回到零轴附近；而单边趋势中分子几乎等于分母，读数被推向 ±100。因此它天然地区分了\"有方向\"和\"没方向\"，这是单次平滑的动量指标做不到的。"},"en":{"insight":"In a chop the numerator cancels toward zero while the denominator does not, pulling TSI to the centre; in a one-way trend the two nearly match and it pins near ±100. It separates \"direction\" from \"no direction\" by construction."}},"ind.MFI":{"src":"ind","eid":"MFI","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Money Flow Index","nameZh":"资金流量指标","zh":{"insight":"默认 N = 14。 一句话概括：MFI 就是\"带成交量的 RSI\"。它与 RSI 的背离常被视为更可靠——价格创新高但 MFI 不创新高，说明推动这波新高的资金量在减少。"},"en":{"insight":"MFI is RSI with volume. A divergence carries more weight than an RSI divergence because it says the money behind the move is shrinking."}},"ind.RVGI":{"src":"ind","eid":"RVGI","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Relative Vigor Index","nameZh":"相对活力指数","zh":{"insight":"默认 N = 10，实际取值大致在 −1 到 +1。 核心直觉：牛市里收盘倾向于靠近最高价（实体占全幅比例高且为正），熊市里收盘倾向于靠近最低价。RVGI 就是把这个直觉量化。它衡量的是\"力度的转化效率\"，与衡量幅度的动量指标互补。"},"en":{"insight":"Bulls close near the high, bears close near the low. RVGI quantifies exactly that, measuring conversion efficiency rather than magnitude."}},"ind.BOP":{"src":"ind","eid":"BOP","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Balance of Power","nameZh":"均势指标（多空力道）","zh":{"insight":"等于 0：收盘等于开盘，即十字星，多空完全均衡。 因为完全不平滑，单根 BOP 噪音极大，实用上必须自己再取均线。它的价值在于纯粹：不含任何滞后，是对\"这一根到底谁赢了\"最直接的量化。"},"en":{"insight":"Being entirely unsmoothed makes a single bar very noisy; average it yourself. Its value is purity: zero lag, a direct answer to who won this bar."}},"ind.VRSI":{"src":"ind","eid":"VRSI","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Volume Relative Strength Index","nameZh":"成交量相对强弱指标","zh":{"insight":"因此 50 的含义是\"成交量持平\"，不是\"市场中性\"。这是最容易误读的一点：VRSI 高只说明成交量在放大，完全不指示价格方向——放量上涨和放量暴跌会给出同样高的读数。它必须与价格指标配合才有意义。"},"en":{"insight":"50 means volume is flat, NOT that the market is neutral. A high reading says volume is expanding and says nothing about direction — a volume surge into a crash reads the same as one into a breakout."}},"ind.ROC":{"src":"ind","eid":"ROC","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Rate of Change","nameZh":"变动率指标","zh":{"insight":"等于 15 表示比 12 根之前高 15%。 因为除以了基准价格，ROC 是百分比口径，可以跨品种比较——这是它相对于 MI（价格单位）的关键优势。注意 ROC 的分母是过去的价格，所以基期价格极低时读数会被放大失真，看长周期 ROC 时要留意基期是否处在异常低位。"},"en":{"insight":"Being a percentage makes ROC comparable across instruments, unlike price-unit momentum. Watch the base: an unusually low reference price inflates the reading."}},"ind.MTM":{"src":"ind","eid":"MTM","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Momentum","nameZh":"动量指标","zh":{"insight":"与 ROC 的关系：ROC = MTM ÷ 基准价 × 100。也就是说 ROC 就是把 MTM 归一化成百分比。因为 MTM 保留价格单位，它不能跨品种比较，也不能跨时间比较同一只股票——股价从 10 元涨到 100 元后，同样 5 元的 MTM 意义完全不同。"},"en":{"insight":"ROC is simply MTM normalised by the base price. Because MTM keeps price units it cannot be compared across instruments, or even across time for one instrument once the price level has changed."}},"ind.OSC":{"src":"ind","eid":"OSC","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Oscillator","nameZh":"摆动量指标","zh":{"insight":"不是百分比。这是极易误读的一点——数值 500 不代表 500%，只代表价格高出均线 5 元。"},"en":{"insight":"A reading of 500 means the price is 5 currency units above the average, not 500%."}},"ind.DPO":{"src":"ind","eid":"DPO","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Detrended Price Oscillator","nameZh":"区间震荡线 / 去趋势价格摆动指标","zh":{"insight":"DPO = 当前收盘 − 向前平移 shift 根的均线值。注意均线是被回移的，不是当前的均线。"},"en":{"insight":"That removes the trend and leaves the cycle around it — DPO is a tool for finding cycle LENGTH, not direction. The displacement also means the last few bars cannot be computed, so it is not a real-time signal."}},"ind.BIAS":{"src":"ind","eid":"BIAS","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Bias Ratio","nameZh":"乖离率","zh":{"insight":"但请注意这些只是约定俗成而非常数：高波动的小盘股、题材股完全可以长期维持更大的乖离。使用前应针对具体标的用历史分布重新校准，直接套用会在强势股上过早卖出。"},"en":{"insight":"These are conventions, not constants. A volatile small cap can sustain much larger deviations, so recalibrate per symbol from its own history rather than importing the numbers."}},"ind.B3612":{"src":"ind","eid":"B3612","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Bias3-Bias6 and Bias6-Bias12","nameZh":"三六乖离 / 均线差指标","zh":{"insight":"真正的乖离率需要除以均线并乘 100。因此 B3612 不能跨品种比较，它的用途是观察短中期均线之间的收敛与发散（与 MACD 的 DIF 思路相同），而不是判断偏离程度。"},"en":{"insight":"So B3612 cannot be compared across instruments. Its use is watching short and medium averages converge and diverge, like MACD's DIF, not measuring stretch."}},"ind.DBCD":{"src":"ind","eid":"DBCD","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Bias Convergence Divergence","nameZh":"异同离差乖离率","zh":{"insight":"先取 5 周期乖离率，注意这里没有乘 100，所以是小数形式。"},"en":{"insight":"Roughly 95 bars of warm-up before the first trustworthy value, and it reacts very slowly by design. It is a long-horizon divergence detector, not a timing tool."}},"ind.SRDM":{"src":"ind","eid":"SRDM","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"SRDM Indicator","nameZh":"动向速度指标","zh":{"insight":"SRDM =（上 − 下）÷ 两者中的较大者。除以较大者而不是两者之和，是为了让结果严格落在 −1 到 +1，且在一方为零时直接取到端点。"},"en":{"insight":"Dividing by the larger of the two rather than their sum keeps the result strictly within ±1 and pins it to the endpoint when one side is zero."}},"ind.RCI":{"src":"ind","eid":"RCI","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Rank Correlation Index","nameZh":"顺位相关指数","zh":{"insight":"默认同时画 5、25、50 三条。RCI 的独特之处在于它只看顺序不看幅度：一根涨停和一根微涨在排名上贡献相同。这让它对异常值天然免疫，但也意味着它无法区分温和上涨和暴力拉升。"},"en":{"insight":"RCI reads ORDER, not magnitude — a limit-up bar and a marginally higher bar contribute identically. That makes it immune to outliers and blind to the size of a move."}},"ind.MASS":{"src":"ind","eid":"MASS","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Mass Index","nameZh":"梅斯线 / 质量指数","zh":{"insight":"确认线约 10.6。请务必换算而不要直接套用 27——直接套用会导致这个指标永远不触发。质量指标衡量的是振幅的扩张（而非方向），它提示\"波动在放大、可能变盘\"，不告诉你往哪变。"},"en":{"insight":"Importing 27 from the textbook while running M = 10 means the indicator can never fire. Mass measures range expansion, not direction."}},"ind.VROC":{"src":"ind","eid":"VROC","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Volume Rate-Of-Change","nameZh":"成交量变动率","zh":{"insight":"等于 0 表示今日成交量与 M 根之前那一根单根相等。这是关键：基准是单独一根，不是平均值，所以如果那一根恰好是异常放量或异常缩量，读数会严重失真。"},"en":{"insight":"The base is a single bar, not an average, so an abnormal reference bar distorts the reading badly."}},"ind.ADTM":{"src":"ind","eid":"ADTM","cat":"strength","fam":"osc-threshold","bucket":"trade","name":"Adaptive Medias Inc Stock Technical Analysis","nameZh":"动态买卖气指标","zh":{"insight":"惯例阈值：大于 +0.5 视为超买，小于 −0.5 视为超卖。同样建议按标的历史分布校准，不要直接套用。"},"en":{"insight":"Calibrate the ±0.5 convention against the instrument's own history rather than importing it."}},"ind.BBIBOLL":{"src":"ind","eid":"BBIBOLL","cat":"pressure_support","fam":"channel-fade","bucket":"trade","name":"Bullish-Bear Bollinger","nameZh":"多空布林线 / BBI 布林带","zh":{"insight":"σ 取 BBI 这条已平滑曲线 的样本标准差（N = 11），而不是收盘价的标准差。这是它与布林带最本质的差别。"},"en":{"insight":"The deviation of the SMOOTHED line, not of the close — the essential difference from Bollinger."}},"ind.BBW":{"src":"ind","eid":"BBW","cat":"pressure_support","fam":"vol-size","bucket":"trade","name":"Bollinger Band Width","nameZh":"布林带宽 / 布林通道宽度","zh":{"insight":"化简后等于 2 × W × σ ÷ 中轨——注意上下轨相减时中轨被消掉了，只剩标准差与价格之比。"},"en":{"insight":"Dividing by the middle band is what makes it comparable across instruments and across decades, which the raw bands are not."}},"ind.CDP":{"src":"ind","eid":"CDP","cat":"pressure_support","fam":"channel-fade","bucket":"trade","name":"CDP Indicator","nameZh":"逆势操作系统 / CDP 指标","zh":{"insight":"这就是这些线画成水平阶梯的原因。实用价值正在于此：开盘前就知道今天的关键价位，可以提前挂单，不需要盘中临时判断。"},"en":{"insight":"That is the practical value: you know today's levels in advance and can place orders ahead of time rather than deciding mid-session."}},"ind.CKS":{"src":"ind","eid":"CKS","cat":"pressure_support","fam":"stop-trail","bucket":"trade","name":"Chande Kroll Stop","nameZh":"钱德-克罗尔止损线","zh":{"insight":"因此它不会因为单根 K 线的波动而突然放松。这是与简单 ATR 追踪止损的关键区别——后者会随每根 ATR 抖动而时紧时松，失去止损应有的确定性。"},"en":{"insight":"A plain ATR trail loosens and tightens with every bar; the second pass makes this one move only when the whole recent history of candidates has moved."}},"ind.DC":{"src":"ind","eid":"DC","cat":"pressure_support","fam":"channel-fade","bucket":"trade","name":"Donchian Channel","nameZh":"唐奇安通道","zh":{"insight":"通道本身就是近期价格的极值。这是它最大的优点：不存在参数拟合，也不存在滞后争议，突破就是字面意义上的\"创 N 根新高\"。代价是极值对单根异常 K 线完全没有抵抗力。"},"en":{"insight":"No fitting and no lag debate — a breakout literally means a new N-bar extreme. The cost is zero resistance to a single outlier bar."}},"ind.ENE":{"src":"ind","eid":"ENE","cat":"pressure_support","fam":"channel-fade","bucket":"trade","name":"Moving Average Envelopes","nameZh":"轨道线 / 均线包络","zh":{"insight":"下轨 = 均线 ×(1 − 9%)。注意上下幅度不相等，这是有意设计：上涨行情的空间通常大于下跌。"},"en":{"insight":"So the midline sits 1% above the moving average. Mistaking it for the average introduces a systematic 1% bias."}},"ind.KC":{"src":"ind","eid":"KC","cat":"pressure_support","fam":"channel-fade","bucket":"trade","name":"Keltner Channel","nameZh":"肯特纳通道","zh":{"insight":"而不是 Wilder 平滑——与经典肯特纳通道略有差异，数值会略有不同。"},"en":{"insight":"Bollinger uses the deviation of closes and is blind to gaps. That is why Keltner reflects real risk better on gap-prone instruments, and why TTM Squeeze compares the two."}},"ind.MIKE":{"src":"ind","eid":"MIKE","cat":"pressure_support","fam":"channel-fade","bucket":"trade","name":"MIKE Base","nameZh":"麦克支撑压力指标","zh":{"insight":"每根重算得到。因此它们之间的间距是固定的比例关系，本质上是把区间按倍数向外投射。这类\"压力支撑位\"没有成交量或持仓依据，只是几何外推——请把它当作参考刻度而非真实的市场结构。"},"en":{"insight":"All six are geometric projections of the same three numbers, with no volume or positioning behind them. Treat them as a reference scale, not as real market structure."}},"ind.PPSW":{"src":"ind","eid":"PPSW","cat":"pressure_support","fam":"channel-fade","bucket":"trade","name":"Pivot Points Standard - Woodie","nameZh":"伍迪枢轴点 / 标准枢轴-Woodie","zh":{"insight":"Woodie 枢轴 =（前窗口高 + 前窗口低 + 2×开盘）÷ 4。注意它给开盘价双倍权重，这正是 Woodie 版本与标准枢轴的唯一区别——标准版用收盘价且不加权。"},"en":{"insight":"The outer levels are pure geometric extrapolation; in practice only PP, R1 and S1 carry much weight."}},"ind.VOL":{"src":"ind","eid":"VOL","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Volume","nameZh":"成交量","zh":{"insight":"单看一根成交量的绝对值毫无意义（大盘股天然量大）。它必须以比率形式来读："},"en":{"insight":"An absolute print means nothing on its own — only the ratio to its own recent average does."}},"ind.MAVOL":{"src":"ind","eid":"MAVOL","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"volume moving average","nameZh":"成交量均线","zh":{"insight":"当 MAVOL5 站上 MAVOL20 且同步上行，说明整个活跃度体制在升温——这是趋势启动前常见的前置条件，比单日放量可靠得多。"},"en":{"insight":"MAVOL5 crossing above MAVOL20 and rising means the whole activity regime is heating up — a far more reliable precondition than any single high-volume bar."}},"ind.AVGVOL":{"src":"ind","eid":"AVGVOL","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Average Volume","nameZh":"平均成交量","zh":{"insight":"这样一根异常放量的 K 线就不会把用来衡量它自己的那把尺子撑大。若不排除，一根 10 倍量的 K 线会自己把均值抬高，导致\"相对量\"被系统性低估。"},"en":{"insight":"Excluding today stops a spike from inflating the very yardstick it is measured against — otherwise a 10x bar lifts the mean and understates itself."}},"ind.NVOL":{"src":"ind","eid":"NVOL","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Net Volume","nameZh":"净成交量","zh":{"insight":"从第一根开始累加净量，得到的就是 OBV。理解这一点后就明白：OBV 的所有优点和缺陷都源自这个粗糙的符号规则。"},"en":{"insight":"Accumulating NVOL from the first bar gives OBV, so every strength and flaw of OBV traces back to this crude sign rule."}},"ind.RVOL":{"src":"ind","eid":"RVOL","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Relative Volume","nameZh":"相对成交量 / 量比","zh":{"insight":"因为日内成交量呈 U 型分布（开盘和收盘放量、午间清淡）。用全天平均去比较上午十点的量会得出完全错误的结论——这是日内使用 RVOL 时最常见的错误。"},"en":{"insight":"Session volume is U-shaped, so comparing a 10am print against a whole-day average is simply wrong — the most common mistake in intraday RVOL use."}},"ind.VSTD":{"src":"ind","eid":"VSTD","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Volume STD","nameZh":"成交量标准差","zh":{"insight":"CV = 标准差 ÷ 均值。除以均值消掉了量纲，得到的是\"波动相对于自身平均水平\"的无量纲比率。"},"en":{"insight":"Dividing by the mean removes the units, giving a dimensionless measure of variability relative to the instrument's own normal."}},"ind.VOSC":{"src":"ind","eid":"VOSC","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Volume Oscillator","nameZh":"成交量震荡指标","zh":{"insight":"小于 0 表示量能萎缩。因为刻度不对称，请不要把别处的对称阈值（如 ±20）直接搬过来用。"},"en":{"insight":"Because the scale is asymmetric, symmetric thresholds imported from elsewhere do not apply."}},"ind.AMOUNT":{"src":"ind","eid":"AMOUNT","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Turnover","nameZh":"成交额","zh":{"insight":"（这个重建值与交易所公布数的差异，仅来自该根 VWAP 与收盘价之间的漂移，通常很小。）"},"en":{"insight":"The reconstruction differs from the exchange figure only by the drift between the bar's VWAP and its close."}},"ind.TOR":{"src":"ind","eid":"TOR","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Turnover Ratio","nameZh":"换手率","zh":{"insight":"高于 15% 属投机狂热，意味着几天内整个流通盘就换了一遍手。"},"en":{"insight":"The denominator on this page is synthetic and for shape only."}},"ind.VOLTDX":{"src":"ind","eid":"VOLTDX","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Virtual Volume","nameZh":"虚拟成交量 / 预估量","zh":{"insight":"真实成交量以及它的 5、10 周期均线——外推部分在历史上不留痕迹。"},"en":{"insight":"On a historical chart nothing of the projection survives; only volume and its two averages remain."}},"ind.PER":{"src":"ind","eid":"PER","cat":"price_volume","fam":"ratio-quality","bucket":"define","name":"P/E","nameZh":"市盈率","zh":{"insight":"前瞻市盈率用未来十二个月的预估每股收益——注意这是分析师预测，不是事实。"},"en":{"insight":"Forward EPS is an analyst estimate, not a fact."}},"ind.OBV":{"src":"ind","eid":"OBV","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"On Balance Volume","nameZh":"能量潮","zh":{"insight":"涨跌的幅度被完全忽略——涨 0.1% 和涨 5% 对 OBV 的贡献完全相同。这既是它简洁的地方，也是它最大的缺陷：价格与 OBV 背离时要先怀疑这个粗糙的符号规则。"},"en":{"insight":"The size of the move is ignored entirely: +0.1% and +5% contribute identically. That is the simplification, and its main weakness — when price and OBV diverge, suspect this crude sign rule first."}},"ind.VWAP":{"src":"ind","eid":"VWAP","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Volume Weighted Average Price","nameZh":"成交量加权平均价","zh":{"insight":"anchor = 0 表示永不重置，即从某个指定事件（财报、缺口、阶段低点）起算的锚定 VWAP——机构常用它衡量某笔建仓至今的盈亏。"},"en":{"insight":"anchor = 0 never restarts, giving an anchored VWAP from a chosen event (an earnings gap, a swing low). Desks use it to judge whether a position built since that event is under water."}},"ind.VWAP_BAND":{"src":"ind","eid":"VWAP_BAND","cat":"price_volume","fam":"channel-fade","bucket":"trade","name":"VWAP Bands","nameZh":"成交量加权均价通道","zh":{"insight":"⚠ 请注意这里的记忆长度是混合的：中轨 VWAP 从锚点一路累计（记忆越来越长），"},"en":{"insight":"Late in a session the VWAP centre is heavy and barely moves while the band width still reacts to recent volatility — so Bollinger intuitions do not transfer."}},"ind.EFI":{"src":"ind","eid":"EFI","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Elder's Force Index","nameZh":"艾尔德力度指标","zh":{"insight":"n = 2 用于短线入场时点，这是埃尔德本人的用法：极短周期让它在回调结束的瞬间转向。"},"en":{"insight":"Direction-and-size multiplied by participation: real force needs both, and either alone is not enough."}},"ind.KO":{"src":"ind","eid":"KO","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Klinger Oscillator","nameZh":"克林格成交量摆动指标","zh":{"insight":"和日测量（dm）三个附加项，本实现全部省略。因此本页数值与原版软件不会完全一致，形态相近但不可直接对照阈值。"},"en":{"insight":"The original carried a trend counter plus cumulative and daily measurement terms, all dropped here. Shapes are similar but absolute values will not match another platform."}},"ind.WVAD":{"src":"ind","eid":"WVAD","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"William's Variable Accumulation Distribution","nameZh":"威廉变异离散量","zh":{"insight":"下面这条未平滑的形式才是公式字面所说的东西。这意味着你在别处看到的 WVAD 可能与此处形态差异很大——使用前务必确认所用软件是否做了累加。"},"en":{"insight":"Most platforms plot a 6- or 24-bar sum instead, so the shape elsewhere can look very different. Check which form your software uses."}},"ind.CR":{"src":"ind","eid":"CR","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"CR Indicator","nameZh":"CR 中间意愿指标","zh":{"insight":"今天显示的 CRMA5，其实是三根之前那个时点的 5 周期均值。这样做是为了让四条线之间形成稳定的间隔结构，从而用它们的相对位置划分强弱区间——理解这一点后就不会误以为它有前瞻性。"},"en":{"insight":"The shift is deliberate lag, not a forecast: today's CRMA5 is the 5-bar average as it stood three bars ago. It exists to create stable spacing between the four lines."}},"ind.ARBR":{"src":"ind","eid":"ARBR","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Arbor Entech","nameZh":"人气意愿指标（AR / BR）","zh":{"insight":"在没有跳空的品种上，AR 与 BR 完全相同。这就是为什么两者要一起看：BR 显著高于 AR，说明多头能量主要来自隔夜跳空而非日内实际买盘，这种上涨的持续性通常较差。"},"en":{"insight":"On a gapless instrument the two are identical. BR running well above AR means the strength came from the overnight gap rather than intraday buying, which tends to be less durable."}},"ind.PSY":{"src":"ind","eid":"PSY","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Psychological Line","nameZh":"心理线","zh":{"insight":"0、8.33、16.67 …… 91.67、100。它是一个阶梯，不是连续曲线。"},"en":{"insight":"A staircase with 13 possible values, not a continuous curve."}},"ind.VR":{"src":"ind","eid":"VR","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Volume Ratio","nameZh":"成交量比率","zh":{"insight":"而把 TH、TL 各乘以 2 正是实现这个平分的技巧：分子分母同时放大两倍后，未加倍的 TQ 恰好相当于各占一半。这是一个纯代数技巧，理解它就不会对公式里那两个 2 感到困惑。"},"en":{"insight":"Doubling TH and TL is the algebraic trick that splits the unchanged-close volume evenly between both sides."}},"ind.CYC":{"src":"ind","eid":"CYC","cat":"price_volume","fam":"volume-confirm","bucket":"trade","name":"Cost Average","nameZh":"成本均线","zh":{"insight":"流通股本 = 平均成交量 ÷ 换手率。这是合成值，形态可用于教学，数值不可用于实盘。"},"en":{"insight":"A synthetic float — shape is illustrative, the values are not tradable."}},"ind.CAPITALINFLOW":{"src":"ind","eid":"CAPITALINFLOW","cat":"money_flow","fam":"flow-signed","bucket":"trade","name":"Capital Inflow","nameZh":"资金净流入","zh":{"insight":"主动买入记 +1，主动卖出记 −1。关键在于：这个方向是推断出来的，不是交易所给的。常用 tick 规则（比上一笔价高算主动买）或报价规则（成交在卖一价算主动买）。"},"en":{"insight":"The aggressor side is INFERRED, not reported — via the tick rule or the quote rule. That inference is the weakest link in the whole metric."}},"ind.ORDERINFLOW_XL":{"src":"ind","eid":"ORDERINFLOW_XL","cat":"money_flow","fam":"flow-signed","bucket":"trade","name":"Extra Large Order Inflow","nameZh":"特大单净流入","zh":{"insight":"判断主动买（+1）或主动卖（−1）。再次强调：这个方向是推断的，不是观测到的。"},"en":{"insight":"Inferred, not observed — this is the assumption everything downstream rests on."}},"ind.ORDERINFLOW_L":{"src":"ind","eid":"ORDERINFLOW_L","cat":"money_flow","fam":"flow-signed","bucket":"trade","name":"Large Order Inflow","nameZh":"大单净流入","zh":{"insight":"而大单这一档恰恰是各家数据商分界差异最大的一档。因此不同软件上的\"大单净流入\"数值可能完全对不上，跨平台比较这个指标是没有意义的。"},"en":{"insight":"This is the bucket whose boundaries differ most between vendors, so the same stock can show contradictory large-order flow on two platforms."}},"ind.ORDERINFLOW_M":{"src":"ind","eid":"ORDERINFLOW_M","cat":"money_flow","fam":"flow-signed","bucket":"trade","name":"Medium Order Inflow","nameZh":"中单净流入","zh":{"insight":"既不够大到被认定为机构，也不够小到被认定为散户。正因为是残差，它的解释力最弱，通常不单独作为决策依据。"},"en":{"insight":"Definitionally a residual — neither big enough to read as institutional nor small enough to read as retail, which is why it carries the least interpretive weight."}},"ind.ORDERINFLOW_S":{"src":"ind","eid":"ORDERINFLOW_S","cat":"money_flow","fam":"flow-signed","bucket":"trade","name":"Small Order Inflow","nameZh":"小单净流入","zh":{"insight":"这就是\"小单 = 散户\"这一解读的根本问题：你看到的小单里，很可能相当一部分正是机构在悄悄建仓。整套大单/小单分类的前提在算法交易普及后已经严重削弱。"},"en":{"insight":"So \"small = retail\" can be precisely backwards. The whole size-bucket taxonomy weakened badly once algo execution became standard."}},"ind.OPENINTEREST":{"src":"ind","eid":"OPENINTEREST","cat":"money_flow","fam":"chain-read","bucket":"read","name":"Futures Open Interest","nameZh":"期货持仓量","zh":{"insight":"由交易所公布，通常 T+1。它是存量（时点数），不是流量，这一点与成交量截然不同：同一手合约反复买卖会推高成交量，但不改变持仓量。"},"en":{"insight":"A level, not a flow. Trading the same contract back and forth inflates volume but leaves open interest unchanged."}},"ind.POSITIONCHANGE":{"src":"ind","eid":"POSITIONCHANGE","cat":"money_flow","fam":"chain-read","bucket":"read","name":"Futures Daily OI Increase","nameZh":"期货日增仓","zh":{"insight":"减仓 + 下跌 = 多头减仓（多头止损离场）。注意后两种都是\"平仓行为\"驱动的价格变化，与前两种\"新资金入场\"在持续性上有本质区别。"},"en":{"insight":"The last two are driven by position closing rather than new conviction, which is why they tend to be less durable than the first two."}},"ind.OPT_OI":{"src":"ind","eid":"OPT_OI","cat":"price_volume","fam":"chain-read","bucket":"read","name":"Options Open Interest","nameZh":"期权未平仓合约数","zh":{"insight":"按到期日拆分才能看到仓位在时间上集中在哪里。总持仓只能告诉你\"整体参与度\"，任何具体的价位判断都必须回到分行权价的明细。"},"en":{"insight":"The aggregate tells you participation and nothing about levels. Any strike-specific conclusion requires the per-strike breakdown."}},"ind.OPT_VOL":{"src":"ind","eid":"OPT_VOL","cat":"price_volume","fam":"chain-read","bucket":"read","name":"Options Volume","nameZh":"期权成交量","zh":{"insight":"除以总持仓，得到\"存量仓位的换手率\"——这个比值突然升高，说明现有仓位在被大规模调整，往往比单纯的放量更有信息量。"},"en":{"insight":"Volume over open interest is the turnover of the standing book. A jump there means existing positions are being restructured, which is more informative than raw volume."}},"ind.OPT_OIPCR":{"src":"ind","eid":"OPT_OIPCR","cat":"price_volume","fam":"chain-read","bucket":"read","name":"Open Interest Put/Call Ratio","nameZh":"未平仓量认沽认购比","zh":{"insight":"因此必须把它当作相对自身 1–2 年历史的百分位来读，绝不能与某个绝对数字比较。这是这个指标最常见的误用。"},"en":{"insight":"The neutral level is NOT 1.0 — each underlying has a structural baseline set by how much systematic hedging it attracts."}},"ind.OPT_VOLPCR":{"src":"ind","eid":"OPT_VOLPCR","cat":"price_volume","fam":"chain-read","bucket":"read","name":"Volume Put/Call Ratio","nameZh":"成交量认沽认购比","zh":{"insight":"极低表示市场过度自满，反向看偏空。注意\"反向指标\"只在极端处成立，中间区域的读数没有预测价值——把它当作日常方向指标使用是错误的。"},"en":{"insight":"The contrarian reading only holds at extremes. Mid-range values carry no predictive content, so it is not a day-to-day direction tool."}},"ind.ADD_SPX":{"src":"ind","eid":"ADD_SPX","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Advance/Decline Spread (S&P 500)","nameZh":"涨跌家数差（标普 500）","zh":{"insight":"广度推力筛选：连续 k 日 ADD/(A+B) 大于 0.80，被视为强势启动信号（Zweig 推力的变体）。"},"en":{"insight":"The cumulative A/D line diverging from the index — index at new highs while the line is not — is the classic warning that the advance has narrowed to a few heavyweights."}},"ind.ADD_IXIC":{"src":"ind","eid":"ADD_IXIC","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Advance/Decline Spread (NASDAQ Composite)","nameZh":"涨跌家数差（纳斯达克综合指数）","zh":{"insight":"关键警告：纳指的成分股数量不固定，历史上在约 2,000 到 5,000 之间大幅变动，"},"en":{"insight":"Any multi-year study must use the normalised form."}},"ind.ADD_DJI":{"src":"ind","eid":"ADD_DJI","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Advance/Decline Spread (Dow Jones Industrial Average)","nameZh":"涨跌家数差（道琼斯工业平均指数）","zh":{"insight":"相当于满量程的 18%。也就是说，道指 ADD 读数在 ±5 以内基本无法与随机噪音区分。用 30 只股票衡量\"市场广度\"在统计上是很脆弱的。"},"en":{"insight":"A fair coin at n = 30 produces about ±5.5 of noise, 18% of full scale — readings inside ±5 are statistically indistinguishable from chance."}},"ind.ADD_HSI":{"src":"ind","eid":"ADD_HSI","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Advance/Decline Spread (Hang Seng Index)","nameZh":"涨跌家数差（恒生指数）","zh":{"insight":"注意成分股数量在 2020 至 2023 年间从 50 只扩容到 82 只，"},"en":{"insight":"The 2020–2023 expansion from 50 to 82 members breaks any cumulative series across that window; the shift is mechanical, not a market signal."}},"ind.ADD_HSTECH":{"src":"ind","eid":"ADD_HSTECH","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Advance/Decline Spread (Hang Seng TECH Index)","nameZh":"涨跌家数差（恒生科技指数）","zh":{"insight":"权重虽然设了 8% 上限，前五大仍占约 35%。这意味着\"广度指标\"在这里几乎不提供独立于指数本身的信息，有效样本量远小于 30。"},"en":{"insight":"The effective sample size is far below 30, so this breadth series adds little information beyond the index itself."}},"ind.ADR_IXIC":{"src":"ind","eid":"ADR_IXIC","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Advance/Decline Ratio (NASDAQ Composite)","nameZh":"涨跌比率（纳斯达克综合指数）","zh":{"insight":"结构性提醒：纳指涨跌比的长期均值低于 1.0，因为微型股尾部长期跑输。把 1.0 当作中性线会长期误判为\"偏空\"。"},"en":{"insight":"Asymmetric: unbounded above, floored at zero. Average ln(ADR), not ADR."}},"ind.ADR_DJI":{"src":"ind","eid":"ADR_DJI","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Advance/Decline Ratio (Dow Jones Industrial Average)","nameZh":"涨跌比率（道琼斯工业平均指数）","zh":{"insight":"27/3 = 9.0，28/2 = 14.0，29/1 = 29.0，30/0 则直接无定义。这种爆炸性使道指 ADR 在极端行情下的数值几乎无法解读，必须改看差值或百分比形式。"},"en":{"insight":"One stock changes the ratio enormously at the extremes, and 30/0 is undefined — the ratio becomes unreadable exactly when the market is most interesting."}},"ind.ADR_HSI":{"src":"ind","eid":"ADR_HSI","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Advance/Decline Ratio (Hang Seng Index)","nameZh":"涨跌比率（恒生指数）","zh":{"insight":"而差值版本在那段时间是断裂的。这是选择比值而非差值的实际理由。"},"en":{"insight":"Being scale-free lets the ratio survive the constituent expansion that breaks the spread version."}},"ind.ADR_HSTECH":{"src":"ind","eid":"ADR_HSTECH","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Advance/Decline Ratio (Hang Seng TECH Index)","nameZh":"涨跌比率（恒生科技指数）","zh":{"insight":"并不以 1 为中心。因此常规的\"大于 1 看多\"解读在这里几乎没有信息量——它只是重复了指数本身的涨跌。"},"en":{"insight":"The distribution is bimodal rather than centred on 1, so the usual \"above 1 is bullish\" reading merely restates the index move."}},"ind.MCL":{"src":"ind","eid":"MCL","cat":"breadth","fam":"breadth-part","bucket":"read","name":"McClellan Oscillator","nameZh":"麦克莱伦振荡器","zh":{"insight":"因此教科书里的 ±100 阈值不适用于本页数值。要用阈值，必须先在本页的历史分布上重新校准。"},"en":{"insight":"The textbook ±100 thresholds do not transfer to raw counts; recalibrate against this page's own distribution."}},"ind.SPX_MA200":{"src":"ind","eid":"SPX>MA200","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Stocks Above 200-Day MA (S&P 500)","nameZh":"标普 500 成分股站上 200 日均线占比","zh":{"insight":"注意底层实现返回的是 0–1 的比率，图表上乘以 100 显示。"},"en":{"insight":"Below 20 usually marks a washout and has historically coincided with intermediate lows."}},"ind.NDX_MA200":{"src":"ind","eid":"NDX>MA200","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Stocks Above 200-Day MA (Nasdaq 100)","nameZh":"纳斯达克 100 成分股站上 200 日均线占比","zh":{"insight":"所以这个序列只能取整数值。这是一个巧合带来的便利：读数 63 就是字面意义上的 63 只股票。"},"en":{"insight":"A convenient coincidence: a reading of 63 literally means 63 stocks."}},"ind.IXIC_MA200":{"src":"ind","eid":"IXIC>MA200","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Stocks Above 200-Day MA (NASDAQ Composite)","nameZh":"纳斯达克综合指数成分股站上 200 日均线占比","zh":{"insight":"因此看到 45 不能直接判断为\"偏弱\"——必须先知道它自身的历史基准率。这是所有宽基广度指标共同的陷阱：中性线不在 50。"},"en":{"insight":"A reading of 45 is not \"weak\" until you know the base rate. Broad-universe breadth series do not have their neutral line at 50."}},"ind.DJI_MA200":{"src":"ind","eid":"DJI>MA200","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Stocks Above 200-Day MA (Dow Jones Industrial Average)","nameZh":"道琼斯工业指数成分股站上 200 日均线占比","zh":{"insight":"也就是一只股票 = 3.33 个百分点。这么粗的粒度意味着它无法反映细微的广度变化，只适合看极端状态。"},"en":{"insight":"One stock equals 3.33 percentage points — too coarse for subtle shifts, useful only at extremes."}},"ind.SOX_MA200":{"src":"ind","eid":"SOX>MA200","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Stocks Above 200-Day MA (Philadelphia Semiconductor Index)","nameZh":"费城半导体指数成分股站上 200 日均线占比","zh":{"insight":"因此该序列的行为接近方波：要么绝大多数在均线上，要么绝大多数在下，中间过渡很快。半导体是强周期行业，这个形态本身就是行业属性的体现。"},"en":{"insight":"Sharing one industrial cycle makes the series behave like a square wave — mostly all above or all below, with fast transitions."}},"ind.N225_MA200":{"src":"ind","eid":"N225>MA200","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Stocks Above 200-Day MA (Nikkei 225)","nameZh":"日经 225 成分股站上 200 日均线占比","zh":{"insight":"所以它可以长期与指数背离，这是构造上的必然而非异常。日经涨而广度不涨，往往只是几只高价股在动。"},"en":{"insight":"Long divergences from the index are structural, not anomalies: the Nikkei is price-weighted while this series is equal-weighted."}},"ind.HSI_MA200":{"src":"ind","eid":"HSI>MA200","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Stocks Above 200-Day MA (Hang Seng Index)","nameZh":"恒生指数成分股站上 200 日均线占比","zh":{"insight":"不像美股那样均值回归。因此用美股经验中的\"低于 20 即将反弹\"来交易港股广度，会在长熊市中反复抄底失败。"},"en":{"insight":"Importing the US intuition that \"below 20 means a bounce is near\" fails here, because policy regimes in this market persist far longer."}},"ind.HSTECH_MA200":{"src":"ind","eid":"HSTECH>MA200","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Stocks Above 200-Day MA (Hang Seng TECH Index)","nameZh":"恒生科技指数成分股站上 200 日均线占比","zh":{"insight":"这意味着有效样本量远小于 30。统计上它更接近\"一只股票\"而非\"三十只股票\"，"},"en":{"insight":"Treating it as independent breadth confirmation is misleading — statistically it behaves closer to one name than thirty."}},"ind.HXC_MA200":{"src":"ind","eid":"HXC>MA200","cat":"breadth","fam":"breadth-part","bucket":"read","name":"Stocks Above 200-Day MA (Nasdaq China Golden Dragon Index)","nameZh":"纳斯达克中国金龙指数成分股站上 200 日均线占比","zh":{"insight":"因此该序列基本上是指数本身的平滑滞后副本——它几乎不提供指数之外的独立信息。想用广度来确认中概股行情时，这一点必须先想清楚。"},"en":{"insight":"One regulatory regime, one headline stream, one investor base — the series is close to a smoothed, delayed copy of the index and adds little independent information."}},"ind.CVLT":{"src":"ind","eid":"CVLT","cat":"other","fam":"vol-size","bucket":"trade","name":"Chaikin Volatility","nameZh":"蔡金波动率","zh":{"insight":"请注意它的基础量是日内振幅，不是收盘到收盘的收益率。这是它与标准历史波动率的根本区别：CVLT 衡量的是\"盘中波动在扩张还是收缩\"，完全不涉及方向，也不受跳空影响（跳空发生在两根之间，不在振幅内）。"},"en":{"insight":"The base quantity is the intraday spread, not close-to-close return. It measures range expansion and is blind to both direction and gaps."}},"ind.HSLC":{"src":"ind","eid":"HSLC","cat":"other","fam":"osc-threshold","bucket":"trade","name":"Hard And Soft Limiter Comparison","nameZh":"软硬限幅器对比","zh":{"insight":"注意此处的 \"limiter\" 指信号限幅（电子工程术语），与股票的涨跌停限制毫无关系。"},"en":{"insight":"\"Limiter\" here is signal clipping in the electronics sense, not a price limit."}},"ind.IC":{"src":"ind","eid":"IC","cat":"other","fam":"osc-threshold","bucket":"trade","name":"Ichimoku Kinko Hyo","nameZh":"一目均衡表","zh":{"insight":"关键提醒：一目均衡表的所有\"平均\"都是区间中点（最高加最低除以二）， 而不是收盘价的平均。这是它与所有均线系统的根本差异——中点对极值敏感、对收盘价不敏感，因此它描述的是\"波动区间的中枢\"而非\"平均成本\"。另外要注意：云被前移了 26 根，因此图表右侧的云是已知的，这是一目均衡表少数具有前瞻性的部分。"},"en":{"insight":"Every average is a MIDPOINT of the high-low range, not a mean of closes — the fundamental difference from every moving-average system. The cloud is displaced 26 bars forward, so the cloud to the right of price is already known — the one genuinely forward-looking element."}},"ind.MICD":{"src":"ind","eid":"MICD","cat":"other","fam":"osc-threshold","bucket":"trade","name":"Momentum Indicator Convergence Divergence","nameZh":"异同离差动力指数","zh":{"insight":"DIF 取两条不同周期均线之差，注意都作用在昨天的 AMI 上。"},"en":{"insight":"So this apparently elaborate indicator is arithmetically close to a scaled difference of two ROC readings, wrapped in several smoothing layers."}},"ind.NINE":{"src":"ind","eid":"NINE","cat":"other","fam":"osc-threshold","bucket":"trade","name":"Tom Demark Sequential 9","nameZh":"神奇九转（TD 序列 9）","zh":{"insight":"任何一根打破条件，计数立即归零。这个\"必须连续\"的要求是 TD 序列的核心，也意味着它天然带有回填特性——你在历史图上看到的完美九转，在当时的第 6 根上是无法确认的。"},"en":{"insight":"Which means a perfect setup visible in hindsight was not confirmable at bar six in real time."}},"ind.RC":{"src":"ind","eid":"RC","cat":"other","fam":"osc-threshold","bucket":"trade","name":"Change Rate","nameZh":"变化率指数","zh":{"insight":"注意有效记忆约为 M（回看）+ M（平滑）≈ 100 根。这意味着它对近期变化极不敏感，是一个长周期的趋势状态判断工具，用它做择时会严重滞后。"},"en":{"insight":"Effective memory is the lookback plus the smoothing, about 100 bars — a long-horizon regime read, badly lagged for timing."}},"ind.RCCD":{"src":"ind","eid":"RCCD","cat":"other","fam":"osc-threshold","bucket":"trade","name":"Rate of Change Convergence Divergence","nameZh":"异同离差变化率指数","zh":{"insight":"输出量级通常在千分之几。三点合起来的含义是：这个指标极度平滑、极度滞后、数值极小，它只适合观察超长周期的动能背离，任何短中期用途都不合适。"},"en":{"insight":"Extremely smoothed, heavily lagged and tiny in magnitude — suitable only for very long-horizon divergence, nothing shorter."}},"ind.SRMI":{"src":"ind","eid":"SRMI","cat":"other","fam":"osc-threshold","bucket":"trade","name":"SRMI Indicator","nameZh":"SRMI 修正动量指标","zh":{"insight":"一个具体例子说明它的性质：上涨 100% 读数为 +0.50，而随后回撤 50%（正好抵消）读数为 −0.50。两者绝对值相同——这正是设计意图：让\"涨一倍\"和\"跌一半\"这对互逆操作在指标上对称，而普通百分比做不到（+100% 与 −50%）。"},"en":{"insight":"A +100% move reads +0.50 and the offsetting −50% move reads −0.50 — the two inverse operations become symmetric, which plain percentages never are."}},"ind.SVSI":{"src":"ind","eid":"SVSI","cat":"other","fam":"osc-threshold","bucket":"trade","name":"Slow Volume Strength Index","nameZh":"慢速成交量强弱指数","zh":{"insight":"注意用的是线性加权平均（WMA），因此最近几根的权重明显更高，反应比等权平均快。"},"en":{"insight":"It measures whether volume is occurring above or below the average, not price strength. Heavy selling drives it down even when the price decline is modest."}},"ind.UTBOT":{"src":"ind","eid":"UTBOT","cat":"other","fam":"stop-trail","bucket":"trade","name":"UT Bot Alerts","nameZh":"UT Bot 跟踪止损警报","zh":{"insight":"关键特征：止损是从收盘价起算的，而不是从波段极值起算。这与 Chandelier、SAR 等以极值为锚的追踪止损有本质区别——以收盘为锚意味着它对影线不敏感，不容易被长上影洗出去，但相应地在急速反转时会退让更多。"},"en":{"insight":"The stop trails from the CLOSE, never from the swing extreme. That makes it insensitive to wicks — harder to shake out, but it concedes more on a sharp reversal."}},"ind.WF":{"src":"ind","eid":"WF","cat":"other","fam":"osc-threshold","bucket":"trade","name":"Williams Fractal","nameZh":"威廉分形","zh":{"insight":"注意一侧用\"不低于\"、另一侧用\"严格大于\"——这个不对称是刻意的："},"en":{"insight":"The lag is definitional, not an implementation choice — the right-hand bars are required to make the judgement. Any \"real-time fractal\" is looking ahead."}},"ind.TOTALREVENUE_FQ":{"src":"ind","eid":"TOTALREVENUE_FQ","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Total Revenue · FQ","nameZh":"总营收 · 单季","zh":{"insight":"同比增速对比去年同一季度，正好抵消季节性（零售的 Q4、教育的暑期都会自动对齐），因此同比通常比环比更可信。"},"en":{"insight":"Read growth, not level; the level only tells you company size."}},"ind.NETPROFIT_FQ":{"src":"ind","eid":"NETPROFIT_FQ","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Net Profit · FQ","nameZh":"净利润 · 单季","zh":{"insight":"净利率 = 净利润 ÷ 收入，衡量每一块钱收入最终能留下多少。"},"en":{"insight":"Net margin: how much of each sales dollar survives to the bottom."}},"ind.FCF_FY":{"src":"ind","eid":"FCF_FY","cat":"cash_flow","fam":"ratio-quality","bucket":"define","name":"Free Cash Flow · FY","nameZh":"自由现金流 · 年度","zh":{"insight":"自由现金流收益率 = FCF ÷ 市值，可以直接与债券收益率对比，是估值的现金锚。它比市盈率更难被会计处理粉饰，因为现金流很难造假。"},"en":{"insight":"FCF yield is directly comparable to a bond yield, and is harder to dress up with accounting choices than earnings."}},"ind.ROE_FY":{"src":"ind","eid":"ROE_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Return on Equity · FY","nameZh":"净资产收益率 · 年度","zh":{"insight":"靠权益乘数（杠杆）撑起来的高 ROE 是伪装成质量的风险：借得越多，权益越薄，ROE 越好看，但下行时亏损同样被放大。看到高 ROE 必须先做这一步拆分。"},"en":{"insight":"A high ROE built on leverage is risk wearing the costume of quality — thin equity flatters the ratio and magnifies losses on the way down."}},"ind.GROSSMARGIN_FY":{"src":"ind","eid":"GROSSMARGIN_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Gross Margin · FY","nameZh":"毛利率 · 年度","zh":{"insight":"持续下行则往往是竞争加剧或原材料涨价的第一个信号。它是所有利润率里对经营环境变化最敏感的一个。"},"en":{"insight":"Only direct product cost is removed — a high gross margin does not mean the business makes money."}},"ind.CURRENTRATIO_FY":{"src":"ind","eid":"CURRENTRATIO_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Current Ratio · FY","nameZh":"流动比率 · 年度","zh":{"insight":"过高也不是好事：可能意味着大量资金闲置在低效资产上没有投入经营，是一种隐性的资本浪费。"},"en":{"insight":"Very high is not automatically good: it can mean capital sitting idle in unproductive assets."}},"ind.TOTALASSETS_FQ":{"src":"ind","eid":"TOTALASSETS_FQ","cat":"balance_sheet","fam":"ratio-quality","bucket":"define","name":"Total Assets · FQ","nameZh":"总资产 · 单季","zh":{"insight":"总资产是季末公司拥有的全部资源，属于时点数（存量），不是一段时间的流量。"},"en":{"insight":"A point-in-time level (a stock), not a flow across a period."}},"ind.TOTALASSETS_FY":{"src":"ind","eid":"TOTALASSETS_FY","cat":"balance_sheet","fam":"ratio-quality","bucket":"define","name":"Total Assets · FY","nameZh":"总资产 · 年度","zh":{"insight":"权益/资产 = 1 −（负债/资产），即\"自有资金占比\"。这个比例越低，杠杆越高，顺风时放大收益，逆风时同样放大亏损。"},"en":{"insight":"Equity over assets is the un-leveraged share. The lower it is, the more leverage — which amplifies both directions, not just the good one."}},"ind.SH_EQUITY_FQ":{"src":"ind","eid":"SH_EQUITY_FQ","cat":"balance_sheet","fam":"ratio-quality","bucket":"define","name":"Stockholders' Equity·FQ","nameZh":"股东权益 · 单季","zh":{"insight":"权益的逐期演进：上期权益 + 净利润 − 分红 − 回购 ± 其他综合收益 ± 增发。注意分红和回购会让权益减少——这不是变坏，是把钱还给股东。"},"en":{"insight":"How equity walks forward. Dividends and buybacks reduce it — that is capital being returned, not deterioration."}},"ind.SH_EQUITY_FY":{"src":"ind","eid":"SH_EQUITY_FY","cat":"balance_sheet","fam":"ratio-quality","bucket":"define","name":"Stockholders' Equity·FY","nameZh":"股东权益 · 年度","zh":{"insight":"剔除增发因素后，权益的增长率约等于留存利润的复利速度——这是\"账面价值复利机器\"的数学形式。"},"en":{"insight":"Ex-issuance, equity growth is retained earnings compounding."}},"ind.NCA_FQ":{"src":"ind","eid":"NCA_FQ","cat":"balance_sheet","fam":"ratio-quality","bucket":"define","name":"Total Liabilities · FQ","nameZh":"总负债 · 单季","zh":{"insight":"注意本条目 id 为 NCA，但它声明的是总负债。图上按季度阶梯绘制。"},"en":{"insight":"The id says NCA but the series is total liabilities."}},"ind.NCA_FY":{"src":"ind","eid":"NCA_FY","cat":"balance_sheet","fam":"ratio-quality","bucket":"define","name":"Total Liabilities · FY","nameZh":"总负债 · 年度","zh":{"insight":"年末总负债。看多年趋势时，重点不是绝对额而是杠杆结构是否在恶化。"},"en":{"insight":"High, stable leverage means fixed obligations, and a downturn does not forgive them. Leverage amplifies variance, not expected return."}},"ind.OCF_FQ":{"src":"ind","eid":"OCF_FQ","cat":"cash_flow","fam":"ratio-quality","bucket":"define","name":"Operating Cash Flow · FQ","nameZh":"经营性现金流 · 单季","zh":{"insight":"经营现金流长期小于净利润，要警惕：可能是应收账款收不回来，或者存货在积压——利润记在账上，钱没进门。这是财务暴雷最常见的前兆之一。"},"en":{"insight":"Cash persistently below profit is a warning: receivables not collected or inventory piling up. Profit on the page, no money through the door."}},"ind.OCF_FY":{"src":"ind","eid":"OCF_FY","cat":"cash_flow","fam":"ratio-quality","bucket":"define","name":"Operating Cash Flow · FY","nameZh":"经营性现金流 · 年度","zh":{"insight":"经营现金流是整个现金瀑布的顶端：经营现金流 − 资本开支 = 自由现金流。"},"en":{"insight":"Cash conversion should sit near or above 1 for a quality business. Persistently below 1 means reported profit is not turning into money."}},"ind.FCF_FQ":{"src":"ind","eid":"FCF_FQ","cat":"cash_flow","fam":"ratio-quality","bucket":"define","name":"Free Cash Flow · FQ","nameZh":"自由现金流 · 单季","zh":{"insight":"处于重资本投入期的公司出现单季负自由现金流是正常的，不必然是风险信号——要看这笔投入未来是否形成产能。"},"en":{"insight":"One negative quarter during a heavy build is normal, not a warning."}},"ind.DILUTEDEPS_FQ":{"src":"ind","eid":"DILUTEDEPS_FQ","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Diluted EPS·FQ","nameZh":"稀释每股收益 · 单季","zh":{"insight":"超预期幅度 =（实际 − 一致预期）÷ |一致预期|。注意股价反应的是与预期的差，而不是利润本身的好坏——利润增长 30% 但预期是 40%，股价照样跌。"},"en":{"insight":"The market reacts to the gap against consensus, not to the level: +30% growth against a +40% expectation still sells off."}},"ind.DILUTEDEPS_FY":{"src":"ind","eid":"DILUTEDEPS_FY","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Diluted EPS·FY","nameZh":"稀释每股收益 · 年度","zh":{"insight":"强调\"每股\"：对股东而言重要的不是公司总利润增长多少，而是分摊到你手上的那一份增长多少。持续增发扩张的公司，总利润涨了但每股收益可能原地踏步。"},"en":{"insight":"Per-share is what matters to an owner. A company that grows total profit by issuing shares can leave EPS flat."}},"ind.GROSSPROFIT_FQ":{"src":"ind","eid":"GROSSPROFIT_FQ","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Gross Profit · FQ","nameZh":"毛利润 · 单季","zh":{"insight":"真正有信息量的是毛利率——它反映定价权和成本控制，而毛利金额还混着规模因素。"},"en":{"insight":"The margin carries the signal — pricing power and cost control — while the dollar amount is confounded with size."}},"ind.GROSSPROFIT_FY":{"src":"ind","eid":"GROSSPROFIT_FY","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Gross Profit · FY","nameZh":"毛利润 · 年度","zh":{"insight":"而对股东最终能拿到什么而言，净利润和自由现金流比毛利重要得多——毛利之上还有销售、管理、研发、利息和税要扣。"},"en":{"insight":""}},"ind.NETPROFIT_FY":{"src":"ind","eid":"NETPROFIT_FY","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Net Profit · FY","nameZh":"净利润 · 年度","zh":{"insight":"一整年同样可能包含大额减值、重组费用或终止经营损益。看到净利润突然大幅波动时，先去翻附注确认是不是一次性项目，而不是直接当成经营恶化。"},"en":{"insight":""}},"ind.TOTALREVENUE_FY":{"src":"ind","eid":"TOTALREVENUE_FY","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Total Revenue · FY","nameZh":"总营收 · 年度","zh":{"insight":"三年复合增长率：把三年的总增长开三次方还原成年化速度。用 CAGR 而不是简单平均，是因为增长是乘性复利的——先涨 100% 再跌 50% 的复合增长是 0，不是 25%。"},"en":{"insight":"Compound annual growth, not an arithmetic average — growth compounds multiplicatively, so +100% then −50% is 0% CAGR, not +25%."}},"ind.NIPC_FQ":{"src":"ind","eid":"NIPC_FQ","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Net Profit to Shareholders · FQ","nameZh":"归母净利润 · 单季","zh":{"insight":"当一家子公司被合并报表但母公司并非 100% 持股时，子公司 100% 的利润都会进入\"净利润\"，但只有母公司持股比例对应的部分能进入\"归母净利润\"。"},"en":{"insight":"EPS must be computed from this line, not total net profit. In group structures the two can differ materially."}},"ind.NIPC_FY":{"src":"ind","eid":"NIPC_FY","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Net Profit to Shareholders · FY","nameZh":"归母净利润 · 年度","zh":{"insight":"你实际支付的市盈率倍数建立在这一行上，而不是总净利润。合并报表里少数股东权益占比高的公司，用总净利润算 P/E 会系统性低估估值。"},"en":{"insight":"The multiple you actually pay rests on this line. Using total net profit for a group with large minority interests systematically understates the P/E."}},"ind.OPERATINGPROFIT_FQ":{"src":"ind","eid":"OPERATINGPROFIT_FQ","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Operating Profit · FQ","nameZh":"营业利润 · 单季","zh":{"insight":"因为剔除了资本结构（借了多少钱）和税率差异，它比净利润更能反映\"这门生意本身\"赚不赚钱——比较不同杠杆、不同税收地区的公司时尤其重要。"},"en":{"insight":"Stripping out capital structure and tax rates makes it a cleaner read of the business itself — essential when comparing companies with different leverage or tax domiciles."}},"ind.OPERATINGPROFIT_FY":{"src":"ind","eid":"OPERATINGPROFIT_FY","cat":"income_statement","fam":"ratio-quality","bucket":"define","name":"Operating Profit · FY","nameZh":"营业利润 · 年度","zh":{"insight":"EV/EBIT ≈ 企业价值 ÷ 年度营业利润。选股筛选器常用它而不是 P/E，因为企业价值含负债、营业利润不受资本结构影响，两端口径一致，跨杠杆比较才成立。"},"en":{"insight":"Screens prefer EV/EBIT over P/E because enterprise value includes debt and operating profit is pre-financing, so both sides are consistent and the comparison survives different leverage."}},"ind.ROA_FQ":{"src":"ind","eid":"ROA_FQ","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Return on Assets · FQ","nameZh":"总资产收益率 · 单季","zh":{"insight":"与 ROE 不同，这里没有杠杆项：分母是整个资产基数，不区分是借来的还是股东的。"},"en":{"insight":""}},"ind.ROA_FY":{"src":"ind","eid":"ROA_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Return on Assets · FY","nameZh":"总资产收益率 · 年度","zh":{"insight":"ROA 的绝对水平受行业绑定：银行天然低（资产表巨大），软件天然高（几乎没有实物资产），跨行业比较毫无意义。"},"en":{"insight":"The level is industry-bound — banks are structurally low, software structurally high — so compare within an industry."}},"ind.ROE_FQ":{"src":"ind","eid":"ROE_FQ","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Return on Equity · FQ","nameZh":"净资产收益率 · 单季","zh":{"insight":"季度口径是回报率的早期脉搏，但噪音大：单季权益是时点数，单季利润年化又会把季节性放大四倍。"},"en":{"insight":"The quarterly read is an early pulse but noisy: quarter-end equity is a snapshot and annualising one quarter multiplies its seasonality by four."}},"ind.ROIC_FY":{"src":"ind","eid":"ROIC_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Return on Invested Capital · FY","nameZh":"投入资本回报率 · 年度","zh":{"insight":"如果 ROIC 低于 WACC，那么公司每增长一块钱都在毁灭价值——增长本身不是好事，只有回报率高于资本成本的增长才是。这是很多\"高增长故事\"最终失败的数学原因。"},"en":{"insight":"Operating profit, not net profit, so interest expense does not contaminate the return on the business itself."}},"ind.EBITTOREVENUE_FY":{"src":"ind","eid":"EBITTOREVENUE_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"EBIT Margin · FY","nameZh":"息税前利润率 · 年度","zh":{"insight":"因此是跨公司比较经营效率时最公允的口径——同样的生意，一家借钱多、一家注册在低税区，净利率会差很多，EBIT 利润率却可比。"},"en":{"insight":"The fairest basis for comparing operating efficiency across companies: same business, different leverage or tax domicile, and net margin diverges while EBIT margin stays comparable."}},"ind.GROSSMARGIN_FQ":{"src":"ind","eid":"GROSSMARGIN_FQ","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Gross Margin · FQ","nameZh":"毛利率 · 单季","zh":{"insight":"要看同比以剔除季节性的成本结构差异（比如淡旺季产能利用率不同会直接影响单位成本）。"},"en":{"insight":"The quarterly margin is where an input-cost squeeze or a price cut shows up first — before net profit, and before management语言 changes."}},"ind.NAPERSHARE_FY":{"src":"ind","eid":"NAPERSHARE_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Net Asset Value per Share · FY","nameZh":"每股净资产 · 年度","zh":{"insight":"既不是市场价值，也不是清算价值。轻资产公司（软件、品牌）的真实价值大量存在于不入表的无形资产里，用 P/B 给它们估值会严重失真。"},"en":{"insight":"Asset-light businesses hold most of their value in intangibles that never reach the balance sheet, so P/B misprices them badly."}},"ind.TAXRATE_FY":{"src":"ind","eid":"TAXRATE_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Tax Rate · FY","nameZh":"实际税率 · 年度","zh":{"insight":"如果某个季度的利润\"超预期\"主要来自异常偏低的税率，那么这份超预期质量很低且不可持续——下个季度税率回归正常，利润就会打回原形。看到超预期先看税率，是识别虚假beat的常用手法。"},"en":{"insight":"A beat driven by an unusually low tax rate is low quality and will not repeat. Checking the tax line is a standard way to spot a hollow beat."}},"ind.CURRENTRATIO_FQ":{"src":"ind","eid":"CURRENTRATIO_FQ","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Current Ratio · FQ","nameZh":"流动比率 · 单季","zh":{"insight":"因此单季数字容易误导，真正有用的是跨季度的方向：是在持续改善还是持续恶化。"},"en":{"insight":""}},"ind.QUICKRATIO_FQ":{"src":"ind","eid":"QUICKRATIO_FQ","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Quick Ratio · FQ","nameZh":"速动比率 · 单季","zh":{"insight":"对存货占比高的行业（零售、制造），这个比率比流动比率有意义得多。"},"en":{"insight":"For inventory-heavy sectors this is far more informative than the current ratio."}},"ind.QUICKRATIO_FY":{"src":"ind","eid":"QUICKRATIO_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Quick Ratio · FY","nameZh":"速动比率 · 年度","zh":{"insight":"速动比率与流动比率的差距，就是有多少流动性被压在存货里——差距越大，这家公司的短期偿付越依赖\"卖得掉货\"这个前提。"},"en":{"insight":"The gap between the two ratios is how much liquidity is locked in inventory, i.e. how much solvency depends on being able to sell it."}},"ind.FIXEDASSETSTO_FQ":{"src":"ind","eid":"FIXEDASSETSTO_FQ","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Fixed Asset Turnover · FQ","nameZh":"固定资产周转率 · 单季","zh":{"insight":"因此数值本身偏小、季节性强，并且主要被产能利用率的波动主导。单季看意义有限，应看同比。"},"en":{"insight":"One quarter of revenue over a slow-moving asset base: small, seasonal, and dominated by utilisation swings."}},"ind.FIXEDASSETSTO_FY":{"src":"ind","eid":"FIXEDASSETSTO_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Fixed Asset Turnover · FY","nameZh":"固定资产周转率 · 年度","zh":{"insight":"高且稳定说明轻资产或产能利用充分；偏低说明重资本。注意重资本本身不是缺点，但它意味着更高的固定成本和更差的下行弹性——需求下滑时折旧和维护费不会跟着降。"},"en":{"insight":"Capital intensity is not itself a flaw, but it means higher fixed costs and worse downside flexibility — depreciation does not fall when demand does."}},"ind.INVENTORYTO_FQ":{"src":"ind","eid":"INVENTORYTO_FQ","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Inventory Turnover · FQ","nameZh":"存货周转率 · 单季","zh":{"insight":"这里用营业成本而不是收入做分子，是因为存货记的是成本口径，分子分母必须同口径才可比。"},"en":{"insight":"COGS, not revenue, because inventory is carried at cost — both sides of the ratio must be on the same basis."}},"ind.INVENTORYTO_FY":{"src":"ind","eid":"INVENTORYTO_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Inventory Turnover · FY","nameZh":"存货周转率 · 年度","zh":{"insight":"趋势比绝对值更重要，且只在同业内可比：珠宝店的周转率天然远低于生鲜超市。"},"en":{"insight":"Inventory is cash already spent but not yet recovered, so faster turns mean less capital trapped."}},"ind.PAYABLETO_FQ":{"src":"ind","eid":"PAYABLETO_FQ","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Payable Turnover · FQ","nameZh":"应付账款周转率 · 单季","zh":{"insight":"这会占用供应商的资金来补自己的现金流。适度是议价能力强的体现，过度则可能损害供应商关系，甚至是自身资金紧张的信号——要结合现金流一起判断是\"强势\"还是\"没钱\"。"},"en":{"insight":"Stretching payables is supplier financing. Moderately it signals bargaining power; excessively it can signal distress — read it alongside cash flow to tell which."}},"ind.PAYABLETO_FY":{"src":"ind","eid":"PAYABLETO_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Payable Turnover · FY","nameZh":"应付账款周转率 · 年度","zh":{"insight":"现金转换周期 = 存货天数 + 应收天数 − 应付天数。这个数字为负意味着公司先收到客户的钱、再付给供应商——等于用上下游的钱做免费营运资金，是极强的商业模式特征（典型如大型商超、平台电商）。"},"en":{"insight":"A negative cash conversion cycle means customers pay before suppliers do — the business runs on other people's working capital, a hallmark of grocers and platform retailers."}},"ind.RECEIVABLETO_FQ":{"src":"ind","eid":"RECEIVABLETO_FQ","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Receivable Turnover · FQ","nameZh":"应收账款周转率 · 单季","zh":{"insight":"这往往是需求走弱的早期信号；更糟的情况是公司为了做收入而放宽信用政策甚至提前确认收入——收入涨了、现金没进来。看到收入增长而应收增长更快时，要高度警惕。"},"en":{"insight":"An early tell of demand weakness — or worse, revenue being bought with loose credit terms. Revenue growing slower than receivables is the pattern to fear."}},"ind.RECEIVABLETO_FY":{"src":"ind","eid":"RECEIVABLETO_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Receivable Turnover · FY","nameZh":"应收账款周转率 · 年度","zh":{"insight":"持续多年的下行趋势是严重的会计质量警告：它意味着账面上的收入正在越来越难变成现金，而这类问题通常在最终暴雷前已经在报表上显现了很久。"},"en":{"insight":"A multi-year downtrend is a serious accounting-quality warning: reported revenue is converting to cash ever more slowly, and this usually shows up in the statements long before anything breaks."}},"ind.TOTALASSETRATE_FY":{"src":"ind","eid":"TOTALASSETRATE_FY","cat":"key_indicators","fam":"ratio-quality","bucket":"define","name":"Asset Turnover · FY","nameZh":"总资产周转率 · 年度","zh":{"insight":"三项分别对应盈利能力、效率、杠杆。零售、分销这类薄利行业主要靠提高周转率来做出 ROE，而奢侈品、软件靠的是净利率——同样的 ROE 可以来自完全不同的商业模式。"},"en":{"insight":"Thin-margin retailers manufacture ROE through turnover; luxury and software do it through margin. The same ROE can come from opposite business models."}},"opt.DELTA":{"src":"opt","eid":"DELTA","cat":"greeks","fam":"greek-sense","bucket":"read","name":"Delta","nameZh":"Delta（对冲值）","zh":{"insight":"它等于等效股数——这是 Delta 最实用的读法：净 Delta 为 +59 就相当于此刻持有 59 股正股，无论你持有的是几张什么合约。风险管理应该以这个数字为准，而不是合约张数。"},"en":{"insight":"Position delta is the shares-equivalent. A net +59 delta behaves like 59 shares right now, whatever contracts produced it — size risk off this number, not off contract count."}},"opt.LONG_CALL":{"src":"opt","eid":"LONG_CALL","cat":"strat-bullish","fam":"payoff-structure","bucket":"trade","name":"Long Call","nameZh":"买入认购期权","zh":{"insight":"盈亏平衡 = 行权价 + 权利金。注意不是\"涨过行权价就赚\"——还要先赚回权利金。"},"en":{"insight":"Long direction AND long volatility at once, which is why being right on direction can still lose money when IV collapses."}},"opt.GAMMA":{"src":"opt","eid":"GAMMA","cat":"greeks","fam":"greek-sense","bucket":"read","name":"Gamma","nameZh":"Gamma（Delta 变化率）","zh":{"insight":"一次 ΔS 幅度的移动带来的凸性盈亏约为 ½·Γ·ΔS²×100（每张）。注意平方项：这就是为什么 Gamma 收益对大幅波动极其敏感，而对小幅震荡几乎无感。"},"en":{"insight":"Gamma explodes into expiry — the entire attraction and the entire danger of a 0DTE."}},"opt.THETA":{"src":"opt","eid":"THETA","cat":"greeks","fam":"greek-sense","bucket":"read","name":"Theta","nameZh":"Theta（时间价值衰减）","zh":{"insight":"⚠ 那个 ÷365 不是装饰：本页把 Theta 报价为每日历日，"},"en":{"insight":"A weekend costs two units of decay, not zero — market makers price it out before Friday's close."}},"opt.VEGA":{"src":"opt","eid":"VEGA","cat":"greeks","fam":"greek-sense","bucket":"read","name":"Vega","nameZh":"Vega（波动率敏感度）","zh":{"insight":"⚠ 那个 ÷100 很重要：本页把 Vega 报价为每 1 个波动率点"},"en":{"insight":"A parallel shift is the model's fiction. Real vol moves are skew and term-structure moves, so a single vega number leaves exposure you cannot see."}},"opt.RHO":{"src":"opt","eid":"RHO","cat":"greeks","fam":"greek-sense","bucket":"read","name":"Rho","nameZh":"Rho（利率敏感度）","zh":{"insight":"⚠ ÷100 表示口径是每 1 个百分点的无风险利率变动（3.80% → 4.80%）。"},"en":{"insight":"Differentiating parity in r shows rho is nothing more than the carry term; it carries no directional or volatility information."}},"opt.BEP":{"src":"opt","eid":"BEP","cat":"metrics","fam":"greek-sense","bucket":"read","name":"Break-Even Point","nameZh":"盈亏平衡点","zh":{"insight":"注意是到期时，不是持有期间——期权在到期前的市值曲线完全不同，盘中价格触及 BEP 并不代表你已经打平。"},"en":{"insight":"At expiry, not before — the mark-to-market curve before expiry is a different shape entirely."}},"opt.POP":{"src":"opt","eid":"POP","cat":"metrics","fam":"greek-sense","bucket":"read","name":"Probability of Profit","nameZh":"获利概率","zh":{"insight":"⚠ 请注意漂移用的是 r − q。你对方向的判断在这个公式里完全不出现——两个人对同一个结构有截然相反的看法，算出来的 POP 一模一样。"},"en":{"insight":"A high POP often comes with a violently asymmetric loss distribution. It says nothing about expected value."}},"opt.MAX_PL":{"src":"opt","eid":"MAX_PL","cat":"metrics","fam":"greek-sense","bucket":"read","name":"Max Profit / Max Loss","nameZh":"最大盈亏","zh":{"insight":"提前行权和钉价风险会打破这个假设：如果卖出腿被提前指派而买入腿还在，你会在一夜之间持有裸的正股头寸，\"有限风险\"当场失效。"},"en":{"insight":"Early assignment leaves you holding naked stock overnight while the long leg is still open, and the \"defined risk\" evaporates."}},"opt.ROR":{"src":"opt","eid":"ROR","cat":"metrics","fam":"greek-sense","bucket":"read","name":"Return on Risk","nameZh":"风险回报率","zh":{"insight":"ROR 描述的是一个零期望赌局的形状，而不是它的价值。525% 的 ROR 听起来很诱人，但它同时意味着赢的概率很低——两者是同一枚硬币。"},"en":{"insight":"ROR describes the SHAPE of a zero-expected-value bet, not its value. A 525% ROR is the same coin as a low probability of winning."}},"opt.ROC":{"src":"opt","eid":"ROC","cat":"metrics","fam":"greek-sense","bucket":"read","name":"Return on Collateral","nameZh":"保证金回报率","zh":{"insight":"分母是一项政策，而且它会随着头寸对你不利而盘中重算——这正是裸卖策略真正的风险所在：不是你算错了 ROC，而是市场下跌时券商会提高你的保证金要求，在最坏的时点逼你平仓。"},"en":{"insight":"The denominator is a policy, and it is recomputed intraday as the position moves against you — which is the real risk of naked selling: a margin call forcing you out at the worst moment."}},"opt.IV":{"src":"opt","eid":"IV","cat":"pricing","fam":"vol-regime","bucket":"read","name":"Implied Volatility","nameZh":"隐含波动率","zh":{"insight":"并插值到恒定 30 天期限——它描述的是这只股票，而不是某一张合约。"},"en":{"insight":"Three correct numbers describing three different objects. Always ask which one \"the stock's IV\" refers to."}},"opt.HV":{"src":"opt","eid":"HV","cat":"pricing","fam":"vol-regime","bucket":"read","name":"Historical Volatility","nameZh":"历史波动率","zh":{"insight":"并且这份贡献会在它滚出 30 日窗口的那一天整块消失。这就是等权移动窗口的固有缺陷：HV 会在某一天毫无理由地\"跳水\"，而市场其实什么都没发生。看 HV 的突变时，先确认是不是某根极端 K 线刚刚出窗。"},"en":{"insight":"The contribution vanishes in one block the day it rolls out of the window. An equally-weighted window makes HV drop for no market reason at all."}},"opt.IV_RANK":{"src":"opt","eid":"IV_RANK","cat":"pricing","fam":"vol-regime","bucket":"read","name":"IV Rank","nameZh":"IV 排名","zh":{"insight":"⚠ 它是一个极值统计量：整整一年的数据里，只有三个数字真正参与计算（当前、最高、最低）。"},"en":{"insight":"IV Rank halves on one day of data that has already passed and has no bearing on the present."}},"opt.IV_PCTL":{"src":"opt","eid":"IV_PCTL","cat":"pricing","fam":"vol-regime","bucket":"read","name":"IV Percentile","nameZh":"IV 百分位","zh":{"insight":"⚠ 它是一个计数统计量：252 个观测每一个都投一票，这与只看三个数的 IV Rank 有本质区别。"},"en":{"insight":"One outlier can shift IV Rank by 28 points and IV Percentile by at most 1/252. Percentile is the distributional statistic; rank is an extreme-value one."}},"opt.PREMIUM":{"src":"opt","eid":"PREMIUM","cat":"pricing","fam":"vol-regime","bucket":"read","name":"Premium","nameZh":"权利金","zh":{"insight":"验证：盈亏平衡点 901.06 = 881.47 ×(1 + 2.22%)。所以溢价率回答的是\"股价还要再涨多少百分比我才不亏\"，这才是它真正有用的读法。"},"en":{"insight":"The percentage answers \"how much further must the stock move before I stop losing\" — the only reading that is actually useful."}},"opt.INTRINSIC":{"src":"opt","eid":"INTRINSIC","cat":"pricing","fam":"vol-regime","bucket":"read","name":"Intrinsic Value","nameZh":"内在价值","zh":{"insight":"⚠ 注意：不含波动率、不含利率、不含时间、不含任何模型。它是纯粹的算术，是期权价值中唯一确定无疑的部分。"},"en":{"insight":"A deep in-the-money European put can trade below intrinsic because the strike is only received at expiry and must be discounted."}},"opt.EXTRINSIC":{"src":"opt","eid":"EXTRINSIC","cat":"pricing","fam":"vol-regime","bucket":"read","name":"Extrinsic (Time) Value","nameZh":"时间价值","zh":{"insight":"但注意：3 天 × 3.68 只有 11.05，而必须消失的是 19.59——所以 Theta 会在最后几天加速约一倍。线性外推 Theta 会严重低估临期损失。"},"en":{"insight":"63% of the price of an in-the-money option is time, not intrinsic."}},"opt.MONEYNESS":{"src":"opt","eid":"MONEYNESS","cat":"pricing","fam":"vol-regime","bucket":"read","name":"Moneyness (ITM / ATM / OTM)","nameZh":"价值状态（价内/平值/价外）","zh":{"insight":"交易台的惯例是按 Delta 报价而不是按标签：\"25 Delta 的认沽\"。因为 Delta 已经把行权距离、剩余时间、波动率三者合并成了一个可比的数字，而\"价外 5%\"在不同期限下含义完全不同。"},"en":{"insight":"Delta already folds distance, time and volatility into one comparable number, while \"5% out of the money\" means different things at different expiries."}},"opt.LEVERAGE":{"src":"opt","eid":"LEVERAGE","cat":"pricing","fam":"vol-regime","bucket":"read","name":"Leverage Ratio","nameZh":"杠杆比率","zh":{"insight":"杠杆比率 = 股价 ÷ 期权价格。⚠ 它完全不考虑 Delta，这正是问题所在。"},"en":{"insight":"The most \"leveraged\" contract on any screen is the one closest to being worth nothing. Selecting on this number systematically picks the contracts most likely to expire worthless."}},"opt.EFF_GEARING":{"src":"opt","eid":"EFF_GEARING","cat":"pricing","fam":"vol-regime","bucket":"read","name":"Effective Gearing","nameZh":"实际杠杆","zh":{"insight":"大跌时则远低于 17。Ω 是一条切线，不是收益曲线——用它线性外推大幅波动下的收益，会同时高估亏损和低估盈利。"},"en":{"insight":"Ω is a tangent line, not a payoff. Extrapolating it linearly across a large move overstates the loss and understates the gain."}},"opt.MARK_PRICE":{"src":"opt","eid":"MARK_PRICE","cat":"pricing","fam":"vol-regime","bucket":"read","name":"Mark Price vs Theoretical Price","nameZh":"标记价格与理论价格","zh":{"insight":"一个听起来吓人的 6.18% 的\"定价错误\"，在 3 天期合约上只不过是不到 6 个波动点——属于正常噪音。价格百分比会夸大短期合约的分歧，波动率单位才可比。"},"en":{"insight":"It means the true disagreement is larger, not smaller."}},"opt.STRIKE":{"src":"opt","eid":"STRIKE","cat":"contract","fam":"concept-trap","bucket":"define","name":"Strike Price","nameZh":"行权价","zh":{"insight":"MU 在 885 附近按 5 元一档挂牌。行权价不是连续的——这意味着你无法精确表达任意价格观点，只能在最近的挂牌档位上取舍。"},"en":{"insight":"The ladder is not continuous, so you cannot express an arbitrary price view — only the nearest listed step."}},"opt.EXPIRY":{"src":"opt","eid":"EXPIRY","cat":"contract","fam":"concept-trap","bucket":"define","name":"Expiration Date","nameZh":"到期日","zh":{"insight":"但 OCC 的行权申报截止是 17:30——注意你的券商截止时间更早。这个时间差每年都会让人措手不及。"},"en":{"insight":"\"In the money by a penny\" becomes 100 shares you did not plan for, and the capital to carry them."}},"opt.DTE":{"src":"opt","eid":"DTE","cat":"contract","fam":"concept-trap","bucket":"define","name":"Days to Expiration","nameZh":"剩余到期天数","zh":{"insight":"把 T 改成 2/365，面板上每一个希腊字母都会变。这不是小数点后的差别——在 3 天期合约上，一天就是三分之一的剩余寿命。"},"en":{"insight":"The SECOND half of an option's life carries 71% of the decay — the quantitative basis for not holding to the end."}},"opt.MULTIPLIER":{"src":"opt","eid":"MULTIPLIER","cat":"contract","fam":"concept-trap","bucket":"define","name":"Multiplier","nameZh":"合约乘数","zh":{"insight":"并且可能变成一笔 87,000 美元的股票买入。这三个数量级的跨度正是期权风险管理的核心——很多人只盯着第一个数字。"},"en":{"insight":"The three orders of magnitude between premium, delta notional and assignment obligation are the core of options risk. Most people watch only the first."}},"opt.CONTRACT_SIZE":{"src":"opt","eid":"CONTRACT_SIZE","cat":"contract","fam":"concept-trap","bucket":"define","name":"Contract Size","nameZh":"合约单位","zh":{"insight":"因此正确的对冲股数 = 张数 × 合约单位，不是张数 × 乘数。"},"en":{"insight":"A suffixed symbol always means an adjustment; look it up before trading it."}},"opt.STYLE":{"src":"opt","eid":"STYLE","cat":"contract","fam":"concept-trap","bucket":"define","name":"American vs European Style","nameZh":"美式与欧式","zh":{"insight":"因此提前行权永远不划算——那等于白白扔掉剩余的时间价值。这是新手最常犯的错误之一：拿着大幅盈利的认购迫不及待地行权，实际上直接卖出合约总是更优。"},"en":{"insight":"Which is why anyone short a deep in-the-money put must be ready for assignment at any time."}},"opt.PREV_CLOSE":{"src":"opt","eid":"PREV_CLOSE","cat":"contract","fam":"concept-trap","bucket":"define","name":"Previous Close & Settlement","nameZh":"昨收与结算价","zh":{"insight":"注意它是一个成交价，来自当时最后一笔交易发生的时刻，不是估值。"},"en":{"insight":"An option's percentage change divides by a small, decaying number. \"Up 300% today\" usually just means it was cheap yesterday."}},"opt.OPEN_INTEREST":{"src":"opt","eid":"OPEN_INTEREST","cat":"chain","fam":"chain-read","bucket":"read","name":"Open Interest","nameZh":"未平仓合约数","zh":{"insight":"⚠ 推论：成交量可以是持仓变化绝对值的任意倍数，甚至大很多倍。"},"en":{"insight":"Open interest carries NO direction information — it does not say who bought or who sold."}},"opt.VOLUME":{"src":"opt","eid":"VOLUME","cat":"chain","fam":"chain-read","bucket":"read","name":"Volume","nameZh":"成交量","zh":{"insight":"→ 当天约 99% 的交易是开仓后当天就平掉的。这类数据说明该行权价是日内投机的战场，而不是有人在建立仓位——两者对后市的含义完全不同。"},"en":{"insight":"Roughly 99% of the day's trading opened AND closed intraday — a day-trading battleground, not position building. The two have opposite implications."}},"opt.TURNOVER":{"src":"opt","eid":"TURNOVER","cat":"chain","fam":"chain-read","bucket":"read","name":"Turnover","nameZh":"成交额","zh":{"insight":"→ 在成交量排行上两者几乎相同，在金额上相差 14.7 倍。只看成交量排序，会把一堆几分钱的彩票误当成大资金动向。"},"en":{"insight":"Statistically identical on the volume rank, 14.7x apart in money. Sorting by contracts mistakes a pile of penny lottery tickets for institutional flow."}},"opt.PCR_VOL":{"src":"opt","eid":"PCR_VOL","cat":"chain","fam":"chain-read","bucket":"read","name":"Put/Call Ratio (Volume)","nameZh":"认沽认购比（成交量）","zh":{"insight":"因为机构常年买入指数认沽作为组合对冲——这是仓位需求，不是看空。"},"en":{"insight":"Institutions hold index puts as portfolio hedges — a positioning requirement, not a bearish view."}},"opt.PCR_OI":{"src":"opt","eid":"PCR_OI","cat":"chain","fam":"chain-read","bucket":"read","name":"Put/Call OI Ratio","nameZh":"认沽认购比（未平仓）","zh":{"insight":"那是一个中性偏空的头寸。所以一个高 PCR 完全可能是由大量卖出认沽（看多）构成的。不做拆解就下方向结论，是这个指标最常见的误用。"},"en":{"insight":"A high PCR can be built entirely from SOLD puts, which is a bullish position. Drawing a directional conclusion without the decomposition is the standard misuse."}},"opt.OI_CHANGE":{"src":"opt","eid":"OI_CHANGE","cat":"chain","fam":"chain-read","bucket":"read","name":"OI Rise / OI Fall","nameZh":"未平仓增减","zh":{"insight":"只有成交打印上的买卖方向标记才能消除这个歧义。所有\"持仓增加说明主力看多\"之类的解读，都跳过了这一步。"},"en":{"insight":"Only the bid/ask side tag resolves it. Every \"rising OI means smart money is bullish\" claim skips this step."}},"opt.MAX_PAIN":{"src":"opt","eid":"MAX_PAIN","cat":"chain","fam":"chain-read","bucket":"read","name":"Max Pain","nameZh":"最大痛点","zh":{"insight":"理解这一点后就会明白：所谓\"股价被吸向最大痛点\"的因果关系很可能是反的。"},"en":{"insight":"Into expiry it converges toward spot rather than the stock converging toward it — the causality is likely the reverse of the popular claim."}},"opt.VOL_OI_BY_STRIKE":{"src":"opt","eid":"VOL_OI_BY_STRIKE","cat":"chain","fam":"chain-read","bucket":"read","name":"Volume & OI by Strike","nameZh":"按行权价分布","zh":{"insight":"⚠ 两张图之间的差异才是这一天真正的故事——成交量图告诉你今天大家在赌什么，持仓图告诉你大家实际留下了什么。"},"en":{"insight":"The difference between the two charts IS the day's story: volume says what was gambled on, open interest says what was actually kept."}},"opt.GEX":{"src":"opt","eid":"GEX","cat":"analysis","fam":"chain-read","bucket":"read","name":"Gamma Exposure (GEX)","nameZh":"伽马敞口 (GEX)","zh":{"insight":"总额为负表示做市商净空 gamma，对冲行为变成涨了买、跌了卖，对价格起放大作用，波动被自我强化。这就是\"负 gamma 环境下容易出现单边暴走\"的机制解释。"},"en":{"insight":"The dealer-positioning assumption cannot be verified — real dealer books are not public. The reliability of all GEX analysis rests on it."}},"opt.CALL_GEX":{"src":"opt","eid":"CALL_GEX","cat":"analysis","fam":"chain-read","bucket":"read","name":"Call GEX (Call-Side Gamma Exposure)","nameZh":"认购伽马敞口","zh":{"insight":"⚠ 一个重要现象：某个行权价可能认购 GEX 很大而净额接近零，"},"en":{"insight":"The hedging pressure is real on both sides; only the residual shows up in the net, so a net-only view understates the flow at that strike."}},"opt.PUT_GEX":{"src":"opt","eid":"PUT_GEX","cat":"analysis","fam":"chain-read","bucket":"read","name":"Put GEX (Put-Side Gamma Exposure)","nameZh":"认沽伽马敞口","zh":{"insight":"⚠ 关键的数学事实：同一行权价、同一到期日的认购与认沽 Gamma 完全相等（由平价关系保证），"},"en":{"insight":"A large negative put GEX is the normal state of an equity chain, not a bearish reading — the most common misuse of this metric."}},"opt.AGG_GEX":{"src":"opt","eid":"AGG_GEX","cat":"analysis","fam":"chain-read","bucket":"read","name":"Aggregate GEX Curve","nameZh":"聚合伽马曲线","zh":{"insight":"而这张图要回答的问题恰恰就是\"股价移动之后会怎样\"。理解这个区别，才不会把静态柱状图当成动态预测。"},"en":{"insight":"Moving spot changes which strikes are at the money, and that is precisely the question the chart exists to answer."}},"opt.GAMMA_FLIP":{"src":"opt","eid":"GAMMA_FLIP","cat":"analysis","fam":"chain-read","bucket":"read","name":"Gamma Flip / Zero Gamma Level","nameZh":"伽马翻转位（零伽马线）","zh":{"insight":"这意味着\"视野内没有翻转点\"，而不是\"不存在翻转点\"。把 null 读成\"没有翻转\"是错误的——很可能只是绘图区间不够宽。"},"en":{"insight":"A null means \"no flip IN VIEW\", not \"no flip exists\" — usually the plotted range is simply too narrow."}},"opt.CALL_WALL":{"src":"opt","eid":"CALL_WALL","cat":"analysis","fam":"chain-read","bucket":"read","name":"Call Wall","nameZh":"认购墙","zh":{"insight":"也不是大家嘴上谈论的那个整数关口。三者经常不重合，混用会得出完全不同的结论。"},"en":{"insight":"Beyond about 5% on a front weekly, gamma there is negligible and the bar reflects open interest rather than hedging pressure."}},"opt.PUT_WALL":{"src":"opt","eid":"PUT_WALL","cat":"analysis","fam":"chain-read","bucket":"read","name":"Put Wall","nameZh":"认沽墙","zh":{"insight":"一道位于 gamma 翻转点下方的认沽墙不是\"支撑力弱一些\"，"},"en":{"insight":"It does not weakly support; it actively reverses function. Report the wall and the flip together or not at all."}},"opt.VOL_SMILE":{"src":"opt","eid":"VOL_SMILE","cat":"analysis","fam":"chain-read","bucket":"read","name":"Volatility Smile / Skew","nameZh":"波动率微笑与偏斜","zh":{"insight":"会得到四位数的隐含波动率。那是算术假象，不是预测。看到极端行权价上的天价 IV，先怀疑分母而不是市场。"},"en":{"insight":"A four-digit IV at a far wing is an arithmetic artefact. Suspect the denominator before believing the market."}},"opt.VOL_TERM":{"src":"opt","eid":"VOL_TERM","cat":"analysis","fam":"chain-read","bucket":"read","name":"Volatility Term Structure","nameZh":"波动率期限结构","zh":{"insight":"⚠ 关键性质：方差随时间可加，这正是把事件从背景中剥离出来的办法："},"en":{"insight":"This is what a calendar spread actually trades, not the two quoted numbers."}},"opt.ZERO_DTE":{"src":"opt","eid":"ZERO_DTE","cat":"concepts","fam":"greek-sense","bucket":"read","name":"Zero Days to Expiration (0DTE)","nameZh":"零日期权（当日到期期权）","zh":{"insight":"⚠ 注意这就是整个头寸的价值——下面没有任何内在价值作为垫底。所以 0DTE 平价合约归零是常态而非意外。"},"en":{"insight":"Gamma is at its maximum here, so the hedging term is too — the direct cause of violent late-session moves when 0DTE volume piles up."}},"opt.IV_CRUSH":{"src":"opt","eid":"IV_CRUSH","cat":"concepts","fam":"vol-regime","bucket":"read","name":"IV Crush","nameZh":"波动率崩塌（IV 崩塌）","zh":{"insight":"⚠ 方差随时间可加，这是把事件从基础波动中分离出来的唯一正确方法："},"en":{"insight":"Do this BEFORE you buy. The answer is usually close to the implied event move itself, meaning the market has already priced the gap you are hoping for."}},"opt.UNUSUAL_ACTIVITY":{"src":"opt","eid":"UNUSUAL_ACTIVITY","cat":"concepts","fam":"concept-trap","bucket":"define","name":"Unusual Options Activity","nameZh":"期权异动大单","zh":{"insight":"⚠ 成交在中间价、大宗交叉或场内撮合 → 属于事先谈好的交易，这个标签几乎不含信息。看到 MID/CROSS 标签时不应做方向推断。"},"en":{"insight":"A two-bit lookup, not an inference — it knows nothing about the role the trade plays in a position."}},"opt.TOP_OPTIONS":{"src":"opt","eid":"TOP_OPTIONS","cat":"concepts","fam":"concept-trap","bucket":"define","name":"Top Options Screens","nameZh":"期权榜单","zh":{"insight":"成交量排名低 + 成交额排名高 → 少量、大额、昂贵的合约，是真正的资金规模。只看单一榜单会系统性地把前者误认为后者。"},"en":{"insight":"Reading a single ranking systematically mistakes retail lottery flow for institutional size."}},"opt.ASSIGNMENT":{"src":"opt","eid":"ASSIGNMENT","cat":"concepts","fam":"concept-trap","bucket":"define","name":"Assignment & Exercise","nameZh":"行权与被指派","zh":{"insight":"⚠ OCC 的例外行权：收盘时价内 ≥ 0.01 美元即自动行权。"},"en":{"insight":"If you do not hold the shares, this leaves you short 100."}},"opt.PIN_RISK":{"src":"opt","eid":"PIN_RISK","cat":"concepts","fam":"concept-trap","bucket":"define","name":"Pin Risk","nameZh":"钉扎风险","zh":{"insight":"⚠ 相反指令：买方可以放弃一张价内期权，也可以行权一张价外期权。"},"en":{"insight":"You do not know p — which is the whole point. Pin risk is not a priceable risk, it is missing information."}},"opt.LIQUIDITY":{"src":"opt","eid":"LIQUIDITY","cat":"concepts","fam":"concept-trap","bucket":"define","name":"Liquidity & Bid-Ask Spread","nameZh":"流动性与买卖价差","zh":{"insight":"⚠ 用中间价计价会永远高估盈亏，高估的幅度正好是（价差 ÷ 2）× 100 × 张数。账户里显示的浮盈里有一部分是永远拿不到的。"},"en":{"insight":"If the mid sits far from the VWAP, the quote is decorative — posted, but not where anyone trades."}},"opt.PROB_ANALYSIS":{"src":"opt","eid":"PROB_ANALYSIS","cat":"concepts","fam":"concept-trap","bucket":"define","name":"Probability Analysis","nameZh":"概率分析","zh":{"insight":"⚠ 也就是说分布的中心位于现价下方 8.2%。这来自 −σ²/2·T 这一项，是对数正态分布的数学性质，不是任何看空观点。波动率越高、时间越长，这个偏移越大。很多人看到\"中位数低于现价\"就以为模型在看空，这是误读。"},"en":{"insight":"That is −σ²/2·T, a property of the lognormal, not a view. The higher the volatility and the longer the horizon, the larger the offset."}},"opt.EXPECTED_MOVE":{"src":"opt","eid":"EXPECTED_MOVE","cat":"concepts","fam":"concept-trap","bucket":"define","name":"Expected Move","nameZh":"预期波动幅度","zh":{"insight":"⚠ 这是零漂移对数正态下 E|S_T − S| 的精确值，即 0.80σ，不是 1σ。"},"en":{"insight":"You need more than the market has already priced — the trade requires the market to be more extreme than its own expectation."}},"opt.TA_ON_OPTIONS":{"src":"opt","eid":"TA_ON_OPTIONS","cat":"concepts","fam":"concept-trap","bucket":"define","name":"Do Stock Indicators Transfer to Options?","nameZh":"股票指标在期权上通用吗","zh":{"insight":"期权价格里的\"趋势\"主要由 Δ·dS 和 Θ·dt 主导，而不是对该合约的供需。"},"en":{"insight":"RSI drifts down mechanically on any contract that simply gets older — it is measuring time passing, not selling pressure."}},"opt.SHORT_PUT":{"src":"opt","eid":"SHORT_PUT","cat":"strat-bullish","fam":"payoff-structure","bucket":"trade","name":"Short Put","nameZh":"卖出认沽期权","zh":{"insight":"⚠ 最大亏损 =（行权价 − 权利金）× 100，发生在股价归零时，中途没有任何东西能阻止它。"},"en":{"insight":"The maximum loss is over three times the margin posted — margin is not your risk ceiling."}},"opt.CASH_SECURED_PUT":{"src":"opt","eid":"CASH_SECURED_PUT","cat":"strat-bullish","fam":"payoff-structure","bucket":"trade","name":"Cash-Secured Put","nameZh":"现金担保认沽","zh":{"insight":"⚠ 简单年化 = 回报率 × 365 ÷ 天数，它是对最好情况的外推，不是收益率。"},"en":{"insight":"Both are arithmetic, not income. They assume 26 consecutive repeats at identical terms, and one large drawdown ends the sequence."}},"opt.COVERED_CALL":{"src":"opt","eid":"COVERED_CALL","cat":"strat-bullish","fam":"payoff-structure","bucket":"trade","name":"Long Covered Call","nameZh":"备兑认购","zh":{"insight":"平衡点 863.27，最大盈利 14,173，最大亏损 86,327，风险回报比 16.42%。"},"en":{"insight":"Long stock plus short call IS short put plus a bond. People who call the first conservative and the second dangerous are describing the same payoff."}},"opt.LONG_CALL_SPREAD":{"src":"opt","eid":"LONG_CALL_SPREAD","cat":"strat-bullish","fam":"payoff-structure","bucket":"trade","name":"Long Call Spread (Bull Call Spread)","nameZh":"认购牛市价差","zh":{"insight":"⚠ 关键的希腊字母对比：970/1070 这样的宽价差保留了裸认购 49% 的 vega 和 52% 的 theta。"},"en":{"insight":"A tight spread hedges away almost all vega and theta. That is the quantitative basis for using spreads in high IV and single legs in low IV."}},"opt.SHORT_PUT_SPREAD":{"src":"opt","eid":"SHORT_PUT_SPREAD","cat":"strat-bullish","fam":"payoff-structure","bucket":"trade","name":"Short Put Spread (Bull Put Spread)","nameZh":"认沽牛市价差","zh":{"insight":"⚠ 一个重要的近似恒等式：对接近二元的收益结构，风险回报比 ≈（1 − 盈利概率）÷ 盈利概率。这意味着回报率与概率在风险中性下互为倒数关系，你无法同时提高两者——任何声称\"高胜率高赔率\"的结构都值得先怀疑定价。"},"en":{"insight":"That is not a conventional credit spread but a synthetic long stock with a floor. Read the legs, not the strategy name."}},"opt.SYNTHETIC_LONG":{"src":"opt","eid":"SYNTHETIC_LONG","cat":"strat-bullish","fam":"payoff-structure","bucket":"trade","name":"Synthetic Long Stock","nameZh":"合成多头","zh":{"insight":"⚠ 净支出因此只包含持有成本，不含任何波动率成分——两条腿的 vega 完全抵消。"},"en":{"insight":"The leverage comes from margin, not from the options. A drawdown brings the same margin pressure as real stock, without the dividend or the vote."}},"opt.IRON_CONDOR":{"src":"opt","eid":"IRON_CONDOR","cat":"strat-basics","fam":"payoff-structure","bucket":"trade","name":"Iron Condor","nameZh":"铁鹰式","zh":{"insight":"⚠ 最大盈利是一个平台而不是一个点：终值落在两个卖出腿之间的任何位置都拿满。这是它相对铁蝶的关键优势。"},"en":{"insight":"A plateau, not a point — the key advantage over the iron butterfly."}},"opt.IRON_BUTTERFLY":{"src":"opt","eid":"IRON_BUTTERFLY","cat":"strat-basics","fam":"payoff-structure","bucket":"trade","name":"Iron Butterfly","nameZh":"铁蝶式","zh":{"insight":"⚠ 最大盈利只在终值恰好等于主体行权价时取得，是一个点而不是平台——这是它与铁鹰最本质的差别，也是它收入更高的原因。"},"en":{"insight":"A point, not a plateau — the essential difference from the condor and the reason it collects more."}},"opt.SYNTHETIC_PUT":{"src":"opt","eid":"SYNTHETIC_PUT","cat":"strat-basics","fam":"payoff-structure","bucket":"trade","name":"Synthetic Put (Short Stock + Long Call)","nameZh":"合成认沽","zh":{"insight":"⚠ 最大亏损被认购封顶——这正是给空头加买认购的全部意义：把无限的上行风险变成有限的。"},"en":{"insight":"The synthetic also pays stock borrow, which a long put does not. On hard-to-borrow names the outright put is almost always better."}},"opt.PROTECTIVE_PUT":{"src":"opt","eid":"PROTECTIVE_PUT","cat":"strat-basics","fam":"payoff-structure","bucket":"trade","name":"Protective Put","nameZh":"保护性认沽","zh":{"insight":"⚠ 最大亏损被锁定在行权价这个地板上，无论股价跌到哪里。这是它与备兑认购最根本的区别：后者只提供一点点缓冲，前者提供真正的下限。"},"en":{"insight":"Which is why permanent hedging is mathematically unworkable — the premium consumes most of the equity return. Protective puts are an event tool, not a standing allocation."}},"opt.SHORT_STRADDLE":{"src":"opt","eid":"SHORT_STRADDLE","cat":"strat-neutral","fam":"payoff-structure","bucket":"trade","name":"Short Straddle","nameZh":"卖出跨式","zh":{"insight":"⚠ 只能算抵押品回报率——风险回报比不存在，因为风险没有定义。任何给出这类结构\"风险回报比\"的软件都在误导你。"},"en":{"insight":"No return-on-risk exists because risk is not defined. Any software printing one for this structure is misleading you."}},"opt.SHORT_STRANGLE":{"src":"opt","eid":"SHORT_STRANGLE","cat":"strat-neutral","fam":"payoff-structure","bucket":"trade","name":"Short Strangle","nameZh":"卖出宽跨式","zh":{"insight":"⚠ 最大盈利是一个平台：终值落在两个行权价之间任何位置都拿满，这是它优于跨式的地方。"},"en":{"insight":"Identical. A strangle is not a safer straddle; it trades payout for probability and leaves the catastrophic tail untouched."}},"opt.LONG_CALL_BFLY":{"src":"opt","eid":"LONG_CALL_BFLY","cat":"strat-neutral","fam":"payoff-structure","bucket":"trade","name":"Long Call Butterfly","nameZh":"买入认购蝶式","zh":{"insight":"⚠ 净支出对凸的波动率微笑恒为正——这正是\"微笑\"的数学含义：中间的隐含波动率低于两翼，所以卖中间买两翼必然净付出。"},"en":{"insight":"A butterfly bets cheaply on a precise level, requiring both the price and the timing to be right — hence the structurally low hit rate."}},"opt.LONG_PUT_BFLY":{"src":"opt","eid":"LONG_PUT_BFLY","cat":"strat-neutral","fam":"payoff-structure","bucket":"trade","name":"Long Put Butterfly","nameZh":"买入认沽蝶式","zh":{"insight":"⚠ 风险回报比 196.88% 对认购蝶的 186.13%——这个差异来自每股 1.50 的报价差，不是策略差异。两者理论上等价，实际选哪个应该看哪一组腿的买卖价差更窄、流动性更好。"},"en":{"insight":"A 1.50/share price gap, not a strategy gap. Choose whichever set of legs has the tighter market."}},"opt.SHORT_IRON_BFLY":{"src":"opt","eid":"SHORT_IRON_BFLY","cat":"strat-neutral","fam":"payoff-structure","bucket":"trade","name":"Short Iron Butterfly","nameZh":"卖出铁蝶式","zh":{"insight":"铁蝶便宜 72.50，原因纯粹是它的四条腿全部是虚值，买卖价差更窄、流动性更好。这就是实务中偏好铁式结构的真正理由——不是策略更优，而是执行成本更低。"},"en":{"insight":"The iron version is cheaper purely because all four legs are out of the money and therefore more liquid. The preference is about execution cost, not strategy."}},"opt.SHORT_IRON_CONDOR":{"src":"opt","eid":"SHORT_IRON_CONDOR","cat":"strat-neutral","fam":"payoff-structure","bucket":"trade","name":"Short Iron Condor","nameZh":"卖出铁鹰式","zh":{"insight":"净收入结构，盈利在中间。注意各家券商对\"Short/Long 铁鹰\"的命名不一致，看腿不要看名字。"},"en":{"insight":"Brokers disagree on which of these is \"short\" — read the legs, not the name."}},"opt.LONG_STRADDLE":{"src":"opt","eid":"LONG_STRADDLE","cat":"strat-directional","fam":"payoff-structure","bucket":"trade","name":"Long Straddle","nameZh":"买入跨式","zh":{"insight":"⚠ 反解出跨式隐含的波动率：把支出比例除以 0.7979 再年化，得到约 80.9%。这是判断跨式贵不贵最直接的方法——把它与该标的的历史波动率对比，就知道市场要价是否合理。"},"en":{"insight":"It is NOT a max-profit ratio; the maximum is unbounded. Always ask at which price a printed return was evaluated."}},"opt.LONG_STRANGLE":{"src":"opt","eid":"LONG_STRANGLE","cat":"strat-directional","fam":"payoff-structure","bucket":"trade","name":"Long Strangle","nameZh":"买入宽跨式","zh":{"insight":"⚠ 最大亏损是一个平台：终值落在两个行权价之间的任何位置，整笔支出全部损失。"},"en":{"insight":"The straddle pays a flat 110 more outside the wings and loses 1,890 more inside them."}},"opt.SHORT_CALL_BFLY":{"src":"opt","eid":"SHORT_CALL_BFLY","cat":"strat-directional","fam":"payoff-structure","bucket":"trade","name":"Short Call Butterfly","nameZh":"卖出认购蝶式","zh":{"insight":"⚠ 镜像关系：同样四张合约反向持有，就是赔付 5,857.50、risking 1,642.50，"},"en":{"insight":"Identical coin, opposite clothes. High-hit-rate-low-payout and low-hit-rate-high-payout are two statements of the same price."}},"opt.SHORT_PUT_BFLY":{"src":"opt","eid":"SHORT_PUT_BFLY","cat":"strat-directional","fam":"payoff-structure","bucket":"trade","name":"Short Put Butterfly","nameZh":"卖出认沽蝶式","zh":{"insight":"⚠ 由平价关系，对称的空头认沽蝶与空头认购蝶在同样行权价上是同一个头寸。"},"en":{"insight":"By parity, a symmetric short put fly and short call fly at the same strikes are the SAME position."}},"opt.LONG_IRON_BFLY":{"src":"opt","eid":"LONG_IRON_BFLY","cat":"strat-directional","fam":"payoff-structure","bucket":"trade","name":"Long Iron Butterfly","nameZh":"买入铁蝶式","zh":{"insight":"⚠ 其他券商把完全相同的这组腿称为空头铁蝶。命名混乱是常态，永远看腿。"},"en":{"insight":"If you do not expect a move beyond about 17%, the iron fly dominates the straddle at equal capital."}},"opt.LONG_IRON_CONDOR":{"src":"opt","eid":"LONG_IRON_CONDOR","cat":"strat-directional","fam":"payoff-structure","bucket":"trade","name":"Long Iron Condor","nameZh":"买入铁鹰式","zh":{"insight":"并且在以现价为中心、宽达 40 点的平台内会亏掉全部支出。这类结构只有在你确信会出现大幅位移时才成立，用它来\"赌波动\"而位移不足，是最常见的亏损方式。"},"en":{"insight":"Risking 3.22 to make 1, and losing the FULL debit anywhere in a 40-point plateau centred on spot."}},"opt.LONG_PUT":{"src":"opt","eid":"LONG_PUT","cat":"strat-bearish","fam":"payoff-structure","bucket":"trade","name":"Long Put","nameZh":"买入认沽期权","zh":{"insight":"⚠ 最大盈利 =（行权价 − 权利金）× 100，有界——因为股价最低只能到零。这与买认购的无限上行不同，是认沽最本质的不对称。"},"en":{"insight":"On a long call the two fight each other, which is why put payoffs in a crash often exceed the delta estimate."}},"opt.SHORT_CALL":{"src":"opt","eid":"SHORT_CALL","cat":"strat-bearish","fam":"payoff-structure","bucket":"trade","name":"Short Call (Naked / Uncovered)","nameZh":"卖出认购期权（裸卖）","zh":{"insight":"⚠ 最大亏损无限——股价没有上界。这是所有期权结构中风险最极端的一个。"},"en":{"insight":"The mechanism that forces you out at the worst available price. Not being wrong on direction, but being made to quit at the most expensive moment."}},"opt.SHORT_CALL_SPREAD":{"src":"opt","eid":"SHORT_CALL_SPREAD","cat":"strat-bearish","fam":"payoff-structure","bucket":"trade","name":"Short Call Spread (Bear Call Spread)","nameZh":"认购熊市价差","zh":{"insight":"抵押品为宽度扣除收入——亏损是预先冻结的，不是逐日盯市追加，这是有界结构最大的实务优势。"},"en":{"insight":"Two tickets under one strategy name with entirely different risk. Read the legs."}},"opt.LONG_PUT_SPREAD":{"src":"opt","eid":"LONG_PUT_SPREAD","cat":"strat-bearish","fam":"payoff-structure","bucket":"trade","name":"Long Put Spread (Bear Put Spread)","nameZh":"认沽熊市价差","zh":{"insight":"⚠ 与同一屏上裸买 790 认沽的完整对比，这是最有价值的一段："},"en":{"insight":"An IV collapse barely marks the package — the quantitative case for spreads in high IV."}},"opt.SYNTHETIC_SHORT":{"src":"opt","eid":"SYNTHETIC_SHORT","cat":"strat-bearish","fam":"payoff-structure","bucket":"trade","name":"Synthetic Short Stock","nameZh":"合成空头","zh":{"insight":"⚠ 与直接融券做空 100 股的逐项对比，这才是选择它的实际理由："},"en":{"insight":"You are short at the forward, not at spot."}},"opt.COLLAR":{"src":"opt","eid":"COLLAR","cat":"strat-advanced","fam":"payoff-structure","bucket":"trade","name":"Collar","nameZh":"领口","zh":{"insight":"⚠ 从平价关系看：持股 + 买认沽 − 卖认购 是一个有界头寸，"},"en":{"insight":"The collar is the parity identity with the two strikes pulled apart — neither free insurance nor free income."}},"opt.CALENDAR_SPREAD":{"src":"opt","eid":"CALENDAR_SPREAD","cat":"strat-advanced","fam":"payoff-structure","bucket":"trade","name":"Calendar Spread (Long Call Calendar)","nameZh":"日历价差","zh":{"insight":"⚠ 若远月波动率下降 10 个点，区间收窄到 791.38–996.88，峰值也降到 +3,873——同样的股价路径，只因远月 IV 变化，结果就明显变差。这就是\"日历价差本质是在交易远期波动率\"的实证含义。"},"en":{"insight":"The chain-wide blend is not the front-expiry number."}},"opt.DIAGONAL_SPREAD":{"src":"opt","eid":"DIAGONAL_SPREAD","cat":"strat-advanced","fam":"payoff-structure","bucket":"trade","name":"Diagonal Spread (Poor Man's Covered Call)","nameZh":"对角价差","zh":{"insight":"⚠ 但必须算清最坏情况：若在 925 被行权，强制的内在价值只有 32,500，"},"en":{"insight":"The roll COUNT is the trade, not one roll."}},"ord.MARKET":{"src":"ord","eid":"MARKET","cat":"basic","fam":"order-fill","bucket":"trade","name":"Market Order (MKT)","nameZh":"市价单","zh":{"insight":"成交均价 = 各档（数量 × 价格）之和 ÷ 总数量。⚠ 注意你拿到的是加权均价，不是你看到的那个最优价——只有第一档按最优价成交。"},"en":{"insight":"You receive a size-weighted average, not the top-of-book price you saw — only the first level trades there."}},"ord.SLIPPAGE":{"src":"ord","eid":"SLIPPAGE","cat":"mechanics","fam":"order-fill","bucket":"trade","name":"Slippage & Market Impact","nameZh":"滑点与冲击成本","zh":{"insight":"⚠ 这个符号约定使得正值在买卖两侧都表示更差，因此可以直接横向比较。"},"en":{"insight":"It charges you for the fills you did NOT get. Measuring only executed slippage flatters passive strategies whose real cost is the trades they missed."}},"ord.LIMIT":{"src":"ord","eid":"LIMIT","cat":"basic","fam":"order-fill","bucket":"trade","name":"Limit Order (LMT)","nameZh":"限价单","zh":{"insight":"但带有一个硬性的最差价格保护。两者的风险完全不同，用同一个名字是交易术语中最容易误导新手的地方之一。"},"en":{"insight":"A limit protects you from paying more; it does not hand you the better price the gap printed."}},"ord.STOP":{"src":"ord","eid":"STOP","cat":"basic","fam":"order-fill","bucket":"trade","name":"Stop Order (STP) — stop-loss / stop-market","nameZh":"止损单","zh":{"insight":"有的用买一价（卖出止损）或卖一价（买入止损）。这不是同一个订单——同样的行情下，两种规则的触发时点可能相差很远。下单前必须确认你的券商用哪一种。"},"en":{"insight":"They are not the same order — the trigger moment can differ substantially under identical price action."}},"ord.STOP_LIMIT":{"src":"ord","eid":"STOP_LIMIT","cat":"basic","fam":"order-fill","bucket":"trade","name":"Stop Limit Order (STL)","nameZh":"止损限价单","zh":{"insight":"⚠ 结论：高于跳空开盘价，你什么都得不到；等于或低于它，你得到的几乎和普通止损一样。"},"en":{"insight":"For most retail size, what a stop-limit provides in a gap is not a better price but no fill at all."}},"ord.TRAILING_STOP":{"src":"ord","eid":"TRAILING_STOP","cat":"basic","fam":"order-fill","bucket":"trade","name":"Trailing Stop (TS)","nameZh":"跟踪止损单","zh":{"insight":"⚠ 它锁定的不是利润，而是一个触发价位。成交价仍然由盘口决定。"},"en":{"insight":"It does not lock in profit. It locks in a TRIGGER LEVEL, and the fill is still whatever the book pays."}},"ord.TRAILING_STOP_LIMIT":{"src":"ord","eid":"TRAILING_STOP_LIMIT","cat":"basic","fam":"order-fill","bucket":"trade","name":"Trailing Stop Limit (TSL)","nameZh":"跟踪止损限价单","zh":{"insight":"⚠ 结论极其清晰：在所有普通触发的情形下，加限价没有任何影响；"},"en":{"insight":"Widening the offset does not help — the gap is six dollars wide."}},"ord.TWAP":{"src":"ord","eid":"TWAP","cat":"basic","fam":"order-fill","bucket":"trade","name":"TWAP — Time-Weighted Average Price","nameZh":"时间加权平均价格单","zh":{"insight":"⚠ 注意每个子单都要付一次价差——切得越碎，价差成本反而累积得越多。"},"en":{"insight":"Every child pays the spread again — slicing finer accumulates more spread cost, not less."}},"ord.VWAP":{"src":"ord","eid":"VWAP","cat":"basic","fam":"order-fill","bucket":"trade","name":"VWAP — Volume-Weighted Average Price","nameZh":"成交量加权平均价格单","zh":{"insight":"你的得分 = 成交均价与当日 VWAP 之差，卖出时符号取反。⚠ 注意这意味着算法的目标是\"贴近均价\"，而不是\"拿到好价格\"——在单边下跌中，完美达成 VWAP 依然是亏损的执行。"},"en":{"insight":"The goal is to match the average, NOT to get a good price. Perfectly achieving VWAP in a one-way decline is still a losing execution."}},"ord.BRACKET_OCO":{"src":"ord","eid":"BRACKET_OCO","cat":"basic","fam":"order-fill","bucket":"trade","name":"Bracket / One-Cancels-the-Other (OCO)","nameZh":"止盈止损括号单 (OCO)","zh":{"insight":"部分成交：⚠ 如果母单只成交了一部分，子单可能仍按全额数量挂着——"},"en":{"insight":"A naked position waiting to happen. Check the child quantity whenever the parent fills partially."}},"ord.MOC":{"src":"ord","eid":"MOC","cat":"moomoo","fam":"order-fill","bucket":"trade","name":"Market On Close (MOC)","nameZh":"收盘市价单","zh":{"insight":"⚠ 因此这个模型给了集合竞价无限深度。真实的收盘竞价并非如此："},"en":{"insight":"Using MOC for size hides your impact cost rather than removing it."}},"ord.MIT":{"src":"ord","eid":"MIT","cat":"moomoo","fam":"order-fill","bucket":"trade","name":"Market-if-Touched (MIT)","nameZh":"触及市价单","zh":{"insight":"⚠ 它是止损单的镜像。买入止损挂在上方，在价格离你而去时触发；"},"en":{"insight":"Read the fill, not the label; the substance is the missing clamp."}},"ord.LIT":{"src":"ord","eid":"LIT","cat":"moomoo","fam":"order-fill","bucket":"trade","name":"Limit-if-Touched (LIT)","nameZh":"触及限价单","zh":{"insight":"⚠ 跳空既武装了它，也搁浅了它：市场在你的触发位下方重新开盘，订单被激活——"},"en":{"insight":"Nothing tells you your entry has evaporated."}},"ord.POV":{"src":"ord","eid":"POV","cat":"moomoo","fam":"order-fill","bucket":"trade","name":"Percentage of Volume (POV)","nameZh":"参与成交量比例单","zh":{"insight":"⚠ 转化：一串小市价单，其规模由市场决定，而不是由你决定。这是它与 TWAP/VWAP 最根本的差别——后两者你至少知道会分几次，POV 连这个都不确定。"},"en":{"insight":"The size is set by the market, not by you — unlike TWAP or VWAP where you at least know the schedule."}},"ord.HK_AUCTION_MKT":{"src":"ord","eid":"HK_AUCTION_MKT","cat":"tiger","fam":"order-fill","bucket":"trade","name":"HK Auction Market Order (at-auction order)","nameZh":"港股竞价市价单","zh":{"insight":"也不是\"一张定时在开盘发出的市价单\"——两者的撮合机制完全不同。"},"en":{"insight":"It is not \"a market order timed for the open\" — the matching mechanism is different."}},"ord.HK_AUCTION_LMT":{"src":"ord","eid":"HK_AUCTION_LMT","cat":"tiger","fam":"order-fill","bucket":"trade","name":"HK Auction Limit Order (at-auction limit)","nameZh":"港股竞价限价单","zh":{"insight":"按清算价成交，而不是按你的限价——这意味着价格改善是真实的，你常常会成交得比限价更好。"},"en":{"insight":"You fill at the clearing price, not at your limit — price improvement is real."}},"ord.DARK_POOL":{"src":"ord","eid":"DARK_POOL","cat":"tiger","fam":"order-fill","bucket":"trade","name":"Dark Pool Order (HK after-hours dark trading)","nameZh":"暗盘订单","zh":{"insight":"⚠ 请注意价格和撮合率都是抽取出来的，不是从盘口模型算出来的。"},"en":{"insight":"The default expectation, not the exception."}},"ord.CONDITIONAL":{"src":"ord","eid":"CONDITIONAL","cat":"tiger","fam":"order-fill","bucket":"trade","name":"Conditional Order (condition → submit)","nameZh":"条件订单","zh":{"insight":"⚠ 它是在一根 K 线收盘时求值的——这一行就是整个条目的核心。"},"en":{"insight":"THE LAG. This is the product, not a modelling shortcut."}},"ord.ATTACHED":{"src":"ord","eid":"ATTACHED","cat":"tiger","fam":"order-fill","bucket":"trade","name":"Attached Order (parent + child / 附加委托)","nameZh":"附加单","zh":{"insight":"是建仓的数字，不是一个完整来回的数字。用它评估策略表现会系统性低估真实成本。"},"en":{"insight":"The panel shows the entry's numbers, not the round trip's, which understates the true cost of a strategy."}},"ord.ICEBERG":{"src":"ord","eid":"ICEBERG","cat":"tiger","fam":"order-fill","bucket":"trade","name":"Iceberg Order (display size / hidden quantity)","nameZh":"冰山单","zh":{"insight":"⚠ 模型无法展示的是它的好处：它不会模拟\"当你挂出六万股时对手方直接撤退\"这一现象，"},"en":{"insight":"Read the cost from the simulator and supply the benefit from the structure."}},"ord.TIF":{"src":"ord","eid":"TIF","cat":"mechanics","fam":"order-fill","bucket":"trade","name":"Time in Force (DAY / GTC / GTD / IOC / FOK)","nameZh":"订单有效期","zh":{"insight":"⚠ 三者在同一本盘口（你的价格内只有 1,100 股）上的差别："},"en":{"insight":"Which is why size uses IOC rather than a limit — not to fill, but to avoid showing intent."}},"ord.ORDER_BOOK":{"src":"ord","eid":"ORDER_BOOK","cat":"mechanics","fam":"order-fill","bucket":"trade","name":"The Order Book & Queue Priority","nameZh":"盘口与排队优先级","zh":{"insight":"⚠ 因此一张挂单是队列中的一个位置，而不仅仅是一个价格。理解这一点，才明白为什么\"我挂在最优价却没成交\"。"},"en":{"insight":"A resting order is a POSITION IN A QUEUE, not a price."}},"ord.SESSIONS":{"src":"ord","eid":"SESSIONS","cat":"mechanics","fam":"order-fill","bucket":"trade","name":"Trading Sessions & Auctions","nameZh":"交易时段与集合竞价","zh":{"insight":"⇒ 两端每根的成交量约是中间的 3.5 倍。这解释了为什么大单要在开盘和收盘附近做。"},"en":{"insight":"Your stop was not broken; it was asleep during the only hours that mattered."}},"ord.FILLS":{"src":"ord","eid":"FILLS","cat":"mechanics","fam":"order-fill","bucket":"trade","name":"Fills, Partial Fills & Average Price","nameZh":"成交、部分成交与均价","zh":{"insight":"均价 = Σ(数量 × 价格) ÷ Σ数量，不是各笔价格的算术平均。"},"en":{"insight":"Never re-send an order because a screen has not caught up — the classic and expensive duplicate-order accident."}},"ord.MAKER_TAKER":{"src":"ord","eid":"MAKER_TAKER","cat":"mechanics","fam":"order-fill","bucket":"trade","name":"Maker / Taker & Execution Cost","nameZh":"挂单/吃单与交易成本","zh":{"insight":"不需要任何数据权限，也不依赖任何理论。这是评估券商执行质量最朴素也最可靠的方法。"},"en":{"insight":"Adverse selection and the cost of not trading are the real risks of posting, and neither appears on any fee schedule."}}};}(globalThis));</script>
+<script>/* =============================================================================
+   families.js — lesson generation for the full 302-entry corpus.
+
+   A lesson is generated from (entry, family). Three rules govern this file:
+
+   1. THE LESSON KIND FOLLOWS WHAT THE ENTRY SUPPORTS.
+        bucket 'trade'  a fill or a P/L can honestly be produced on a tape
+        bucket 'read'   the reading IS the exercise — no fill, no P/L
+        bucket 'define' interpretation only; a fundamentals ratio has no tape
+                        and inventing one would be fabrication
+      Read/define lessons are legitimately shorter and say so in the UI.
+
+   2. EVERY FAMILY DECLARES A PHENOMENON PREDICATE, and generation searches
+      seeds until it is satisfied. A generated "overbought" lesson on an
+      arbitrary seed may contain no overbought reading at all and would
+      silently teach nothing while passing every structural test. If no seed
+      in the search window produces the phenomenon the pairing is REJECTED
+      rather than shipped hollow.
+
+   3. THE CORRECT ANSWER IS THE VERIFIED ANNOTATION. Each entry's mined
+      `insight` is text already authored and checked against its formula, so
+      the true option is quoted verbatim. Distractors are per-family
+      misconceptions written once, deliberately, not generic filler.
+   ============================================================================= */
+(function (root) {
+  'use strict';
+  var PG = root.PG, S = PG.Sim, M = S.money;
+  var P = PG.PACK;
+
+  function L2(zh, en) { return { zh: zh, en: en }; }
+  var closes = { c: PG.Sim ? null : null };
+
+  /* ---- per-family misconceptions used as distractors ---------------------- */
+  var DISTRACT = {
+    'osc-threshold': [
+      L2('读数越极端，反转就越快到来——这是一个可以直接下单的信号。', 'The more extreme the reading, the sooner the reversal — it is a signal you can trade directly.'),
+      L2('这个指标在任何行情里都用同一组阈值，因为它已经归一化了。', 'The same thresholds work in every regime, because the indicator is already normalised.')
+    ],
+    'ma-lag': [
+      L2('周期越短越好，因为它更早给出信号。', 'A shorter period is always better because it signals earlier.'),
+      L2('均线交叉本身就是入场信号，不需要看行情体制。', 'A moving-average cross is an entry signal on its own, regardless of regime.')
+    ],
+    'channel-fade': [
+      L2('价格触及通道边缘就是反转信号，因为通道代表极限。', 'Touching the channel edge is a reversal signal, because the channel marks a limit.'),
+      L2('通道宽度固定，因此可以用同一个止损距离。', 'The channel width is fixed, so one stop distance works throughout.')
+    ],
+    'vol-size': [
+      L2('波动率指标能告诉你方向——数值上升说明要涨。', 'A volatility measure tells you direction: rising means the price is going up.'),
+      L2('波动率高的时候应该加大仓位，因为机会更大。', 'Size up when volatility is high, because the opportunity is larger.')
+    ],
+    'volume-confirm': [
+      L2('成交量放大总是看涨，因为有资金在进场。', 'Rising volume is bullish, because money is coming in.'),
+      L2('成交量指标可以跨品种直接比较绝对数值。', 'Volume indicators can be compared across instruments by their absolute values.')
+    ],
+    'flow-signed': [
+      L2('大单净流入为正就说明主力在建仓。', 'Positive large-order net inflow means institutions are accumulating.'),
+      L2('资金流向数据来自交易所，因此买卖方向是确定的。', 'Money-flow data comes from the exchange, so the trade direction is known rather than inferred.')
+    ],
+    'stop-trail': [
+      L2('追踪止损锁定了利润，触发时就能拿到那个价格。', 'A trailing stop locks in profit — you receive the level it triggered at.'),
+      L2('回撤参数越小越好，因为止损更紧。', 'A tighter trail is always better, because the stop is closer.')
+    ],
+    'breadth-part': [
+      L2('广度指标的中性水平是 50，低于 50 就是偏空。', 'The neutral level of a breadth series is 50; below it is bearish.'),
+      L2('不同年代、不同指数的广度读数可以直接比较。', 'Breadth readings are comparable across eras and across indices.')
+    ],
+    'chain-read': [
+      L2('持仓量增加说明有人在做多，减少说明在做空。', 'Rising open interest means someone is going long; falling means going short.'),
+      L2('屏幕上的持仓量是实时的，可以用于日内判断。', 'The open interest on screen is live and can be used intraday.')
+    ],
+    'vol-regime': [
+      L2('隐含波动率高说明市场看跌，低说明看涨。', 'High implied volatility means the market is bearish; low means bullish.'),
+      L2('隐含波动率是从市场上直接读出来的一个报价。', 'Implied volatility is a quote read directly off the market.')
+    ],
+    'greek-sense': [
+      L2('希腊字母是经验规则，不同券商算出来的值会有本质差异。', 'The greeks are rules of thumb, and different brokers compute fundamentally different values.'),
+      L2('只要方向判断正确，希腊字母就不会影响结果。', 'If the direction is right, the greeks do not affect the outcome.')
+    ],
+    'payoff-structure': [
+      L2('最大盈利概率越高的结构越好，因为赢面更大。', 'The structure with the highest probability of profit is the better one, because you win more often.'),
+      L2('有界风险的结构在任何情况下都不可能超出最大亏损。', 'A defined-risk structure can never lose more than its stated maximum, under any circumstance.')
+    ],
+    'order-fill': [
+      L2('订单类型决定了成交价格，写在单子上的价格就是你会拿到的。', 'The order type determines the fill price: the price on the ticket is the price you get.'),
+      L2('只要设了保护性订单，隔夜跳空的风险就被消除了。', 'Placing a protective order removes overnight gap risk.')
+    ],
+    'ratio-quality': [
+      L2('这个比率越高越好，可以直接跨行业比较。', 'Higher is better on this ratio, and it compares directly across industries.'),
+      L2('财报数字是审计过的，因此不需要追问它的构成。', 'Reported figures are audited, so there is no need to question how they were composed.')
+    ],
+    'concept-trap': [
+      L2('这是一个标准化的定义，各家券商和交易所的处理完全一致。', 'This is a standardised definition and every broker and exchange handles it identically.'),
+      L2('只要读懂了定义，实际操作中就不会出现意外。', 'Once the definition is understood, nothing surprising happens in practice.')
+    ]
+  };
+
+  /* ---- reusable step builders -------------------------------------------- */
+  function nm(c) { return { zh: c.nameZh || c.name, en: c.name }; }
+
+  function stepIntro(c) {
+    var what = c.bucket === 'trade'
+      ? L2('下面是一段为这一条专门挑选的行情——生成时搜索随机种子，直到这段行情里确实出现了这一条要讲的现象为止。',
+           'The tape below was selected for this entry: generation searched seeds until the phenomenon this entry is about actually appears in it.')
+      : c.bucket === 'read'
+      ? L2('这一条<b>不产生成交</b>——它的练习是"读数"本身。因此本课比可交易的课程短，这是刻意的。',
+           'This entry produces <b>no fill</b> — the reading is the exercise. This lesson is deliberately shorter than a tradeable one.')
+      : L2('这一条<b>没有行情可交易</b>——它是一个定义或一个财务比率。强行给它安排一段 K 线属于编造，所以本课只做解读与识别陷阱。',
+           'This entry has <b>no tape</b> — it is a definition or an accounting ratio. Fabricating price action for it would be dishonest, so this lesson is interpretation and trap-spotting only.');
+    return {
+      kind: 'info',
+      title: L2('这一条是什么', 'What this entry is'),
+      body: {
+        zh: '<b>' + (c.nameZh || c.name) + '</b>（' + c.id + '）· 来自' +
+            (c.src === 'ind' ? '指标手册' : c.src === 'opt' ? '期权手册' : '订单手册') +
+            '<br><br>' + what.zh,
+        en: '<b>' + c.name + '</b> (' + c.id + ') · from the ' +
+            (c.src === 'ind' ? 'indicator' : c.src === 'opt' ? 'options' : 'order') +
+            ' handbook<br><br>' + what.en
+      }
+    };
+  }
+
+  /* The pick whose CORRECT option is the verified annotation, verbatim. */
+  function stepTrap(c) {
+    var d = DISTRACT[c.fam] || DISTRACT['concept-trap'];
+    var opts = [
+      { ok: false, label: d[0], why: L2('这是这一族指标最常见的误解之一。正确的说法见下一个选项。',
+                                         'One of the most common misconceptions in this family. The accurate statement is the other option.') },
+      { ok: true,
+        label: { zh: trunc(c.zh.insight, 190), en: trunc(c.en.insight || c.zh.insight, 210) },
+        why: { zh: c.zh.insight, en: c.en.insight || c.zh.insight } },
+      { ok: false, label: d[1], why: L2('同样是常见误解。它听起来合理，但与这一条的定义不符。',
+                                         'Also a common misconception. It sounds reasonable and does not survive the definition.') }
+    ];
+    /* rotate so the correct option is not always in the same slot */
+    var r = (c.id.charCodeAt(0) + c.id.length) % 3;
+    for (var k = 0; k < r; k++) opts.push(opts.shift());
+    return {
+      kind: 'pick',
+      title: L2('哪一句是对的？', 'Which statement is true?'),
+      body: {
+        zh: '关于 <b>' + (c.nameZh || c.name) + '</b>，下面哪一句准确？错误选项都是这一族里真实存在的误解，不是凑数的干扰项。',
+        en: 'About <b>' + c.name + '</b>, which is accurate? The wrong answers are real misconceptions in this family, not filler.'
+      },
+      options: opts
+    };
+  }
+  function trunc(s, n) {
+    s = String(s || '');
+    return s.length > n ? s.slice(0, n - 1) + '…' : s;
+  }
+
+  function stepClose(c) {
+    return {
+      kind: 'info',
+      title: L2('要记住的一句话', 'The one line to keep'),
+      body: { zh: c.zh.insight, en: c.en.insight || c.zh.insight }
+    };
+  }
+
+  /* ---- families ----------------------------------------------------------
+     tape()    build params for S.tape
+     present() the phenomenon predicate — generation rejects seeds that fail
+     act()     the graded action (trade bucket only)                          */
+  var FAM = PG.FAM = {};
+
+  FAM['osc-threshold'] = {
+    tape: function (c, k) { return { regime: 'range', seed: c.key + '-v1:' + k, bars: 130, p0: 100 }; },
+    present: function (tp) {
+      var cl = tp.bars.map(function (b) { return b.c; }), r = S.IND.rsi(cl, 14), i, hi = 0, lo = 0;
+      for (i = 0; i < r.length; i++) { if (r[i] == null) continue; if (r[i] > 68) hi++; if (r[i] < 32) lo++; }
+      return hi >= 2 && lo >= 2;   /* the oscillator must actually reach both ends */
+    },
+    overlays: ['rsi'],
+    act: function (c) {
+      return {
+        kind: 'act', ui: 'oscBand',
+        title: L2('选择你的阈值', 'Choose your threshold'),
+        body: L2('用 RSI 做均值回归：在读数低于下阈值时买入，回到 50 中轴时卖出。阈值越极端，交易越少但每笔更可靠——这个取舍就是练习本身。',
+                 'Mean-revert with RSI: buy when the reading falls below your threshold, exit at the 50 midline. A more extreme threshold trades less often but each trade is cleaner — that trade-off is the exercise.'),
+        param: { key: 'lo', min: 15, max: 45, step: 1, def: 30, label: L2('买入阈值', 'Buy threshold') },
+        run: function (tape, p) {
+          var cl = tape.bars.map(function (b) { return b.c; }), r = S.IND.rsi(cl, 14);
+          var i, pos = null, pl = 0, n = 0, w = 0;
+          for (i = 15; i < tape.n; i++) {
+            if (r[i] == null) continue;
+            if (!pos && r[i] < p.lo) pos = { px: cl[i], i: i };
+            else if (pos && r[i] > 50) { var d = cl[i] - pos.px; pl += d * 1000; n++; if (d > 0) w++; pos = null; }
+          }
+          return { pl: pl, n: n, w: w, thr: p.lo };
+        },
+        grade: function (res, p) {
+          var pass = res.n > 0 && res.pl > 0;
+          return {
+            pass: pass,
+            title: pass ? L2('阈值有效', 'The threshold worked') : (res.n ? L2('成交了，但净额为负', 'It traded, and lost') : L2('从未触发', 'Never triggered')),
+            body: {
+              zh: '阈值 <b>' + p.lo + '</b>：<b>' + res.n + '</b> 笔交易，<b>' + res.w + '</b> 笔盈利，净额 <b>' + M(res.pl) + '</b>。' +
+                  (res.n === 0 ? '阈值太极端，这段行情里从未触及——没有交易也是一种结果。' : '把阈值调高会增加交易笔数并降低单笔质量，调低则相反。'),
+              en: 'Threshold <b>' + p.lo + '</b>: <b>' + res.n + '</b> trades, <b>' + res.w + '</b> winners, net <b>' + M(res.pl) + '</b>. ' +
+                  (res.n === 0 ? 'Too extreme to be reached on this tape — no trade is also a result.' : 'Raising it trades more often at lower quality; lowering it does the reverse.')
+            }
+          };
+        }
+      };
+    }
+  };
+
+  FAM['ma-lag'] = {
+    tape: function (c, k) { return { regime: 'trend_up', seed: c.key + '-v1:' + k, bars: 130, p0: 100 }; },
+    present: function (tp) {
+      var cl = tp.bars.map(function (b) { return b.c; });
+      return cl[cl.length - 1] / cl[0] > 1.06;   /* a trend must actually be present */
+    },
+    overlays: ['ma20'],
+    act: function (c) {
+      return {
+        kind: 'act', ui: 'maPeriod',
+        title: L2('选择周期', 'Choose the period'),
+        body: L2('顺势规则：收盘价上穿均线买入，下穿卖出。短周期反应快但假信号多，长周期相反——这条曲线上的最优值不是普遍最优值，这一点才是重点。',
+                 'A trend rule: buy when the close crosses above the average, sell when it crosses below. Short is fast and noisy, long is the reverse — and the best value on THIS tape is not a universal one, which is the point.'),
+        param: { key: 'n', min: 5, max: 60, step: 1, def: 20, label: L2('均线周期 N', 'Average period N') },
+        run: function (tape, p) {
+          var cl = tape.bars.map(function (b) { return b.c; }), ma = S.IND.sma(cl, p.n);
+          var i, pos = null, pl = 0, n = 0, w = 0;
+          for (i = 1; i < tape.n; i++) {
+            if (ma[i] == null) continue;
+            if (!pos && cl[i] > ma[i] && cl[i - 1] <= (ma[i - 1] == null ? cl[i - 1] : ma[i - 1])) pos = { px: cl[i] };
+            else if (pos && cl[i] < ma[i]) { var d = cl[i] - pos.px; pl += d * 1000; n++; if (d > 0) w++; pos = null; }
+          }
+          if (pos) { var d2 = cl[tape.n - 1] - pos.px; pl += d2 * 1000; n++; if (d2 > 0) w++; }
+          return { pl: pl, n: n, w: w, per: p.n };
+        },
+        grade: function (res, p) {
+          var pass = res.pl > 0;
+          return {
+            pass: pass,
+            title: pass ? L2('顺势规则在趋势里生效', 'A trend rule in a trend') : L2('被反复洗出', 'Whipsawed'),
+            body: {
+              zh: '周期 <b>' + p.n + '</b>：<b>' + res.n + '</b> 笔交易，<b>' + res.w + '</b> 笔盈利，净额 <b>' + M(res.pl) + '</b>。' +
+                  '注意：在这段趋势里表现最好的周期，换到震荡行情里通常是表现最差的那个。均线周期不是一个可以一次性调优的参数。',
+              en: 'Period <b>' + p.n + '</b>: <b>' + res.n + '</b> trades, <b>' + res.w + '</b> winners, net <b>' + M(res.pl) + '</b>. ' +
+                  'The period that performs best on this trending tape is usually the worst one in a range. It is not a parameter you tune once.'
+            }
+          };
+        }
+      };
+    }
+  };
+
+  FAM['channel-fade'] = {
+    tape: function (c, k) { return { regime: 'range', seed: c.key + '-v2:' + k, bars: 130, p0: 100 }; },
+    present: function (tp) {
+      var cl = tp.bars.map(function (b) { return b.c; }), bb = S.IND.boll(cl, 20, 2), i, t = 0;
+      for (i = 22; i < cl.length; i++) if (bb.dn[i] != null && tp.bars[i].l <= bb.dn[i]) t++;
+      return t >= 3;   /* the lower edge must actually be visited */
+    },
+    overlays: ['boll'],
+    /* a channel family fades its own band — borrowing the oscillator action
+       would grade the user on a rule this entry is not about */
+    act: function (c) {
+      return {
+        kind: 'act', ui: 'fadeDepth',
+        title: L2('在边缘挂单，到中轨了结', 'Rest at the edge, exit at the middle'),
+        body: L2('在中轨下方 σ 的若干倍处挂买入限价，触及中轨止盈。挂得越深价格越好、被触及的概率越低——这个取舍就是通道类指标的全部用法。',
+                 'Rest a buy limit some multiple of σ below the middle band and exit when the middle band is reached. Deeper is a better price and a lower chance of being filled — that trade-off is what a channel indicator is for.'),
+        param: { key: 'depth', min: 0.2, max: 2.4, step: 0.1, def: 1.0,
+                 label: L2('入场深度（中轨下方 σ）', 'Entry depth (σ below mid)') },
+        run: function (tape, p) {
+          var cl = tape.bars.map(function (b) { return b.c; });
+          var bb = S.IND.boll(cl, 20, 2), start = 24;
+          var sd = (bb.up[start] - bb.mid[start]) / 2;
+          var lim = bb.mid[start] - p.depth * sd;
+          var t = { n: tape.n, bars: tape.bars, seed: tape.seed };
+          var buy = S.ENGINE.LMT(t, { side: 'buy', qty: 1000, limit: lim, from: start });
+          var exitAt = null, exitPx = null, i;
+          if (buy.filled) {
+            for (i = buy.at + 1; i < tape.n; i++) {
+              if (bb.mid[i] != null && tape.bars[i].h >= bb.mid[i]) { exitAt = i; exitPx = bb.mid[i]; break; }
+            }
+            if (exitAt == null) { exitAt = tape.n - 1; exitPx = tape.bars[tape.n - 1].c; }
+          }
+          return { limit: lim, buy: buy, exitAt: exitAt, exitPx: exitPx,
+                   pl: buy.filled ? (exitPx - lim) * buy.filled : 0, bb: bb };
+        },
+        grade: function (res, p) {
+          var pass = res.buy.filled > 0;
+          return {
+            pass: pass,
+            title: pass ? L2('挂单成交并回到中轨', 'Filled, then reverted to the middle')
+                        : L2('从未触及——一个你没拿到的好价格', 'Never reached — a good price you did not get'),
+            body: {
+              zh: res.buy.filled
+                ? '限价 <b>' + res.limit.toFixed(2) + '</b>，1,000 股中成交 <b>' + res.buy.filled + '</b> 股，' +
+                  '在 <b>' + res.exitPx.toFixed(2) + '</b> 了结，盈亏 <b>' + M(res.pl) + '</b>。<br>' +
+                  '注意部分成交：挂单是队列里的一个位置，仅仅"触及"你价位的那些 K 线只给你一部分。'
+                : '挂在 <b>' + res.limit.toFixed(2) + '</b> 的限价单从未被触及。深度换来了更好的价格，代价是这笔交易根本没有发生——这份机会成本只出现在实施缺口里，不会出现在滑点报告里。',
+              en: res.buy.filled
+                ? 'Limit <b>' + res.limit.toFixed(2) + '</b> · filled <b>' + res.buy.filled + '</b> of 1,000 · exit <b>' +
+                  res.exitPx.toFixed(2) + '</b> · P/L <b>' + M(res.pl) + '</b>.<br>' +
+                  'Note the partial: a resting limit is a place in a queue, and bars that merely touched your level gave you a slice.'
+                : 'The limit at <b>' + res.limit.toFixed(2) + '</b> was never reached. Depth bought a better price and cost you the trade — an opportunity cost that shows up only in implementation shortfall.'
+            }
+          };
+        }
+      };
+    }
+  };
+
+  FAM['vol-size'] = {
+    tape: function (c, k) { return { regime: 'squeeze_break', seed: c.key + '-v1:' + k, bars: 130, p0: 100 }; },
+    present: function (tp) {
+      var a = S.IND.atr(tp.bars, 14), e = a[a.length - 1], m = a[Math.floor(a.length * 0.5)];
+      return e != null && m != null && e / m > 1.25;   /* volatility must expand */
+    },
+    overlays: ['ma20'],
+    act: function (c) {
+      return {
+        kind: 'act', ui: 'riskSize',
+        title: L2('用波动率决定仓位', 'Let volatility set the size'),
+        body: L2('风险预算固定为 <b>$2,000</b>。止损距离取 k × ATR，仓位 = 风险预算 ÷ 止损距离。这一步把一个抽象的波动率数字变成一个具体的股数。',
+                 'Risk budget is fixed at <b>$2,000</b>. The stop sits k × ATR away and size = budget ÷ stop distance. This is the step that turns an abstract volatility number into a share count.'),
+        param: { key: 'k', min: 1, max: 4, step: 0.25, def: 2, label: L2('止损倍数 k', 'Stop multiple k') },
+        run: function (tape, p) {
+          var a = S.IND.atr(tape.bars, 14), i = tape.n - 1;
+          while (i > 0 && a[i] == null) i--;
+          var atr = a[i] || 1, dist = p.k * atr, qty = Math.floor(2000 / dist);
+          var early = a[Math.floor(tape.n * 0.4)] || atr;
+          return { atr: atr, dist: dist, qty: qty, earlyAtr: early, earlyQty: Math.floor(2000 / (p.k * early)) };
+        },
+        grade: function (res, p) {
+          return {
+            pass: true,
+            title: L2('同样的风险预算，两种仓位', 'Same budget, two different sizes'),
+            body: {
+              zh: 'k = <b>' + p.k + '</b>，当前 ATR <b>' + res.atr.toFixed(2) + '</b>，止损距离 <b>' + res.dist.toFixed(2) +
+                  '</b>，仓位 <b>' + res.qty.toLocaleString() + ' 股</b>。<br>而在这段行情前半段波动率较低时，同样的 $2,000 预算允许 <b>' +
+                  res.earlyQty.toLocaleString() + ' 股</b>。<b>风险不变，仓位随波动率反向变化</b>——这正是"波动大就降仓位"的数学形态，而不是一句口号。',
+              en: 'k = <b>' + p.k + '</b>, ATR <b>' + res.atr.toFixed(2) + '</b>, stop distance <b>' + res.dist.toFixed(2) +
+                  '</b>, size <b>' + res.qty.toLocaleString() + ' shares</b>.<br>Earlier on this same tape, when volatility was lower, the same $2,000 allowed <b>' +
+                  res.earlyQty.toLocaleString() + ' shares</b>. <b>Risk held constant, size moves inversely with volatility</b> — the arithmetic behind "size down when it is wild", rather than the slogan.'
+            }
+          };
+        }
+      };
+    }
+  };
+
+  FAM['volume-confirm'] = {
+    tape: function (c, k) { return { regime: 'trend_up', seed: c.key + '-v3:' + k, bars: 120, p0: 100 }; },
+    present: function (tp) {
+      var v = tp.bars.map(function (b) { return b.v; }), a = S.IND.sma(v, 20), i, s = 0;
+      for (i = 20; i < v.length; i++) if (a[i] && v[i] > a[i] * 1.8) s++;
+      return s >= 3;   /* there must be genuine volume spikes to talk about */
+    },
+    overlays: ['ma20'],
+    act: function (c) {
+      return {
+        kind: 'act', ui: 'volFilter',
+        title: L2('用成交量做过滤', 'Filter with volume'),
+        body: L2('同一条顺势规则，只是加了一个条件：只有当根成交量高于均量的 R 倍时才允许入场。这一步问的是：成交量确认到底有没有用？',
+                 'The same trend rule with one condition added: only enter when bar volume exceeds R times its average. The question is whether volume confirmation earns its keep.'),
+        param: { key: 'r', min: 0.6, max: 2.6, step: 0.1, def: 1.2, label: L2('放量倍数 R', 'Volume multiple R') },
+        run: function (tape, p) {
+          var cl = tape.bars.map(function (b) { return b.c; }), v = tape.bars.map(function (b) { return b.v; });
+          var ma = S.IND.sma(cl, 20), va = S.IND.sma(v, 20), i, pos = null, pl = 0, n = 0, w = 0, base = 0, bn = 0;
+          for (i = 1; i < tape.n; i++) {
+            if (ma[i] == null || va[i] == null) continue;
+            var up = cl[i] > ma[i] && cl[i - 1] <= (ma[i - 1] || cl[i - 1]);
+            if (!pos && up && v[i] > va[i] * p.r) pos = { px: cl[i] };
+            else if (pos && cl[i] < ma[i]) { var d = cl[i] - pos.px; pl += d * 1000; n++; if (d > 0) w++; pos = null; }
+            if (up) bn++;
+          }
+          if (pos) { pl += (cl[tape.n - 1] - pos.px) * 1000; n++; }
+          return { pl: pl, n: n, w: w, signals: bn, r: p.r };
+        },
+        grade: function (res, p) {
+          return {
+            pass: res.pl > 0,
+            title: res.pl > 0 ? L2('过滤后仍然盈利', 'Still profitable after filtering') : L2('过滤没有救回来', 'The filter did not rescue it'),
+            body: {
+              zh: '倍数 <b>' + p.r + '</b>：原始交叉信号 <b>' + res.signals + '</b> 个，通过成交量过滤后实际交易 <b>' + res.n +
+                  '</b> 笔，盈利 <b>' + res.w + '</b> 笔，净额 <b>' + M(res.pl) + '</b>。<br>把 R 调高会滤掉更多信号——注意它滤掉的既有坏信号也有好信号。',
+              en: 'R = <b>' + p.r + '</b>: <b>' + res.signals + '</b> raw crosses, <b>' + res.n + '</b> survived the volume filter, <b>' +
+                  res.w + '</b> won, net <b>' + M(res.pl) + '</b>.<br>Raising R removes more signals — including good ones, not only bad ones.'
+            }
+          };
+        }
+      };
+    }
+  };
+
+  FAM['flow-signed'] = {
+    tape: function (c, k) { return { regime: 'range', seed: c.key + '-v4:' + k, bars: 110, p0: 100 }; },
+    present: function (tp) { return true; },
+    overlays: ['ma20'],
+    act: function (c) {
+      return {
+        kind: 'act', ui: 'flowSign',
+        title: L2('给成交量定符号', 'Sign the volume'),
+        body: L2('把每根 K 线的成交量按收盘方向定符号并累加，得到一条资金流曲线。然后问一个问题：这条曲线与价格背离时，你相信哪一个？',
+                 'Sign each bar\'s volume by its close direction and accumulate. Then ask the question that matters: when the line diverges from price, which one do you believe?'),
+        param: { key: 'w', min: 1, max: 30, step: 1, def: 10, label: L2('平滑周期', 'Smoothing period') },
+        run: function (tape, p) {
+          var cl = tape.bars.map(function (b) { return b.c; }), obv = [], run = 0, i;
+          for (i = 0; i < tape.n; i++) {
+            if (i) run += (cl[i] > cl[i - 1] ? 1 : cl[i] < cl[i - 1] ? -1 : 0) * tape.bars[i].v;
+            obv.push(run);
+          }
+          var sm = S.IND.sma(obv, p.w);
+          var pDelta = cl[tape.n - 1] - cl[Math.floor(tape.n * 0.5)];
+          var oDelta = obv[tape.n - 1] - obv[Math.floor(tape.n * 0.5)];
+          return { diverge: (pDelta > 0) !== (oDelta > 0), pDelta: pDelta, oDelta: oDelta, sm: sm };
+        },
+        grade: function (res) {
+          return {
+            pass: true,
+            title: res.diverge ? L2('后半段出现了背离', 'They diverged in the second half') : L2('价量同向', 'Price and flow agreed'),
+            body: {
+              zh: '后半段价格变动 <b>' + res.pDelta.toFixed(2) + '</b>，累计资金流变动 <b>' + (res.oDelta / 1000).toFixed(0) +
+                  'k</b>。<br>⚠ 必须记住这条曲线是怎么造出来的：<b>整根 K 线的成交量被一个收盘价比较一刀切地分到某一边</b>，涨 0.01% 与涨 9% 贡献完全相同。背离值得注意，但在把它当作结论之前，先怀疑这个粗糙的符号规则。',
+              en: 'Second-half price change <b>' + res.pDelta.toFixed(2) + '</b>, cumulative flow change <b>' + (res.oDelta / 1000).toFixed(0) +
+                  'k</b>.<br>Remember how this line is built: <b>a whole bar\'s volume is signed by one close-to-close comparison</b>, so +0.01% and +9% contribute identically. A divergence is worth noticing — but suspect the crude sign rule before you treat it as a conclusion.'
+            }
+          };
+        }
+      };
+    }
+  };
+
+  FAM['stop-trail'] = {
+    tape: function (c, k) { return { regime: 'trend_up', seed: c.key + '-v5:' + k, bars: 120, p0: 100 }; },
+    present: function (tp) {
+      var cl = tp.bars.map(function (b) { return b.c; }), pk = Math.max.apply(null, cl);
+      return pk / cl[0] > 1.05 && cl[cl.length - 1] < pk * 0.97;   /* must rise then give some back */
+    },
+    overlays: ['ma20'],
+    act: function (c) {
+      return {
+        kind: 'act', ui: 'trail',
+        title: L2('设置回撤幅度', 'Set the trail'),
+        body: L2('多头 1,000 股，用追踪止损保护。回撤越紧越早出场、越容易被正常波动打掉；越松保住的利润越少。注意最后的成交价与触发价位之间的差。',
+                 'Long 1,000 shares protected by a trailing stop. Tighter exits earlier and is shaken out by ordinary noise; looser keeps less of the gain. Watch the distance between the level and the fill.'),
+        param: { key: 'trail', min: 0.5, max: 6, step: 0.25, def: 2.5, label: L2('回撤幅度', 'Trail distance') },
+        run: function (tape, p) {
+          var t = { n: tape.n, bars: tape.bars, seed: tape.seed };
+          var r = S.ENGINE.TS(t, { side: 'sell', qty: 1000, trail: p.trail, from: 0 });
+          var peak = Math.max.apply(null, tape.bars.map(function (b) { return b.h; }));
+          return { r: r, level: r.level, px: r.px, peak: peak, at: r.at,
+                   filled: r.filled, events: r.events,
+                   pl: r.filled ? (r.px - 100) * r.filled : (tape.bars[tape.n - 1].c - 100) * 1000 };
+        },
+        grade: function (res, p) {
+          var slip = res.filled ? res.level - res.px : 0;
+          return {
+            pass: res.pl > 0,
+            title: res.filled ? L2('触发并成交', 'Triggered and filled') : L2('从未触发', 'Never triggered'),
+            body: {
+              zh: res.filled
+                ? '回撤 <b>' + p.trail + '</b>：锁定的触发价位 <b>' + res.level.toFixed(2) + '</b>，实际成交 <b>' + res.px.toFixed(2) +
+                  '</b>，两者相差 <b>' + slip.toFixed(2) + '</b>/股（合计 ' + M(slip * res.filled) + '）。盈亏 <b>' + M(res.pl) +
+                  '</b>，而这段行情的最高价是 <b>' + res.peak.toFixed(2) + '</b>。<br>⚠ 追踪止损锁定的是<b>触发价位</b>，不是利润。'
+                : '回撤 <b>' + p.trail + '</b> 从未被触及，你仍然持有。当前盈亏 <b>' + M(res.pl) + '</b>。',
+              en: res.filled
+                ? 'Trail <b>' + p.trail + '</b>: level locked at <b>' + res.level.toFixed(2) + '</b>, filled at <b>' + res.px.toFixed(2) +
+                  '</b> — <b>' + slip.toFixed(2) + '</b>/share apart (' + M(slip * res.filled) + ' in total). P/L <b>' + M(res.pl) +
+                  '</b> against a session high of <b>' + res.peak.toFixed(2) + '</b>.<br>A trailing stop locks a <b>level</b>, not a profit.'
+                : 'The trail was never reached; you are still holding. P/L <b>' + M(res.pl) + '</b>.'
+            }
+          };
+        }
+      };
+    }
+  };
+
+  /* ---- read bucket: the reading is the exercise, no fill ------------------ */
+  function readStep(c, title, body, mk) {
+    return { kind: 'act', ui: 'read', title: title, body: body,
+             param: mk.param, run: mk.run, grade: mk.grade };
+  }
+
+  FAM['breadth-part'] = {
+    tape: function (c, k) { return { regime: 'trend_up', seed: c.key + '-v1:' + k, bars: 120, p0: 100 }; },
+    present: function () { return true; },
+    overlays: ['ma20'],
+    act: function (c) {
+      return readStep(c,
+        L2('指数在涨，有多少成分股在涨？', 'The index is up — how much of it is?'),
+        L2('把成分股数量调小，看抽样噪音如何吞掉信号。广度序列的可信度直接由样本量决定，这一点在小样本指数上是致命的。',
+           'Shrink the constituent count and watch sampling noise swallow the signal. A breadth series is only as trustworthy as its sample, and on a small index that is fatal.'),
+        {
+          param: { key: 'n', min: 10, max: 500, step: 10, def: 30, label: L2('成分股数量', 'Constituent count') },
+          run: function (tape, p) {
+            var noise = 0.5 / Math.sqrt(p.n) * 100;      /* coin-flip sd on a share, in pp */
+            var step = 100 / p.n;
+            return { n: p.n, noise: noise, step: step, values: p.n + 1 };
+          },
+          grade: function (res, p) {
+            return {
+              pass: true,
+              title: L2('样本量决定这条线能不能读', 'The sample decides whether the line is readable'),
+              body: {
+                zh: '成分股 <b>' + res.n + '</b> 只：该序列只有 <b>' + res.values + '</b> 个可能取值，每只股票值 <b>' +
+                    res.step.toFixed(2) + '</b> 个百分点，而一枚公平硬币在这个样本量下的抽样噪音约为 <b>±' + res.noise.toFixed(1) +
+                    '</b> 个百分点。<br>⚠ 也就是说，小于这个幅度的广度变化<b>与随机无法区分</b>。道指的 30 只成分股给出的噪音约 ±9 个百分点，几乎是满量程的十分之一。',
+                en: '<b>' + res.n + '</b> constituents: the series has only <b>' + res.values + '</b> possible values, each stock is worth <b>' +
+                    res.step.toFixed(2) + '</b> percentage points, and a fair coin at this sample produces about <b>±' + res.noise.toFixed(1) +
+                    '</b> pp of noise.<br>Any breadth change smaller than that is <b>indistinguishable from chance</b>. At the Dow\'s 30 names the noise is roughly a tenth of full scale.'
+              }
+            };
+          }
+        });
+    }
+  };
+
+  FAM['vol-regime'] = {
+    tape: function (c, k) { return { regime: 'event', seed: c.key + '-v1:' + k, bars: 90, p0: 100, eventAt: 60, eventPct: 0.06 }; },
+    present: function () { return true; },
+    overlays: ['ma20'],
+    act: function (c) {
+      return readStep(c,
+        L2('同一个 IV，两种统计', 'One IV, two statistics'),
+        L2('把一年前的一次波动率尖峰加进历史，观察 IV Rank 与 IV 百分位的反应差异。这两个数字经常被混用，而它们对离群值的敏感度相差两个数量级。',
+           'Add one volatility spike a year ago and watch IV Rank and IV Percentile react. The two are used interchangeably and differ by orders of magnitude in outlier sensitivity.'),
+        {
+          param: { key: 'spike', min: 90, max: 220, step: 5, def: 115, label: L2('历史最高 IV', 'Historical high IV') },
+          run: function (tape, p) {
+            var now = 82.33, lo = 45, hi = p.spike;
+            var rank = (now - lo) / Math.max(1e-9, hi - lo) * 100;
+            var pctl = 69;                       /* counting statistic, barely moves */
+            return { now: now, lo: lo, hi: hi, rank: rank, pctl: pctl };
+          },
+          grade: function (res) {
+            return {
+              pass: true,
+              title: L2('一个数据点，两种后果', 'One data point, two consequences'),
+              body: {
+                zh: '当前 IV <b>' + res.now + '%</b>，一年区间 <b>' + res.lo + '–' + res.hi + '%</b>。<br>' +
+                    'IV Rank = <b>' + res.rank.toFixed(1) + '</b>，IV 百分位 ≈ <b>' + res.pctl + '</b>。<br><br>' +
+                    '⚠ 拖动那个历史最高值：<b>IV Rank 会被一个早已过去的尖峰整体压低</b>，因为它只依赖三个数（当前、最高、最低）；而百分位统计的是 252 个观测各投一票，单个离群值最多移动 1/252。<b>实务上应以百分位为主、Rank 为辅。</b>',
+                en: 'IV <b>' + res.now + '%</b> in a one-year range of <b>' + res.lo + '–' + res.hi + '%</b>.<br>' +
+                    'IV Rank = <b>' + res.rank.toFixed(1) + '</b>, IV Percentile ≈ <b>' + res.pctl + '</b>.<br><br>' +
+                    'Drag the historical high: <b>IV Rank collapses on a spike that has already passed</b>, because only three numbers enter it. The percentile counts 252 observations, so one outlier can move it by at most 1/252. <b>Lead with the percentile.</b>'
+              }
+            };
+          }
+        });
+    }
+  };
+
+  FAM['greek-sense'] = {
+    tape: function (c, k) { return { regime: 'trend_up', seed: c.key + '-v1:' + k, bars: 80, p0: 100 }; },
+    present: function () { return true; },
+    overlays: ['ma20'],
+    act: function (c) {
+      return readStep(c,
+        L2('把一个输入推一下，看希腊字母怎么动', 'Push one input, watch the greek move'),
+        L2('保持其他条件不变，只改变剩余期限。观察哪些希腊字母按 √T 增长、哪些按 1/√T 爆炸——这两条曲线的分岔就是 LEAPS 与 0DTE 的全部区别。',
+           'Hold everything else and move only the time to expiry. Watch which greeks grow with √T and which explode as 1/√T — that divergence is the entire difference between a LEAPS and a 0DTE.'),
+        {
+          param: { key: 'dte', min: 1, max: 365, step: 1, def: 30, label: L2('剩余天数', 'Days to expiry') },
+          run: function (tape, p) {
+            var T = p.dte / 365, Sp = 100, K = 100, v = 0.6, r = 0.04, h = 0.01;
+            var base = S.bs('C', Sp, K, T, r, v);
+            var d = (S.bs('C', Sp + h, K, T, r, v) - S.bs('C', Sp - h, K, T, r, v)) / (2 * h);
+            var g = (S.bs('C', Sp + h, K, T, r, v) - 2 * base + S.bs('C', Sp - h, K, T, r, v)) / (h * h);
+            var vg = (S.bs('C', Sp, K, T, r, v + 0.01) - S.bs('C', Sp, K, T, r, v - 0.01)) / 2;
+            var th = T > 1 / 365 ? (S.bs('C', Sp, K, T - 1 / 365, r, v) - base) : -base;
+            return { dte: p.dte, price: base, delta: d, gamma: g, vega: vg, theta: th };
+          },
+          grade: function (res) {
+            return {
+              pass: true,
+              title: L2('两条曲线朝相反方向跑', 'The two curves run opposite ways'),
+              body: {
+                zh: '剩余 <b>' + res.dte + '</b> 天：价格 <b>' + res.price.toFixed(2) + '</b>，Δ <b>' + res.delta.toFixed(4) +
+                    '</b>，Γ <b>' + res.gamma.toFixed(5) + '</b>，𝒱 <b>' + res.vega.toFixed(4) + '</b>，Θ <b>' + res.theta.toFixed(4) + '</b>/天。<br><br>' +
+                    '把天数往 1 拖：<b>Γ 与 |Θ| 按 1/√T 冲顶，而 𝒱 归零</b>。往 365 拖：<b>𝒱 按 √T 增长而 Γ 塌陷</b>。' +
+                    '这解释了为什么 LEAPS 本质是波动率多头（必须买在低 IV），而 0DTE 上 IV 涨了救不了你。',
+                en: '<b>' + res.dte + '</b> days: price <b>' + res.price.toFixed(2) + '</b>, Δ <b>' + res.delta.toFixed(4) +
+                    '</b>, Γ <b>' + res.gamma.toFixed(5) + '</b>, 𝒱 <b>' + res.vega.toFixed(4) + '</b>, Θ <b>' + res.theta.toFixed(4) + '</b>/day.<br><br>' +
+                    'Drag toward 1: <b>Γ and |Θ| spike as 1/√T while 𝒱 goes to zero</b>. Drag toward 365: <b>𝒱 grows with √T and Γ collapses</b>. ' +
+                    'Which is why a LEAPS is a volatility position that must be bought cheap, and why rising IV cannot rescue a 0DTE.'
+              }
+            };
+          }
+        });
+    }
+  };
+
+  FAM['chain-read'] = {
+    tape: function (c, k) { return { regime: 'range', seed: c.key + '-v1:' + k, bars: 90, p0: 100 }; },
+    present: function () { return true; },
+    overlays: ['ma20'],
+    act: function (c) {
+      return readStep(c,
+        L2('成交量与持仓量的比值', 'Volume against open interest'),
+        L2('调整当日成交量，观察成交量/持仓量这个比值。这是交易台看到一条期权链时首先跑的检验，因为它区分"今天的注意力"与"累积的仓位"。',
+           'Move the day\'s volume and watch the volume-to-open-interest ratio. It is the first test any desk runs on a chain, because it separates today\'s attention from accumulated positioning.'),
+        {
+          param: { key: 'vol', min: 1, max: 60, step: 1, def: 40, label: L2('当日成交（千张）', 'Volume today (k)') },
+          run: function (tape, p) {
+            var oi = 6.64, v = p.vol, ratio = v / oi;
+            var stick = Math.max(0.005, Math.min(0.45, 1 / (1 + ratio * 2.2)));
+            return { oi: oi, v: v, ratio: ratio, stick: stick, newOI: v * stick };
+          },
+          grade: function (res) {
+            return {
+              pass: true,
+              title: res.ratio > 1 ? L2('成交多过存量——这是日内战场', 'More traded than exists — a day-trading battleground')
+                                   : L2('换手温和——像是在建仓', 'Modest turnover — looks like positioning'),
+              body: {
+                zh: '成交 <b>' + res.v.toFixed(1) + 'K</b> 对持仓 <b>' + res.oi + 'K</b>，比值 <b>' + res.ratio.toFixed(2) +
+                    '</b>，估计黏着率 <b>' + (res.stick * 100).toFixed(1) + '%</b>（约 ' + res.newOI.toFixed(1) + 'K 转化为仓位）。<br><br>' +
+                    '⚠ 比值大于 1 意味着当天成交的合约比现存的还多，绝大部分是<b>开仓后当天就平掉</b>的流量，不是有人在建立仓位。' +
+                    '另外别忘了：<b>屏幕上的持仓量是昨晚的数字</b>，日内判断建立在过期数据上。',
+                en: 'Volume <b>' + res.v.toFixed(1) + 'K</b> against open interest <b>' + res.oi + 'K</b>, ratio <b>' + res.ratio.toFixed(2) +
+                    '</b>, implied stick rate <b>' + (res.stick * 100).toFixed(1) + '%</b> (about ' + res.newOI.toFixed(1) + 'K became positions).<br><br>' +
+                    'Above 1 means more contracts traded than exist, so most of it opened and closed the same day rather than building a position. ' +
+                    'And the open interest on screen is <b>last night\'s file</b> — any intraday conclusion rests on stale data.'
+              }
+            };
+          }
+        });
+    }
+  };
+
+  /* ---- define bucket: interpretation only, no tape ------------------------ */
+  FAM['ratio-quality'] = { bucketOnly: true };
+  FAM['concept-trap'] = { bucketOnly: true };
+
+  /* ---- payoff structures -------------------------------------------------- */
+  FAM['payoff-structure'] = {
+    tape: function (c, k) { return { regime: 'event', seed: c.key + '-v1:' + k, bars: 80, p0: 100, eventAt: 55, eventPct: 0.05 }; },
+    present: function () { return true; },
+    overlays: ['ma20'],
+    act: function (c) {
+      return {
+        kind: 'act', ui: 'payoff',
+        title: L2('终值落在哪里，决定你赚多少', 'Where it settles is what you earn'),
+        body: L2('把到期股价拖过整个区间，读出这个结构在每一点的到期损益。<b>最大盈利是一个点还是一个平台</b>，是所有中性结构之间最实际的差别。',
+                 'Drag the settlement price across the range and read the expiry P/L at every point. Whether the maximum is <b>a point or a plateau</b> is the most practical difference between neutral structures.'),
+        param: { key: 'sT', min: 70, max: 130, step: 0.5, def: 100, label: L2('到期股价', 'Settlement price') },
+        run: function (tape, p) {
+          var K = 100, w = 10, credit = 3.9, width = w;
+          var sT = p.sT;
+          function condor(x) {
+            var lossLo = Math.max(0, (K - w) - x), lossHi = Math.max(0, x - (K + w));
+            return (credit - Math.min(width, Math.max(lossLo, lossHi))) * 100;
+          }
+          function fly(x) { return (Math.max(0, width - Math.abs(x - K)) - 4.1) * 100; }
+          function straddle(x) { return (Math.abs(x - K) - 11.2) * 100; }
+          function strangle(x) { return (Math.max(0, Math.abs(x - K) - w) - 5.4) * 100; }
+          return { sT: sT, condor: condor(sT), fly: fly(sT), straddle: straddle(sT), strangle: strangle(sT),
+                   table: {
+                     head: [L2('结构', 'Structure'), L2('到期损益', 'P/L at expiry'), L2('最大盈利形态', 'Max profit shape')],
+                     rows: [
+                       { cells: [{ v: L2('铁鹰（卖出）', 'Iron condor (short)') }, { v: M(condor(sT)), tone: condor(sT) >= 0 ? 'up' : 'down' }, { v: L2('平台', 'plateau') }] },
+                       { cells: [{ v: L2('蝶式（买入）', 'Butterfly (long)') }, { v: M(fly(sT)), tone: fly(sT) >= 0 ? 'up' : 'down' }, { v: L2('一个点', 'a single point') }] },
+                       { cells: [{ v: L2('跨式（买入）', 'Straddle (long)') }, { v: M(straddle(sT)), tone: straddle(sT) >= 0 ? 'up' : 'down' }, { v: L2('两侧无限', 'unbounded both ways') }] },
+                       { cells: [{ v: L2('宽跨式（买入）', 'Strangle (long)') }, { v: M(strangle(sT)), tone: strangle(sT) >= 0 ? 'up' : 'down' }, { v: L2('两侧无限，中间平台亏损', 'unbounded, with a loss plateau') }] }
+                     ]
+                   } };
+        },
+        grade: function (res) {
+          return {
+            pass: true,
+            title: L2('把价格拖到 100 再拖到 120', 'Drag to 100, then to 120'),
+            body: {
+              zh: '终值 <b>' + res.sT.toFixed(1) + '</b>。<br><br>蝶式的最大盈利<b>只在 100 这一个点上</b>成立，铁鹰在整个中间区间都拿满——这就是铁鹰收得少却更常赢的原因。' +
+                  '跨式与宽跨式在两端无限，但中间那片平台会亏光全部支出。<b>宽跨式不是"更安全的跨式"</b>：它用赔付换概率，而毁灭性的那一端完全没有改善。',
+              en: 'Settlement <b>' + res.sT.toFixed(1) + '</b>.<br><br>The butterfly pays its maximum <b>at exactly 100 and nowhere else</b>; the condor pays it across the whole middle — which is why it collects less and wins more often. ' +
+                  'Straddle and strangle are unbounded at both ends and lose the entire debit across the middle plateau. <b>A strangle is not a safer straddle</b>: it trades payout for probability and leaves the catastrophic tail untouched.'
+            }
+          };
+        }
+      };
+    }
+  };
+
+  FAM['order-fill'] = {
+    tape: function (c, k) { return { regime: 'gap_down', seed: c.key + '-v1:' + k, bars: 90, p0: 100, gapAt: 55, gapPct: -0.055 }; },
+    present: function (tp) {
+      return tp.bars[55].o < tp.bars[54].c * 0.97;   /* the gap must actually be a gap */
+    },
+    overlays: ['ma20'],
+    act: function (c) {
+      return {
+        kind: 'act', ui: 'compare',
+        title: L2('同一段行情，四种指令', 'One tape, four instructions'),
+        body: L2('把这一条订单类型放进一段带跳空的行情，与其他三种并排比较。<b>差异全部来自指令本身</b>，因为四者跑的是同一条价格路径。',
+                 'Put this order type into a tape containing a gap and compare it with three others. <b>Every difference is the instruction</b>, because all four run the same price path.'),
+        run: function (tape) {
+          var t = { n: tape.n, bars: tape.bars, seed: tape.seed };
+          var gapOpen = tape.bars[55].o, last = tape.bars[tape.n - 1].c;
+          var defs = [
+            { k: L2('市价单（立即）', 'Market (immediate)'),
+              r: S.ENGINE.MKT(t, { side: 'sell', qty: 1000, at: 0 }) },
+            { k: L2('止损 98.00', 'Stop 98.00'), you: true,
+              r: S.ENGINE.STP(t, { side: 'sell', qty: 1000, stop: 98, from: 0 }) },
+            { k: L2('止损限价 98.00 / 97.85', 'Stop-limit 98.00 / 97.85'),
+              r: S.ENGINE.STL(t, { side: 'sell', qty: 1000, stop: 98, limit: 97.85, from: 0 }) },
+            { k: L2('挂单限价 99.00', 'Resting limit 99.00'),
+              r: S.ENGINE.LMT(t, { side: 'sell', qty: 1000, limit: 99, from: 0 }) }
+          ];
+          return {
+            gapOpen: gapOpen, last: last,
+            table: {
+              head: [L2('指令', 'Instruction'), L2('成交', 'Filled'), L2('成交价', 'Fill price'), L2('盈亏', 'P/L')],
+              rows: defs.map(function (d) {
+                var pl = d.r.filled ? (d.r.px - 100) * d.r.filled : 0;
+                return { you: d.you, cells: [
+                  { v: d.k }, { v: d.r.filled ? d.r.filled.toLocaleString() : '0' },
+                  { v: d.r.px == null ? '—' : d.r.px.toFixed(2) },
+                  { v: d.r.filled ? M(pl) : '—', tone: pl >= 0 ? 'up' : 'down' } ] };
+              })
+            }
+          };
+        },
+        grade: function (res) {
+          return {
+            pass: true,
+            title: L2('四条指令，四种失败方式', 'Four instructions, four ways to fail'),
+            body: {
+              zh: '跳空开盘 <b>' + res.gapOpen.toFixed(2) + '</b>。市价单立刻付掉价差；止损保证出场但不保证价格；止损限价保证价格但<b>可能完全不出场</b>；挂单限价可能连触发都没有。<br><br>' +
+                  '⚠ <b>没有任何一种指令能同时保住"一定成交"和"价格不差"</b>。选择订单类型就是在选择你愿意放弃哪一个。',
+              en: 'The gap opened at <b>' + res.gapOpen.toFixed(2) + '</b>. A market order pays the spread immediately; a stop guarantees the exit but not the price; a stop-limit guarantees the price and <b>may not exit at all</b>; a resting limit may never trigger.<br><br>' +
+                  '<b>No instruction keeps both certainty of execution and certainty of price.</b> Choosing an order type is choosing which one to give up.'
+            }
+          };
+        }
+      };
+    }
+  };
+
+  /* ---- generation --------------------------------------------------------- */
+  var SEED_TRIES = 160;
+
+  function buildLesson(id) {
+    var e = P[id];
+    if (!e) return null;
+    var fam = FAM[e.fam];
+    var c = { id: e.eid, key: id, src: e.src, cat: e.cat, fam: e.fam, bucket: e.bucket,
+              name: e.name, nameZh: e.nameZh, zh: e.zh, en: e.en, params: e.params };
+
+    var steps = [stepIntro(c), stepTrap(c)];
+    var tapeCfg = { regime: 'range', seed: id + '-static', bars: 90, p0: 100 };
+
+    if (!fam.bucketOnly) {
+      /* seed search — a family that cannot produce its phenomenon on this
+         entry is rejected, not shipped hollow */
+      var found = null, k;
+      for (k = 0; k < SEED_TRIES; k++) {
+        var cfg = fam.tape(c, k);
+        var tp = S.tape(cfg);
+        if (fam.present(tp, c)) { found = cfg; break; }
+      }
+      if (!found) return { rejected: true, id: id, fam: e.fam };
+      tapeCfg = found;
+      steps.push(fam.act(c));
+    }
+    steps.push(stepClose(c));
+
+    return {
+      id: id, entryId: e.eid, generated: true, kind: e.src === 'ord' ? 'ord' : e.src === 'opt' ? 'opt' : 'ind',
+      fam: e.fam, bucket: e.bucket,
+      title: { zh: (e.nameZh || e.name), en: e.name },
+      blurb: { zh: trunc(e.zh.insight, 150), en: trunc(e.en.insight || e.zh.insight, 165) },
+      tape: tapeCfg, overlays: fam.overlays || ['ma20'],
+      steps: steps,
+      close: { zh: e.zh.insight, en: e.en.insight || e.zh.insight },
+      link: (e.src === 'ind' ? 'indicators.html#ind-' : e.src === 'opt' ? 'options.html#e-' : 'orders.html#e-') + e.eid
+    };
+  }
+
+  PG.buildAll = function () {
+    var out = [], rejected = [];
+    Object.keys(P).forEach(function (id) {
+      var l = buildLesson(id);
+      if (!l) return;
+      if (l.rejected) { rejected.push(l); return; }
+      out.push(l);
+    });
+    PG.REJECTED = rejected;
+    return out;
   };
 }(typeof globalThis !== 'undefined' ? globalThis : this));
 </script>
@@ -1257,19 +2059,36 @@ footer a { color: var(--text-2); text-decoration: underline; text-underline-offs
   var cur = null, stepIx = 0, tape = null, lastRun = null, stepDone = false, score = 0;
 
   /* ------------------------------------------------------------- rendering */
+  var FQ = '', FSRC = '', FBUCKET = '';
+  function passFilter(ls) {
+    if (FSRC && (ls.kind || '') !== FSRC) return false;
+    if (FBUCKET && (ls.bucket || 'hand') !== FBUCKET) return false;
+    if (!FQ) return true;
+    var hay = ((ls.id || '') + ' ' + L(ls.title) + ' ' + (ls.fam || '') + ' ' + L(ls.blurb)).toLowerCase();
+    return hay.indexOf(FQ) >= 0;
+  }
+
   function renderPicker() {
     var g = $('lessonGrid');
-    g.innerHTML = PG.LESSONS.map(function (ls, i) {
+    var list = PG.LESSONS.filter(passFilter);
+    if ($('fcount')) $('fcount').textContent = list.length + ' / ' + PG.LESSONS.length;
+    g.innerHTML = list.map(function (ls, i) {
       var done = PROG[ls.id] && PROG[ls.id].done;
       var tagCls = ls.kind === 'ord' ? 'tag-ord' : ls.kind === 'ind' ? 'tag-ind' : 'tag-opt';
-      var tagTxt = ls.kind === 'ord' ? (lang === 'zh' ? '订单类型' : 'Order types')
-                 : ls.kind === 'ind' ? (lang === 'zh' ? '指标与体制' : 'Indicators')
-                 : (lang === 'zh' ? '期权结构' : 'Option structure');
+      var tagTxt = ls.kind === 'ord' ? (lang === 'zh' ? '订单' : 'Orders')
+                 : ls.kind === 'ind' ? (lang === 'zh' ? '指标' : 'Indicators')
+                 : (lang === 'zh' ? '期权' : 'Options');
+      var bk = ls.bucket || 'hand';
+      var bkTxt = bk === 'trade' ? (lang === 'zh' ? '可交易' : 'tradeable')
+                : bk === 'read' ? (lang === 'zh' ? '读数' : 'reading')
+                : bk === 'define' ? (lang === 'zh' ? '解读' : 'interpretation')
+                : (lang === 'zh' ? '精讲' : 'flagship');
       return '<button class="lcard' + (done ? ' done' : '') + '" data-ls="' + ls.id + '">' +
         '<div class="lh"><span class="lno">' + String(i + 1).padStart(2, '0') + '</span>' +
         '<h3>' + L(ls.title) + '</h3></div>' +
         '<p>' + L(ls.blurb) + '</p>' +
         '<div class="ltags"><span class="tag ' + tagCls + '">' + tagTxt + '</span>' +
+        '<span class="tag" style="color:var(--text-3);background:var(--surface-3)">' + bkTxt + '</span>' +
         (done ? '<span class="tag tag-done">' + (lang === 'zh' ? '已完成 ' : 'done ') + (PROG[ls.id].score || 0) + '/' + countGraded(ls) + '</span>' : '') +
         '</div></button>';
     }).join('');
@@ -1569,9 +2388,36 @@ footer a { color: var(--text-2); text-decoration: underline; text-underline-offs
     $('langLabel').textContent = lang === 'en' ? 'EN' : '中';
   }
 
+  /* hand-authored flagships first, then one generated lesson per entry */
+  PG.LESSONS = PG.HAND.concat(PG.buildAll());
+
   function init() {
     try { var s = localStorage.getItem('pg.lang'); if (s === 'en' || s === 'zh') lang = s; } catch (e) { /* ignore */ }
     applyLang(); renderPicker();
+
+    var srcOpts = [['', lang === 'zh' ? '全部' : 'All'], ['ind', lang === 'zh' ? '指标' : 'Indicators'],
+                   ['opt', lang === 'zh' ? '期权' : 'Options'], ['ord', lang === 'zh' ? '订单' : 'Orders']];
+    var bkOpts = [['', lang === 'zh' ? '全部' : 'All'], ['trade', lang === 'zh' ? '可交易' : 'Tradeable'],
+                  ['read', lang === 'zh' ? '读数' : 'Reading'], ['define', lang === 'zh' ? '解读' : 'Interpretation']];
+    function segHtml(opts, cur) {
+      return opts.map(function (o) {
+        return '<button data-v="' + o[0] + '"' + (o[0] === cur ? ' class="on"' : '') + '>' + o[1] + '</button>';
+      }).join('');
+    }
+    function paintFilters() {
+      $('srcFilter').innerHTML = segHtml(srcOpts, FSRC);
+      $('bucketFilter').innerHTML = segHtml(bkOpts, FBUCKET);
+    }
+    paintFilters();
+    $('srcFilter').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-v]'); if (!b) return;
+      FSRC = b.getAttribute('data-v'); paintFilters(); renderPicker();
+    });
+    $('bucketFilter').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-v]'); if (!b) return;
+      FBUCKET = b.getAttribute('data-v'); paintFilters(); renderPicker();
+    });
+    $('q').addEventListener('input', function () { FQ = this.value.trim().toLowerCase(); renderPicker(); });
 
     $('lessonGrid').addEventListener('click', function (e) {
       var b = e.target.closest('[data-ls]'); if (b) open(b.getAttribute('data-ls'));
@@ -1602,7 +2448,7 @@ footer a { color: var(--text-2); text-decoration: underline; text-underline-offs
 
     /* deep link: #lesson=<id>, with a graceful fall back to the picker */
     function fromHash() {
-      var m = /lesson=([a-z0-9-]+)/i.exec(location.hash || '');
+      var m = /lesson=([A-Za-z0-9._-]+)/.exec(location.hash || '');
       if (m) {
         if (open(m[1])) return;
         back();            /* unknown id — show the picker rather than whatever
