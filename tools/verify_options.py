@@ -26,12 +26,48 @@ keep it honest:
 Usage:  python3 tools/verify_options.py [path/to/options.html]
 """
 import pathlib
+import shutil
+import subprocess
 import sys
+import tempfile
 
 from playwright.sync_api import sync_playwright
 
 REPO = pathlib.Path(__file__).resolve().parent.parent
 DEFAULT = REPO / "options.html"
+SOURCE = pathlib.Path(
+    "/Users/arcueidpeng/github/finance/domain-knowledge/option/site"
+)
+
+
+def drift_check(shipped: pathlib.Path) -> tuple[bool, str]:
+    """Has the built file been hand-edited since it was generated?
+
+    The source lives in a different repository from the artefact, by design.
+    That is a structure someone can work with, but only if a hand-edit to the
+    built file is DISCOVERED rather than found out a year later when a rebuild
+    silently deletes it — which is exactly what happened to the formula
+    typesetter and the 1,494 annotations once already.
+
+    Absent source is not a failure: this script must still be useful on a
+    machine that only has bpcv.
+    """
+    if not (SOURCE / "build.js").exists():
+        return True, "source tree not present — drift check skipped"
+    if shutil.which("node") is None:
+        return True, "node not installed — drift check skipped"
+    with tempfile.TemporaryDirectory() as tmp:
+        fresh = pathlib.Path(tmp) / "options.html"
+        r = subprocess.run(["node", "build.js", str(fresh)], cwd=SOURCE,
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            return False, f"rebuild failed: {r.stderr.strip()[:120]}"
+        if fresh.read_bytes() == shipped.read_bytes():
+            return True, "shipped file matches a fresh build"
+        a, b = fresh.read_text(encoding="utf-8"), shipped.read_text(encoding="utf-8")
+        return False, (f"shipped file differs from a fresh build "
+                       f"({len(b) - len(a):+d} bytes) — it was hand-edited, and the "
+                       f"next rebuild will discard the change")
 
 
 def main() -> int:
@@ -56,6 +92,9 @@ def main() -> int:
         page.wait_for_timeout(3500)
 
         check(not errors, "no page errors", errors[0][:120] if errors else "")
+
+        ok, detail = drift_check(page_path)
+        check(ok, "built file is in sync with its source", detail)
 
         # ---- the ported layers -------------------------------------------
         entries = page.evaluate("() => Object.keys(FIN.DOC).length")
