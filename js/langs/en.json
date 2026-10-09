@@ -47,10 +47,13 @@
         "duration": "11/2025 - Present",
         "location": "Perth, WA, Australia",
         "description": [
-          "Engineered and maintained the Get2Go and SAH platforms using C# .NET, PostgreSQL, and Angular, facilitating the distribution and sales of Assistive Technology (AT) products across Australia.",
-          "Designed and implemented scalable RESTful APIs and database schemas to support product lifecycle management, order processing, and user authentication for assistive device providers.",
-          "Collaborated in cross-functional Agile sprints to deliver end-to-end features — from Angular component design to .NET backend logic and PostgreSQL query optimization.",
-          "Improved platform reliability by writing integration tests, conducting code reviews, and refactoring legacy modules to reduce technical debt."
+          "Deliver end-to-end .NET, Angular and PostgreSQL features for Get2Go and SAH, supporting assistive technology distribution.",
+          "Optimise product queries with CPU profiling, flamegraphs and SQL tuning; maintain operational data.",
+          "Integrate OpenSearch indexes to accelerate fuzzy product search and autocomplete.",
+          "Automate business workflows and data synchronisation with Power Automate.",
+          "AWS hackathon: resolve AWS–Azure Data Factory integration using prompt engineering, CSV-to-JSON Schema conversion and pipeline implementation.",
+          "Automate batch recognition and information extraction from supplier invoices.",
+          "Internal hackathon: build a Claude-assisted financial accounting prototype for finance data, payroll workflows and email automation."
         ]
       },
       {

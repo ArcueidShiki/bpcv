@@ -35,10 +35,13 @@
         "duration": "2025年11月 - 至今",
         "location": "澳大利亚珀斯",
         "description": [
-          "使用C# .NET、PostgreSQL和Angular开发并维护Get2Go和SAH平台，支持澳大利亚辅助技术（AT）产品的分发与销售。",
-          "设计并实现可扩展的RESTful API和数据库架构，支撑产品生命周期管理、订单处理及辅助设备供应商的用户认证系统。",
-          "在跨职能敏捷团队中协作交付端到端功能，涵盖Angular组件设计、.NET后端逻辑及PostgreSQL查询优化。",
-          "通过编写集成测试、开展代码审查和重构遗留模块来降低技术债务，提升平台稳定性。"
+          "交付 Get2Go 与 SAH 平台的 .NET、Angular、PostgreSQL 全栈功能，支持辅助技术产品分销。",
+          "通过 CPU 性能分析、火焰图和 SQL 调优改善产品查询，负责日常数据维护。",
+          "集成 OpenSearch 并构建产品索引，加速模糊搜索与自动补全。",
+          "利用 Power Automate 自动化业务流程与数据同步。",
+          "AWS Hackathon：运用提示词工程、CSV 转 JSON Schema 与管道开发，解决 AWS–Azure Data Factory 数据集成问题。",
+          "自动识别并批量提取供应商发票信息。",
+          "内部 Hackathon：使用 Claude 构建财务软件原型，辅助财务数据处理、工资核算及邮件收发自动化。"
         ]
       },
       {
