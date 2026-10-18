@@ -1,0 +1,78 @@
+/* Options handbook: strategy lab + screener. Theme vars come from theme.css. */
+
+.hint { font-size: 12px; margin: 0; }
+
+/* ---------------------------------------------------------------- lab picker */
+.lab { display: flex; flex-direction: column; gap: 12px; }
+.lab-pick { display: flex; flex-direction: column; gap: 10px; }
+.tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--line); overflow-x: auto; scrollbar-width: none; }
+.tab { background: none; border: 0; border-bottom: 2px solid transparent; padding: 6px 12px;
+  color: var(--text-2); cursor: pointer; white-space: nowrap; font-size: 13px; }
+.tab:hover { color: var(--text); }
+.tab.on { color: var(--text); border-bottom-color: var(--brand); font-weight: 600; }
+
+/* ---------------------------------------------------------------- lab body */
+.lab-body { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 14px; }
+.lab-chart { min-width: 0; }
+.lab-title { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; margin-bottom: 6px; }
+.lab-title b { font-size: 16px; }
+.ticket { font: 12px var(--mono); color: var(--text-2); }
+.lab-side { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+
+/* ---------------------------------------------------------------- payoff panel */
+.pay { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-md); padding: 8px; }
+.pay-main { height: 300px; }
+.pay-sub { height: 130px; }
+.pay-subbar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px;
+  border-top: 1px solid var(--line); margin-top: 6px; padding-top: 8px; }
+.pay-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 11.5px; color: var(--text-2); padding: 0 4px 6px; }
+.lg::before { content: ''; display: inline-block; vertical-align: middle; margin-right: 6px; }
+.lg-exp::before { width: 16px; border-top: 2px solid var(--text); }
+.lg-t0::before { width: 16px; border-top: 2px dashed var(--info); }
+.lg-bep::before { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+.lg-prob::before { width: 12px; height: 9px; background: rgba(46,155,255,.25); }
+
+/* ---------------------------------------------------------------- sliders */
+.sliders { display: flex; flex-direction: column; gap: 8px; }
+.slider { display: grid; grid-template-columns: 1fr auto; gap: 0 8px; font-size: 12.5px; }
+.slider .k { color: var(--text-2); }
+.slider output { font-family: var(--mono); }
+.slider input { grid-column: 1 / -1; width: 100%; margin: 2px 0 0; }
+
+/* ---------------------------------------------------------------- readout */
+.readout { display: flex; flex-direction: column; gap: 10px; }
+.kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.kpi, .greek { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 6px 8px; }
+.kpi .k, .greek .k { display: block; font-size: 11px; color: var(--text-2); }
+.kpi b { font: 600 13.5px var(--mono); }
+.kpi:last-child { grid-column: 1 / -1; }
+.greeks { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; }
+.greek { padding: 5px 6px; text-align: center; }
+.greek .sym { display: block; color: var(--brand); font-weight: 700; }
+.greek b { font: 600 12px var(--mono); }
+.up { color: var(--up); }
+.dn { color: var(--down); }
+.gold { color: var(--gold); }
+
+/* ---------------------------------------------------------------- screener */
+.scr { display: flex; flex-direction: column; gap: 8px; }
+.scr-scroll { overflow-x: auto; max-height: 420px; overflow-y: auto; }
+.scr-table { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.scr-table th { position: sticky; top: 0; background: var(--surface); text-align: left; border-bottom: 1px solid var(--line-2); }
+.scr-table th button { all: unset; box-sizing: border-box; width: 100%; cursor: pointer; padding: 6px 8px; display: block; color: var(--text-2); white-space: nowrap; }
+.scr-table th button:hover { color: var(--text); }
+.scr-table th.n button { text-align: right; }
+.scr-table td { padding: 5px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.scr-table td.n { text-align: right; font-family: var(--mono); }
+.scr-table tr:hover td { background: var(--surface-2); }
+.scr-table tr.on td { background: var(--surface-3); }
+.row-btn { all: unset; cursor: pointer; font-weight: 600; }
+.row-btn:focus-visible { outline: 2px solid var(--accent); }
+
+@media (max-width: 860px) {
+  .lab-body { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 640px) {
+  .pay-main { height: 240px; }
+  .pay-sub { height: 110px; }
+}

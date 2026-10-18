@@ -1,7 +1,13 @@
 {
     "name": "bpcv",
     "compatibility_date": "2025-03-28",
-    "assets" : {
-        "directory": "./"
+    // `wrangler deploy` runs the build first, so a git-triggered Cloudflare
+    // build needs no extra settings. Only dist is published, so .git,
+    // sources and scripts are never public.
+    "build": {
+        "command": "npm run build"
+    },
+    "assets": {
+        "directory": "./dist"
     }
 }

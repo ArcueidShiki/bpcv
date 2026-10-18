@@ -1,0 +1,78 @@
+/* Math for Finance — page-specific layout. Series colours are read by the
+   canvas engine (legacy/plot.js) through these tokens. */
+:root {
+  --c-f: #EAECEF; --c-d1: #2E9BFF; --c-d2: #FF7A00; --c-d3: #8C6EFF; --c-aux: #00B96B;
+}
+
+.m-toc { margin: 4px 0 8px; }
+.m-toc a.chip:hover { text-decoration: none; }
+.m-sec { padding-top: 36px; }
+.m-example { margin: 0 0 10px; color: var(--text-2); max-width: 760px; }
+.m-example b { color: var(--text); margin-right: 8px; font-size: 12px; }
+.m-formula { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-sm);
+  padding: 8px 12px; margin: 0 0 14px; font: 12.5px/1.6 var(--mono); color: var(--gold);
+  white-space: pre-wrap; overflow-x: auto; }
+.m-stack { display: flex; flex-direction: column; gap: 14px; }
+.m-grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+/* lab panel: chart + controls */
+.m-lab { min-width: 0; }
+.m-lab-h { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; margin-bottom: 10px; }
+.m-lab-h h3 { margin: 0; font-size: 14.5px; }
+.m-readout { font: 12px var(--mono); color: var(--text-2); }
+.m-lab-body { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 16px; }
+.m-lab-body.solo { grid-template-columns: minmax(0, 1fr); }
+.m-lab-chart { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.m-lab-side { display: flex; flex-direction: column; gap: 12px; }
+.m-plot { background: var(--bg); border: 1px solid var(--line); border-radius: var(--r-sm); }
+
+.m-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--text-2); }
+.m-legend i { display: inline-block; width: 12px; height: 3px; border-radius: 2px; margin-right: 6px; vertical-align: middle; }
+
+.m-ctrl { display: grid; grid-template-columns: 1fr auto; gap: 2px 8px; font-size: 12.5px; color: var(--text-2); }
+.m-ctrl-v { font-family: var(--mono); color: var(--text); }
+.m-ctrl input { grid-column: 1 / -1; width: 100%; margin: 2px 0 0; }
+
+.m-kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.m-kpi { background: var(--surface-2); border: 1px solid var(--line); border-radius: var(--r-sm); padding: 6px 8px; min-width: 0; }
+.m-kpi.wide { grid-column: 1 / -1; }
+.m-kpi-k { font-size: 11px; color: var(--text-3); }
+.m-kpi-v { font: 13px/1.4 var(--mono); overflow-wrap: anywhere; }
+.t-up { color: var(--up); } .t-dn { color: var(--down); } .t-info { color: var(--info); }
+.t-acc { color: var(--accent); } .t-gold { color: var(--gold); }
+
+.m-toggles { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12.5px; }
+.m-toggles input { accent-color: var(--accent); }
+.m-btn { align-self: flex-start; }
+
+/* shape gallery */
+.m-gal { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+.m-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); overflow: hidden; }
+.m-card .m-plot { border: 0; border-radius: 0; }
+.m-card-b { padding: 8px 10px 10px; }
+.m-card-b h4 { margin: 0; font-size: 13px; }
+.m-fx { font: 11.5px var(--mono); color: var(--gold); }
+.m-card-b p { margin: 4px 0 0; font-size: 12px; color: var(--text-2); }
+
+/* matrix entry */
+.m-mat { display: flex; align-items: center; gap: 10px; font: 15px var(--mono); }
+.m-mat-cells { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; border-left: 2px solid var(--line-2);
+  border-right: 2px solid var(--line-2); padding: 2px 6px; }
+.m-mat-cells input { width: 72px; padding: 4px 6px; font: 13px var(--mono); }
+
+/* applied map */
+.m-map { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.m-map-row { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md);
+  padding: 8px 12px; display: flex; flex-direction: column; }
+.m-map-row span { color: var(--gold); font-size: 12.5px; }
+
+@media (max-width: 900px) {
+  .m-lab-body { grid-template-columns: minmax(0, 1fr); }
+  .m-grid2 { grid-template-columns: minmax(0, 1fr); }
+  .m-gal { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .m-map { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 480px) {
+  .m-map { grid-template-columns: minmax(0, 1fr); }
+  .m-mat-cells input { width: 64px; }
+}

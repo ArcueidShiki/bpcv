@@ -1,0 +1,27 @@
+{
+  "name": "bpcv",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "description": "Personal site: trading handbooks (orders, indicators, options, math, calendar) + Market Tycoon, built with React + Vite and deployed to Cloudflare as static assets.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "check:lang": "node scripts/check-lang.mjs",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "react": "18.3.1",
+    "react-dom": "18.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.9.0",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "@vitejs/plugin-react": "4.3.4",
+    "typescript": "5.6.3",
+    "vite": "5.4.11"
+  }
+}

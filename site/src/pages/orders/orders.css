@@ -1,0 +1,76 @@
+/* Orders page: the lab, the combined charts + book view, and the comparison. */
+.up { color: var(--up); }
+.dn { color: var(--down); }
+.gold { color: var(--gold); }
+.hint { color: var(--text-3); font-size: 12px; margin: 6px 0 0; }
+.pane-title { font-size: 12px; color: var(--text-2); margin: 10px 0 4px; }
+.btn { background: var(--surface-2); border: 1px solid var(--line-2); border-radius: var(--r-sm);
+  padding: 5px 12px; cursor: pointer; font-size: 12.5px; }
+.btn:hover { border-color: var(--brand); }
+
+/* ---------------------------------------------------------------- picker */
+.picker { display: flex; flex-direction: column; gap: 10px; }
+.seg { display: inline-flex; background: var(--bg); border: 1px solid var(--line-2); border-radius: var(--r-sm);
+  padding: 2px; align-self: flex-start; flex-wrap: wrap; }
+.seg button { background: none; border: 0; border-radius: 4px; padding: 4px 12px; cursor: pointer;
+  color: var(--text-2); font-size: 12.5px; }
+.seg button.on { background: var(--surface-3); color: var(--text); }
+.seg.mini button { padding: 2px 10px; }
+.ticket { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 12px; margin: 12px 0 0; }
+.ticket b { font-size: 16px; }
+.ticket code { font: 12px var(--mono); color: var(--brand); }
+
+/* ---------------------------------------------------------------- combined view */
+.combo { display: grid; grid-template-columns: minmax(0, 1fr) 260px; gap: 14px; margin-top: 4px; }
+.cv-tape { height: 320px; }
+.cv-fills { height: 110px; }
+.cv-ladder { height: 260px; }
+.book { border-left: 1px solid var(--line); padding-left: 14px; }
+.readouts { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; margin: 10px 0; }
+.readouts div { display: flex; flex-direction: column; }
+.readouts dt { font-size: 11px; color: var(--text-3); }
+.readouts dd { margin: 0; font: 13px var(--mono); }
+.mini-table, .cmp { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.mini-table th, .cmp th { text-align: left; color: var(--text-3); font-weight: 500; padding: 4px 6px;
+  border-bottom: 1px solid var(--line); }
+.mini-table td, .cmp td { padding: 4px 6px; border-bottom: 1px solid var(--line); font-family: var(--mono); }
+
+/* ---------------------------------------------------------------- results + controls */
+.lab-bottom { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; margin-top: 14px; }
+.outcome { font-weight: 600; }
+.outcome .flag { color: var(--warn); font-weight: 400; }
+.kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; margin-top: 8px; }
+.kpi { background: var(--surface-2); border-radius: var(--r-sm); padding: 6px 8px; display: flex; flex-direction: column; }
+.kpi span { font-size: 11px; color: var(--text-3); }
+.kpi b { font: 600 13px var(--mono); }
+.events { list-style: none; margin: 0; padding: 0; max-height: 150px; overflow-y: auto; font-size: 12.5px; }
+.events li { display: flex; gap: 8px; padding: 2px 0; }
+.events li b { font: 12px var(--mono); color: var(--text-3); min-width: 28px; }
+.kind { font-size: 11px; padding: 0 6px; border-radius: 4px; background: var(--surface-3); color: var(--text-2); }
+.kind.fill { color: var(--up); }
+.kind.trigger, .kind.warn { color: var(--warn); }
+.kind.place { color: var(--info); }
+.kind.expire { color: var(--down); }
+.kind.partial { color: var(--gold); }
+.ctrls { display: flex; flex-direction: column; gap: 8px; }
+.ctrl { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2px 10px; font-size: 12.5px; color: var(--text-2); }
+.ctrl output { font: 12px var(--mono); color: var(--text); }
+.ctrl input[type=range] { grid-column: 1 / -1; width: 100%; }
+.ctrl-head { font-size: 12px; color: var(--text); font-weight: 600; margin-top: 6px; border-top: 1px solid var(--line); padding-top: 8px; }
+.ctrl-btns { display: flex; gap: 8px; }
+
+/* ---------------------------------------------------------------- comparison */
+.cmp-wrap { overflow-x: auto; max-width: 640px; }
+.cmp td:first-child { font-family: inherit; }
+.cmp tbody tr { cursor: pointer; }
+.cmp tbody tr:hover { background: var(--surface-2); }
+.cmp tbody tr.on { background: var(--surface-3); }
+
+@media (max-width: 860px) {
+  .combo, .lab-bottom { grid-template-columns: minmax(0, 1fr); }
+  .book { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); padding-top: 4px; }
+  .cv-tape { height: 260px; }
+}
+@media (max-width: 480px) {
+  .kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

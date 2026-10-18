@@ -1,0 +1,17 @@
+.hub { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 16px; }
+.hub-card { display: flex; flex-direction: column; gap: 4px; background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--r-lg); padding: 14px 16px; color: var(--text); }
+.hub-card:hover { border-color: var(--brand); text-decoration: none; }
+.hub-card b { font-size: 15px; }
+.hub-card span { color: var(--text-2); font-size: 13px; }
+.hub-card.ghost { border-style: dashed; }
+.practice-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+.practice { all: unset; box-sizing: border-box; cursor: pointer; display: flex; flex-direction: column; gap: 3px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 10px 12px; }
+.practice:focus-visible { outline: 2px solid var(--brand); }
+.practice span { color: var(--text-2); font-size: 12.5px; }
+.practice .practice-cat { font-family: var(--mono); font-size: 11px; color: var(--info); }
+.practice.on { border-color: var(--up); background: rgba(0,185,107,.08); }
+.score { font-family: var(--mono); font-size: 16px; margin: 12px 0 4px; }
+.score.pass { color: var(--up); }
+.refs { font-size: 12px; }

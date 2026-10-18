@@ -1,0 +1,82 @@
+/* Macro calendar: schedule list, history chart, scenario, rule cards. */
+.small { font-size: 12px; }
+.cal-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 10px; }
+.cal-tools .search { flex: 1 1 180px; }
+.cal-check { display: inline-flex; align-items: center; gap: 6px; color: var(--text-2); font-size: 13px; cursor: pointer; }
+.cal-btn { background: var(--surface-2); border: 1px solid var(--line-2); border-radius: var(--r-sm);
+  padding: 6px 12px; cursor: pointer; }
+.cal-btn:hover:not(:disabled) { border-color: var(--brand); }
+.cal-btn:disabled { opacity: .45; cursor: default; }
+
+/* ---------------------------------------------------------------- schedule */
+.cal-list { display: flex; flex-direction: column; margin-top: 12px; border: 1px solid var(--line);
+  border-radius: var(--r-md); background: var(--surface); }
+.cal-list > .muted { padding: 12px 14px; margin: 0; }
+.cal-row { display: grid; grid-template-columns: 180px 1fr auto auto; gap: 12px; align-items: baseline;
+  padding: 8px 14px; border-top: 1px solid var(--line); font-size: 13.5px; }
+.cal-row:first-child { border-top: 0; }
+.cal-row.past { opacity: .5; }
+.cal-when { font-family: var(--mono); font-size: 12.5px; color: var(--text-2); }
+.cal-what b { color: var(--brand); margin-right: 4px; }
+.cal-key { font-size: 11px; color: var(--gold); border: 1px solid var(--gold); border-radius: 999px; padding: 0 7px; }
+
+/* ---------------------------------------------------------------- history */
+.hist-head { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; margin-bottom: 6px; }
+.hist-svg { width: 100%; height: auto; display: block; }
+.hist-svg text { fill: var(--text-3); font: 13px var(--mono); }
+.hist-band { fill: #1B2A38; }
+.hist-grid { stroke: var(--line-2); }
+.hist-line { fill: none; stroke: var(--info); stroke-width: 2; }
+.hist-dot { fill: var(--info); }
+.hist-fc path { stroke: var(--brand); stroke-width: 2; }
+.hist-fc circle { fill: var(--brand); }
+.hist-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; font-size: 12px; margin: 6px 0 10px; }
+.sw { display: inline-block; width: 14px; height: 10px; margin-left: 8px; border-radius: 2px; }
+.sw:first-child { margin-left: 0; }
+.sw.line { background: var(--info); height: 3px; }
+.sw.band { background: #1B2A38; }
+.sw.fc { background: var(--brand); width: 10px; border-radius: 50%; }
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+.stats > div { background: var(--surface-2); border-radius: var(--r-sm); padding: 8px 10px; }
+.stats span { display: block; color: var(--text-2); font-size: 12px; }
+.stats b { font: 600 16px var(--mono); }
+.stats .orange { color: var(--brand); }
+
+/* ---------------------------------------------------------------- scenario */
+.sc { margin-top: 12px; }
+.sc h3 { font-size: 15px; margin: 0 0 10px; }
+.sc-fields { display: flex; flex-wrap: wrap; gap: 10px; }
+.sc-field { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--text-2); }
+.sc-field input { width: 140px; }
+.sc-verdict { margin: 12px 0 8px; }
+.sc-verdict.high b { color: var(--up); }
+.sc-verdict.low b { color: var(--down); }
+.sc-effects { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; margin: 0; }
+.sc-effects div { background: var(--surface-2); border-radius: var(--r-sm); padding: 8px 10px; }
+.sc-effects dt { font-weight: 600; font-size: 12.5px; }
+.sc-effects dd { margin: 2px 0 0; color: var(--text-2); font-size: 13px; }
+
+/* ---------------------------------------------------------------- rules */
+.rules { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 10px; margin-top: 12px; }
+.rule { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r-md); padding: 12px 14px; }
+.rule-top { display: flex; justify-content: space-between; align-items: baseline; }
+.rule-abbr { font-family: var(--mono); color: var(--brand); font-size: 12px; }
+.rule h3 { font-size: 15px; margin: 2px 0 2px; }
+.rule p { margin: 0 0 6px; font-size: 13.5px; }
+.rule .rule-when { font-family: var(--mono); font-size: 12px; color: var(--text-2); }
+.rule a { font-size: 12.5px; }
+
+/* ---------------------------------------------------------------- industry */
+.flows { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; }
+.flow { font: 600 14px var(--mono); margin: 6px 0; }
+.flows p { margin: 0; font-size: 13.5px; }
+.links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin: 12px 0 40px; font-size: 13px; }
+
+@media (max-width: 640px) {
+  .cal-row { grid-template-columns: 1fr auto; gap: 2px 10px; }
+  .cal-when { grid-column: 1 / -1; }
+  .cal-row > :nth-child(3) { display: none; }
+  .sc-field input { width: 100%; }
+  .sc-field { flex: 1 1 100px; }
+  .hist-svg text { font-size: 30px; }
+}

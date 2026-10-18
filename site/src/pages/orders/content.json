@@ -1,0 +1,467 @@
+[
+ {
+  "id": "MARKET",
+  "cat": "basic",
+  "name": {
+   "en": "Market Order (MKT)",
+   "zh": "市价单"
+  },
+  "score": 7,
+  "formula": {
+   "en": "Avg price = Σ(size × price) / Σ size   over every level taken",
+   "zh": "成交均价 = Σ(数量 × 价格) / Σ 数量   逐档吃掉的所有价位"
+  },
+  "principle": {
+   "en": "Buy or sell right now at whatever price the market offers. You are certain to trade, but you only learn the price after you have paid it.",
+   "zh": "立刻按市场现有价格买入或卖出。一定能成交，但成交价要等成交后才知道。"
+  },
+  "example": {
+   "en": "Like grabbing a taxi in the rain with no meter check: you get the ride for sure, the fare is a surprise. A big buy can eat several ask levels and average well above the quote.",
+   "zh": "像雨天随手拦车不问价：一定坐得上，车费却是惊喜。大单会连吃几档卖盘，均价明显高于报价。"
+  }
+ },
+ {
+  "id": "SLIPPAGE",
+  "cat": "mechanics",
+  "name": {
+   "en": "Slippage & Market Impact",
+   "zh": "滑点与冲击成本"
+  },
+  "score": 9.1,
+  "formula": {
+   "en": "Slippage = ±(avg fill − mid when you sent)   (+ = worse for you)\nIn bps = slippage / mid × 10,000\nTotal ≈ half spread + your own impact + drift while waiting",
+   "zh": "滑点 = ±(成交均价 − 下单时中间价)   （正数代表对你不利）\n基点 = 滑点 / 中间价 × 10,000\n总成本 ≈ 半个价差 + 自身冲击 + 等待期间的漂移"
+  },
+  "principle": {
+   "en": "Slippage is the gap between the price you saw when you decided and the price you actually got. It comes from crossing the spread, pushing the price with your own size, and the market moving while you wait.",
+   "zh": "滑点是你决定下单时看到的价格与实际成交价之间的差距。来源有三：跨越买卖价差、自己的单量推动价格、等待期间市场变动。"
+  },
+  "example": {
+   "en": "You see $50.00, send a market buy for 10,000 shares and average $50.06. That 6 cents a share, about 12 bps, is your slippage.",
+   "zh": "你看到 50.00 元，市价买入一万股，均价 50.06 元。每股多付的 6 分（约 12 个基点）就是滑点。"
+  }
+ },
+ {
+  "id": "LIMIT",
+  "cat": "basic",
+  "name": {
+   "en": "Limit Order (LMT)",
+   "zh": "限价单"
+  },
+  "score": 9.4,
+  "principle": {
+   "en": "You set the worst price you will accept and give up the guarantee of trading. Priced away from the market it waits in line; priced through the market it fills at once, with a ceiling.",
+   "zh": "你设定能接受的最差价格，代价是不保证成交。挂在市价之外就排队等待；挂过市价就立即成交，但有价格上限。"
+  },
+  "example": {
+   "en": "Like putting a price tag on what you will pay and waiting. Stock at $20.10: a buy limit at $20.00 waits for sellers to come down; one at $20.20 fills now, never above $20.20.",
+   "zh": "就像给自己愿付的价格贴好标签然后等着。股价 20.10 元：20.00 元的买入限价单等卖家降价；20.20 元的会立刻成交，绝不高于 20.20 元。"
+  }
+ },
+ {
+  "id": "STOP",
+  "cat": "basic",
+  "name": {
+   "en": "Stop Order (STP) — stop-loss",
+   "zh": "止损单"
+  },
+  "score": 8.2,
+  "principle": {
+   "en": "A stop is a trigger, not a price. When the market reaches your stop level, it turns into a market order, so you get out for sure, but at whatever price the market gives.",
+   "zh": "止损是触发条件，不是成交价。价格触及止损位时，它变成市价单：一定能出场，但成交价由市场决定。"
+  },
+  "example": {
+   "en": "You hold a stock at $100 with a stop at $95. Bad news hits overnight and it opens at $88: the stop fires and you sell near $88, not $95.",
+   "zh": "你持有 100 元的股票，止损设在 95 元。隔夜出坏消息，开盘直接 88 元：止损触发，你在 88 元附近卖出，而不是 95 元。"
+  }
+ },
+ {
+  "id": "STOP_LIMIT",
+  "cat": "basic",
+  "name": {
+   "en": "Stop Limit Order (STL)",
+   "zh": "止损限价单"
+  },
+  "score": 5.5,
+  "principle": {
+   "en": "A stop that becomes a limit order instead of a market order. It refuses to sell below your floor, so in a sharp drop it may not fill at all and you keep the whole position.",
+   "zh": "触发后变成限价单而非市价单的止损。它拒绝低于你设定的底价卖出，所以急跌时可能完全不成交，你只能继续持有。"
+  },
+  "example": {
+   "en": "Stop $95, limit $94. If the stock gaps from $100 straight to $88, nothing sells, and you are still holding as it keeps falling.",
+   "zh": "止损 95 元，限价 94 元。若股价从 100 元直接跳空到 88 元，一股也卖不掉，只能眼看它继续下跌。"
+  }
+ },
+ {
+  "id": "TRAILING_STOP",
+  "cat": "basic",
+  "name": {
+   "en": "Trailing Stop (TS)",
+   "zh": "跟踪止损单"
+  },
+  "score": 7,
+  "formula": {
+   "en": "Stop = highest price since entry − trail   (long)\nThe stop only moves up, never down\nFires when price ≤ stop → becomes a market order",
+   "zh": "止损位 = 入场后最高价 − 跟踪距离   （多头）\n止损位只上移，不下移\n价格 ≤ 止损位时触发 → 变为市价单"
+  },
+  "principle": {
+   "en": "A stop that follows the best price the position has reached and never moves back. It lets a winning trend run while locking in part of the gain, then exits with a market order.",
+   "zh": "止损位跟随持仓期间的最高价上移，且永不回撤。让盈利趋势继续奔跑，同时锁住一部分利润，触发后以市价出场。"
+  },
+  "example": {
+   "en": "Buy at $50 with a $3 trail. The stock climbs to $60, so the stop rises to $57. It then dips to $57 and you are sold out with about $7 profit.",
+   "zh": "50 元买入，跟踪距离 3 元。股价涨到 60 元，止损位升到 57 元。随后回落到 57 元，你被卖出，约赚 7 元。"
+  }
+ },
+ {
+  "id": "TRAILING_STOP_LIMIT",
+  "cat": "basic",
+  "name": {
+   "en": "Trailing Stop Limit (TSL)",
+   "zh": "跟踪止损限价单"
+  },
+  "score": 3.8,
+  "principle": {
+   "en": "A trailing stop that becomes a limit order when hit. It combines the moving stop with the stop-limit's main risk: on a fast drop or gap, it may not fill at all.",
+   "zh": "触发后变成限价单的跟踪止损。它把移动止损和止损限价单的主要风险叠在一起：急跌或跳空时可能完全不成交。"
+  },
+  "example": {
+   "en": "Trail $3, limit offset $0.20. The stop rises to $57, so the limit is $56.80. If the stock gaps to $54, the order sits unfilled while you still hold.",
+   "zh": "跟踪 3 元，限价偏移 0.20 元。止损升到 57 元，限价即 56.80 元。若股价跳空到 54 元，订单挂着不成交，你仍然持仓。"
+  }
+ },
+ {
+  "id": "TWAP",
+  "cat": "basic",
+  "name": {
+   "en": "TWAP — Time-Weighted Average Price",
+   "zh": "时间加权平均价格单"
+  },
+  "score": 6.8,
+  "formula": {
+   "en": "Child size = total qty / k\nOne child every (window / k) bars, each a market order",
+   "zh": "每笔子单 = 总数量 / k\n每隔（时间窗口 / k）根 K 线发一笔市价子单"
+  },
+  "principle": {
+   "en": "Splits a big order into equal pieces sent at equal time intervals. Each piece is small enough for the book to absorb, but the price can drift away while you wait.",
+   "zh": "把大单切成等份，按相同时间间隔发出。每份够小，盘口吃得下；代价是等待期间价格可能跑掉。"
+  },
+  "example": {
+   "en": "Buy 20,000 shares over 4 hours as 8 orders of 2,500, one every 30 minutes, instead of one big order that would sweep ten price levels.",
+   "zh": "四小时内买入两万股：每 30 分钟买 2,500 股，共 8 笔，而不是一笔大单连吃十档。"
+  }
+ },
+ {
+  "id": "VWAP",
+  "cat": "basic",
+  "name": {
+   "en": "VWAP — Volume-Weighted Average Price",
+   "zh": "成交量加权平均价格单"
+  },
+  "score": 7.2,
+  "formula": {
+   "en": "VWAP = Σ(typical price × volume) / Σ volume\nTypical price = (high + low + close) / 3\nChild size ∝ volume in its time slot",
+   "zh": "VWAP = Σ(典型价 × 成交量) / Σ 成交量\n典型价 = (最高 + 最低 + 收盘) / 3\n子单大小 ∝ 该时段成交量"
+  },
+  "principle": {
+   "en": "Splits an order in proportion to how much volume trades in each part of the day, so you trade more when the market is busy. VWAP is also the benchmark most big orders are graded against.",
+   "zh": "按一天中各时段的成交量比例拆单，市场活跃时多买，清淡时少买。VWAP 也是衡量大单执行好坏的常用基准。"
+  },
+  "example": {
+   "en": "If 30% of a day's volume trades in the first and last hour, a VWAP order puts about 30% of your shares there too.",
+   "zh": "如果全天 30% 的成交量集中在开盘和收盘各一小时，VWAP 单也会把约 30% 的股数放在这两段。"
+  }
+ },
+ {
+  "id": "BRACKET_OCO",
+  "cat": "basic",
+  "name": {
+   "en": "Bracket / One-Cancels-the-Other (OCO)",
+   "zh": "止盈止损括号单（OCO）"
+  },
+  "score": 8.4,
+  "principle": {
+   "en": "Two exit orders around a position: a take-profit above and a stop-loss below. Whichever is hit first fills and cancels the other, so your exit plan runs without you watching.",
+   "zh": "围绕持仓同时挂两张出场单：上方止盈、下方止损。先触及的那张成交并自动撤掉另一张，无需盯盘也能执行计划。"
+  },
+  "example": {
+   "en": "Long at $100 with take-profit $110 and stop $95. The stock hits $110 first, so you sell at $110 and the $95 stop is cancelled automatically.",
+   "zh": "100 元做多，止盈 110 元、止损 95 元。股价先到 110 元，你在 110 元卖出，95 元的止损单自动撤销。"
+  }
+ },
+ {
+  "id": "MOC",
+  "cat": "moomoo",
+  "name": {
+   "en": "Market On Close (MOC)",
+   "zh": "收盘市价单"
+  },
+  "score": 7.8,
+  "principle": {
+   "en": "An instruction to trade in the closing auction at its single closing price. It waits all day, cannot be cancelled after the cut-off, and fills in the deepest liquidity of the day.",
+   "zh": "指定在收盘集合竞价中按唯一收盘价成交。全天排队等待，截止时间后不可撤单，成交在一天中流动性最深的时刻。"
+  },
+  "example": {
+   "en": "A fund that marks its portfolio at the close sends an MOC to buy 50,000 shares. It gets exactly the official closing price, the same price its benchmark uses.",
+   "zh": "某基金按收盘价估值，用收盘市价单买入五万股，成交价正好是官方收盘价，与其基准一致。"
+  }
+ },
+ {
+  "id": "MIT",
+  "cat": "moomoo",
+  "name": {
+   "en": "Market-if-Touched (MIT)",
+   "zh": "触及市价单"
+  },
+  "score": 7.8,
+  "principle": {
+   "en": "A stop pointed the other way. It fires when price comes toward the level you want, then sends a market order. A buy MIT sits below the market, a sell MIT above.",
+   "zh": "方向相反的止损单。价格朝你想要的位置移动并触及时触发，随后发出市价单。买入挂在市价下方，卖出挂在上方。"
+  },
+  "example": {
+   "en": "Stock at $52, you want to buy a dip to $50. Set a buy MIT at $50: when it trades there, a market buy goes out and fills near $50.",
+   "zh": "股价 52 元，你想在回落到 50 元时买入。设 50 元的买入触及市价单：一旦成交价到 50 元，就发出市价买单，在 50 元附近成交。"
+  }
+ },
+ {
+  "id": "LIT",
+  "cat": "moomoo",
+  "name": {
+   "en": "Limit-if-Touched (LIT)",
+   "zh": "触及限价单"
+  },
+  "score": 7.2,
+  "principle": {
+   "en": "Like an MIT, but when the trigger is touched it places a limit order instead of a market order. You cap the price, at the risk that the touch happens and the fill does not.",
+   "zh": "类似触及市价单，但触发后挂出限价单而非市价单。价格有上限，风险是触及了却没成交。"
+  },
+  "example": {
+   "en": "Stock at $52. Buy LIT with trigger $50 and limit $49.90. If it touches $50 and bounces straight back to $51, your $49.90 limit never fills.",
+   "zh": "股价 52 元。买入触及限价单：触发 50 元、限价 49.90 元。若触及 50 元后立刻反弹到 51 元，49.90 元的限价单就不会成交。"
+  }
+ },
+ {
+  "id": "POV",
+  "cat": "moomoo",
+  "name": {
+   "en": "Percentage of Volume (POV)",
+   "zh": "参与成交量比例单"
+  },
+  "score": 6.4,
+  "formula": {
+   "en": "Each bar: buy = bar volume × rate\nRepeat until done or the window ends (no catch-up)",
+   "zh": "每根 K 线：买入量 = 该 K 线成交量 × 参与率\n直到完成或时间窗口结束（不会追量）"
+  },
+  "principle": {
+   "en": "Takes a fixed share of whatever trades, bar by bar, until the order is done. You control your footprint; the market controls how long it takes, and a quiet day may leave shares unfilled.",
+   "zh": "按固定比例跟随市场成交量，逐根 K 线买卖直到完成。你控制的是自己的存在感，完成时间由市场决定，清淡时可能做不完。"
+  },
+  "example": {
+   "en": "At a 10% rate, if 30,000 shares trade in a minute you buy 3,000; if only 2,000 trade, you buy 200.",
+   "zh": "参与率 10%：某分钟成交三万股，你就买 3,000 股；只成交 2,000 股，你就买 200 股。"
+  }
+ },
+ {
+  "id": "HK_AUCTION_MKT",
+  "cat": "tiger",
+  "name": {
+   "en": "HK Auction Market Order (at-auction order)",
+   "zh": "港股竞价市价单"
+  },
+  "score": 3.4,
+  "principle": {
+   "en": "Puts you into the Hong Kong opening auction at whatever single price it clears. You get priority over limit orders, but there is no visible book and no price cap at all.",
+   "zh": "让你以开盘集合竞价的唯一成交价参与港股竞价。比限价单优先撮合，但看不到盘口，也完全没有价格上限。"
+  },
+  "example": {
+   "en": "Like bidding at an auction with \"whatever it takes\": you will win the lot, but if overnight news is hot, you may pay far above yesterday's close.",
+   "zh": "就像拍卖时喊「多少钱都要」：一定拍得到，但若隔夜有利好，成交价可能远高于昨收。"
+  }
+ },
+ {
+  "id": "HK_AUCTION_LMT",
+  "cat": "tiger",
+  "name": {
+   "en": "HK Auction Limit Order (at-auction limit)",
+   "zh": "港股竞价限价单"
+  },
+  "score": 7,
+  "principle": {
+   "en": "The auction order with a price limit. If the auction clears within your limit, you fill the whole order at the clearing price; if it clears beyond it, you get nothing.",
+   "zh": "带限价的竞价单。竞价成交价在你的限价之内，就以该成交价全部成交；超出限价，则完全不成交。"
+  },
+  "example": {
+   "en": "Buy limit HK$100 in the opening auction. It clears at HK$98, so you buy everything at HK$98. If it clears at HK$103, you buy nothing.",
+   "zh": "开盘竞价买入限价 100 港元。竞价价 98 港元，你全部以 98 港元成交；若竞价价是 103 港元，则一股都买不到。"
+  }
+ },
+ {
+  "id": "DARK_POOL",
+  "cat": "tiger",
+  "name": {
+   "en": "Dark Pool Order (HK after-hours dark trading)",
+   "zh": "暗盘订单"
+  },
+  "score": 5.4,
+  "principle": {
+   "en": "An after-hours matching session for Hong Kong stocks, mainly for new listings the day before they debut. Few participants means prices can stray from fair value and partial fills are normal.",
+   "zh": "港股的盘后暗盘交易，主要用于新股上市前一天。参与者少，价格容易偏离合理水平，部分成交是常态。"
+  },
+  "example": {
+   "en": "You were allotted shares in an IPO at HK$10. In the dark pool the evening before listing it trades at HK$11.50, so you can sell early and lock in the gain.",
+   "zh": "你以 10 港元中签新股。上市前一晚暗盘成交在 11.50 港元，你可以提前卖出锁定收益。"
+  }
+ },
+ {
+  "id": "CONDITIONAL",
+  "cat": "tiger",
+  "name": {
+   "en": "Conditional Order (condition → submit)",
+   "zh": "条件订单"
+  },
+  "score": 6.3,
+  "principle": {
+   "en": "Watches for a condition to become true, then submits an order. The condition can be on any data, even another stock, but the order is sent only after the condition is confirmed, so it lags.",
+   "zh": "监测某个条件成立后再提交订单。条件可以基于任何数据，甚至另一只股票；但要等条件确认后才下单，所以有延迟。"
+  },
+  "example": {
+   "en": "\"If the index closes above 20,000, buy 1,000 shares of this stock.\" The bar closes at 20,050, and the market buy goes out on the next bar.",
+   "zh": "「若指数收在 20,000 点上方，就买入这只股票 1,000 股。」某根 K 线收在 20,050 点，下一根 K 线才发出市价买单。"
+  }
+ },
+ {
+  "id": "ATTACHED",
+  "cat": "tiger",
+  "name": {
+   "en": "Attached Order (parent + child)",
+   "zh": "附加单"
+  },
+  "score": 8.2,
+  "principle": {
+   "en": "Links an exit order to an entry, so the exit is placed the instant the entry fills. It adds no new mechanics; it simply removes the moment where you forget to protect a new position.",
+   "zh": "把出场单绑定在入场单上，入场一成交，出场单立刻生效。机制并不新，只是消除了「成交后忘记设止损」这个人为疏漏。"
+  },
+  "example": {
+   "en": "Buy 500 shares at market with an attached stop at $95. The moment the buy fills at $100, the $95 stop is live, even if you have walked away.",
+   "zh": "市价买入 500 股，附加 95 元止损。买单在 100 元成交的那一刻，95 元止损就已生效，即使你已经离开电脑。"
+  }
+ },
+ {
+  "id": "ICEBERG",
+  "cat": "tiger",
+  "name": {
+   "en": "Iceberg Order (display size / hidden quantity)",
+   "zh": "冰山单"
+  },
+  "score": 4.3,
+  "principle": {
+   "en": "A limit order that shows only a small slice of its size. When the slice fills, a new one appears at the back of the queue. It hides your size but takes much longer to finish.",
+   "zh": "只露出一小部分数量的限价单。露出的部分成交后，再补上一份，但要重新排到队尾。能隐藏真实数量，但完成得慢很多。"
+  },
+  "example": {
+   "en": "Sell 50,000 shares at $30 showing 1,000 at a time. The book only ever shows 1,000, so other traders do not see the full 50,000 waiting.",
+   "zh": "在 30 元卖出五万股，每次只显示 1,000 股。盘口上永远只看到 1,000 股，别人看不出背后还有五万股在等。"
+  }
+ },
+ {
+  "id": "TIF",
+  "cat": "mechanics",
+  "name": {
+   "en": "Time in Force (DAY / GTC / GTD / IOC / FOK)",
+   "zh": "订单有效期"
+  },
+  "score": 8.3,
+  "formula": {
+   "en": "DAY  until today's close\nGTC  until you cancel (or the broker's cap)\nGTD  until a date you choose\nIOC  fill what you can now, cancel the rest\nFOK  fill everything now, or nothing",
+   "zh": "DAY  当日收盘前有效\nGTC  撤单前一直有效（或券商上限）\nGTD  到指定日期前有效\nIOC  立即成交能成交的部分，其余撤销\nFOK  立即全部成交，否则全部撤销"
+  },
+  "principle": {
+   "en": "Time in force says how long your order stays live. The price says what you will trade at; the TIF says for how long, or, for IOC and FOK, that it must not wait at all.",
+   "zh": "订单有效期决定订单能存活多久。价格决定以什么价成交，有效期决定愿意等多久；IOC 和 FOK 则表示完全不排队。"
+  },
+  "example": {
+   "en": "A GTC buy at $45 left on a $50 stock can fill weeks later after you have forgotten it. A DAY order would have quietly expired tonight.",
+   "zh": "在 50 元的股票上挂 45 元的 GTC 买单，可能在你忘掉几周后突然成交。若用 DAY 单，今晚收盘就自动失效了。"
+  }
+ },
+ {
+  "id": "ORDER_BOOK",
+  "cat": "mechanics",
+  "name": {
+   "en": "The Order Book & Queue Priority",
+   "zh": "盘口与排队优先级"
+  },
+  "score": 9,
+  "formula": {
+   "en": "Spread = best ask − best bid\nPriority: better price first, then earlier arrival\nTaker avg = Σ(size × price) / Σ size",
+   "zh": "价差 = 最优卖价 − 最优买价\n优先级：价格优先，同价时间优先\n吃单均价 = Σ(数量 × 价格) / Σ 数量"
+  },
+  "principle": {
+   "en": "The order book is a queue of waiting limit orders, sorted by price and then by arrival time. Takers walk down it paying more at each level; makers join the back and wait to be hit.",
+   "zh": "盘口是所有等待成交的限价单组成的队列，先按价格、再按时间排序。吃单者逐档往下吃，越吃越贵；挂单者排在队尾等别人来成交。"
+  },
+  "example": {
+   "en": "Like a deli counter: the best price is the front of the line. If you post a bid at $10.00 behind 5,000 shares already there, all 5,000 must fill before you do.",
+   "zh": "像排队买东西：最优价格站在最前面。你在 10.00 元挂买单，前面已有 5,000 股，这 5,000 股要先成交才轮到你。"
+  }
+ },
+ {
+  "id": "SESSIONS",
+  "cat": "mechanics",
+  "name": {
+   "en": "Trading Sessions & Auctions",
+   "zh": "交易时段与集合竞价"
+  },
+  "score": 8.7,
+  "principle": {
+   "en": "A trading day is several markets joined together: pre-open, opening auction, continuous trading, closing auction and extended hours. Each has different participants, rules and depth.",
+   "zh": "一个交易日由几个市场拼接而成：盘前、开盘竞价、连续交易、收盘竞价和盘后。各时段的参与者、规则和深度都不同。"
+  },
+  "example": {
+   "en": "A stock that trades 5 million shares in regular hours may trade 50,000 after hours, so a market order there can move the price several percent.",
+   "zh": "一只股票常规时段成交五百万股，盘后可能只有五万股，这时下市价单可能把价格推动好几个百分点。"
+  }
+ },
+ {
+  "id": "FILLS",
+  "cat": "mechanics",
+  "name": {
+   "en": "Fills, Partial Fills & Average Price",
+   "zh": "成交、部分成交与均价"
+  },
+  "score": 7.6,
+  "formula": {
+   "en": "Avg price = Σ(qty × price) / Σ qty   (weighted, not a simple mean)",
+   "zh": "成交均价 = Σ(数量 × 价格) / Σ 数量   （加权平均，不是简单平均）"
+  },
+  "principle": {
+   "en": "An order is your instruction; a fill is one actual trade against it. One order can produce many fills at different prices, and a partial fill leaves you with a position you did not fully plan.",
+   "zh": "订单是你的指令，成交是实际发生的一笔交易。一张订单可能分成多笔、价格各不相同；部分成交会让你持有一个计划之外的仓位。"
+  },
+  "example": {
+   "en": "Buy 1,000 shares: 300 fill at $10.00 and 700 at $10.10. Your average is $10.07, not the $10.05 midpoint of the two prices.",
+   "zh": "买入 1,000 股：300 股成交于 10.00 元，700 股成交于 10.10 元。均价是 10.07 元，而不是两个价格的中点 10.05 元。"
+  }
+ },
+ {
+  "id": "MAKER_TAKER",
+  "cat": "mechanics",
+  "name": {
+   "en": "Maker / Taker & Execution Cost",
+   "zh": "挂单/吃单与交易成本"
+  },
+  "score": 6.9,
+  "formula": {
+   "en": "Taker cost = ½ spread + taker fee\nMaker cost = −½ spread + maker fee (often a rebate)\n           + risk of not filling",
+   "zh": "吃单成本 = ½ 价差 + 吃单费\n挂单成本 = −½ 价差 + 挂单费（常为返佣）\n         + 不成交的风险"
+  },
+  "principle": {
+   "en": "If your order was waiting and someone traded against it, you are a maker; you earn the spread and often a rebate. If you crossed to someone else's order, you are a taker and pay both.",
+   "zh": "你的订单在等待、别人来成交，你就是挂单方，赚价差、常有返佣。你主动去成交别人的订单，就是吃单方，要付价差和手续费。"
+  },
+  "example": {
+   "en": "Bid $9.99, ask $10.01. Buying at $10.01 costs a cent over mid; resting a bid at $9.99 saves a cent, but only if someone sells to you.",
+   "zh": "买价 9.99 元，卖价 10.01 元。按 10.01 元买比中间价多付一分；挂 9.99 元买单能省一分，但前提是有人愿意卖给你。"
+  }
+ }
+]

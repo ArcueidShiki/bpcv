@@ -1,0 +1,4013 @@
+[
+ {
+  "id": "MA",
+  "cat": "trend",
+  "name": {
+   "en": "Simple Moving Average (MA)",
+   "zh": "简单移动平均线（MA）"
+  },
+  "score": 8,
+  "formula": {
+   "en": "MA(N) = (C₁ + C₂ + … + C_N) / N\nCommon: MA5, MA10, MA20, MA60\nSlope = MA_t − MA_{t−1}",
+   "zh": "MA(N) = (C₁ + C₂ + … + C_N) / N\n常用：MA5、MA10、MA20、MA60\n斜率 = MA_t − MA_{t−1}"
+  },
+  "principle": {
+   "en": "The average close of the last N bars. It smooths out daily noise so you see the direction; the slope and whether price sits above or below it matter more than the number itself.",
+   "zh": "最近 N 根 K 线收盘价的平均值，滤掉日常噪音、看清方向。关键看它的斜率，以及价格在它上方还是下方。"
+  },
+  "example": {
+   "en": "A stock in an uptrend pulls back to its rising MA20 three times and bounces each time. Each touch is a low-risk spot to buy, with a stop just below the line.",
+   "zh": "一只上涨股三次回踩上行的 MA20 都弹起，每次回踩都是低风险买点，止损放在均线略下方。"
+  }
+ },
+ {
+  "id": "BOLL",
+  "cat": "pressure_support",
+  "name": {
+   "en": "Bollinger Bands (BOLL)",
+   "zh": "布林带（BOLL）"
+  },
+  "score": 8.5,
+  "formula": {
+   "en": "MID = SMA(C, 20)\nUPPER = MID + 2σ\nLOWER = MID − 2σ\n%B = (C − LOWER) / (UPPER − LOWER)\nBandwidth = (UPPER − LOWER) / MID",
+   "zh": "中轨 = SMA(C, 20)\n上轨 = 中轨 + 2σ\n下轨 = 中轨 − 2σ\n%B = (C − 下轨) / (上轨 − 下轨)\n带宽 = (上轨 − 下轨) / 中轨"
+  },
+  "principle": {
+   "en": "A moving average with bands two standard deviations above and below. The bands widen when the market is jumpy and squeeze when it is calm, showing how unusual today's price is.",
+   "zh": "一条均线加上下两倍标准差的通道。市场躁动时通道张开，平静时收窄，用来衡量当前价格有多「不寻常」。"
+  },
+  "example": {
+   "en": "Like a coiled spring: when the bands pinch to a six-month low and price then closes outside them on big volume, a strong move has usually just started.",
+   "zh": "像压紧的弹簧：带宽缩到半年最窄后，价格放量收在通道外，往往意味着一段大行情刚刚开始。"
+  }
+ },
+ {
+  "id": "MACD",
+  "cat": "trend",
+  "name": {
+   "en": "MACD",
+   "zh": "指数平滑异同移动平均线（MACD）"
+  },
+  "score": 8.5,
+  "formula": {
+   "en": "DIF = EMA(C, 12) − EMA(C, 26)\nDEA = EMA(DIF, 9)   (signal line)\nMACD = (DIF − DEA) × 2   (histogram)",
+   "zh": "DIF = EMA(C, 12) − EMA(C, 26)\nDEA = EMA(DIF, 9)（信号线）\nMACD = (DIF − DEA) × 2（柱状图）"
+  },
+  "principle": {
+   "en": "The gap between a fast and a slow average measures trend momentum. The histogram shows whether that momentum is speeding up or fading, so it turns before the lines cross.",
+   "zh": "快慢两条均线的差距衡量趋势的动量；柱状图显示动量在加速还是衰减，所以它比两线交叉更早转向。"
+  },
+  "example": {
+   "en": "Price makes three lower lows, but each DIF low is shallower: sellers are tiring. The buy signal is the golden cross that follows this divergence.",
+   "zh": "价格连创三次新低，但 DIF 的低点一次比一次浅，说明卖盘在衰竭；随后出现的金叉才是买点。"
+  }
+ },
+ {
+  "id": "RSI",
+  "cat": "strength",
+  "name": {
+   "en": "Relative Strength Index (RSI)",
+   "zh": "相对强弱指标（RSI）"
+  },
+  "score": 8,
+  "formula": {
+   "en": "RS = average gain / average loss (N bars)\nRSI = 100 − 100 / (1 + RS)\nDefault N = 14, Wilder smoothing",
+   "zh": "RS = 平均涨幅 / 平均跌幅（N 根 K 线）\nRSI = 100 − 100 / (1 + RS)\n默认 N = 14，威尔德平滑"
+  },
+  "principle": {
+   "en": "The share of recent price movement that went up, on a 0–100 scale. Above 70 means most of the energy was upward; in a strong trend that is strength, not a sell signal.",
+   "zh": "近期涨跌中「上涨」所占的比例，0–100 之间。高于 70 说明大部分力量向上；强趋势里这是强势，而不是卖出信号。"
+  },
+  "example": {
+   "en": "A stock trading between $40 and $46 dips to $39.5, but RSI is 32 versus 26 at the last low. Less selling pressure: buy when RSI crosses back above 30.",
+   "zh": "一只在 40–46 美元震荡的股票跌到 39.5，但 RSI 为 32，高于上次低点的 26；卖压减弱，RSI 回到 30 上方时买入。"
+  }
+ },
+ {
+  "id": "ADR_SPX",
+  "cat": "breadth",
+  "name": {
+   "en": "Advance/Decline Ratio (S&P 500)",
+   "zh": "涨跌比率（标普 500）"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "ADR = stocks up today / stocks down today\nADR > 1 → more advancers\nOften smoothed: MA(ADR, 10)",
+   "zh": "ADR = 当日上涨家数 / 当日下跌家数\nADR > 1 → 上涨家数更多\n常做平滑：MA(ADR, 10)"
+  },
+  "principle": {
+   "en": "How many index members rose divided by how many fell. It shows whether a rally is broad or carried by a few giant stocks.",
+   "zh": "成分股上涨家数除以下跌家数。它告诉你指数上涨是全面开花，还是只靠几只巨头撑着。"
+  },
+  "example": {
+   "en": "Like a team where one star scores every goal: the index hits new highs while most stocks fall. A shrinking ADR warns the rally's base is eroding.",
+   "zh": "就像一支球队只靠一个球星得分：指数创新高，多数股票却在跌。涨跌比走低，提示上涨根基正在松动。"
+  }
+ },
+ {
+  "id": "EMA",
+  "cat": "trend",
+  "name": {
+   "en": "Exponential Moving Average (EMA)",
+   "zh": "指数移动平均线（EMA）"
+  },
+  "score": 8,
+  "formula": {
+   "en": "α = 2 / (n + 1)\nEMA_t = α·C_t + (1 − α)·EMA_{t−1}\nCommon: 5 / 10 / 20 / 60 / 120 / 250",
+   "zh": "α = 2 / (n + 1)\nEMA_t = α·C_t + (1 − α)·EMA_{t−1}\n常用：5 / 10 / 20 / 60 / 120 / 250"
+  },
+  "principle": {
+   "en": "An average where recent bars count more and older bars fade out smoothly. It reacts faster than a simple average and doesn't jump when an old bar drops out.",
+   "zh": "越近的 K 线权重越大，越老的权重平滑衰减。比简单均线反应更快，也不会因为旧数据移出窗口而跳动。"
+  },
+  "example": {
+   "en": "A stock breaks out at $42 and rises for ten weeks; each dip to the rising EMA20 that closes back above it is a low-risk place to add.",
+   "zh": "一只股票在 42 美元突破后涨了十周，每次回踩上行的 EMA20 又收回上方，都是低风险加仓点。"
+  }
+ },
+ {
+  "id": "WMA",
+  "cat": "trend",
+  "name": {
+   "en": "Weighted Moving Average (WMA)",
+   "zh": "加权移动平均线（WMA）"
+  },
+  "score": 4,
+  "formula": {
+   "en": "WMA(n) = [n·C_t + (n−1)·C_{t−1} + … + 1·C_{t−n+1}] / [n(n+1)/2]\nDefault n = 9",
+   "zh": "WMA(n) = [n·C_t + (n−1)·C_{t−1} + … + 1·C_{t−n+1}] / [n(n+1)/2]\n默认 n = 9"
+  },
+  "principle": {
+   "en": "An average whose weights fall in a straight line: the newest bar counts most, the oldest least. It lags about a third less than a simple average but is a bit jumpier.",
+   "zh": "权重线性递减：最新一根最重，最老一根最轻。比简单均线滞后少约三分之一，但更容易抖动。"
+  },
+  "example": {
+   "en": "After price bases for two hours, three strong bars appear. WMA9 turns up on the second bar; an SMA9 needs two more bars to tilt.",
+   "zh": "价格横盘两小时后连出三根大阳线，WMA9 在第二根就拐头向上，而 SMA9 还要再等两根。"
+  }
+ },
+ {
+  "id": "DEMA",
+  "cat": "trend",
+  "name": {
+   "en": "Double Exponential Moving Average (DEMA)",
+   "zh": "双重指数移动平均线（DEMA）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "E1 = EMA(C, n)\nE2 = EMA(E1, n)\nDEMA = 2·E1 − E2\nDefault n = 9",
+   "zh": "E1 = EMA(C, n)\nE2 = EMA(E1, n)\nDEMA = 2·E1 − E2\n默认 n = 9"
+  },
+  "principle": {
+   "en": "An EMA with its own lag estimated and added back. The gap between the EMA and an EMA of the EMA approximates the lag, so adding it pulls the line closer to price.",
+   "zh": "估算出 EMA 自身的滞后再加回去。EMA 与「EMA 的 EMA」之差约等于滞后量，补回后线更贴近价格。"
+  },
+  "example": {
+   "en": "An index runs from 3,850 to 4,300. An EMA20 signal fires near 3,995; DEMA(9) fires near 3,915, catching about 80 more points.",
+   "zh": "某指数从 3850 涨到 4300。EMA20 在 3995 附近才发信号，DEMA(9) 在 3915 附近就发出，多吃约 80 点。"
+  }
+ },
+ {
+  "id": "TEMA",
+  "cat": "trend",
+  "name": {
+   "en": "Triple Exponential Moving Average (TEMA)",
+   "zh": "三重指数移动平均线（TEMA）"
+  },
+  "score": 4.6,
+  "formula": {
+   "en": "E1 = EMA(C, n), E2 = EMA(E1, n), E3 = EMA(E2, n)\nTEMA = 3·E1 − 3·E2 + E3\nDefault n = 9",
+   "zh": "E1 = EMA(C, n)，E2 = EMA(E1, n)，E3 = EMA(E2, n)\nTEMA = 3·E1 − 3·E2 + E3\n默认 n = 9"
+  },
+  "principle": {
+   "en": "The DEMA lag-correction trick applied twice, so it keeps up even with an accelerating trend. The price is extra noise and more false turns.",
+   "zh": "把 DEMA 的滞后修正再做一次，连加速中的趋势也能跟上。代价是噪音更多、假拐点更多。"
+  },
+  "example": {
+   "en": "On a 180-pip breakout, TEMA(9) turns up around pip 25, DEMA(9) around pip 38 and EMA(9) around pip 61.",
+   "zh": "一段 180 点的突破行情中，TEMA(9) 约在第 25 点拐头，DEMA(9) 在第 38 点，EMA(9) 要到第 61 点。"
+  }
+ },
+ {
+  "id": "HMA",
+  "cat": "trend",
+  "name": {
+   "en": "Hull Moving Average (HMA)",
+   "zh": "赫尔移动平均线（HMA）"
+  },
+  "score": 7,
+  "formula": {
+   "en": "raw = 2·WMA(C, n/2) − WMA(C, n)\nHMA = WMA(raw, √n)\nDefault n = 9",
+   "zh": "原始值 = 2·WMA(C, n/2) − WMA(C, n)\nHMA = WMA(原始值, √n)\n默认 n = 9"
+  },
+  "principle": {
+   "en": "First a difference of two WMAs removes the lag, then a very short WMA smooths the result again. You get a line that is both fast and clean.",
+   "zh": "先用两条 WMA 之差消除滞后，再用一条很短的 WMA 重新平滑，得到一条又快又顺的线。"
+  },
+  "example": {
+   "en": "Rule: hold only while HMA55 is rising. On a stock going from $28 to $52, you ride the whole move and exit near $50.40, within two bars of the top.",
+   "zh": "规则：HMA55 向上才持有。一只从 28 涨到 52 美元的股票，你能吃下整段，并在顶部两根 K 线内约 50.4 美元离场。"
+  }
+ },
+ {
+  "id": "LSMA",
+  "cat": "trend",
+  "name": {
+   "en": "Least Squares Moving Average (LSMA)",
+   "zh": "最小二乘移动平均线（LSMA）"
+  },
+  "score": 6.4,
+  "formula": {
+   "en": "Fit C_k ≈ a + b·k over the last n bars\nLSMA = a + b·(n − 1)\nb = slope (price change per bar)\nDefault n = 25",
+   "zh": "对最近 n 根做拟合：C_k ≈ a + b·k\nLSMA = a + b·(n − 1)\nb = 斜率（每根 K 线的价格变化）\n默认 n = 25"
+  },
+  "principle": {
+   "en": "Not an average: it is today's point on the straight line that best fits the last n closes. In a clean trend it has almost no lag, and the slope tells you the trend's speed.",
+   "zh": "它不是平均值，而是最近 n 根收盘价最佳拟合直线在今天的位置。趋势平稳时几乎没有滞后，斜率直接给出趋势速度。"
+  },
+  "example": {
+   "en": "A stock climbs steadily about $0.28 a day and stays within ±2.5% of the line. Buy touches of the line; exit when the slope flattens.",
+   "zh": "一只股票每天稳定上涨约 0.28 美元，始终在直线上下 2.5% 内波动。回踩直线就买，斜率走平就卖。"
+  }
+ },
+ {
+  "id": "VWMA",
+  "cat": "trend",
+  "name": {
+   "en": "Volume-Weighted Moving Average (VWMA)",
+   "zh": "成交量加权移动平均线（VWMA）"
+  },
+  "score": 7.2,
+  "formula": {
+   "en": "VWMA(n) = Σ(C × V) / Σ(V)\nDefault n = 20\nVWMA > SMA → heavy volume at high prices\nVWMA < SMA → heavy volume at low prices",
+   "zh": "VWMA(n) = Σ(C × V) / Σ(V)\n默认 n = 20\nVWMA > SMA → 大成交量发生在高价\nVWMA < SMA → 大成交量发生在低价"
+  },
+  "principle": {
+   "en": "The average price at which shares actually traded, weighting each bar by its volume. Comparing it with a plain average shows where the real money changed hands.",
+   "zh": "按成交量加权的平均价，反映股票实际在什么价位换手。与普通均线对比，能看出真金白银在哪里成交。"
+  },
+  "example": {
+   "en": "A stock rises from $18 to $21 on fading volume while VWMA20 slips below SMA20: up days are thin, down days heavy. Big holders are quietly selling.",
+   "zh": "一只股票缩量从 18 涨到 21 美元，VWMA20 却跌破 SMA20：上涨日量小、下跌日量大，大资金在悄悄出货。"
+  }
+ },
+ {
+  "id": "TWAP",
+  "cat": "trend",
+  "name": {
+   "en": "Time-Weighted Average Price (TWAP)",
+   "zh": "时间加权平均价（TWAP）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "TWAP = (sum of closes since the anchor) / (number of bars)\nAnchor = session start (intraday) or year start\nEvery bar counts equally, volume ignored",
+   "zh": "TWAP = 锚点以来收盘价之和 / K 线根数\n锚点 = 日内取开盘，日线以上取年初\n每根 K 线权重相同，不看成交量"
+  },
+  "principle": {
+   "en": "The plain average price since a starting point, with every bar weighted the same. It is mainly a benchmark for orders that are split into equal slices over time.",
+   "zh": "从某个起点开始的简单平均价，每根 K 线权重一样。它主要是「按时间平均拆单」执行的基准价。"
+  },
+  "example": {
+   "en": "To buy 400,000 shares without moving the price, an algorithm buys about 1,700 shares every minute all day. TWAP is the price it should average.",
+   "zh": "要买 40 万股又不想推高价格，算法全天每分钟买约 1700 股，TWAP 就是它应该拿到的平均价。"
+  }
+ },
+ {
+  "id": "BBI",
+  "cat": "trend",
+  "name": {
+   "en": "Bull and Bear Index (BBI)",
+   "zh": "多空指数（BBI）"
+  },
+  "score": 5,
+  "formula": {
+   "en": "BBI = [MA(C,3) + MA(C,6) + MA(C,12) + MA(C,24)] / 4",
+   "zh": "BBI = [MA(C,3) + MA(C,6) + MA(C,12) + MA(C,24)] / 4"
+  },
+  "principle": {
+   "en": "The average of four moving averages of different lengths, giving one line that splits bull from bear. Recent bars weigh most, so it behaves like a medium-speed average.",
+   "zh": "四条不同周期均线的平均，合成一条「多空分界线」。近期 K 线权重最大，速度介于快慢均线之间。"
+  },
+  "example": {
+   "en": "Hold while the close is above BBI, step aside below. A stock rising from ¥12 to ¥19 only dips under BBI twice and recovers within two days.",
+   "zh": "收盘在 BBI 上方就持有，下方就离场。一只从 12 元涨到 19 元的股票只跌破两次，且两天内就收复。"
+  }
+ },
+ {
+  "id": "GMMA",
+  "cat": "trend",
+  "name": {
+   "en": "Guppy Multiple Moving Average (GMMA)",
+   "zh": "顾比复合移动平均线（GMMA）"
+  },
+  "score": 6,
+  "formula": {
+   "en": "Short group: EMA 3, 5, 8, 10, 12, 15\nLong group: EMA 30, 35, 40, 45, 50, 60",
+   "zh": "短期组：EMA 3、5、8、10、12、15\n长期组：EMA 30、35、40、45、50、60"
+  },
+  "principle": {
+   "en": "Twelve EMAs in a fast ribbon (traders) and a slow ribbon (investors). A ribbon's width shows how much that group agrees; the gap between ribbons shows how strong the trend is.",
+   "zh": "十二条 EMA 分成快带（短线客）和慢带（长线资金）。带的宽度代表群体共识，两带间距代表趋势强弱。"
+  },
+  "example": {
+   "en": "A stock drops 9% in three days and the fast ribbon collapses, but the slow ribbon stays spread out. That is a shakeout, not a reversal.",
+   "zh": "一只股票三天跌 9%，快带收拢，但慢带依旧张开——这是洗盘，不是反转。"
+  }
+ },
+ {
+  "id": "ADX",
+  "cat": "trend",
+  "name": {
+   "en": "Average Directional Index (ADX)",
+   "zh": "平均趋向指数（ADX）"
+  },
+  "score": 8.5,
+  "formula": {
+   "en": "+DI = 100 × smoothed(+DM) / ATR\n−DI = 100 × smoothed(−DM) / ATR\nDX = |+DI − −DI| / (+DI + −DI)\nADX = 100 × smoothed(DX, 14)",
+   "zh": "+DI = 100 × 平滑(+DM) / ATR\n−DI = 100 × 平滑(−DM) / ATR\nDX = |+DI − −DI| / (+DI + −DI)\nADX = 100 × 平滑(DX, 14)"
+  },
+  "principle": {
+   "en": "ADX measures how strong a trend is, not its direction. Below 20 the market is choppy; above 25 it is trending. +DI and −DI tell you which side is winning.",
+   "zh": "ADX 只衡量趋势有多强，不管方向。低于 20 是震荡，高于 25 是趋势；方向看 +DI 与 −DI 谁在上。"
+  },
+  "example": {
+   "en": "Like a switch between playbooks: with ADX at 15, buy dips and sell rallies. When ADX climbs past 25 and +DI pulls away, switch to riding the trend.",
+   "zh": "像一个切换开关：ADX 在 15 时做高抛低吸；ADX 升破 25 且 +DI 拉开差距时，改为顺势持有。"
+  }
+ },
+ {
+  "id": "DMI",
+  "cat": "trend",
+  "name": {
+   "en": "Directional Movement Index (DMI)",
+   "zh": "动向指标（DMI）"
+  },
+  "score": 7,
+  "formula": {
+   "en": "PDI = 100 × Σ(up moves) / Σ(TR)\nMDI = 100 × Σ(down moves) / Σ(TR)\nADX = SMA(|MDI − PDI| / (MDI + PDI) × 100, 6)\nADXR = (ADX + ADX six bars ago) / 2",
+   "zh": "PDI = 100 × Σ(向上动向) / Σ(TR)\nMDI = 100 × Σ(向下动向) / Σ(TR)\nADX = SMA(|MDI − PDI| / (MDI + PDI) × 100, 6)\nADXR = (ADX + 6 根前的 ADX) / 2"
+  },
+  "principle": {
+   "en": "The same idea as ADX, but using simple rolling sums, so it reacts much faster. PDI above MDI means buyers are pushing the range further than sellers.",
+   "zh": "思路与 ADX 相同，但用滚动求和计算，反应快得多。PDI 在 MDI 上方，说明买方推动的幅度大于卖方。"
+  },
+  "example": {
+   "en": "After a six-week base, a breakout lifts PDI to 34, drops MDI to 11 and ADX jumps from 12 to 41 in four days — two weeks before Wilder's ADX confirms.",
+   "zh": "横盘六周后突破，四天内 PDI 升到 34、MDI 降到 11、ADX 从 12 跳到 41，比传统 ADX 早两周确认。"
+  }
+ },
+ {
+  "id": "DDI",
+  "cat": "trend",
+  "name": {
+   "en": "Directional Divergence Index (DDI)",
+   "zh": "方向标准离差指数（DDI）"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "DIZ = up deviation / total deviation (13 bars)\nDDI = 2·DIZ − 1   (range −1 … +1)\nADDI = smoothed DDI, AD = SMA(ADDI, 5)",
+   "zh": "DIZ = 向上偏离 / 总偏离（13 根）\nDDI = 2·DIZ − 1（范围 −1 … +1）\nADDI = DDI 的平滑，AD = SMA(ADDI, 5)"
+  },
+  "principle": {
+   "en": "Over the last 13 bars, what share of directional movement went up versus down. Zero is an even split; +0.6 means about 80% went up. Being bounded, it compares across stocks and years.",
+   "zh": "最近 13 根 K 线里，方向性波动有多少向上、多少向下。0 表示各半，+0.6 约等于八成向上；有上下限，可跨股票比较。"
+  },
+  "example": {
+   "en": "A stock hits a 60-day high while DDI has stayed above +0.5 for eleven of thirteen days: the rally is broad and steady, not two lucky gaps.",
+   "zh": "一只股票创 60 日新高，DDI 在 13 天里有 11 天高于 +0.5：上涨稳健扎实，不是靠两次跳空。"
+  }
+ },
+ {
+  "id": "AROON",
+  "cat": "trend",
+  "name": {
+   "en": "Aroon Indicator",
+   "zh": "阿隆指标（AROON）"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "Up = (n − bars since n-bar high) / n × 100\nDown = (n − bars since n-bar low) / n × 100\nDefault n = 14",
+   "zh": "上升线 = (n − 距 n 日最高的根数) / n × 100\n下降线 = (n − 距 n 日最低的根数) / n × 100\n默认 n = 14"
+  },
+  "principle": {
+   "en": "Aroon measures time, not price: how many bars ago was the latest high or low? Fresh highs keep Aroon Up near 100, showing the trend is still being pushed.",
+   "zh": "阿隆看的是时间而不是价格：最近的高点或低点出现在几根之前？不断创新高，上升线就保持在 100 附近。"
+  },
+  "example": {
+   "en": "After running from $30 to $42, both lines drift below 50 for five weeks. The day Aroon Up jumps from 30 to 100 is the breakout day.",
+   "zh": "一只股票从 30 涨到 42 美元后，两条线在 50 以下徘徊五周；上升线从 30 跳到 100 的那天，就是突破日。"
+  }
+ },
+ {
+  "id": "SI",
+  "cat": "trend",
+  "name": {
+   "en": "Swing Index (SI)",
+   "zh": "摆动指数（SI）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "X = (C − C₋₁) + 0.5(C − O) + 0.25(C₋₁ − O₋₁)\nK = max(|H − C₋₁|, |L − C₋₁|)\nSI = 50 × X × K / (R × 3)\nR = range term depending on the largest gap",
+   "zh": "X = (C − C₋₁) + 0.5(C − O) + 0.25(C₋₁ − O₋₁)\nK = max(|H − C₋₁|, |L − C₋₁|)\nSI = 50 × X × K / (R × 3)\nR = 取决于最大跳空的区间项"
+  },
+  "principle": {
+   "en": "A single-bar score that says which way the day really swung, combining today's open, high, low and close with yesterday's. It handles gaps more honestly than a simple close-to-close change.",
+   "zh": "给单根 K 线打分，综合今天和昨天的开高低收，判断当天真实的摆动方向。对跳空的处理比单纯收盘差更合理。"
+  },
+  "example": {
+   "en": "A stock closes at $50, gaps down to $46, then rallies to $49.50. Close-to-close says down day; SI scores it positive because buyers won the session.",
+   "zh": "一只股票昨收 50 美元，今天低开到 46，全天拉回到 49.5。按收盘差是下跌日，SI 却给正分，因为当天买方赢了。"
+  }
+ },
+ {
+  "id": "MI",
+  "cat": "trend",
+  "name": {
+   "en": "Momentum Indicator (MI)",
+   "zh": "动量指标（MI）"
+  },
+  "score": 3,
+  "formula": {
+   "en": "DIFF = C − C₋₁₂\nMI = smoothed(DIFF, 12)",
+   "zh": "DIFF = C − C₋₁₂\nMI = DIFF 的平滑（12）"
+  },
+  "principle": {
+   "en": "Today's close minus the close 12 bars ago, plus a smoothed line of that gap. Above zero means price is higher than 12 bars ago. It is in price units, so compare a stock only with itself.",
+   "zh": "今天收盘价减去 12 根前的收盘价，再配一条平滑线。大于零表示比 12 根前更高；单位是价格，只能和自己比较。"
+  },
+  "example": {
+   "en": "A stock climbs from $80 to $118 in three legs; DIFF peaks at +9, then +5.5, then +3. Price still rises, but each leg is slower — momentum is fading.",
+   "zh": "一只股票分三段从 80 涨到 118 美元，DIFF 峰值依次为 +9、+5.5、+3。价格还在涨，但一段比一段慢，动量在衰减。"
+  }
+ },
+ {
+  "id": "TRIX",
+  "cat": "trend",
+  "name": {
+   "en": "Triple Exponential Average (TRIX)",
+   "zh": "三重指数平滑均线（TRIX）"
+  },
+  "score": 6,
+  "formula": {
+   "en": "TR = EMA(EMA(EMA(C, 12), 12), 12)\nTRIX = (TR − TR₋₁) / TR₋₁ × 100\nTRMA = SMA(TRIX, 20)",
+   "zh": "TR = EMA(EMA(EMA(C, 12), 12), 12)\nTRIX = (TR − TR₋₁) / TR₋₁ × 100\nTRMA = SMA(TRIX, 20)"
+  },
+  "principle": {
+   "en": "Smooth the price three times with an EMA, then take its daily percentage change. Short-term noise is almost completely filtered out, leaving a slow but very clean trend line.",
+   "zh": "价格连做三次 EMA 平滑，再算每日百分比变化。短期噪音几乎被滤光，留下一条慢但非常干净的趋势线。"
+  },
+  "example": {
+   "en": "On a weekly chart through a two-year rally, TRIX stayed above zero for about 80 weeks, ignoring three 12–15% pullbacks that triggered false MACD sells.",
+   "zh": "在两年牛市的周线上，TRIX 连续约 80 周保持在零轴上方，无视三次 12–15% 的回调，而 MACD 每次都发出了假卖出信号。"
+  }
+ },
+ {
+  "id": "DMA",
+  "cat": "trend",
+  "name": {
+   "en": "Moving Average Difference (DMA)",
+   "zh": "平行线差指标（DMA）"
+  },
+  "score": 5,
+  "formula": {
+   "en": "D = SMA(C, 10) − SMA(C, 50)\nDMA = SMA(D, 10)",
+   "zh": "D = SMA(C, 10) − SMA(C, 50)\nDMA = SMA(D, 10)"
+  },
+  "principle": {
+   "en": "The gap between a 10-bar and a 50-bar simple average, plus a signal line. It is basically MACD built from simple averages: a wider gap means a stronger trend.",
+   "zh": "10 日与 50 日简单均线之差，再配一条信号线。本质上就是用简单均线做的 MACD：差距越大，趋势越强。"
+  },
+  "example": {
+   "en": "On past rallies D topped near +6. Now it hits +9.5 while price barely makes a new high — the trend is stretched and a pullback is likely.",
+   "zh": "过去几轮上涨 D 都在 +6 左右见顶，这次冲到 +9.5，价格却只是勉强创新高——趋势过度拉伸，回调概率大。"
+  }
+ },
+ {
+  "id": "PRICEOSC",
+  "cat": "trend",
+  "name": {
+   "en": "Price Oscillator (PRICEOSC)",
+   "zh": "价格振荡器（PRICEOSC）"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "PRICEOSC = (SMA(C, 12) − SMA(C, 26)) / SMA(C, 12) × 100",
+   "zh": "PRICEOSC = (SMA(C, 12) − SMA(C, 26)) / SMA(C, 12) × 100"
+  },
+  "principle": {
+   "en": "The gap between a fast and a slow average, expressed as a percentage. Because it is a percentage, a $4 stock and a $4,000 index can be compared on the same scale.",
+   "zh": "快慢均线的差距，换算成百分比。正因为是百分比，4 元的股票和 4000 点的指数可以放在同一把尺子上比较。"
+  },
+  "example": {
+   "en": "Rank 200 stocks by PRICEOSC: the top 10% have a 12-day average more than about 4% above the 26-day — a quick list of fast movers.",
+   "zh": "把 200 只股票按 PRICEOSC 排序，前 10% 的 12 日均线比 26 日均线高出约 4% 以上，就是一份「正在快速上涨」的名单。"
+  }
+ },
+ {
+  "id": "FO",
+  "cat": "trend",
+  "name": {
+   "en": "Forecast Oscillator (FO)",
+   "zh": "预测振荡器（FO）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "TSF = value of the 5-bar regression line\nFOSC = (C − TSF₋₁) / C × 100\nSIG = SMA(FOSC, 3)",
+   "zh": "TSF = 5 根回归直线的值\nFOSC = (C − TSF₋₁) / C × 100\nSIG = SMA(FOSC, 3)"
+  },
+  "principle": {
+   "en": "How far today's close landed from where yesterday's trend line said it would be, in percent. A steady trend reads near zero, so it only lights up on surprises.",
+   "zh": "今天收盘价偏离昨天趋势线预测值多少（百分比）。匀速趋势读数接近零，只有出现「意外」时才会亮起。"
+  },
+  "example": {
+   "en": "In a clear uptrend, a pullback prints FOSC −2.8% then −3.1%: price is undershooting the trend. When FOSC turns back up, that is the dip to buy.",
+   "zh": "明确上升趋势中回调，FOSC 先后为 −2.8%、−3.1%，价格低于趋势预期；FOSC 拐头向上时就是回调买点。"
+  }
+ },
+ {
+  "id": "SAR",
+  "cat": "trend",
+  "name": {
+   "en": "Parabolic SAR",
+   "zh": "抛物线转向指标（SAR）"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "SAR = SAR₋₁ + AF × (EP − SAR₋₁)\nEP = extreme price since the last flip\nAF starts at 2%, +2% per new extreme, max 20%\nPrice touches SAR → flip side",
+   "zh": "SAR = SAR₋₁ + AF × (EP − SAR₋₁)\nEP = 上次转向以来的极值价\nAF 起始 2%，每创新极值 +2%，上限 20%\n价格触及 SAR → 转向"
+  },
+  "principle": {
+   "en": "A stop level that creeps toward price a bit faster every time the trend makes a new extreme. It simply says: if price reaches here, the trend is over.",
+   "zh": "一个止损位，趋势每创一次新极值，它就更快地向价格靠拢。它只表达一件事：价格碰到这里，趋势就结束了。"
+  },
+  "example": {
+   "en": "You buy a breakout at 50; over three months the dots rise to 61, 68, 73 as the stock runs to 78. Your stop trails up on its own and locks in most of the gain.",
+   "zh": "你在 50 元突破时买入，三个月涨到 78，SAR 点位依次上移到 61、68、73，止损自动跟随，锁住大部分利润。"
+  }
+ },
+ {
+  "id": "SUPER_TREND",
+  "cat": "trend",
+  "name": {
+   "en": "Supertrend",
+   "zh": "超级趋势线（Supertrend）"
+  },
+  "score": 7,
+  "formula": {
+   "en": "MID = (H + L) / 2\nUpper = MID + 3 × ATR(10)\nLower = MID − 3 × ATR(10)\nLine only moves in the trend's favour; flips when crossed",
+   "zh": "中值 = (H + L) / 2\n上轨 = 中值 + 3 × ATR(10)\n下轨 = 中值 − 3 × ATR(10)\n线只朝有利方向移动，被穿越即翻转"
+  },
+  "principle": {
+   "en": "A trailing line set a few ATRs away from price that only ratchets in the trend's direction. Because the distance is based on volatility, it gives jumpy markets more room.",
+   "zh": "一条离价格几个 ATR 的跟踪线，只朝趋势方向移动。距离按波动率设定，所以波动大的品种会自动给更多空间。"
+  },
+  "example": {
+   "en": "A contract at 4,200 with ATR 45 has its line near 4,065. Price grinds to 4,600 and the line ratchets to 4,455 without ever moving down.",
+   "zh": "某合约 4200 点、ATR 为 45，线在 4065 附近。价格涨到 4600，线随之抬到 4455，从未下移。"
+  }
+ },
+ {
+  "id": "ALLIGAT",
+  "cat": "trend",
+  "name": {
+   "en": "Williams Alligator",
+   "zh": "威廉姆斯鳄鱼线（ALLIGATOR）"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "MID = (H + L) / 2\nJaw = SMMA(MID, 13), shifted 8 bars\nTeeth = SMMA(MID, 8), shifted 5 bars\nLips = SMMA(MID, 5), shifted 3 bars",
+   "zh": "中值 = (H + L) / 2\n颚线 = SMMA(中值, 13)，右移 8 根\n齿线 = SMMA(中值, 8)，右移 5 根\n唇线 = SMMA(中值, 5)，右移 3 根"
+  },
+  "principle": {
+   "en": "Three smoothed averages, each shifted forward. When they are tangled the alligator is asleep (no trend); when they fan out in order it is eating (trend).",
+   "zh": "三条平滑均线，各自向右平移。三线缠绕时鳄鱼在睡觉（无趋势），按顺序张开时鳄鱼在进食（有趋势）。"
+  },
+  "example": {
+   "en": "A currency pair ranges for six weeks with the lines knotted within 20 pips. A crossover system fires eight times; the Alligator keeps you out until the lines fan.",
+   "zh": "某货币对横盘六周，三线缠在 20 点内。均线交叉系统发了八次信号，鳄鱼线让你一直等到三线张开。"
+  }
+ },
+ {
+  "id": "TSF",
+  "cat": "trend",
+  "name": {
+   "en": "Time Series Forecast (TSF)",
+   "zh": "时间序列预测线（TSF）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "Fit y = a + b·x over the last 9 closes\nTSF = a + b·(n − 1) + b·k   (k = 6)",
+   "zh": "对最近 9 根收盘价拟合 y = a + b·x\nTSF = a + b·(n − 1) + b·k（k = 6）"
+  },
+  "principle": {
+   "en": "Draw the best-fit straight line through recent closes, then extend it a few bars ahead. It shows where the trend says price is heading, with much less lag than an average.",
+   "zh": "对近期收盘价画一条最佳拟合直线，再向前延伸几根，表示趋势指向哪里。滞后比均线小得多。"
+  },
+  "example": {
+   "en": "An ETF bases at 395–402 and then closes 399, 401, 403. A 9-bar SMA is still flat, but TSF's slope turns sharply up — the trend change shows days earlier.",
+   "zh": "某 ETF 在 395–402 横盘后收出 399、401、403，9 日均线仍然走平，TSF 斜率却已明显向上，提前几天发现转势。"
+  }
+ },
+ {
+  "id": "TOWER",
+  "cat": "trend",
+  "name": {
+   "en": "Tower Line",
+   "zh": "宝塔线（TOWER）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "TOWER = C − C₋₂\nRed if C ≥ C₋₂, green if C < C₋₂",
+   "zh": "宝塔线 = C − C₋₂\nC ≥ C₋₂ 为红，C < C₋₂ 为绿"
+  },
+  "principle": {
+   "en": "A chart that keeps only closing prices. A bar turns green only when the close breaks the close of two bars back, so a single down day inside a rally is ignored.",
+   "zh": "只保留收盘价的图形。只有收盘价跌破两根前的收盘价才翻绿，所以上涨途中的单日小跌会被忽略。"
+  },
+  "example": {
+   "en": "A stock runs from 12 to 19 with eleven red bars in a row. The first green bar prints at 18.2 — a rule-following trader exits there and keeps most of the move.",
+   "zh": "一只股票从 12 元涨到 19 元，连续 11 根红柱，第一根绿柱出现在 18.2 元。守纪律离场，就保住了大部分涨幅。"
+  }
+ },
+ {
+  "id": "HADIFF",
+  "cat": "trend",
+  "name": {
+   "en": "Heikin Ashi Difference (HADIFF)",
+   "zh": "平均足实体差（HADIFF）"
+  },
+  "score": 5,
+  "formula": {
+   "en": "haC = (O + H + L + C) / 4\nhaO = (haO₋₁ + haC₋₁) / 2\nHADIFF = haC − haO\nHADMA = SMA(HADIFF, 3)",
+   "zh": "haC = (O + H + L + C) / 4\nhaO = (haO₋₁ + haC₋₁) / 2\nHADIFF = haC − haO\nHADMA = SMA(HADIFF, 3)"
+  },
+  "principle": {
+   "en": "The body of a Heikin Ashi candle, drawn as a histogram. Because it uses averaged prices, it stays positive through a trend and flips sign only reluctantly.",
+   "zh": "把平均足蜡烛的实体画成柱状图。由于用的是平均价，趋势中它会一直保持同一方向，不轻易翻转。"
+  },
+  "example": {
+   "en": "Holding a stock from 60 to 82, normal candles show four red days that tempt you to sell. HADIFF stays positive the whole way and keeps you in.",
+   "zh": "持有一只从 60 涨到 82 的股票，普通 K 线出现四根阴线诱你卖出，HADIFF 却始终为正，让你拿住。"
+  }
+ },
+ {
+  "id": "SQUEEZE",
+  "cat": "trend",
+  "name": {
+   "en": "TTM Squeeze",
+   "zh": "TTM 挤压指标"
+  },
+  "score": 8,
+  "formula": {
+   "en": "BB_upper = SMA(C, 20) + 2σ\nKC_upper = EMA(C, 20) + 1 × EMA(TR, 20)\nSqueeze on when BB_upper < KC_upper\nMomentum = regression of (C − mid of range)",
+   "zh": "布林上轨 = SMA(C, 20) + 2σ\n肯特纳上轨 = EMA(C, 20) + 1 × EMA(TR, 20)\n布林上轨 < 肯特纳上轨 → 挤压开启\n动量 = (C − 区间中值) 的回归值"
+  },
+  "principle": {
+   "en": "When Bollinger Bands shrink inside Keltner Channels, volatility is unusually low, and a big move often follows. A momentum histogram hints at which way it will break.",
+   "zh": "布林带缩进肯特纳通道内，说明波动率异常低，往往酝酿大行情；动量柱提示可能向哪个方向突破。"
+  },
+  "example": {
+   "en": "A stock sits in a 3% range for a month and the squeeze is on for 18 days while momentum bars grow positive. When the squeeze releases, it breaks upward.",
+   "zh": "一只股票在 3% 区间里横了一个月，挤压持续 18 天，动量柱逐渐变高为正；挤压一解除，股价向上突破。"
+  }
+ },
+ {
+  "id": "FISHER",
+  "cat": "trend",
+  "name": {
+   "en": "Fisher Transform",
+   "zh": "费雪变换（FISHER）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "z = position of (H + L)/2 within its 9-bar range, 0…1\nv = 0.67 × (z − 0.5) + 0.66 × v₋₁\nFisher = 0.5 × ln((1 + v) / (1 − v)) + 0.5 × Fisher₋₁\nTrigger = Fisher₋₁",
+   "zh": "z = (H + L)/2 在 9 根区间中的位置，0…1\nv = 0.67 × (z − 0.5) + 0.66 × v₋₁\n费雪值 = 0.5 × ln((1 + v) / (1 − v)) + 0.5 × 费雪值₋₁\n触发线 = 费雪值₋₁"
+  },
+  "principle": {
+   "en": "Takes where price sits in its recent range and stretches the extremes with a log formula. Turning points become sharp spikes, so rare readings really are rare.",
+   "zh": "先算价格在近期区间的位置，再用对数公式把两端拉伸。拐点变成尖峰，极端读数真正少见。"
+  },
+  "example": {
+   "en": "A currency pair ranging for three weeks sells off four days into support. Fisher spikes below −2, then crosses its trigger line upward: a clear bounce signal.",
+   "zh": "某货币对震荡三周后连跌四天到支撑位，费雪值冲到 −2 以下，随后上穿触发线，给出清晰的反弹信号。"
+  }
+ },
+ {
+  "id": "AO",
+  "cat": "trend",
+  "name": {
+   "en": "Awesome Oscillator (AO)",
+   "zh": "动量震荡指标（AO）"
+  },
+  "score": 6,
+  "formula": {
+   "en": "MID = (H + L) / 2\nAO = SMA(MID, 5) − SMA(MID, 34)",
+   "zh": "中值 = (H + L) / 2\nAO = SMA(中值, 5) − SMA(中值, 34)"
+  },
+  "principle": {
+   "en": "The gap between a 5-bar and a 34-bar average of each bar's midpoint. It reads medium-term momentum; crossing zero marks a shift in trend.",
+   "zh": "每根 K 线中值的 5 日均线减去 34 日均线，反映中期动量；穿越零轴代表趋势转换。"
+  },
+  "example": {
+   "en": "A stock rallies to 60, dips to 55, then pushes to a new high at 62, but AO peaks lower the second time. Momentum is weakening under the new high.",
+   "zh": "一只股票涨到 60、回落到 55、再创新高到 62，但第二次 AO 峰值更低——新高背后动量已经减弱。"
+  }
+ },
+ {
+  "id": "EWO",
+  "cat": "trend",
+  "name": {
+   "en": "Elliott Wave Oscillator (EWO)",
+   "zh": "艾略特波浪震荡指标（EWO）"
+  },
+  "score": 4,
+  "formula": {
+   "en": "EWO = EMA(C, 5) − EMA(C, 34)",
+   "zh": "EWO = EMA(C, 5) − EMA(C, 34)"
+  },
+  "principle": {
+   "en": "The gap between a 5- and a 34-period EMA, used to help count Elliott waves. Wave 3 usually shows the biggest reading; wave 5 makes a new high on a smaller one.",
+   "zh": "5 日与 34 日 EMA 之差，用来辅助数浪。第三浪通常读数最大，第五浪价格创新高但读数更小。"
+  },
+  "example": {
+   "en": "A rally from 100 to 120 showed the biggest EWO bars; the next push to 125 shows much smaller bars. That fits wave 5 — the trend is likely near its end.",
+   "zh": "从 100 涨到 120 时 EWO 柱最高，再冲到 125 时柱子明显变矮，符合第五浪特征，趋势可能接近尾声。"
+  }
+ },
+ {
+  "id": "ATR",
+  "cat": "trend",
+  "name": {
+   "en": "Average True Range (ATR)",
+   "zh": "平均真实波幅（ATR）"
+  },
+  "score": 9,
+  "formula": {
+   "en": "TR = max(H − L, |H − C₋₁|, |L − C₋₁|)\nATR = SMA(TR, 14)\nStop distance = k × ATR\nPosition size = risk $ / (k × ATR)",
+   "zh": "TR = max(H − L, |H − C₋₁|, |L − C₋₁|)\nATR = SMA(TR, 14)\n止损距离 = k × ATR\n仓位 = 风险金额 / (k × ATR)"
+  },
+  "principle": {
+   "en": "The average size of a daily move in price units, counting gaps. It says nothing about direction; it tells you how much a stock normally wiggles, which sets stops and position size.",
+   "zh": "每天平均波动多少（含跳空），以价格为单位。它不管方向，只告诉你股票正常晃动幅度，用来定止损和仓位。"
+  },
+  "example": {
+   "en": "Risking $500 with a 2×ATR stop: a $40 stock with ATR 1.20 gives 208 shares; one with ATR 0.30 gives 833. Same risk, very different size.",
+   "zh": "每笔风险 500 美元、止损 2 倍 ATR：ATR 为 1.2 的 40 美元股票买 208 股，ATR 为 0.3 的买 833 股。风险相同，仓位差很多。"
+  }
+ },
+ {
+  "id": "VOLAT",
+  "cat": "trend",
+  "name": {
+   "en": "Historical Volatility (VOLAT)",
+   "zh": "历史波动率（年化）"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "r = ln(C / C₋₁)\nVOLAT = StdDev(r, 20) × √252 × 100\nOne-day move ≈ VOLAT / 16 %",
+   "zh": "r = ln(C / C₋₁)\nVOLAT = StdDev(r, 20) × √252 × 100\n单日波动 ≈ VOLAT / 16 %"
+  },
+  "principle": {
+   "en": "How widely daily returns have scattered recently, scaled to a yearly percentage. It speaks the same language as option prices, so you can compare it with implied volatility.",
+   "zh": "近期每日涨跌幅的离散程度，换算成年化百分比。它和期权报价用同一种语言，可以直接与隐含波动率对比。"
+  },
+  "example": {
+   "en": "A stock moves with 14% historical volatility while its options price in 34%. Options are charging more than twice the actual movement — they look expensive.",
+   "zh": "一只股票实际波动率 14%，期权却按 34% 定价，相当于收了两倍多的「波动费」，期权明显偏贵。"
+  }
+ },
+ {
+  "id": "HLVOL",
+  "cat": "trend",
+  "name": {
+   "en": "High-Low Volatility (HLVOL)",
+   "zh": "高低波幅率（HLVOL）"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "HLD = HHV(H, 9) − LLV(L, 9)\nHLVOL = EMA(HLD, 9) / EMA(C, 9) × 100",
+   "zh": "HLD = HHV(H, 9) − LLV(L, 9)\nHLVOL = EMA(HLD, 9) / EMA(C, 9) × 100"
+  },
+  "principle": {
+   "en": "The height of the recent high-low box as a percentage of price. A falling reading means the box is shrinking and price is coiling.",
+   "zh": "近期最高最低价构成的「箱体」高度，占价格的百分比。读数下降说明箱体在收窄、价格在蓄势。"
+  },
+  "example": {
+   "en": "Scan 100 stocks: names at 3–4% trade in a tight box, names at 18% are wide open. A stock dropping from 12% to 4% is a coil worth watching for a breakout.",
+   "zh": "扫描 100 只股票：3–4% 的在窄箱里，18% 的波动很大。从 12% 降到 4% 的股票正在蓄势，值得盯住突破。"
+  }
+ },
+ {
+  "id": "CHOP",
+  "cat": "trend",
+  "name": {
+   "en": "Choppiness Index (CHOP)",
+   "zh": "震荡指数（CHOP）"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "CHOP = 100 × log(ΣTR(n) / (HHV(H, n) − LLV(L, n))) / log(n)\nAbove 61.8 = choppy, below 38.2 = trending",
+   "zh": "CHOP = 100 × log(ΣTR(n) / (HHV(H, n) − LLV(L, n))) / log(n)\n高于 61.8 为震荡，低于 38.2 为趋势"
+  },
+  "principle": {
+   "en": "Compares the total distance price walked with the distance it actually covered. Near 100, price paced around the room; near 0, it walked straight somewhere. It ignores direction.",
+   "zh": "比较价格「走过的总路程」和「实际位移」。接近 100 是在原地兜圈，接近 0 是直线前进。不看方向。"
+  },
+  "example": {
+   "en": "Add one rule to a losing crossover system: only trade when CHOP is below 45. It cuts trades roughly in half and removes most of the whipsaws.",
+   "zh": "给一个亏钱的均线交叉系统加一条规则：CHOP 低于 45 才交易。交易次数约减半，大部分来回打脸的信号消失了。"
+  }
+ },
+ {
+  "id": "ER",
+  "cat": "trend",
+  "name": {
+   "en": "Efficiency Ratio (ER)",
+   "zh": "效率比率（ER）"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "net = |C − C₋ₙ|\npath = Σ|C − C₋₁| over n bars\nER = net / path, from 0 to 1   (n = 24)",
+   "zh": "净位移 = |C − C₋ₙ|\n总路程 = n 根内 Σ|C − C₋₁|\nER = 净位移 / 总路程，范围 0 到 1（n = 24）"
+  },
+  "principle": {
+   "en": "How much of the movement actually went somewhere: net change divided by total wiggling. 1 is a straight line, 0 means price ended where it started.",
+   "zh": "价格的波动里有多少是「有效前进」：净变化除以总路程。1 是一条直线，0 表示绕了一圈回到原点。"
+  },
+  "example": {
+   "en": "Like a GPS route: driving 10 km to get 5 km away is ER 0.5 — half the trip was wasted on back-and-forth.",
+   "zh": "像导航路线：开了 10 公里才离起点 5 公里，ER 就是 0.5，一半路程浪费在来回绕上。"
+  }
+ },
+ {
+  "id": "RVI",
+  "cat": "trend",
+  "name": {
+   "en": "Relative Volatility Index (RVI)",
+   "zh": "相对波动率指数（RVI）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "σ = StdDev(C, 10)\nUP = EMA(σ on up days, 14), DOWN = EMA(σ on down days, 14)\nRVI = UP / (UP + DOWN) × 100\nRVIMA = SMA(RVI, 14)",
+   "zh": "σ = StdDev(C, 10)\n上行 = EMA(上涨日的 σ, 14)，下行 = EMA(下跌日的 σ, 14)\nRVI = 上行 / (上行 + 下行) × 100\nRVIMA = SMA(RVI, 14)"
+  },
+  "principle": {
+   "en": "Like RSI, but it counts volatility instead of price change: what share of recent volatility happened on up days. Above 50 means the big moves are upward.",
+   "zh": "类似 RSI，但统计的是波动率：近期波动有多少发生在上涨日。高于 50 说明大波动多出现在上涨方向。"
+  },
+  "example": {
+   "en": "A stock breaks to a 50-day high, but RVI sits at 38 and is falling: the big bars lately were down bars. Treat the breakout with suspicion.",
+   "zh": "一只股票创 50 日新高，但 RVI 只有 38 且在下降，说明近期大 K 线多是阴线，这次突破要打个问号。"
+  }
+ },
+ {
+  "id": "RMI",
+  "cat": "trend",
+  "name": {
+   "en": "Relative Momentum Index (RMI)",
+   "zh": "相对动量指标（RMI）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "mom = C − C₋₅\nRMI = SMA(max(mom, 0), 20) / SMA(|mom|, 20) × 100\nLevels: 70 / 50 / 30",
+   "zh": "mom = C − C₋₅\nRMI = SMA(max(mom, 0), 20) / SMA(|mom|, 20) × 100\n参考线：70 / 50 / 30"
+  },
+  "principle": {
+   "en": "RSI measured over 5-bar changes instead of 1-bar changes. Single-day reversals stop counting, so the line is smoother and stays in trend longer.",
+   "zh": "把 RSI 的一日涨跌换成五日涨跌来算。单日的反复不再计入，曲线更平滑，在趋势中停留更久。"
+  },
+  "example": {
+   "en": "In a slow, steady eight-week climb, RSI keeps dipping to 45 on one-day shakeouts, while RMI holds above 60 the whole time.",
+   "zh": "在八周的缓慢稳步上涨中，RSI 每次单日洗盘都掉到 45，RMI 却始终守在 60 以上。"
+  }
+ },
+ {
+  "id": "SMIE",
+  "cat": "trend",
+  "name": {
+   "en": "SMI Ergodic Indicator (SMIE)",
+   "zh": "SMI 遍历指标（SMIE）"
+  },
+  "score": 6,
+  "formula": {
+   "en": "ΔC = C − C₋₁\nSMI = EMA(EMA(ΔC, 5), 20) / EMA(EMA(|ΔC|, 5), 20)\nSignal = EMA(SMI, 5)",
+   "zh": "ΔC = C − C₋₁\nSMI = EMA(EMA(ΔC, 5), 20) / EMA(EMA(|ΔC|, 5), 20)\n信号线 = EMA(SMI, 5)"
+  },
+  "principle": {
+   "en": "Net price change divided by total price change, both smoothed twice. The result runs from −1 to +1 and is a very clean momentum line.",
+   "zh": "净涨跌除以总涨跌，两者都经过两次平滑，结果在 −1 到 +1 之间，是一条非常干净的动量线。"
+  },
+  "example": {
+   "en": "During a decline, price makes a lower low but SMI's low is clearly higher. Because the line is so smooth, this divergence is real, not a squiggle.",
+   "zh": "下跌中价格创新低，SMI 的低点却明显抬高。由于曲线很平滑，这种背离是真实的，不是随手画出来的。"
+  }
+ },
+ {
+  "id": "SMIEO",
+  "cat": "trend",
+  "name": {
+   "en": "SMI Ergodic Oscillator (SMIEO)",
+   "zh": "SMI 遍历振荡器（SMIEO）"
+  },
+  "score": 3,
+  "formula": {
+   "en": "SMIEO = SMI − Signal",
+   "zh": "SMIEO = SMI − 信号线"
+  },
+  "principle": {
+   "en": "The gap between the SMI line and its signal line, drawn as a histogram. Like the MACD histogram, it shows whether momentum is speeding up or slowing down.",
+   "zh": "SMI 线与信号线之差，画成柱状图。和 MACD 柱一样，显示动量在加速还是放缓。"
+  },
+  "example": {
+   "en": "SMI at 0.62 and signal at 0.60 look identical as lines, but as bars you can see three shrinking columns while price still rises — a fading push.",
+   "zh": "SMI 为 0.62、信号线 0.60，两条线几乎重合；画成柱子却能看到价格上涨时柱子连缩三根，推力在减弱。"
+  }
+ },
+ {
+  "id": "VMACD",
+  "cat": "trend",
+  "name": {
+   "en": "Volume MACD (VMACD)",
+   "zh": "量能异同移动平均（VMACD）"
+  },
+  "score": 4,
+  "formula": {
+   "en": "DIFF = EMA(V, 12) − EMA(V, 26)\nDEA = EMA(DIFF, 9)\nVMACD = DIFF − DEA",
+   "zh": "DIFF = EMA(V, 12) − EMA(V, 26)\nDEA = EMA(DIFF, 9)\nVMACD = DIFF − DEA"
+  },
+  "principle": {
+   "en": "MACD applied to volume instead of price. It shows whether participation is rising above or falling below its usual level, but not whether that volume is buying or selling.",
+   "zh": "把 MACD 套在成交量上，看参与度是高于还是低于常态。它不区分这些量是买还是卖。"
+  },
+  "example": {
+   "en": "After four months of falling prices on shrinking volume, price makes a slight new low while DIFF turns sharply up: buyers are arriving at the bottom.",
+   "zh": "缩量下跌四个月后，价格小幅新低，DIFF 却急剧拐头向上——底部开始有资金进场。"
+  }
+ },
+ {
+  "id": "EMV",
+  "cat": "trend",
+  "name": {
+   "en": "Ease of Movement (EMV)",
+   "zh": "简易波动指标（EMV）"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "mid = % change of (H + L) from the previous bar\nEMV = SMA(mid × SMA(V)/V × (H − L)/SMA(H − L), 14)\nEMVA = SMA(EMV, 9)",
+   "zh": "中值变化 = (H + L) 相对前一根的百分比变化\nEMV = SMA(中值变化 × SMA(V)/V × (H − L)/SMA(H − L), 14)\nEMVA = SMA(EMV, 9)"
+  },
+  "principle": {
+   "en": "How far price moved per unit of volume. A big move on light volume means little resistance; a big move on heavy volume means a fight for every tick.",
+   "zh": "每单位成交量推动了多少价格。缩量大涨说明阻力小；放量才涨得动，说明每一步都在硬拼。"
+  },
+  "example": {
+   "en": "Like a car on an empty road versus a traffic jam: a stock jumps 3% out of a six-month base on below-average volume. EMV spikes — there's no supply in the way.",
+   "zh": "就像空荡的马路和堵车：一只股票缩量涨 3% 突破半年箱体，EMV 急升，说明上方几乎没有抛压。"
+  }
+ },
+ {
+  "id": "IV",
+  "cat": "trend",
+  "name": {
+   "en": "Implied Volatility (IV)",
+   "zh": "隐含波动率（IV）"
+  },
+  "score": 8.5,
+  "formula": {
+   "en": "Option price = BlackScholes(S, K, T, r, σ)\nIV = the σ that matches the market price\nIV − HV = volatility risk premium",
+   "zh": "期权价格 = BlackScholes(S, K, T, r, σ)\nIV = 使模型价格等于市价的 σ\nIV − HV = 波动率风险溢价"
+  },
+  "principle": {
+   "en": "The volatility that makes an option model match the option's market price. It is the market's forecast of future movement — the only forward-looking line on the chart.",
+   "zh": "让期权模型算出的价格等于市价的那个波动率。它是市场对未来波动的预期，是图上唯一「向前看」的指标。"
+  },
+  "example": {
+   "en": "Four days before earnings, IV jumps from 32% to 68% while actual volatility is 28%. After the report IV usually collapses — option sellers profit from that crush.",
+   "zh": "财报前四天 IV 从 32% 升到 68%，实际波动只有 28%。财报一出 IV 通常暴跌，期权卖方赚的就是这一跌。"
+  }
+ },
+ {
+  "id": "IV_RANK",
+  "cat": "trend",
+  "name": {
+   "en": "IV Rank",
+   "zh": "隐含波动率排名（IV Rank）"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "IVR = (IV − 1-year low) / (1-year high − 1-year low) × 100",
+   "zh": "IVR = (IV − 一年最低) / (一年最高 − 一年最低) × 100"
+  },
+  "principle": {
+   "en": "Where today's IV sits between its lowest and highest level of the past year, from 0 to 100. It tells you if options are cheap or expensive for this particular stock.",
+   "zh": "今天的 IV 在过去一年最低到最高之间处于什么位置，0 到 100。它告诉你这只股票的期权此刻是贵还是便宜。"
+  },
+  "example": {
+   "en": "A utility at 22% IV ranged 14–24% this year: IVR 80, expensive. A chip stock at 48% ranged 40–90%: IVR 16, cheap. The lower IV is the richer premium.",
+   "zh": "某公用事业股 IV 22%，一年区间 14–24%，排名 80 偏贵；某芯片股 IV 48%，区间 40–90%，排名 16 偏便宜。"
+  }
+ },
+ {
+  "id": "IV_PERCENTILE",
+  "cat": "trend",
+  "name": {
+   "en": "IV Percentile",
+   "zh": "隐含波动率百分位（IVP）"
+  },
+  "score": 6,
+  "formula": {
+   "en": "IVP = (days in the past year with IV ≤ today) / (n − 1) × 100\nn = 252",
+   "zh": "IVP = 过去一年 IV ≤ 今日的天数 / (n − 1) × 100\nn = 252"
+  },
+  "principle": {
+   "en": "The share of days in the past year when IV was lower than today. It counts days instead of measuring distance from extremes, so one crisis spike can't distort it.",
+   "zh": "过去一年里 IV 低于今天的天数占比。它数的是天数而不是距离两端的远近，所以一次危机尖峰扭曲不了它。"
+  },
+  "example": {
+   "en": "After a crisis spike to 180%, today's 46% gives an IV Rank of 8 (looks cheap). But IV was below 46% on 88% of days — IVP 88 says options are actually expensive.",
+   "zh": "危机时 IV 冲到 180%，今天 46% 的 IV 排名只有 8，看似便宜；但一年里 88% 的日子 IV 都低于 46%，IVP 为 88，其实很贵。"
+  }
+ },
+ {
+  "id": "KDJ",
+  "cat": "strength",
+  "name": {
+   "en": "KDJ Stochastic",
+   "zh": "随机指标（KDJ）"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "RSV = (C − LLV(L, 9)) / (HHV(H, 9) − LLV(L, 9)) × 100\nK = SMMA(RSV, 3)\nD = SMMA(K, 3)\nJ = 3K − 2D",
+   "zh": "RSV = (C − LLV(L, 9)) / (HHV(H, 9) − LLV(L, 9)) × 100\nK = SMMA(RSV, 3)\nD = SMMA(K, 3)\nJ = 3K − 2D"
+  },
+  "principle": {
+   "en": "Where today's close sits in the last nine days' range: 0 at the floor, 100 at the ceiling. K and D smooth it; J exaggerates their gap and can break below 0 or above 100.",
+   "zh": "今天收盘价在最近九天区间里的位置：0 在底部，100 在顶部。K、D 是平滑结果，J 放大两者差距，可以跌破 0 或超过 100。"
+  },
+  "example": {
+   "en": "A stock in an uptrend pulls back from ¥26 to ¥23.5 on light volume; J dips to −6. When K crosses back above D, it is a well-timed entry.",
+   "zh": "上升趋势中的股票缩量从 26 元回调到 23.5 元，J 值跌到 −6；K 重新上穿 D 时，就是一个时机不错的买点。"
+  }
+ },
+ {
+  "id": "SLOWKD",
+  "cat": "strength",
+  "name": {
+   "en": "Slow Stochastic (Slow KD)",
+   "zh": "慢速随机指标（慢速 KD）"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "FastK = SMMA(RSV, 3)\nK = SMMA(FastK, 3)\nD = SMMA(K, 5)\nRSV as in KDJ, N = 9",
+   "zh": "快 K = SMMA(RSV, 3)\nK = SMMA(快 K, 3)\nD = SMMA(K, 5)\nRSV 同 KDJ，N = 9"
+  },
+  "principle": {
+   "en": "The same range position as KDJ with one more layer of smoothing. You get fewer, later crossovers but far fewer false ones.",
+   "zh": "和 KDJ 测的是同一个位置，只是多平滑了一层。交叉信号更少、更晚，但假信号也少得多。"
+  },
+  "example": {
+   "en": "On a jumpy small-cap over two months, KDJ crossed eleven times and nine failed within three bars. Slow KD crossed four times, and the two buys worked.",
+   "zh": "一只波动剧烈的小盘股两个月里，KDJ 交叉 11 次，9 次三天内就失效；慢速 KD 只交叉 4 次，两次买入都成功了。"
+  }
+ },
+ {
+  "id": "STOCHRSI",
+  "cat": "strength",
+  "name": {
+   "en": "Stochastic RSI",
+   "zh": "随机相对强弱指标（StochRSI）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "STOCH = (RSI − min RSI(14)) / (max RSI(14) − min RSI(14)) × 100\nK = SMA(STOCH, 3)\nD = SMA(K, 3)",
+   "zh": "STOCH = (RSI − 14 日 RSI 最低) / (14 日 RSI 最高 − 14 日 RSI 最低) × 100\nK = SMA(STOCH, 3)\nD = SMA(K, 3)"
+  },
+  "principle": {
+   "en": "A stochastic applied to RSI: where today's RSI sits within its own recent range. It magnifies small RSI moves, so it turns early but is very jumpy.",
+   "zh": "对 RSI 再做一次随机指标：今天的 RSI 在它自己近期区间里的位置。它放大了 RSI 的小波动，转向早但非常敏感。"
+  },
+  "example": {
+   "en": "A stock bases at ¥54 support with RSI stuck at 42, never reaching 30. StochRSI ranks that 42 near the bottom of its range at 8 — and turns up first.",
+   "zh": "一只股票在 54 元支撑位横盘，RSI 停在 42 始终到不了 30；StochRSI 却显示 8，处在区间底部，并率先拐头。"
+  }
+ },
+ {
+  "id": "SRSI",
+  "cat": "strength",
+  "name": {
+   "en": "Slow RSI (SRSI)",
+   "zh": "慢速相对强弱指标（SRSI）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "EM = EMA(C, 6)\nSRSI = SMA(max(C − EM, 0), 14) / SMA(|C − EM|, 14) × 100",
+   "zh": "EM = EMA(C, 6)\nSRSI = SMA(max(C − EM, 0), 14) / SMA(|C − EM|, 14) × 100"
+  },
+  "principle": {
+   "en": "Despite the name, it uses RSI maths on the gap between price and its 6-day EMA. It shows how persistently price has stayed above or below that average.",
+   "zh": "名字叫慢速 RSI，实际是用 RSI 的算法去算价格与 6 日 EMA 的偏离，衡量价格持续在均线上方或下方的程度。"
+  },
+  "example": {
+   "en": "A stock closes above its 6-EMA for 14 straight days rising from ¥88 to ¥97, so SRSI sits at 100. The first tick down to 93 flags the streak has broken.",
+   "zh": "一只股票从 88 元涨到 97 元，连续 14 天收在 6 日 EMA 上方，SRSI 一直是 100；一旦降到 93，说明连续强势被打破。"
+  }
+ },
+ {
+  "id": "CRSI",
+  "cat": "strength",
+  "name": {
+   "en": "Connors RSI (CRSI)",
+   "zh": "康纳斯相对强弱指标（CRSI）"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "RSI₁ = RSI(C, 3)\nRSI₂ = RSI(up/down streak length, 2)\nRANK = percentile of today's return in the last 100\nCRSI = (RSI₁ + RSI₂ + RANK) / 3",
+   "zh": "RSI₁ = RSI(C, 3)\nRSI₂ = RSI(连涨连跌天数, 2)\nRANK = 今日涨跌幅在近 100 天中的百分位\nCRSI = (RSI₁ + RSI₂ + RANK) / 3"
+  },
+  "principle": {
+   "en": "Averages three short-term readings: momentum, how many days in a row price has moved one way, and how unusual today's move is. Low readings flag a short-term overreaction.",
+   "zh": "把三个短期读数平均：动量、连涨或连跌了几天、今天的涨跌有多罕见。读数很低说明短期反应过度。"
+  },
+  "example": {
+   "en": "An ETF above its rising 200-day line falls four days in a row, the last −2.1%. CRSI drops near 10 — a classic short-term bounce buy.",
+   "zh": "一只 ETF 位于上行的 200 日均线之上，连跌四天，最后一天跌 2.1%，CRSI 降到 10 左右——典型的短线反弹买点。"
+  }
+ },
+ {
+  "id": "WMSR",
+  "cat": "strength",
+  "name": {
+   "en": "Williams %R",
+   "zh": "威廉指标（%R）"
+  },
+  "score": 6.8,
+  "formula": {
+   "en": "%R = −100 × (HHV(H, 14) − C) / (HHV(H, 14) − LLV(L, 14))\nRange: −100 (bottom) to 0 (top)",
+   "zh": "%R = −100 × (HHV(H, 14) − C) / (HHV(H, 14) − LLV(L, 14))\n范围：−100（底部）到 0（顶部）"
+  },
+  "principle": {
+   "en": "Where the close sits in the 14-bar high-low range, with no smoothing at all. 0 means it closed at the top, −100 at the bottom. Fastest possible reading, but noisy.",
+   "zh": "收盘价在 14 根 K 线高低区间中的位置，完全不做平滑。0 表示收在最高，−100 表示收在最低。最快，但也最吵。"
+  },
+  "example": {
+   "en": "A stock ranging ¥62–68 dips to ¥61.6 intraday but closes at ¥64.2. %R jumps from −96 to −38 that same day — the turn shows on the bar it happens.",
+   "zh": "一只在 62–68 元震荡的股票盘中跌到 61.6 元，收盘回到 64.2 元，%R 当天就从 −96 跳到 −38，当根 K 线就显示反转。"
+  }
+ },
+ {
+  "id": "CCI",
+  "cat": "strength",
+  "name": {
+   "en": "Commodity Channel Index (CCI)",
+   "zh": "顺势指标（CCI）"
+  },
+  "score": 7,
+  "formula": {
+   "en": "TYP = (H + L + C) / 3\nCCI = (TYP − SMA(TYP, 14)) / (0.015 × mean deviation)",
+   "zh": "TYP = (H + L + C) / 3\nCCI = (TYP − SMA(TYP, 14)) / (0.015 × 平均绝对偏差)"
+  },
+  "principle": {
+   "en": "How far the typical price sits from its average, measured in units of its usual deviation. It has no ceiling, so a reading of +300 really is far more extreme than +150.",
+   "zh": "典型价格偏离均值多远，以它平常的偏离幅度为单位。没有上限，所以 +300 确实比 +150 极端得多。"
+  },
+  "example": {
+   "en": "A commodity chopping with CCI peaks near ±120 suddenly hits +290 on a supply headline. That is almost triple the normal stretch — a real breakout, not noise.",
+   "zh": "某商品震荡时 CCI 峰值约 ±120，一条供给消息让它冲到 +290，几乎是平常的三倍，是真突破而不是噪音。"
+  }
+ },
+ {
+  "id": "CMO",
+  "cat": "strength",
+  "name": {
+   "en": "Chande Momentum Oscillator (CMO)",
+   "zh": "钱德动量摆动指标（CMO）"
+  },
+  "score": 5,
+  "formula": {
+   "en": "SU = sum of up moves (9 bars)\nSD = sum of down moves (9 bars)\nCMO = (SU − SD) / (SU + SD) × 100",
+   "zh": "SU = 上涨幅度之和（9 根）\nSD = 下跌幅度之和（9 根）\nCMO = (SU − SD) / (SU + SD) × 100"
+  },
+  "principle": {
+   "en": "Up movement minus down movement, divided by all movement, on a −100 to +100 scale. It is like an unsmoothed RSI centred on zero, so it reacts faster.",
+   "zh": "上涨幅度减下跌幅度，再除以总幅度，范围 −100 到 +100。相当于不做平滑、以零为中心的 RSI，反应更快。"
+  },
+  "example": {
+   "en": "CMO near +100 means almost every bar in the window went up — a highly efficient trend. Near 0 means lots of activity but no progress.",
+   "zh": "CMO 接近 +100，说明窗口里几乎每根 K 线都在涨，趋势效率极高；接近 0 则是动静很大却原地踏步。"
+  }
+ },
+ {
+  "id": "TSI",
+  "cat": "strength",
+  "name": {
+   "en": "True Strength Index (TSI)",
+   "zh": "真实强弱指标（TSI）"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "PC = C − C₋₁\nTSI = EMA(EMA(PC, 25), 13) / EMA(EMA(|PC|, 25), 13) × 100\nSignal = EMA(TSI, 13)",
+   "zh": "PC = C − C₋₁\nTSI = EMA(EMA(PC, 25), 13) / EMA(EMA(|PC|, 25), 13) × 100\n信号线 = EMA(TSI, 13)"
+  },
+  "principle": {
+   "en": "Price change divided by the size of price change, both smoothed twice. The result is a very smooth line from −100 to +100 showing how consistently price has moved one way.",
+   "zh": "价格变化除以变化幅度，两者都平滑两次。得到一条很平滑的 −100 到 +100 曲线，反映价格朝一个方向走得有多一致。"
+  },
+  "example": {
+   "en": "Price makes three lower lows over nine weeks, but TSI makes three higher lows. Because TSI is so smooth, that divergence is clear and trustworthy.",
+   "zh": "九周内价格三次创新低，TSI 的低点却三次抬高。TSI 很平滑，这种背离清晰可信。"
+  }
+ },
+ {
+  "id": "MFI",
+  "cat": "strength",
+  "name": {
+   "en": "Money Flow Index (MFI)",
+   "zh": "资金流量指标（MFI）"
+  },
+  "score": 8,
+  "formula": {
+   "en": "TYP = (H + L + C) / 3, FLOW = TYP × V\nMR = Σ FLOW on up bars / Σ FLOW on down bars (14)\nMFI = 100 − 100 / (1 + MR)",
+   "zh": "TYP = (H + L + C) / 3，资金流 = TYP × V\nMR = 上涨日资金流之和 / 下跌日资金流之和（14 根）\nMFI = 100 − 100 / (1 + MR)"
+  },
+  "principle": {
+   "en": "RSI weighted by volume: a move on heavy trading counts more than one on light trading. It shows whether money, not just price, is flowing in or out.",
+   "zh": "按成交量加权的 RSI：放量的涨跌比缩量的更重要。它反映的是资金在流入还是流出，而不只是价格涨跌。"
+  },
+  "example": {
+   "en": "A stock makes highs at ¥52, ¥53.5 and ¥54.2, but MFI reads 86, 71, then 58. Each new high is bought with less money — a classic distribution top.",
+   "zh": "一只股票先后创出 52、53.5、54.2 元的新高，MFI 却依次为 86、71、58，每次新高的资金越来越少，是典型的出货顶部。"
+  }
+ },
+ {
+  "id": "RVGI",
+  "cat": "strength",
+  "name": {
+   "en": "Relative Vigor Index (RVGI)",
+   "zh": "相对活力指数（RVGI）"
+  },
+  "score": 4.8,
+  "formula": {
+   "en": "RVGI = SMA(smoothed(C − O), 10) / SMA(smoothed(H − L), 10)\nSmoothing = (x + 2x₋₁ + 2x₋₂ + x₋₃) / 6\nSignal = smoothed(RVGI)",
+   "zh": "RVGI = SMA(平滑(C − O), 10) / SMA(平滑(H − L), 10)\n平滑 = (x + 2x₋₁ + 2x₋₂ + x₋₃) / 6\n信号线 = 平滑(RVGI)"
+  },
+  "principle": {
+   "en": "How much of each bar's range the body covers, and in which direction. In healthy rallies bars close near their highs; when closes drift back toward the open, conviction is fading.",
+   "zh": "每根 K 线的实体占整个振幅的比例及方向。健康上涨时收盘接近最高；收盘越来越靠近开盘，说明信心在减弱。"
+  },
+  "example": {
+   "en": "A stock rising for six weeks reads around +0.35. Then price adds 2% more, but closes land mid-bar and RVGI slides toward zero: a top is forming.",
+   "zh": "一只股票上涨六周，RVGI 约 +0.35；之后价格又涨 2%，但收盘落在 K 线中部，RVGI 滑向零——顶部正在形成。"
+  }
+ },
+ {
+  "id": "BOP",
+  "cat": "strength",
+  "name": {
+   "en": "Balance of Power (BOP)",
+   "zh": "均势指标（BOP）"
+  },
+  "score": 3,
+  "formula": {
+   "en": "BOP = (C − O) / (H − L)\nRange −1 to +1, no smoothing",
+   "zh": "BOP = (C − O) / (H − L)\n范围 −1 到 +1，不做平滑"
+  },
+  "principle": {
+   "en": "How much of a single bar's range the body covers, and in which direction. +1 opened at the low and closed at the high; 0 is a doji. It describes one candle, with no memory.",
+   "zh": "单根 K 线的实体占振幅多少、朝哪个方向。+1 表示开在最低、收在最高，0 是十字星。它只描述一根 K 线，没有记忆。"
+  },
+  "example": {
+   "en": "On a fourth test of ¥30 support, a bar dips to ¥29.4, opens ¥29.6 and closes ¥30.9. BOP = +0.87: buyers clearly won the day.",
+   "zh": "第四次测试 30 元支撑，K 线最低 29.4 元，开 29.6 元、收 30.9 元，BOP = +0.87，当天买方明显获胜。"
+  }
+ },
+ {
+  "id": "VRSI",
+  "cat": "strength",
+  "name": {
+   "en": "Volume RSI (VRSI)",
+   "zh": "成交量相对强弱指标（VRSI）"
+  },
+  "score": 4,
+  "formula": {
+   "en": "VD = V − V₋₁\nVRSI = SMMA(max(VD, 0), N) / SMMA(|VD|, N) × 100\nN = 6, 12, 24",
+   "zh": "VD = V − V₋₁\nVRSI = SMMA(max(VD, 0), N) / SMMA(|VD|, N) × 100\nN = 6、12、24"
+  },
+  "principle": {
+   "en": "RSI applied to volume instead of price. It shows whether trading activity is growing or shrinking, but not whether that activity is buying or selling.",
+   "zh": "把 RSI 用在成交量上，显示交易活跃度在放大还是萎缩；但它分不清这些量是买还是卖。"
+  },
+  "example": {
+   "en": "A quiet stock drifts in a 6% band for months with VRSI(24) under 45. It climbs to 62 while price barely moves — someone is quietly building a position.",
+   "zh": "一只冷门股在 6% 区间横了几个月，VRSI(24) 一直低于 45；后来升到 62，价格却几乎没动——有人在悄悄建仓。"
+  }
+ },
+ {
+  "id": "ROC",
+  "cat": "strength",
+  "name": {
+   "en": "Rate of Change (ROC)",
+   "zh": "变动率指标（ROC）"
+  },
+  "score": 7.2,
+  "formula": {
+   "en": "ROC = (C − C₋₁₂) / C₋₁₂ × 100\nROCMA = SMA(ROC, 6)",
+   "zh": "ROC = (C − C₋₁₂) / C₋₁₂ × 100\nROCMA = SMA(ROC, 6)"
+  },
+  "principle": {
+   "en": "The percentage change from N bars ago to today. Being a percentage, it compares fairly across stocks and years; it only looks at the start and end, not the path.",
+   "zh": "今天相对 N 根之前涨跌了百分之几。百分比可以跨股票、跨年份比较；它只看起点和终点，不看过程。"
+  },
+  "example": {
+   "en": "Rank 40 stocks by 6-month ROC and hold the top 10% while it stays above zero. That is the classic momentum strategy used in academic research.",
+   "zh": "把 40 只股票按半年 ROC 排序，持有前 10% 且 ROC 为正的那些——这就是学术研究里经典的动量策略。"
+  }
+ },
+ {
+  "id": "MTM",
+  "cat": "strength",
+  "name": {
+   "en": "Momentum (MTM)",
+   "zh": "动量指标（MTM）"
+  },
+  "score": 5,
+  "formula": {
+   "en": "MTM = C − C₋₁₂\nMTMMA = SMA(MTM, 6)",
+   "zh": "MTM = C − C₋₁₂\nMTMMA = SMA(MTM, 6)"
+  },
+  "principle": {
+   "en": "Today's close minus the close N bars ago, in price units. It shows the same thing as ROC, but in money rather than percent.",
+   "zh": "今天收盘价减去 N 根前的收盘价，单位是价格。和 ROC 表达同一件事，只是用金额而不是百分比。"
+  },
+  "example": {
+   "en": "On an index future, MTM(12) at +180 means the last twelve sessions gained 180 points — easy to compare with your stop distance in points.",
+   "zh": "在股指期货上，MTM(12) 为 +180 表示过去 12 个交易日涨了 180 点，可以直接和你按点数设的止损比较。"
+  }
+ },
+ {
+  "id": "OSC",
+  "cat": "strength",
+  "name": {
+   "en": "Oscillator (OSC)",
+   "zh": "摆动量指标（OSC）"
+  },
+  "score": 3,
+  "formula": {
+   "en": "OSC = 100 × (C − SMA(C, 20))\nOSCEMA = EMA(OSC, 6)",
+   "zh": "OSC = 100 × (C − SMA(C, 20))\nOSCEMA = EMA(OSC, 6)"
+  },
+  "principle": {
+   "en": "The gap between price and its 20-bar average, multiplied by 100. It is BIAS without the division, so the scale depends on the stock's price and can't be compared across names.",
+   "zh": "价格与 20 日均线的差再乘以 100。相当于没有做除法的乖离率，数值大小取决于股价，不能跨股票比较。"
+  },
+  "example": {
+   "en": "On an index future that has hovered near 4,000 for months, OSC above +3,000 has repeatedly marked short-term tops. Move to a different price level and that rule breaks.",
+   "zh": "某股指期货几个月都在 4000 点附近，OSC 超过 +3000 多次对应短期顶部；价格水平一变，这条经验就失效了。"
+  }
+ },
+ {
+  "id": "DPO",
+  "cat": "strength",
+  "name": {
+   "en": "Detrended Price Oscillator (DPO)",
+   "zh": "去趋势价格摆动指标（DPO）"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "DPO = C − SMA(C, 20) shifted back 11 bars\nMADPO = SMA(DPO, 6)",
+   "zh": "DPO = C − 回移 11 根的 SMA(C, 20)\nMADPO = SMA(DPO, 6)"
+  },
+  "principle": {
+   "en": "Price minus a moving average shifted back by half its length. This removes the trend and leaves the repeating waves, so you can see cycles.",
+   "zh": "价格减去向回平移半个周期的均线。这样就去掉了趋势，只剩下反复出现的波动，便于观察周期。"
+  },
+  "example": {
+   "en": "On weekly heating oil, DPO(40) peaks line up about 52 weeks apart — the seasonal cycle shows up clearly once the trend is removed.",
+   "zh": "在取暖油周线上，DPO(40) 的峰值大约每隔 52 周出现一次——去掉趋势后，季节性周期一目了然。"
+  }
+ },
+ {
+  "id": "BIAS",
+  "cat": "strength",
+  "name": {
+   "en": "Bias Ratio (BIAS)",
+   "zh": "乖离率（BIAS）"
+  },
+  "score": 7.8,
+  "formula": {
+   "en": "BIAS(N) = (C − MA(N)) / MA(N) × 100\nCommon: BIAS6, BIAS12, BIAS24",
+   "zh": "BIAS(N) = (C − MA(N)) / MA(N) × 100\n常用：BIAS6、BIAS12、BIAS24"
+  },
+  "principle": {
+   "en": "How far price has stretched from its moving average, in percent. Like a rubber band: the further it stretches, the more likely it snaps back.",
+   "zh": "价格偏离均线的百分比。就像橡皮筋，拉得越远，越容易弹回来。"
+  },
+  "example": {
+   "en": "A large cap in an uptrend drops 9% in four days; BIAS6 hits −7.5%, an 18-month low, while BIAS24 is still positive. A short-term overreaction worth buying.",
+   "zh": "一只上升趋势中的大盘股四天跌 9%，BIAS6 达到 −7.5%（18 个月最低），BIAS24 仍为正——短期超跌，值得买入。"
+  }
+ },
+ {
+  "id": "B3612",
+  "cat": "strength",
+  "name": {
+   "en": "Bias 3-6-12 (B3612)",
+   "zh": "三六乖离（B3612）"
+  },
+  "score": 4,
+  "formula": {
+   "en": "B36 = SMA(C, 3) − SMA(C, 6)\nB612 = SMA(C, 6) − SMA(C, 12)",
+   "zh": "B36 = SMA(C, 3) − SMA(C, 6)\nB612 = SMA(C, 6) − SMA(C, 12)"
+  },
+  "principle": {
+   "en": "Two gaps between short moving averages: 3 vs 6 and 6 vs 12 bars. It shows very quickly whether short-term push is speeding up or fading.",
+   "zh": "两组短均线之差：3 日对 6 日、6 日对 12 日。能非常快地看出短线推力在加速还是减弱。"
+  },
+  "example": {
+   "en": "After a stock runs up nine days, B36 turning down through zero flags lost thrust days before a 20-bar MACD would confirm it — a fast exit.",
+   "zh": "一只股票连涨九天后，B36 下穿零轴，说明短线推力消失，比 MACD 确认早好几天，适合快速离场。"
+  }
+ },
+ {
+  "id": "DBCD",
+  "cat": "strength",
+  "name": {
+   "en": "Bias Convergence Divergence (DBCD)",
+   "zh": "异同离差乖离率（DBCD）"
+  },
+  "score": 2.5,
+  "formula": {
+   "en": "BIAS = (C − SMA(C, 5)) / SMA(C, 5)\nDIF = BIAS − BIAS₋₁₆\nDBCD = SMMA(DIF, 76)\nMM = SMA(DBCD, 5)",
+   "zh": "BIAS = (C − SMA(C, 5)) / SMA(C, 5)\nDIF = BIAS − BIAS₋₁₆\nDBCD = SMMA(DIF, 76)\nMM = SMA(DBCD, 5)"
+  },
+  "principle": {
+   "en": "Measures whether price's stretch from its short-term average is bigger or smaller than 16 bars ago, then smooths it very heavily. The result is a slow line that flips sign rarely.",
+   "zh": "比较价格偏离短期均线的程度和 16 根前相比是变大还是变小，再做非常重的平滑，得到一条很少翻转的慢线。"
+  },
+  "example": {
+   "en": "On a weekly index chart, DBCD stays on one side of zero for months at a time; its rare sign flips can mark a change in the long-term regime.",
+   "zh": "在指数周线上，DBCD 往往连续几个月停在零轴一侧，少有的几次翻转可能标志着长期格局的改变。"
+  }
+ },
+ {
+  "id": "SRDM",
+  "cat": "strength",
+  "name": {
+   "en": "SRDM Indicator",
+   "zh": "动向速度指标（SRDM）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "MOVE = max(|H − H₋₁|, |L − L₋₁|)\nUp shift if (H+L) rose, down shift if it fell\nSRDM = (avg up − avg down) / max(avg up, avg down)\nASRDM = SMMA(SRDM, 30)",
+   "zh": "MOVE = max(|H − H₋₁|, |L − L₋₁|)\n(H+L) 上升记为上移，下降记为下移\nSRDM = (上移均值 − 下移均值) / max(上移均值, 下移均值)\nASRDM = SMMA(SRDM, 30)"
+  },
+  "principle": {
+   "en": "Over ten bars, how one-sided the shift of the whole trading range has been, scaled to −1 … +1. The smoothed ASRDM line is the one worth reading.",
+   "zh": "最近十根 K 线里，整个价格区间向上还是向下迁移得有多一边倒，范围 −1 到 +1。真正好读的是平滑后的 ASRDM。"
+  },
+  "example": {
+   "en": "Because it is bounded, you can count trends across a portfolio: if 15 of your 20 holdings have ASRDM above +0.3, most of your book is trending up.",
+   "zh": "因为有上下限，可以用来清点组合：20 只持仓中有 15 只 ASRDM 高于 +0.3，说明大部分持仓处于上升趋势。"
+  }
+ },
+ {
+  "id": "RCI",
+  "cat": "strength",
+  "name": {
+   "en": "Rank Correlation Index (RCI)",
+   "zh": "顺位相关指数（RCI）"
+  },
+  "score": 5,
+  "formula": {
+   "en": "d = price rank − time rank (within N bars)\nRCI = (1 − 6Σd² / (N(N² − 1))) × 100\nRange −100 … +100; N = 5, 25, 50",
+   "zh": "d = 价格排名 − 时间排名（N 根内）\nRCI = (1 − 6Σd² / (N(N² − 1))) × 100\n范围 −100 … +100；N = 5、25、50"
+  },
+  "principle": {
+   "en": "Checks whether closes line up in order over time. Only the ranking matters, not the size of moves, so a single freak spike or gap can't distort it.",
+   "zh": "检查收盘价是否按时间顺序依次排列。只看排名、不看幅度，所以一次异常跳空或尖刺扭曲不了它。"
+  },
+  "example": {
+   "en": "A thin small-cap gaps 12% on one block trade and drifts back. RSI spikes and stays distorted; RCI just counts it as one more rank and barely reacts.",
+   "zh": "一只冷门小盘股因一笔大单跳涨 12% 后回落。RSI 剧烈跳动并持续失真，RCI 只把它当作排名多了一位，几乎不受影响。"
+  }
+ },
+ {
+  "id": "MASS",
+  "cat": "strength",
+  "name": {
+   "en": "Mass Index (MASS)",
+   "zh": "梅斯线（MASS）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "EMA1 = EMA(H − L, 9)\nEMA2 = EMA(EMA1, 9)\nMI = Σ(EMA1 / EMA2) over 10 bars\nBulge trigger ≈ 10.8 (27 when summed over 25)",
+   "zh": "EMA1 = EMA(H − L, 9)\nEMA2 = EMA(EMA1, 9)\nMI = 10 根内 Σ(EMA1 / EMA2)\n膨胀触发 ≈ 10.8（25 根求和时为 27）"
+  },
+  "principle": {
+   "en": "Reversals are often preceded by daily ranges widening. The Mass Index adds up how much ranges are expanding versus normal. It says a turn may come, not which way.",
+   "zh": "反转前往往先出现日内振幅扩大。梅斯线累计振幅比平常扩大了多少；它提示可能转向，但不说明方向。"
+  },
+  "example": {
+   "en": "After months of steady gains on narrowing ranges, daily ranges suddenly widen and MI pushes through its trigger. Big players may be selling — a top is near.",
+   "zh": "连涨几个月、振幅越来越窄之后，振幅突然放大，MI 冲破触发线——大资金可能在出货，顶部临近。"
+  }
+ },
+ {
+  "id": "VROC",
+  "cat": "strength",
+  "name": {
+   "en": "Volume Rate of Change (VROC)",
+   "zh": "成交量变动率（VROC）"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "VROC = (V − V₋₁₂) / V₋₁₂ × 100",
+   "zh": "VROC = (V − V₋₁₂) / V₋₁₂ × 100"
+  },
+  "principle": {
+   "en": "Today's volume compared with the volume 12 bars ago, in percent. It shows whether participation is growing, but it compares against just one old bar, so it can be noisy.",
+   "zh": "今天成交量与 12 根前那一根相比变化了百分之几，反映参与度是否在增加。只和一根旧 K 线比，所以容易跳动。"
+  },
+  "example": {
+   "en": "A stock coiled in a 4% range for three weeks closes above the range with VROC at +180%. The breakout has real buyers behind it.",
+   "zh": "一只股票在 4% 区间盘整三周后收盘突破，VROC 达到 +180%，说明突破背后有真实买盘。"
+  }
+ },
+ {
+  "id": "ADTM",
+  "cat": "strength",
+  "name": {
+   "en": "Dynamic Buy/Sell Momentum (ADTM)",
+   "zh": "动态买卖气指标（ADTM）"
+  },
+  "score": 6,
+  "formula": {
+   "en": "DTM = max(H − O, O − O₋₁) if O > O₋₁, else 0\nDBM = max(O − L, O − O₋₁) if O < O₋₁, else 0\nADTM = (ΣDTM − ΣDBM) / max(ΣDTM, ΣDBM)   (23 bars)\nADTM_MA = SMA(ADTM, 8)",
+   "zh": "DTM = O > O₋₁ 时取 max(H − O, O − O₋₁)，否则 0\nDBM = O < O₋₁ 时取 max(O − L, O − O₋₁)，否则 0\nADTM = (ΣDTM − ΣDBM) / max(ΣDTM, ΣDBM)（23 根）\nADTM_MA = SMA(ADTM, 8)"
+  },
+  "principle": {
+   "en": "Compares buying push and selling push measured from each day's open. It captures both overnight gaps and whether the opening move was extended. Above +0.5 is hot, below −0.5 is weak.",
+   "zh": "以开盘价为基准，比较买方和卖方的推力，同时反映隔夜跳空和开盘后的延续。高于 +0.5 偏热，低于 −0.5 偏弱。"
+  },
+  "example": {
+   "en": "Useful for A-shares, where the opening auction packs overnight news into one price. A stock up three weeks with ADTM at +0.62 that dips below its average is losing steam.",
+   "zh": "适合 A 股，集合竞价把隔夜消息浓缩进开盘价。一只涨了三周、ADTM 在 +0.62 的股票跌破均线，说明买气在减弱。"
+  }
+ },
+ {
+  "id": "BBIBOLL",
+  "cat": "pressure_support",
+  "name": {
+   "en": "BBI Bollinger Bands (BBIBOLL)",
+   "zh": "多空布林线（BBIBOLL）"
+  },
+  "score": 4,
+  "formula": {
+   "en": "BBI = (MA3 + MA6 + MA12 + MA24) / 4\nσ = StdDev(BBI, 11)\nUPR = BBI + 6σ, DWN = BBI − 6σ",
+   "zh": "BBI = (MA3 + MA6 + MA12 + MA24) / 4\nσ = StdDev(BBI, 11)\n上轨 = BBI + 6σ，下轨 = BBI − 6σ"
+  },
+  "principle": {
+   "en": "The BBI line with bands drawn six standard deviations of BBI itself either side. Since BBI is already smooth, the bands behave much like ordinary Bollinger Bands, only wider.",
+   "zh": "在 BBI 线两侧各画 6 倍「BBI 自身标准差」的通道。BBI 本身已很平滑，所以通道表现类似普通布林带，只是更宽。"
+  },
+  "example": {
+   "en": "A large cap moves sideways in a 4% box for six weeks; the bands pinch to under 2.5% wide around 52. A close outside that pinch often starts the next leg.",
+   "zh": "一只大盘股在 4% 箱体里横了六周，通道在 52 元附近收窄到不足 2.5%；一旦收在通道外，往往开启下一段行情。"
+  }
+ },
+ {
+  "id": "BBW",
+  "cat": "pressure_support",
+  "name": {
+   "en": "Bollinger Band Width (BBW)",
+   "zh": "布林带宽（BBW）"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "BBW = (UPPER − LOWER) / MID\n= 4σ / SMA(C, 20)",
+   "zh": "BBW = (上轨 − 下轨) / 中轨\n= 4σ / SMA(C, 20)"
+  },
+  "principle": {
+   "en": "The width of the Bollinger Bands as a fraction of price. It turns 'the bands look tight' into a number you can compare across stocks and over time.",
+   "zh": "布林带宽度占价格的比例，把「通道看起来很窄」变成一个能跨股票、跨时间比较的数字。"
+  },
+  "example": {
+   "en": "An index ranges 1.5% for three weeks and BBW drops to 0.021, its lowest in eight months versus a 0.055 median. Expect a big move soon, direction unknown.",
+   "zh": "某指数三周只波动 1.5%，BBW 降到 0.021，是八个月最低，而中位数为 0.055。大行情可能很快到来，方向未定。"
+  }
+ },
+ {
+  "id": "CDP",
+  "cat": "pressure_support",
+  "name": {
+   "en": "CDP Pivot Levels",
+   "zh": "逆势操作系统（CDP）"
+  },
+  "score": 5,
+  "formula": {
+   "en": "CDP = (H₋₁ + L₋₁ + C₋₁) / 3\nAH = CDP + (H₋₁ − L₋₁),  NH = 2·CDP − L₋₁\nNL = 2·CDP − H₋₁,  AL = CDP − (H₋₁ − L₋₁)",
+   "zh": "CDP = (H₋₁ + L₋₁ + C₋₁) / 3\n最高值 AH = CDP + (H₋₁ − L₋₁)，近高值 NH = 2·CDP − L₋₁\n近低值 NL = 2·CDP − H₋₁，最低值 AL = CDP − (H₋₁ − L₋₁)"
+  },
+  "principle": {
+   "en": "Five price levels for today, all calculated from yesterday's high, low and close. NH and NL mark a normal day's range; AH and AL are only reached on strong trend days.",
+   "zh": "用昨天的最高、最低、收盘算出今天的五个价位。NH、NL 是正常日的波动范围，AH、AL 只有强趋势日才会触及。"
+  },
+  "example": {
+   "en": "Yesterday: high 4,120, low 4,060, close 4,092. Today's levels: NL 4,061, CDP 4,091, NH 4,121. Price dips to 4,063 and reverses — a planned buy near NL.",
+   "zh": "昨日高 4120、低 4060、收 4092，今日 NL 为 4061、CDP 为 4091、NH 为 4121。价格跌到 4063 后反转，正是计划中的买点。"
+  }
+ },
+ {
+  "id": "CKS",
+  "cat": "pressure_support",
+  "name": {
+   "en": "Chande Kroll Stop (CKS)",
+   "zh": "钱德-克罗尔止损线（CKS）"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "ATR = SMMA(TR, 10)\nSTOP_LONG = LLV(LLV(L, 10) + ATR, 9)\nSTOP_SHORT = HHV(HHV(H, 10) − ATR, 9)",
+   "zh": "ATR = SMMA(TR, 10)\n多头止损 = LLV(LLV(L, 10) + ATR, 9)\n空头止损 = HHV(HHV(H, 10) − ATR, 9)"
+  },
+  "principle": {
+   "en": "Two trailing stop lines spaced by ATR and filtered a second time so they step smoothly instead of jittering. The long stop only rises once the market has really made higher lows.",
+   "zh": "两条按 ATR 设置、再经过二次过滤的跟踪止损线，平稳阶梯式移动而不乱跳。多头止损只有在真正抬高低点后才上移。"
+  },
+  "example": {
+   "en": "Entered at $28, a stock runs to $41 in four months. A fixed 8% trailing stop got hit twice on normal dips; the CKS long stop kept you in the whole way.",
+   "zh": "28 美元买入，四个月涨到 41 美元。固定 8% 跟踪止损在正常回调中被打掉两次，CKS 多头止损让你一路拿住。"
+  }
+ },
+ {
+  "id": "DC",
+  "cat": "pressure_support",
+  "name": {
+   "en": "Donchian Channel (DC)",
+   "zh": "唐奇安通道（DC）"
+  },
+  "score": 7.8,
+  "formula": {
+   "en": "UP = HHV(H, 20)\nDOWN = LLV(L, 20)\nMIDDLE = (UP + DOWN) / 2",
+   "zh": "上轨 = HHV(H, 20)\n下轨 = LLV(L, 20)\n中轨 = (上轨 + 下轨) / 2"
+  },
+  "principle": {
+   "en": "The highest high and lowest low of the last N bars. No statistics involved: a close above the top line is simply a new N-bar high, the cleanest breakout trigger there is.",
+   "zh": "最近 N 根 K 线的最高价和最低价。没有任何统计假设：收盘站上上轨，就是创出 N 日新高，最干净的突破信号。"
+  },
+  "example": {
+   "en": "A commodity sits between 88.0 and 94.5 for a month, then closes at 95.1 — a new 20-bar high. Buy on the close with a stop at the middle line, 91.25.",
+   "zh": "某商品一个月在 88.0–94.5 之间，随后收在 95.1，创 20 日新高。收盘买入，止损放在中轨 91.25。"
+  }
+ },
+ {
+  "id": "ENE",
+  "cat": "pressure_support",
+  "name": {
+   "en": "Moving Average Envelopes (ENE)",
+   "zh": "轨道线（ENE）"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "MA = SMA(C, 10)\nUPPER = MA × 1.11\nLOWER = MA × 0.91\nENE = (UPPER + LOWER) / 2",
+   "zh": "MA = SMA(C, 10)\n上轨 = MA × 1.11\n下轨 = MA × 0.91\nENE = (上轨 + 下轨) / 2"
+  },
+  "principle": {
+   "en": "A moving average with fixed percentage bands above and below. The width is your own assumption about how far the stock usually strays, not a measurement of volatility.",
+   "zh": "在均线上下各画一条固定百分比的轨道。宽度是你自己对「股票通常偏离多远」的假设，而不是测出来的波动率。"
+  },
+  "example": {
+   "en": "A sleepy utility at 30.00 with MA10 at 29.80 has bands at 33.08 and 27.12. Over 18 months it touched each band a few times and turned back every time.",
+   "zh": "一只平稳的公用事业股报 30 元，10 日均线 29.8 元，轨道为 33.08 和 27.12。18 个月里几次触及轨道，每次都掉头回来。"
+  }
+ },
+ {
+  "id": "KC",
+  "cat": "pressure_support",
+  "name": {
+   "en": "Keltner Channel (KC)",
+   "zh": "肯特纳通道（KC）"
+  },
+  "score": 8,
+  "formula": {
+   "en": "ML = EMA(C, 20)\nATR = SMA(TR, 14)\nUB = ML + 2 × ATR\nLB = ML − 2 × ATR",
+   "zh": "中轨 = EMA(C, 20)\nATR = SMA(TR, 14)\n上轨 = 中轨 + 2 × ATR\n下轨 = 中轨 − 2 × ATR"
+  },
+  "principle": {
+   "en": "An EMA with a channel two ATRs either side. Because ATR counts gaps and intraday swings, the channel reflects real trading risk, not just how closing prices scatter.",
+   "zh": "EMA 两侧各加 2 倍 ATR 的通道。ATR 包含跳空和日内波动，所以通道反映的是真实交易风险，而不只是收盘价的离散。"
+  },
+  "example": {
+   "en": "In a strong rally, price hugs the upper Keltner band for weeks and only pulls back to the middle line. Each pullback to the middle is a place to add, not a top.",
+   "zh": "强势上涨中，价格贴着肯特纳上轨走了几周，只回踩到中轨。每次回到中轨都是加仓点，而不是顶部。"
+  }
+ },
+ {
+  "id": "MIKE",
+  "cat": "pressure_support",
+  "name": {
+   "en": "MIKE Support and Resistance",
+   "zh": "麦克支撑压力指标（MIKE）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "TYP = (H + L + C) / 3, HH = HHV(H, 12), LL = LLV(L, 12)\nWR = 2·TYP − LL,  MR = TYP + (HH − LL),  SR = 2·HH − LL\nWS = 2·TYP − HH,  MS = TYP − (HH − LL),  SS = 2·LL − HH",
+   "zh": "TYP = (H + L + C) / 3，HH = HHV(H, 12)，LL = LLV(L, 12)\n弱压力 = 2·TYP − LL，中压力 = TYP + (HH − LL)，强压力 = 2·HH − LL\n弱支撑 = 2·TYP − HH，中支撑 = TYP − (HH − LL)，强支撑 = 2·LL − HH"
+  },
+  "principle": {
+   "en": "Six support and resistance lines built from the typical price and the 12-bar high and low. They all move together, so treat them as a ladder of targets rather than separate signals.",
+   "zh": "用典型价和 12 日高低点算出六条支撑压力线。它们同步移动，更适合当作一组目标价阶梯，而不是六个独立信号。"
+  },
+  "example": {
+   "en": "Long from 117 with weak, medium and strong resistance at 122.6, 125.2 and 127.8: sell a third at each level instead of deciding on the fly.",
+   "zh": "117 元做多，弱、中、强压力分别是 122.6、125.2、127.8，到一档卖三分之一，不用临场纠结。"
+  }
+ },
+ {
+  "id": "PPSW",
+  "cat": "pressure_support",
+  "name": {
+   "en": "Woodie Pivot Points (PPSW)",
+   "zh": "伍迪枢轴点（PPSW）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "PP = (prev High + prev Low + 2 × Open) / 4\nR1 = 2·PP − prev Low,  S1 = 2·PP − prev High\nR2 = PP + range,  S2 = PP − range\nrange = prev High − prev Low",
+   "zh": "PP = (前期最高 + 前期最低 + 2 × 本期开盘) / 4\nR1 = 2·PP − 前期最低，S1 = 2·PP − 前期最高\nR2 = PP + 区间，S2 = PP − 区间\n区间 = 前期最高 − 前期最低"
+  },
+  "principle": {
+   "en": "Horizontal levels for this period from last period's range plus this period's open, which gets double weight. They work largely because many traders watch the same numbers.",
+   "zh": "用上一周期的高低点加上本周期开盘价（双倍权重）算出一组水平价位。它们有效，很大程度上因为大家都盯着同样的数字。"
+  },
+  "example": {
+   "en": "Last week ranged 4,180–4,265 and this week opens at 4,240: PP 4,231, S1 4,197.5. Monday dips to 4,199, forms a hammer and reverses right at S1.",
+   "zh": "上周区间 4180–4265，本周开 4240，算得 PP 为 4231、S1 为 4197.5。周一跌到 4199 收锤子线，正好在 S1 反转。"
+  }
+ },
+ {
+  "id": "VOL",
+  "cat": "price_volume",
+  "name": {
+   "en": "Volume (VOL)",
+   "zh": "成交量（VOL）"
+  },
+  "score": 8.5,
+  "formula": {
+   "en": "V = shares traded during the bar\nGreen if C ≥ C₋₁, red if C < C₋₁\nRead as a ratio: V / SMA(V, n)",
+   "zh": "V = 该 K 线内成交的股数\nC ≥ C₋₁ 为绿，C < C₋₁ 为红\n按比值看：V / SMA(V, n)"
+  },
+  "principle": {
+   "en": "How many shares changed hands. Price shows where the market settled; volume shows how many people had to agree to get it there.",
+   "zh": "成交了多少股。价格告诉你市场停在哪里，成交量告诉你有多少人参与、共同把它推到那里。"
+  },
+  "example": {
+   "en": "A stock capped at $52 for eleven weeks on 1.8m shares a day closes at $54.40 on 6.2m. That 3.4× volume says real buyers took out every seller.",
+   "zh": "一只股票在 52 美元被压了 11 周，日均 180 万股；某天放量 620 万股收在 54.4 美元，3.4 倍的量说明真买盘吃掉了所有卖单。"
+  }
+ },
+ {
+  "id": "MAVOL",
+  "cat": "price_volume",
+  "name": {
+   "en": "Volume Moving Average (MAVOL)",
+   "zh": "成交量均线（MAVOL）"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "MAVOL(n) = SMA(V, n)\nCommon: MAVOL5, MAVOL10, MAVOL20\nV > MAVOL5 → expansion; V < MAVOL5 → contraction",
+   "zh": "MAVOL(n) = SMA(V, n)\n常用：MAVOL5、MAVOL10、MAVOL20\nV > MAVOL5 → 放量；V < MAVOL5 → 缩量"
+  },
+  "principle": {
+   "en": "A moving average through the volume bars, so you can tell if today is busier or quieter than normal. When the short line rises above the long one, the whole market is getting busier.",
+   "zh": "给成交量柱画一条均线，一眼看出今天比平常放量还是缩量。短期量线升到长期量线之上，说明整体交投在升温。"
+  },
+  "example": {
+   "en": "Add one filter to a 20-day-high breakout system: volume must be at least MAVOL20. It removes about a third of trades, mostly the quiet drifts that fail.",
+   "zh": "给「创 20 日新高就买」的系统加一条：成交量至少达到 MAVOL20。约三分之一交易被过滤掉，多半是那些缩量、最终失败的假突破。"
+  }
+ },
+ {
+  "id": "AVGVOL",
+  "cat": "price_volume",
+  "name": {
+   "en": "Average Volume (AVGVOL)",
+   "zh": "平均成交量（AVGVOL）"
+  },
+  "score": 4,
+  "formula": {
+   "en": "AVGVOL(n) = SMA(V₋₁, n)   (today excluded)\nDefault n = 50\nRVOL = V / AVGVOL",
+   "zh": "AVGVOL(n) = SMA(V₋₁, n)（不含当天）\n默认 n = 50\nRVOL = V / AVGVOL"
+  },
+  "principle": {
+   "en": "A long, quarter-length average of past volume that leaves today out. It is a clean yardstick of normal trading that a single spike can't inflate.",
+   "zh": "约一个季度的历史平均成交量，且不包含今天。它是一把干净的「正常成交量」标尺，不会被单日放量拉高。"
+  },
+  "example": {
+   "en": "Rule: never take more than 5% of average volume. A stock averaging 900k shares caps you at 45k; if the average halves, your maximum size halves too.",
+   "zh": "规则：仓位不超过平均成交量的 5%。日均 90 万股的股票最多买 4.5 万股；平均量减半，上限也跟着减半。"
+  }
+ },
+ {
+  "id": "NVOL",
+  "cat": "price_volume",
+  "name": {
+   "en": "Net Volume (NVOL)",
+   "zh": "净成交量（NVOL）"
+  },
+  "score": 6,
+  "formula": {
+   "en": "NVOL = sign(C − C₋₁) × V\nRunning sum of NVOL = OBV",
+   "zh": "NVOL = sign(C − C₋₁) × V\nNVOL 的累计和 = OBV"
+  },
+  "principle": {
+   "en": "Each bar's volume gets a plus sign on up days and a minus sign on down days. It shows which side won each day and how much trading it took.",
+   "zh": "上涨日成交量记为正，下跌日记为负。它显示每天哪一方赢了，以及赢得这一天用了多少成交量。"
+  },
+  "example": {
+   "en": "A stock falls to its $28 base on 4.1m shares, the biggest volume of the decline, yet closes only 11 cents lower. Heavy selling was absorbed — buyers are defending.",
+   "zh": "一只股票跌到 28 美元平台，成交 410 万股，是这轮下跌最大量，收盘却只跌 0.11 美元。大量抛盘被吸收，买方在护盘。"
+  }
+ },
+ {
+  "id": "RVOL",
+  "cat": "price_volume",
+  "name": {
+   "en": "Relative Volume (RVOL)",
+   "zh": "量比（RVOL）"
+  },
+  "score": 8,
+  "formula": {
+   "en": "RVOL = V / SMA(V₋₁, 14)\n1.0 = average, 3.0 = three times normal",
+   "zh": "RVOL = V / SMA(V₋₁, 14)\n1.0 = 平均水平，3.0 = 正常的三倍"
+  },
+  "principle": {
+   "en": "Today's volume as a multiple of its recent normal. The units cancel, so a mega-cap and a micro-cap can be compared directly.",
+   "zh": "今天成交量是近期正常水平的几倍。单位被约掉了，所以大盘股和小盘股可以直接比较。"
+  },
+  "example": {
+   "en": "A $32 stock that usually trades 400k shares does 1.9m by mid-morning: RVOL near 5. Something happened, even before you know the news.",
+   "zh": "一只 32 美元、平时日成交 40 万股的股票，上午就成交了 190 万股，量比接近 5——还没看到新闻就知道出事了。"
+  }
+ },
+ {
+  "id": "VSTD",
+  "cat": "price_volume",
+  "name": {
+   "en": "Volume Standard Deviation (VSTD)",
+   "zh": "成交量标准差（VSTD）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "VSTD = StdDev(V, 10)\nScale-free version: CV = VSTD / SMA(V, 10)",
+   "zh": "VSTD = StdDev(V, 10)\n无量纲版本：CV = VSTD / SMA(V, 10)"
+  },
+  "principle": {
+   "en": "How much volume has jumped around its 10-bar average. Low means steady daily trading; high means trading comes in bursts. It says nothing about direction.",
+   "zh": "成交量围绕 10 日均量波动有多大。低表示每天交易稳定，高表示交易一阵一阵地爆发。不说明方向。"
+  },
+  "example": {
+   "en": "A screen for 'volume above 2× average' fires constantly on erratic stocks. Requiring volume 2.5 VSTD above the mean keeps only truly unusual spikes.",
+   "zh": "「成交量超过均量 2 倍」的筛选在成交忽大忽小的股票上频繁触发；改成超过均量 2.5 倍 VSTD，只留下真正异常的放量。"
+  }
+ },
+ {
+  "id": "VOSC",
+  "cat": "price_volume",
+  "name": {
+   "en": "Volume Oscillator (VOSC)",
+   "zh": "成交量震荡指标（VOSC）"
+  },
+  "score": 5,
+  "formula": {
+   "en": "VOSC = (SMA(V, 12) − SMA(V, 26)) / SMA(V, 12) × 100",
+   "zh": "VOSC = (SMA(V, 12) − SMA(V, 26)) / SMA(V, 12) × 100"
+  },
+  "principle": {
+   "en": "The gap between short and long volume averages, as a percentage. It tracks whether participation is trending up or down over weeks, not just on one day.",
+   "zh": "短期与长期均量的差距，用百分比表示。它看的是几周内参与度在上升还是下降，而不是某一天。"
+  },
+  "example": {
+   "en": "A stock's first two rallies came with VOSC at +10 to +18. On the third leg it makes a new high with VOSC at −6: fewer buyers are carrying the trend.",
+   "zh": "一只股票前两段上涨时 VOSC 在 +10 到 +18，第三段创新高时 VOSC 却是 −6——支撑趋势的买家越来越少。"
+  }
+ },
+ {
+  "id": "AMOUNT",
+  "cat": "price_volume",
+  "name": {
+   "en": "Turnover (AMOUNT)",
+   "zh": "成交额（AMOUNT）"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "AMOUNT = Σ(price × size) ≈ C × V\nMAAMT = SMA(AMOUNT, 20)",
+   "zh": "成交额 = Σ(成交价 × 成交量) ≈ C × V\nMAAMT = SMA(成交额, 20)"
+  },
+  "principle": {
+   "en": "The money that changed hands, not the number of shares. Money is what investors actually allocate, and it isn't changed by stock splits, so it compares fairly across stocks.",
+   "zh": "成交的金额，而不是股数。资金才是投资者真正投入的东西，也不受拆股影响，所以能在不同股票间公平比较。"
+  },
+  "example": {
+   "en": "One million shares of a ¥6 stock is ¥6m; of a ¥600 stock it is ¥600m. Same share count, a hundred times the money.",
+   "zh": "100 万股 6 元的股票是 600 万元，100 万股 600 元的股票是 6 亿元。股数相同，资金差了一百倍。"
+  }
+ },
+ {
+  "id": "TOR",
+  "cat": "price_volume",
+  "name": {
+   "en": "Turnover Ratio (TOR)",
+   "zh": "换手率（TOR）"
+  },
+  "score": 7,
+  "formula": {
+   "en": "TOR = V / free-float shares × 100\nMATOR = SMA(TOR, 5)",
+   "zh": "换手率 = V / 流通股本 × 100\nMATOR = SMA(换手率, 5)"
+  },
+  "principle": {
+   "en": "The percentage of a company's tradable shares that changed hands. It puts every stock on the same attention scale: under 1% a day is dormant, above 15% is a frenzy.",
+   "zh": "成交量占流通股的百分比，让所有股票的热度用同一把尺子衡量：日换手低于 1% 是冷门，超过 15% 是过热。"
+  },
+  "example": {
+   "en": "A stock idles at 0.8% daily turnover for four months, then trades 6–9% for three days as it breaks out. About a quarter of the float changed hands — new owners arrived.",
+   "zh": "一只股票四个月日换手只有 0.8%，突破时连续三天换手 6–9%，约四分之一的流通盘易手——新主力进场了。"
+  }
+ },
+ {
+  "id": "VOLTDX",
+  "cat": "price_volume",
+  "name": {
+   "en": "Virtual Volume (VOLTDX)",
+   "zh": "虚拟成交量（VOLTDX）"
+  },
+  "score": 3,
+  "formula": {
+   "en": "VVOL = V so far × (T + 3) / (t + 3)\nT = minutes in the session, t = minutes elapsed\nOn a closed bar, VVOL = V",
+   "zh": "虚拟量 = 当前累计量 × (T + 3) / (t + 3)\nT = 全天交易分钟数，t = 已过分钟数\n已收盘 K 线上，虚拟量 = V"
+  },
+  "principle": {
+   "en": "A live estimate of today's full volume, extrapolated from the pace so far. Once the bar closes it simply equals actual volume.",
+   "zh": "按目前成交节奏推算今天全天成交量的实时估计。K 线收盘后，它就等于实际成交量。"
+  },
+  "example": {
+   "en": "At 10:15 a stock breaks a three-month high with 620k shares traded. Projected: 620k × 243 / 108 ≈ 1.4m, matching the 10-day average — so far, not a heavy breakout.",
+   "zh": "10:15 一只股票突破三个月高点，已成交 62 万股，推算全天 62 万 × 243 / 108 ≈ 140 万，只和 10 日均量持平，目前算不上放量突破。"
+  }
+ },
+ {
+  "id": "PER",
+  "cat": "price_volume",
+  "name": {
+   "en": "Price/Earnings Ratio (P/E)",
+   "zh": "市盈率（P/E）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "P/E = price / earnings per share\nTrailing: last four quarters of EPS\nForward: next twelve months estimated EPS\nEarnings yield = 1 / P/E",
+   "zh": "市盈率 = 股价 / 每股收益\n滚动市盈率：最近四个季度的每股收益\n预期市盈率：未来十二个月的预测每股收益\n盈利收益率 = 1 / 市盈率"
+  },
+  "principle": {
+   "en": "How many years of current earnings you pay for one share. On a chart it is most useful to see where today's price sits within the range investors have paid for this company before.",
+   "zh": "买一股相当于付了多少年的当前利润。在图上，最有用的是看今天的价格处在这家公司历史估值区间的什么位置。"
+  },
+  "example": {
+   "en": "A quality company has traded between 18× and 32× earnings for six years. A breakout at 34× is technically real, but you're paying more than anyone has before.",
+   "zh": "一家优质公司六年来市盈率在 18 到 32 倍之间。在 34 倍时出现突破，技术上成立，但你付的价格比以往任何时候都贵。"
+  }
+ },
+ {
+  "id": "OBV",
+  "cat": "price_volume",
+  "name": {
+   "en": "On-Balance Volume (OBV)",
+   "zh": "能量潮（OBV）"
+  },
+  "score": 8,
+  "formula": {
+   "en": "VA = +V if C > C₋₁, −V if C < C₋₁, 0 otherwise\nOBV = running sum of VA\nOBVMA = SMA(OBV, 30)",
+   "zh": "VA = C > C₋₁ 时为 +V，C < C₋₁ 时为 −V，否则为 0\nOBV = VA 的累计和\nOBVMA = SMA(OBV, 30)"
+  },
+  "principle": {
+   "en": "Adds volume on up days and subtracts it on down days, keeping a running total. The level itself is arbitrary; its slope shows which side volume has been voting for.",
+   "zh": "上涨日加上成交量，下跌日减去成交量，持续累计。数值本身没有意义，斜率显示成交量一直在支持哪一方。"
+  },
+  "example": {
+   "en": "A stock chops between $18 and $19.50 for eleven weeks while OBV climbs to a new high. Buyers are accumulating quietly — a breakout often follows.",
+   "zh": "一只股票在 18–19.5 美元震荡了 11 周，OBV 却持续攀升创新高。资金在悄悄吸筹，随后往往会向上突破。"
+  }
+ },
+ {
+  "id": "VWAP",
+  "cat": "price_volume",
+  "name": {
+   "en": "Volume Weighted Average Price (VWAP)",
+   "zh": "成交量加权平均价（VWAP）"
+  },
+  "score": 9,
+  "formula": {
+   "en": "TP = (H + L + C) / 3\nVWAP = Σ(TP × V) / ΣV   (summed from the anchor bar)",
+   "zh": "TP =（最高 + 最低 + 收盘）/ 3\nVWAP = Σ(TP × V) / ΣV （从锚点起累计）"
+  },
+  "principle": {
+   "en": "The average price actually paid per share since the anchor, so heavy-volume bars count more. Big trading desks are judged against it, which is why price often bounces off it.",
+   "zh": "自锚点以来每股的平均成交价，成交越大的K线权重越高。机构交易台以它为考核基准，所以价格常在它附近获得支撑或遇到压力。"
+  },
+  "example": {
+   "en": "A stock gaps down, then climbs back above VWAP at $46.20 and holds. Buyers have taken control for the day; a pullback that holds $46.20 is a typical entry.",
+   "zh": "某股低开后重新站上46.20元的VWAP并守住，说明当天买方占了上风；回踩不破46.20元就是常见的买点。"
+  }
+ },
+ {
+  "id": "VWAP_BAND",
+  "cat": "price_volume",
+  "name": {
+   "en": "VWAP Bands",
+   "zh": "成交量加权均价通道"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "VWAP = Σ(TP × V) / ΣV\nσ = StdDev(TP, 20)\nUpper k = VWAP + k·σ,  Lower k = VWAP − k·σ   (k = 1, 2)",
+   "zh": "VWAP = Σ(TP × V) / ΣV\nσ = TP 的20周期标准差\n上轨k = VWAP + k·σ，下轨k = VWAP − k·σ（k = 1, 2）"
+  },
+  "principle": {
+   "en": "Bollinger-style bands drawn around VWAP instead of a moving average. The bands show how far price has stretched from what traders actually paid, measured in standard deviations.",
+   "zh": "类似布林带，但中轨换成VWAP。上下轨表示价格偏离市场平均成本有多远，以标准差为单位。"
+  },
+  "example": {
+   "en": "On a range day the index twice pushes to the +2σ band at 5,204 and closes back inside on falling volume. Fading that second failure back toward VWAP is the classic trade.",
+   "zh": "震荡日里指数两次冲到+2σ上轨5204点，又缩量收回轨内；第二次失败时做空、目标回到VWAP，是典型用法。"
+  }
+ },
+ {
+  "id": "EFI",
+  "cat": "price_volume",
+  "name": {
+   "en": "Elder's Force Index (EFI)",
+   "zh": "艾尔德力度指标（EFI）"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "raw = (C − C₋₁) × V\nEFI = EMA(raw, n)   (n = 13 trend, n = 2 timing)",
+   "zh": "原始值 =（收盘 − 昨收）× 成交量\nEFI = EMA(原始值, n)（n = 13 看趋势，n = 2 找时机）"
+  },
+  "principle": {
+   "en": "Price change times volume: how far price moved and how many shares pushed it. Above zero means buyers have the force; below zero, sellers.",
+   "zh": "价格涨跌幅乘以成交量，同时衡量“走了多远”和“多少人在推”。在零轴上方说明买方有力，下方则是卖方占优。"
+  },
+  "example": {
+   "en": "A stock in an uptrend pulls back on light volume. EFI(2) dips deeply negative, then turns up as price stops falling — a common buy-the-dip signal.",
+   "zh": "上升趋势中的股票缩量回调，EFI(2)跌到很深的负值后拐头向上、价格止跌，这是常见的回调买入信号。"
+  }
+ },
+ {
+  "id": "KO",
+  "cat": "price_volume",
+  "name": {
+   "en": "Klinger Oscillator (KVO)",
+   "zh": "克林格成交量摆动指标"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "VF = +V if TP ≥ TP₋₁, else −V\nKVO = EMA(VF, 34) − EMA(VF, 55)\nSignal = EMA(KVO, 13)",
+   "zh": "量力VF = TP ≥ 前一TP 时取 +V，否则取 −V\nKVO = EMA(VF, 34) − EMA(VF, 55)\n信号线 = EMA(KVO, 13)"
+  },
+  "principle": {
+   "en": "Basically MACD applied to volume that is signed up or down by the bar's direction. It tracks whether buying or selling volume is gaining momentum.",
+   "zh": "相当于把MACD用在“带方向的成交量”上：上涨K线的量记正，下跌记负，看买卖量能哪一方在加速。"
+  },
+  "example": {
+   "en": "An index makes a new low 4% below the last one, but KVO's dip is only half as deep. Less selling volume drove the new low, hinting the decline is tiring.",
+   "zh": "指数创出比前低再低4%的新低，但KVO的低点只有上次一半深，说明新低的卖压更小，下跌可能接近尾声。"
+  }
+ },
+ {
+  "id": "WVAD",
+  "cat": "price_volume",
+  "name": {
+   "en": "Williams' Variable Accumulation Distribution (WVAD)",
+   "zh": "威廉变异离散量（WVAD）"
+  },
+  "score": 4,
+  "formula": {
+   "en": "WVAD = (C − O) / (H − L) × V",
+   "zh": "WVAD =（收盘 − 开盘）/（最高 − 最低）× 成交量"
+  },
+  "principle": {
+   "en": "Measures how decisively each bar was won: the candle body as a share of its range, scaled by volume. A strong close on big volume scores high; an indecisive bar scores near zero.",
+   "zh": "衡量每根K线谁赢得更彻底：实体占振幅的比例乘以成交量。放量收在高位得分高，十字星则接近零。"
+  },
+  "example": {
+   "en": "During a quiet base, seven sessions open weak, close strong and post large positive WVAD readings. That cluster suggests someone is quietly buying.",
+   "zh": "横盘整理期间有七天都是低开高走、WVAD大幅为正，这种扎堆出现的信号暗示有人在悄悄吸筹。"
+  }
+ },
+ {
+  "id": "CR",
+  "cat": "price_volume",
+  "name": {
+   "en": "CR Indicator",
+   "zh": "CR 中间意愿指标"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "MID = previous bar's (H + L + C) / 3\nCR = Σ max(0, H − MID) / Σ max(0, MID − L) × 100   (n = 26)",
+   "zh": "中间价MID = 前一根K线的（最高 + 最低 + 收盘）/ 3\nCR = Σ max(0, 最高 − MID) / Σ max(0, MID − 最低) × 100（n = 26）"
+  },
+  "principle": {
+   "en": "Compares how far price reached above the previous bar's midpoint with how far it reached below, over 26 bars. Above 100 means buyers have been pushing harder than sellers.",
+   "zh": "比较26根K线里价格高于前一根中间价的幅度和低于它的幅度。高于100说明买方推得比卖方更远。"
+  },
+  "example": {
+   "en": "After a sharp two-week sell-off, CR sits at 38, an 18-month low. Almost every bar has been probing down, a deeply depressed reading that often precedes a rebound.",
+   "zh": "急跌两周后CR只有38，创18个月新低，几乎每天都在向下试探。这种极度低迷的读数常出现在反弹之前。"
+  }
+ },
+ {
+  "id": "ARBR",
+  "cat": "price_volume",
+  "name": {
+   "en": "AR / BR Sentiment Indicator",
+   "zh": "人气意愿指标（AR / BR）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "AR = Σ(H − O) / Σ(O − L) × 100\nBR = Σ max(0, H − C₋₁) / Σ max(0, C₋₁ − L) × 100   (n = 26)",
+   "zh": "AR = Σ(最高 − 开盘) / Σ(开盘 − 最低) × 100\nBR = Σ max(0, 最高 − 昨收) / Σ max(0, 昨收 − 最低) × 100（n = 26）"
+  },
+  "principle": {
+   "en": "AR measures intraday buying energy from the open; BR measures it from yesterday's close, so it also includes the overnight gap. The gap between the two shows how much the crowd is chasing.",
+   "zh": "AR以开盘价为基准，衡量盘中人气；BR以昨收为基准，把隔夜跳空也算进去。两者的差距反映大家追高的程度。"
+  },
+  "example": {
+   "en": "Late in a speculative run, BR soars from 180 to 430 while AR stays near 195. Every day gaps up and gets sold, a classic sign of a blow-off top.",
+   "zh": "投机行情末段，BR从180飙到430，AR却只有195左右：天天高开后被卖，是典型的冲顶信号。"
+  }
+ },
+ {
+  "id": "PSY",
+  "cat": "price_volume",
+  "name": {
+   "en": "Psychological Line (PSY)",
+   "zh": "心理线（PSY）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "PSY = (up closes in last 12 bars) / 12 × 100\nPSYMA = SMA(PSY, 6)",
+   "zh": "PSY = 最近12根中收涨的根数 / 12 × 100\nPSYMA = SMA(PSY, 6)"
+  },
+  "principle": {
+   "en": "Simply the percentage of recent days that closed up. It ignores how big the moves were, assuming crowd mood follows how often the market has gone up.",
+   "zh": "就是最近收涨天数的占比，不管涨跌幅多大。思路是：人群情绪取决于市场最近“涨了几次”。"
+  },
+  "example": {
+   "en": "An index in a four-month range rallies to the top with 11 up days out of 12 (PSY 91.7). Such streaks are rare and the index often slips back.",
+   "zh": "震荡四个月的指数涨到区间上沿，12天里涨了11天（PSY 91.7）。这种连涨很少见，之后往往会回落。"
+  }
+ },
+ {
+  "id": "VR",
+  "cat": "price_volume",
+  "name": {
+   "en": "Volume Ratio (VR)",
+   "zh": "成交量比率（VR）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "VR = 100 × (2·Up volume + Flat volume) / (2·Down volume + Flat volume)   (n = 26)\nVRMA = SMA(VR, 6)",
+   "zh": "VR = 100 ×（2·上涨日成交量 + 平盘日成交量）/（2·下跌日成交量 + 平盘日成交量）（n = 26）\nVRMA = SMA(VR, 6)"
+  },
+  "principle": {
+   "en": "Volume on up days divided by volume on down days over 26 days. VR 150 means 50% more volume traded on up days than on down days.",
+   "zh": "26天内上涨日成交量除以下跌日成交量。VR为150表示上涨日的成交量比下跌日多50%。"
+  },
+  "example": {
+   "en": "A stock down 45% makes a lower low, yet VR rises from 44 to 71 because the second drop came on half the volume. Selling is drying up.",
+   "zh": "某股累计跌45%后再创新低，但VR从44升到71，因为第二次下跌只有一半的量，说明抛压正在枯竭。"
+  }
+ },
+ {
+  "id": "CYC",
+  "cat": "price_volume",
+  "name": {
+   "en": "Cost Average Lines (CYC)",
+   "zh": "成本均线（CYC）"
+  },
+  "score": 6,
+  "formula": {
+   "en": "A = turnover per bar ≈ TP × V\nCYC(k) = EMA(A, k) / EMA(V, k)   (k = 5, 13, 34)\nCYC∞ updates by the daily turnover rate of the float",
+   "zh": "成交额A ≈ TP × V\nCYC(k) = EMA(A, k) / EMA(V, k)（k = 5, 13, 34）\nCYC∞ 按流通股每日换手率逐步更新"
+  },
+  "principle": {
+   "en": "Lines of average cost rather than average price: what buyers actually paid over the last k bars. Price above the lines means recent holders are in profit; below means they are trapped.",
+   "zh": "画的是平均成本而不是平均价格，即最近k根K线买家实际付出的均价。价格在线上方说明近期持有者赚钱，下方则被套。"
+  },
+  "example": {
+   "en": "A stock falls from 32 to 19, then bases for five months while CYC∞ grinds down from 27 to 21.4. High-cost holders have been replaced, so a breakout above it faces little supply.",
+   "zh": "某股从32元跌到19元后横盘五个月，CYC∞从27降到21.4，高成本筹码已换手，之后突破时上方抛压很小。"
+  }
+ },
+ {
+  "id": "CAPITALINFLOW",
+  "cat": "money_flow",
+  "name": {
+   "en": "Capital Inflow",
+   "zh": "资金净流入"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "side = +1 buyer-initiated, −1 seller-initiated\nInflow = Σ side × price × size   (all order sizes)\nCumulative = running sum of daily inflow",
+   "zh": "方向 = 主动买入 +1，主动卖出 −1\n净流入 = Σ 方向 × 价格 × 数量（全部单量档位）\n累计值 = 每日净流入的累加"
+  },
+  "principle": {
+   "en": "Buyer-initiated minus seller-initiated money traded. It shows which side was more impatient, not real money entering, since every share bought is also sold.",
+   "zh": "主动买入金额减去主动卖出金额。它反映哪一方更急，而不是真有钱“流进来”——每笔买入都对应一笔卖出。"
+  },
+  "example": {
+   "en": "A stock sits in a 3% box for five weeks while the cumulative inflow line climbs steadily. Someone keeps lifting offers, which often precedes an upside breakout.",
+   "zh": "某股五周都在3%的箱体里横盘，累计净流入却稳步上升，说明有人一直在主动买，常是向上突破的前兆。"
+  }
+ },
+ {
+  "id": "ORDERINFLOW_XL",
+  "cat": "money_flow",
+  "name": {
+   "en": "Extra Large Order Inflow",
+   "zh": "特大单净流入"
+  },
+  "score": 6,
+  "formula": {
+   "en": "XL inflow = Σ side × price × size   (only prints ≥ about ¥1m)\nXL% = XL inflow / total turnover",
+   "zh": "特大单净流入 = Σ 方向 × 价格 × 数量（仅限约100万元以上的成交）\n占比 = 特大单净流入 / 当日总成交额"
+  },
+  "principle": {
+   "en": "Net aggressive buying in only the very largest trades, used as a hint of institutional activity. It is most useful when it disagrees with small-order flow.",
+   "zh": "只统计最大一档成交的主动买卖差，被视作机构动向的线索。它和小单资金方向相反时最有参考价值。"
+  },
+  "example": {
+   "en": "A stock drops 12% in five days. Small orders sell every day while extra-large orders net buy ¥450m. Retail is capitulating and a big player is absorbing it.",
+   "zh": "某股五天跌12%，小单天天净卖出，特大单却累计净买入4.5亿元：散户在割肉，大资金在承接。"
+  }
+ },
+ {
+  "id": "ORDERINFLOW_L",
+  "cat": "money_flow",
+  "name": {
+   "en": "Large Order Inflow",
+   "zh": "大单净流入"
+  },
+  "score": 5,
+  "formula": {
+   "en": "L inflow = Σ side × price × size   (prints of about ¥200k–¥1m)",
+   "zh": "大单净流入 = Σ 方向 × 价格 × 数量（单笔约20万至100万元）"
+  },
+  "principle": {
+   "en": "Net aggressive buying in the size band just below the biggest trades. Institutions slice big orders into pieces of about this size, so it is often a truer read of fund activity than extra-large orders.",
+   "zh": "统计仅次于特大单那一档的主动买卖差。机构常把大单拆成这种尺寸分批成交，所以它往往比特大单更能反映机构动向。"
+  },
+  "example": {
+   "en": "A stock shows one huge extra-large buy day. If large-order inflow then stays positive for eight of ten sessions, it is a real buying campaign, not a one-off block.",
+   "zh": "某股某天出现巨额特大单买入。如果之后十天里有八天大单都是净流入，那才是持续建仓，而不是一次性的大宗交易。"
+  }
+ },
+ {
+  "id": "ORDERINFLOW_M",
+  "cat": "money_flow",
+  "name": {
+   "en": "Medium Order Inflow",
+   "zh": "中单净流入"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "M inflow = Σ side × price × size   (prints of about ¥40k–¥200k)",
+   "zh": "中单净流入 = Σ 方向 × 价格 × 数量（单笔约4万至20万元）"
+  },
+  "principle": {
+   "en": "Net aggressive buying in the middle size band. It mixes larger retail, small funds and sliced algorithm orders, so on its own it says little.",
+   "zh": "中间档位的主动买卖差。这里混着大户、小基金和算法拆单，成分说不清，单独看意义不大。"
+  },
+  "example": {
+   "en": "After a 30% run, extra-large, large and medium orders all net sell for two weeks while only small orders buy. Selling is broad, not just one group.",
+   "zh": "某股大涨30%后两周，特大单、大单、中单都在净卖出，只有小单在买，说明卖出是普遍行为，并非某一类人。"
+  }
+ },
+ {
+  "id": "ORDERINFLOW_S",
+  "cat": "money_flow",
+  "name": {
+   "en": "Small Order Inflow",
+   "zh": "小单净流入"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "S inflow = Σ side × price × size   (prints under about ¥40k)",
+   "zh": "小单净流入 = Σ 方向 × 价格 × 数量（单笔约4万元以下）"
+  },
+  "principle": {
+   "en": "Net aggressive buying in the smallest trades, traditionally read as the retail crowd. Retail tends to chase late, so it is used as a contrarian signal.",
+   "zh": "最小档位的主动买卖差，传统上代表散户。散户往往追得晚，所以常被当作反向指标。"
+  },
+  "example": {
+   "en": "A small-cap is up 45% in seven weeks. Over ten days small orders net buy ¥190m while extra-large orders net sell ¥260m. Shares are passing from early to late buyers — a likely top.",
+   "zh": "某小盘股七周涨45%，近十天小单净买1.9亿元、特大单净卖2.6亿元，筹码从先知先觉者流向后知后觉者，很可能见顶。"
+  }
+ },
+ {
+  "id": "OPENINTEREST",
+  "cat": "money_flow",
+  "name": {
+   "en": "Futures Open Interest",
+   "zh": "期货持仓量"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "OI = contracts still open after settlement (longs = shorts)\nPrice ↑ OI ↑ new longs · Price ↑ OI ↓ short covering\nPrice ↓ OI ↑ new shorts · Price ↓ OI ↓ long liquidation",
+   "zh": "持仓量 = 结算后仍未平仓的合约数（多头 = 空头）\n价涨仓增：新多入场 · 价涨仓减：空头回补\n价跌仓增：新空入场 · 价跌仓减：多头离场"
+  },
+  "principle": {
+   "en": "How many futures contracts are still open, not how many traded. It only rises when new money commits on both sides, so it tells you whether a move is backed by fresh positions.",
+   "zh": "仍未平仓的期货合约数量，而不是成交了多少。只有多空双方都有新资金进场时它才会增加，所以能看出行情是否有新仓位支撑。"
+  },
+  "example": {
+   "en": "A commodity rises 9% in three weeks while open interest falls from 340k to 265k lots. The rally is shorts buying back, and it fades once they are done.",
+   "zh": "某商品三周涨9%，持仓却从34万手降到26.5万手。这波上涨是空头回补，回补结束后行情就容易熄火。"
+  }
+ },
+ {
+  "id": "POSITIONCHANGE",
+  "cat": "money_flow",
+  "name": {
+   "en": "Futures Daily Open Interest Change",
+   "zh": "期货日增仓"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "ΔOI = OI today − OI yesterday\n> 0 positions opened, < 0 positions closed",
+   "zh": "日增仓 = 今日持仓量 − 昨日持仓量\n大于0为增仓，小于0为减仓"
+  },
+  "principle": {
+   "en": "The daily change in open interest. Paired with the day's price move, it tells you whether money committed or withdrew today and which side did it.",
+   "zh": "持仓量的每日变化。结合当天涨跌，就能判断今天是资金进场还是离场、是多方还是空方在动。"
+  },
+  "example": {
+   "en": "A sideways contract suddenly adds 18k, 23k and 15k lots on three straight up days. Someone is building a long position with conviction.",
+   "zh": "某合约横盘一个月后，连续三天上涨分别增仓1.8万、2.3万、1.5万手，说明有人在坚决建立多头仓位。"
+  }
+ },
+ {
+  "id": "OPT_OI",
+  "cat": "price_volume",
+  "name": {
+   "en": "Options Open Interest",
+   "zh": "期权未平仓合约数"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "Options OI = Σ (call OI + put OI) over all strikes and expiries",
+   "zh": "期权持仓量 = Σ（看涨持仓 + 看跌持仓），覆盖所有行权价和到期日"
+  },
+  "principle": {
+   "en": "Total options contracts still open on a stock. It shows how much hedging and speculation has piled up; big clusters at a few strikes can pin price near expiry.",
+   "zh": "某标的所有未平仓的期权合约总数，反映堆积了多少对冲和投机仓位。若集中在少数行权价，临近到期时价格容易被“钉住”。"
+  },
+  "example": {
+   "en": "Huge open interest sits at the ¥100 and ¥110 strikes with the stock at ¥104. Dealer hedging tends to keep it between those strikes until expiry.",
+   "zh": "股价104元，期权持仓大量集中在100元和110元两个行权价，做市商的对冲操作往往会把股价困在这两者之间直到到期。"
+  }
+ },
+ {
+  "id": "OPT_VOL",
+  "cat": "price_volume",
+  "name": {
+   "en": "Options Volume",
+   "zh": "期权成交量"
+  },
+  "score": 5,
+  "formula": {
+   "en": "Options volume = Σ (call vol + put vol) traded today\nRelative volume = today / 20-day average",
+   "zh": "期权成交量 = 当日 Σ（看涨成交 + 看跌成交）\n相对成交量 = 当日 / 20日均值"
+  },
+  "principle": {
+   "en": "How many option contracts traded today. Leverage makes options the quickest way to bet, so unusual options activity often shows up before the stock moves.",
+   "zh": "当天期权成交了多少张。期权有杠杆，是下注最快的方式，所以异常的期权成交常常领先于股价变动。"
+  },
+  "example": {
+   "en": "A mid-cap that usually trades 4,000 contracts suddenly trades 31,000 while the stock barely moves. Two days later it announces a deal.",
+   "zh": "一只平时日成交4000张期权的中盘股突然成交3.1万张，股价却几乎没动；两天后公司宣布了一项交易。"
+  }
+ },
+ {
+  "id": "OPT_OIPCR",
+  "cat": "price_volume",
+  "name": {
+   "en": "Open Interest Put/Call Ratio",
+   "zh": "未平仓量看跌看涨比"
+  },
+  "score": 6,
+  "formula": {
+   "en": "OI PCR = Σ put open interest / Σ call open interest",
+   "zh": "持仓PCR = Σ 看跌期权持仓 / Σ 看涨期权持仓"
+  },
+  "principle": {
+   "en": "Open puts divided by open calls. It shows how defensive the accumulated options book is. Compare it to its own history; each stock has a different normal level.",
+   "zh": "未平仓看跌期权除以看涨期权，反映累积仓位有多防御。要和它自身历史比较，每个标的的“正常值”都不一样。"
+  },
+  "example": {
+   "en": "After a 14% fall, an index's OI put/call ratio rises from 1.15 to 1.62, a two-year high. Hedging is crowded, so a sharp short-covering bounce becomes more likely.",
+   "zh": "指数下跌14%后，持仓PCR从1.15升到1.62，创两年新高。对冲已经很拥挤，出现急速反弹的可能性变大。"
+  }
+ },
+ {
+  "id": "OPT_VOLPCR",
+  "cat": "price_volume",
+  "name": {
+   "en": "Volume Put/Call Ratio",
+   "zh": "成交量看跌看涨比"
+  },
+  "score": 7,
+  "formula": {
+   "en": "Volume PCR = Σ put volume / Σ call volume   (today)\nSmoothed = SMA(PCR, 5 or 10)",
+   "zh": "成交PCR = 当日 Σ 看跌成交量 / Σ 看涨成交量\n平滑值 = PCR 的5日或10日均线"
+  },
+  "principle": {
+   "en": "Puts traded divided by calls traded today, a fast fear-and-greed gauge. It is read as a contrarian signal: extreme put buying often marks panic near a low.",
+   "zh": "当天看跌期权成交除以看涨期权成交，是反应很快的恐慌贪婪指标。通常反向解读：极端买入看跌期权常出现在恐慌低点附近。"
+  },
+  "example": {
+   "en": "An index falls 11% in three weeks and the 10-day PCR jumps from 0.85 to 1.35, a two-year high. Fear is crowded, and a rebound often follows.",
+   "zh": "指数三周跌11%，10日均PCR从0.85升到1.35，创两年新高。恐慌情绪拥挤，随后常出现反弹。"
+  }
+ },
+ {
+  "id": "ADD_SPX",
+  "cat": "breadth",
+  "name": {
+   "en": "Advance/Decline Spread (S&P 500)",
+   "zh": "涨跌家数差（标普 500）"
+  },
+  "score": 7,
+  "formula": {
+   "en": "ADD = advancers − decliners   (S&P 500 members)\nA/D line = cumulative sum of ADD",
+   "zh": "ADD = 上涨家数 − 下跌家数（标普500成分股）\n腾落线 = ADD 的累计和"
+  },
+  "principle": {
+   "en": "How many S&P 500 stocks rose minus how many fell. Each stock gets one vote regardless of size, so it shows whether a move is broad or carried by a few giants.",
+   "zh": "标普500里上涨家数减下跌家数。不论市值大小每只一票，可以看出行情是普涨还是靠少数巨头撑着。"
+  },
+  "example": {
+   "en": "With the index 14% off its high, three straight days print +415, +388 and +432. Over 85% of stocks rising together is a breadth thrust that often starts a new rally.",
+   "zh": "指数距高点跌14%后，连续三天读数为+415、+388、+432，超过85%的股票同时上涨，这种宽度推力常开启新一轮上涨。"
+  }
+ },
+ {
+  "id": "ADD_IXIC",
+  "cat": "breadth",
+  "name": {
+   "en": "Advance/Decline Spread (NASDAQ Composite)",
+   "zh": "涨跌家数差（纳斯达克综合指数）"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "ADD = advancers − decliners   (all NASDAQ listings)\nNormalised = ADD / (advancers + decliners)",
+   "zh": "ADD = 上涨家数 − 下跌家数（全部纳斯达克上市公司）\n标准化 = ADD /（上涨家数 + 下跌家数）"
+  },
+  "principle": {
+   "en": "Net advancers across about 3,300 NASDAQ listings. A few mega-caps drive the index while thousands of small names drive this count, so the two often diverge.",
+   "zh": "约3300家纳斯达克公司的涨跌家数差。指数由少数巨头决定，这个数字却由成千上万的小公司决定，所以两者常常背离。"
+  },
+  "example": {
+   "en": "In 2021 the index kept making highs into November, but the A/D spread had been mostly negative since February. The typical stock was already falling — a warning ahead of the top.",
+   "zh": "2021年指数一路新高到11月，但涨跌家数差从2月起就大多为负，普通股票早已在下跌，这是见顶前的预警。"
+  }
+ },
+ {
+  "id": "ADD_DJI",
+  "cat": "breadth",
+  "name": {
+   "en": "Advance/Decline Spread (Dow Jones)",
+   "zh": "涨跌家数差（道琼斯工业平均指数）"
+  },
+  "score": 3,
+  "formula": {
+   "en": "ADD = advancers − decliners   (30 Dow members, range −30 to +30)",
+   "zh": "ADD = 上涨家数 − 下跌家数（道指30只成分股，范围 −30 至 +30）"
+  },
+  "principle": {
+   "en": "Net advancers among just 30 Dow stocks. With so few names it reveals little breadth; it mainly helps explain moves, since the Dow is weighted by share price.",
+   "zh": "道指30只成分股的涨跌家数差。样本太少，很难反映市场宽度；因为道指按股价加权，它主要用来拆解指数涨跌。"
+  },
+  "example": {
+   "en": "The Dow falls 220 points but 24 of 30 stocks rose. The six losers must include the highest-priced names, so a couple of expensive stocks caused the drop.",
+   "zh": "道指跌220点，但30只里有24只上涨。那6只下跌的必然包括股价最高的几只，说明是少数高价股拖累了指数。"
+  }
+ },
+ {
+  "id": "ADD_HSI",
+  "cat": "breadth",
+  "name": {
+   "en": "Advance/Decline Spread (Hang Seng Index)",
+   "zh": "涨跌家数差（恒生指数）"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "ADD = advancers − decliners   (about 82 HSI members)",
+   "zh": "ADD = 上涨家数 − 下跌家数（恒指约82只成分股）"
+  },
+  "principle": {
+   "en": "Net advancers in the Hang Seng. The index is two blocs, old-economy banks and property versus China internet, which often move in opposite directions; this count shows whether both joined in.",
+   "zh": "恒指成分股的涨跌家数差。恒指其实是两大板块——银行地产等旧经济和中概互联网，常反向走；这个数字能看出两边是否一起动。"
+  },
+  "example": {
+   "en": "A stimulus headline lifts the HSI 1.8%, but the spread is only +6. Only the China-internet names rallied, and such one-sided moves are often given back.",
+   "zh": "一条刺激政策消息让恒指涨1.8%，涨跌家数差却只有+6。只有互联网股在涨，这种单边行情常会回吐。"
+  }
+ },
+ {
+  "id": "ADD_HSTECH",
+  "cat": "breadth",
+  "name": {
+   "en": "Advance/Decline Spread (Hang Seng TECH)",
+   "zh": "涨跌家数差（恒生科技指数）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "ADD = advancers − decliners   (30 members, range −30 to +30)",
+   "zh": "ADD = 上涨家数 − 下跌家数（30只成分股，范围 −30 至 +30）"
+  },
+  "principle": {
+   "en": "Net advancers among 30 China-tech names that all react to the same news, so readings are usually near ±26. Only the rare narrow day is informative.",
+   "zh": "30只中概科技股的涨跌家数差。它们受同一类消息驱动，读数通常接近±26，只有少见的“窄幅”日子才有信息量。"
+  },
+  "example": {
+   "en": "HSTECH gaps up 3.2% but the spread is only +8. A few heavyweights carried the gap while 11 names fell, so fading it is the classic trade.",
+   "zh": "恒生科技指数高开3.2%，涨跌家数差却只有+8，靠几只权重股撑着、另有11只在跌，此时逢高做空是经典做法。"
+  }
+ },
+ {
+  "id": "ADR_IXIC",
+  "cat": "breadth",
+  "name": {
+   "en": "Advance/Decline Ratio (NASDAQ Composite)",
+   "zh": "涨跌比率（纳斯达克综合指数）"
+  },
+  "score": 5.8,
+  "formula": {
+   "en": "ADR = advancers / decliners   (all NASDAQ listings)",
+   "zh": "ADR = 上涨家数 / 下跌家数（全部纳斯达克上市公司）"
+  },
+  "principle": {
+   "en": "Advancers divided by decliners. As a ratio it is unaffected by how many companies are listed, so today's reading can be compared with any past year.",
+   "zh": "上涨家数除以下跌家数。比率不受上市公司数量变化影响，所以今天的读数可以和任何年份直接比较。"
+  },
+  "example": {
+   "en": "In a washout the ratio prints 0.13: about 350 stocks up against 2,700 down. Readings that low are rare and tend to cluster near major lows.",
+   "zh": "恐慌杀跌日比率只有0.13，约350家上涨、2700家下跌。这么低的读数很少见，往往出现在重要低点附近。"
+  }
+ },
+ {
+  "id": "ADR_DJI",
+  "cat": "breadth",
+  "name": {
+   "en": "Advance/Decline Ratio (Dow Jones)",
+   "zh": "涨跌比率（道琼斯工业平均指数）"
+  },
+  "score": 2.5,
+  "formula": {
+   "en": "ADR = advancers / decliners   (30 Dow members)",
+   "zh": "ADR = 上涨家数 / 下跌家数（道指30只成分股）"
+  },
+  "principle": {
+   "en": "Advancers over decliners among only 30 stocks. The denominator is tiny, so the ratio jumps around and is undefined when nothing falls; it adds little beyond the spread.",
+   "zh": "只有30只股票的涨跌比。分母太小，数值跳动剧烈，全涨时甚至无法计算，比涨跌家数差多不了什么信息。"
+  },
+  "example": {
+   "en": "The ratio reads 0.5 (10 up, 20 down) yet the Dow rises. Only the highest-priced members can outweigh a 2-to-1 majority, so a few expensive stocks drove the day.",
+   "zh": "比率0.5（10涨20跌）道指却上涨，只有股价最高的几只才能压过二比一的多数，说明是少数高价股撑起了指数。"
+  }
+ },
+ {
+  "id": "ADR_HSI",
+  "cat": "breadth",
+  "name": {
+   "en": "Advance/Decline Ratio (Hang Seng Index)",
+   "zh": "涨跌比率（恒生指数）"
+  },
+  "score": 5,
+  "formula": {
+   "en": "ADR = advancers / decliners   (about 82 HSI members, unchanged excluded)",
+   "zh": "ADR = 上涨家数 / 下跌家数（恒指约82只成分股，平盘不计）"
+  },
+  "principle": {
+   "en": "Advancers over decliners in the Hang Seng. The index grew from 50 to 82 members in 2020–2023, and only a ratio stays comparable across that change.",
+   "zh": "恒指成分股的涨跌比。恒指在2020至2023年间从50只扩到82只，只有比率能跨越这次扩容保持可比。"
+  },
+  "example": {
+   "en": "To compare participation in the 2024 rally with 2018, the spread fails because the member count changed. A ratio of 3.0 means the same 3-to-1 split in both years.",
+   "zh": "想比较2024年和2018年反弹的参与度，涨跌家数差因成分股数量变了而失效；比率3.0在两个年份都代表三比一。"
+  }
+ },
+ {
+  "id": "ADR_HSTECH",
+  "cat": "breadth",
+  "name": {
+   "en": "Advance/Decline Ratio (Hang Seng TECH)",
+   "zh": "涨跌比率（恒生科技指数）"
+  },
+  "score": 2.8,
+  "formula": {
+   "en": "ADR = advancers / decliners   (30 members)",
+   "zh": "ADR = 上涨家数 / 下跌家数（30只成分股）"
+  },
+  "principle": {
+   "en": "Advancers over decliners among 30 China-tech names that move together. The ratio sits at extremes most days; only a middling reading carries real news.",
+   "zh": "30只同涨同跌的中概科技股的涨跌比，大多数日子都处在极端值，只有居中的读数才有真正的信息。"
+  },
+  "example": {
+   "en": "Day one gaps up 4% with a ratio of 4.0. If day two adds just 0.5% and the ratio drops near 1, Hong Kong is not endorsing the overnight rally.",
+   "zh": "第一天高开4%、比率4.0；第二天只涨0.5%、比率回落到1左右，说明港股并不认可隔夜的上涨。"
+  }
+ },
+ {
+  "id": "MCL",
+  "cat": "breadth",
+  "name": {
+   "en": "McClellan Oscillator",
+   "zh": "麦克莱伦振荡器"
+  },
+  "score": 7,
+  "formula": {
+   "en": "DIF = advancers − decliners   (S&P 500)\nMCL = EMA(DIF, 19) − EMA(DIF, 39)\nSummation Index = Σ MCL",
+   "zh": "DIF = 上涨家数 − 下跌家数（标普500）\nMCL = EMA(DIF, 19) − EMA(DIF, 39)\n累计指数 = Σ MCL"
+  },
+  "principle": {
+   "en": "MACD applied to market breadth instead of price. It shows whether participation is speeding up or fading, which is a different question from whether the index is rising.",
+   "zh": "把MACD用在市场宽度而不是价格上，看参与上涨的股票是在增加还是减少，这和指数涨不涨是两回事。"
+  },
+  "example": {
+   "en": "With the S&P 15% off its high, the oscillator swings from −90 to +85 in nine days and stays positive for three weeks. Such breadth thrusts often mark a durable low.",
+   "zh": "标普距高点跌15%时，振荡器九天内从−90升到+85并在零上维持三周，这种宽度推力常标志着可靠的底部。"
+  }
+ },
+ {
+  "id": "SPX>MA200",
+  "cat": "breadth",
+  "name": {
+   "en": "% of S&P 500 Stocks Above 200-Day MA",
+   "zh": "标普 500 成分股站上 200 日均线占比"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "% = (members with Close > SMA(Close, 200)) / 500 × 100",
+   "zh": "占比 = 收盘价高于200日均线的成分股数 / 500 × 100"
+  },
+  "principle": {
+   "en": "The share of S&P 500 stocks above their own 200-day average — a headcount of stocks still in uptrends. It shows what the typical company is doing, not just the giants.",
+   "zh": "标普500里站上自身200日均线的股票占比，相当于数一数还有多少股票处于上升趋势，反映普通公司而非巨头的状况。"
+  },
+  "example": {
+   "en": "The index rises 6% in six months while this line slides from 76 to 44. Most stocks are quietly weakening behind a few mega-caps, a reason to cut risk.",
+   "zh": "指数半年涨6%，这条线却从76降到44，大部分股票在少数巨头身后悄悄走弱，是降低仓位的理由。"
+  }
+ },
+ {
+  "id": "NDX>MA200",
+  "cat": "breadth",
+  "name": {
+   "en": "% of Nasdaq 100 Stocks Above 200-Day MA",
+   "zh": "纳斯达克 100 成分股站上 200 日均线占比"
+  },
+  "score": 6,
+  "formula": {
+   "en": "% = (members with Close > SMA(Close, 200)) / 100 × 100",
+   "zh": "占比 = 收盘价高于200日均线的成分股数 / 100 × 100"
+  },
+  "principle": {
+   "en": "How many of the 100 Nasdaq 100 stocks are above their 200-day line. The index is very top-heavy, so the gap between this count and the index is the key signal.",
+   "zh": "纳斯达克100中站上200日均线的股票数。该指数极度头重脚轻，这个数字和指数走势之间的差距才是关键信号。"
+  },
+  "example": {
+   "en": "The index is flat for a quarter but the reading drops from 68 to 41. Two big winners are holding it up while most names roll over.",
+   "zh": "指数一个季度横盘，读数却从68降到41，说明两只大票撑住了指数，其余大部分股票在走弱。"
+  }
+ },
+ {
+  "id": "IXIC>MA200",
+  "cat": "breadth",
+  "name": {
+   "en": "% of NASDAQ Composite Stocks Above 200-Day MA",
+   "zh": "纳斯达克综合指数成分股站上 200 日均线占比"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "% = (listings with Close > SMA(Close, 200)) / about 3,000 × 100",
+   "zh": "占比 = 收盘价高于200日均线的公司数 / 约3000 × 100"
+  },
+  "principle": {
+   "en": "The 200-day headcount across about 3,000 NASDAQ listings, mostly small and unprofitable. Its normal level is well below 50, so compare it with its own history.",
+   "zh": "约3000家纳斯达克公司的200日均线统计，其中多数是小型、未盈利公司。正常水平远低于50，要和自身历史比较。"
+  },
+  "example": {
+   "en": "The Composite gains 12% in two quarters while this line falls from 48 to 26. Big names soak up the money and small caps starve — a sign of tight liquidity.",
+   "zh": "综合指数两个季度涨12%，这条线却从48跌到26：资金都涌向大公司，小公司融不到钱，说明流动性在收紧。"
+  }
+ },
+ {
+  "id": "DJI>MA200",
+  "cat": "breadth",
+  "name": {
+   "en": "% of Dow Stocks Above 200-Day MA",
+   "zh": "道琼斯工业指数成分股站上 200 日均线占比"
+  },
+  "score": 3,
+  "formula": {
+   "en": "% = (members with Close > SMA(Close, 200)) / 30 × 100",
+   "zh": "占比 = 收盘价高于200日均线的成分股数 / 30 × 100"
+  },
+  "principle": {
+   "en": "The same headcount for only 30 blue chips, so each stock moves the reading by 3.33 points. It measures agreement inside one basket, not the whole market.",
+   "zh": "同样的统计只用于30只蓝筹股，每只股票就占3.33个百分点。它衡量的是一个小篮子内部的一致性，而非整个市场。"
+  },
+  "example": {
+   "en": "S&P breadth recovers from 22 to 61. If the Dow count goes from 6 to 23 stocks at the same time, the recovery has reached old-economy sectors and looks real.",
+   "zh": "标普宽度从22回升到61，同时道指站上均线的股票从6只增到23只，说明复苏已扩散到传统行业，比较可信。"
+  }
+ },
+ {
+  "id": "SOX>MA200",
+  "cat": "breadth",
+  "name": {
+   "en": "% of Semiconductor Index Stocks Above 200-Day MA",
+   "zh": "费城半导体指数成分股站上 200 日均线占比"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "% = (members with Close > SMA(Close, 200)) / 30 × 100",
+   "zh": "占比 = 收盘价高于200日均线的成分股数 / 30 × 100"
+  },
+  "principle": {
+   "en": "How many of 30 chip stocks are above their 200-day line. They share one industry cycle, so it flips between high and low and reads like a chip-cycle gauge.",
+   "zh": "30只芯片股中站上200日均线的数量。它们同处一个行业周期，读数常在高低之间切换，更像芯片周期的仪表盘。"
+  },
+  "example": {
+   "en": "After a 40% fall, the line sits under 15 for four months, then climbs to 55 in six weeks as one chip group after another recovers. The downturn is likely over.",
+   "zh": "芯片指数跌40%后，这条线在15以下停留四个月，随后六周内随各细分板块陆续修复升到55，下行周期很可能已结束。"
+  }
+ },
+ {
+  "id": "N225>MA200",
+  "cat": "breadth",
+  "name": {
+   "en": "% of Nikkei 225 Stocks Above 200-Day MA",
+   "zh": "日经 225 成分股站上 200 日均线占比"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "% = (members with Close > SMA(Close, 200)) / 225 × 100",
+   "zh": "占比 = 收盘价高于200日均线的成分股数 / 225 × 100"
+  },
+  "principle": {
+   "en": "The Nikkei is weighted by share price, so a few high-priced stocks dominate it. This equal-weighted headcount shows what Japanese stocks are really doing.",
+   "zh": "日经指数按股价加权，少数高价股主导指数。这个等权的统计更能反映日本股票的真实状况。"
+  },
+  "example": {
+   "en": "The Nikkei gains 9% as the yen weakens. If the line rises from 58 to 71, domestic stocks joined in; if it falls to 46, only a few exporters drove the gain.",
+   "zh": "日元走弱时日经涨9%：若这条线从58升到71，说明内需股也参与；若降到46，则只是几只出口股在拉。"
+  }
+ },
+ {
+  "id": "HSI>MA200",
+  "cat": "breadth",
+  "name": {
+   "en": "% of Hang Seng Stocks Above 200-Day MA",
+   "zh": "恒生指数成分股站上 200 日均线占比"
+  },
+  "score": 6,
+  "formula": {
+   "en": "% = (members with Close > SMA(Close, 200)) / about 80 × 100",
+   "zh": "占比 = 收盘价高于200日均线的成分股数 / 约80 × 100"
+  },
+  "principle": {
+   "en": "The share of Hang Seng stocks above their 200-day line. Hong Kong is policy-driven, so the line can stay below 20 for a year, then jump to 80 on one policy shift.",
+   "zh": "恒指成分股站上200日均线的占比。港股受政策驱动，这条线可能一年都在20以下，一次政策转向就跳到80。"
+  },
+  "example": {
+   "en": "The index rallies 18% off a low but the line only moves from 8 to 12. A few heavyweights did all the work, and such rallies have usually retraced.",
+   "zh": "恒指从低点反弹18%，这条线却只从8升到12，全靠几只权重股拉动，这类反弹历史上大多会回吐。"
+  }
+ },
+ {
+  "id": "HSTECH>MA200",
+  "cat": "breadth",
+  "name": {
+   "en": "% of Hang Seng TECH Stocks Above 200-Day MA",
+   "zh": "恒生科技指数成分股站上 200 日均线占比"
+  },
+  "score": 4,
+  "formula": {
+   "en": "% = (members with Close > SMA(Close, 200)) / 30 × 100",
+   "zh": "占比 = 收盘价高于200日均线的成分股数 / 30 × 100"
+  },
+  "principle": {
+   "en": "How many of 30 China-tech stocks are above their 200-day line. They share one regulator and one funding channel, so it mostly echoes the index with a lag.",
+   "zh": "30只中概科技股中站上200日均线的数量。它们受同一监管、同一资金渠道影响，多数时候只是滞后地复述指数。"
+  },
+  "example": {
+   "en": "The index is up 25% but the line only climbs from 3 to 10: just two platform giants are rising. A later 25% rally with the line reaching 20 is far more trustworthy.",
+   "zh": "指数涨25%，这条线只从3升到10，只有两家平台巨头在涨；后来同样涨25%而线升到20，那次就可信得多。"
+  }
+ },
+ {
+  "id": "HXC>MA200",
+  "cat": "breadth",
+  "name": {
+   "en": "% of Golden Dragon China Stocks Above 200-Day MA",
+   "zh": "纳斯达克中国金龙指数成分股站上 200 日均线占比"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "% = (ADRs with Close > SMA(Close, 200)) / about 65 × 100",
+   "zh": "占比 = 收盘价高于200日均线的中概股数 / 约65 × 100"
+  },
+  "principle": {
+   "en": "The share of US-listed Chinese stocks above their 200-day line. They are priced mostly by one shared risk — how acceptable it is to own China ADRs — so they cross together.",
+   "zh": "在美上市中概股站上200日均线的占比。它们主要由同一个风险定价——持有中概股是否“安全”——所以常常一起穿越均线。"
+  },
+  "example": {
+   "en": "A 30% rebound with the line moving only from 4 to 9 is two giants plus short covering. A similar rebound that lifts it from 4 to 52 has broadened and is more durable.",
+   "zh": "指数反弹30%而线只从4升到9，只是两只巨头加空头回补；同样反弹若让线从4升到52，说明已普遍扩散，更持久。"
+  }
+ },
+ {
+  "id": "CVLT",
+  "cat": "other",
+  "name": {
+   "en": "Chaikin Volatility",
+   "zh": "蔡金波动率"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "REMA = EMA(H − L, 10)\nCVLT = (REMA − REMA 12 bars ago) / REMA 12 bars ago × 100",
+   "zh": "REMA = EMA(最高 − 最低, 10)\nCVLT =（REMA − 12根前的REMA）/ 12根前的REMA × 100"
+  },
+  "principle": {
+   "en": "Measures how fast the daily high-low range is widening or shrinking, not how volatile the market is. +60 means ranges are 60% wider than 12 bars ago.",
+   "zh": "衡量每日高低价差扩大或收窄的速度，而不是波动率本身。+60表示振幅比12根K线前宽了60%。"
+  },
+  "example": {
+   "en": "A stock's average range sits near $0.90 for two months, then jumps to $1.40 and CVLT prints +55 as price breaks an eight-week high. The expansion confirms the breakout.",
+   "zh": "某股平均振幅两个月都在0.9美元左右，随后扩大到1.4美元、CVLT升至+55，同时价格突破八周高点，振幅放大确认了突破。"
+  }
+ },
+ {
+  "id": "HSLC",
+  "cat": "other",
+  "name": {
+   "en": "Hard and Soft Limiter Comparison",
+   "zh": "软硬限幅器对比"
+  },
+  "score": 5,
+  "formula": {
+   "en": "x = (C − C[2]) / RMS of that change over 50 bars\nSoft = smooth(tanh(x)),  Hard = smooth(clip(x, −1, +1))",
+   "zh": "x =（收盘 − 2根前收盘）/ 该变化50根的均方根\n软线 = 平滑(tanh(x))，硬线 = 平滑(截断(x, −1, +1))"
+  },
+  "principle": {
+   "en": "Momentum measured in standard deviations, then squashed to ±1 in two ways: smoothly and by hard clipping. It stays comparable across calm and wild markets.",
+   "zh": "用标准差衡量动量，再用平滑压缩和硬截断两种方式限制在±1之间，因此在平静和剧烈的市场里都能比较。"
+  },
+  "example": {
+   "en": "Bitcoin drops $2,000 in two bars during a volatile month. That is only −0.8σ here, so HSLC reads −0.35 and you correctly treat it as normal noise.",
+   "zh": "比特币在高波动月份两根K线跌2000美元，但这只相当于−0.8σ，HSLC读数−0.35，正确地把它当作正常波动。"
+  }
+ },
+ {
+  "id": "IC",
+  "cat": "other",
+  "name": {
+   "en": "Ichimoku Kinko Hyo",
+   "zh": "一目均衡表"
+  },
+  "score": 8.5,
+  "formula": {
+   "en": "Conversion = (HHV(H, 9) + LLV(L, 9)) / 2\nBase = (HHV(H, 26) + LLV(L, 26)) / 2\nSpan A = (Conversion + Base) / 2, shifted 26 bars forward\nSpan B = (HHV(H, 52) + LLV(L, 52)) / 2, shifted 26 bars forward\nLagging = close shifted 26 bars back",
+   "zh": "转换线 =（9周期最高 + 9周期最低）/ 2\n基准线 =（26周期最高 + 26周期最低）/ 2\n先行带A =（转换线 + 基准线）/ 2，向前平移26根\n先行带B =（52周期最高 + 52周期最低）/ 2，向前平移26根\n迟行线 = 收盘价向后平移26根"
+  },
+  "principle": {
+   "en": "A complete trend system built from midpoints of high-low ranges. The cloud between Span A and Span B is projected forward, so future support and resistance are already drawn today.",
+   "zh": "一套完整的趋势系统，各条线都取高低价的中点。先行带A和B之间的“云”向前平移，今天就能看到未来的支撑和压力。"
+  },
+  "example": {
+   "en": "A stock breaks above a thick cloud at $52, runs to $63, then pulls back to the base line at $58.40 while the conversion line turns up. That first pullback is the classic entry.",
+   "zh": "某股在52美元突破厚云层，涨到63美元后回踩58.40美元的基准线，同时转换线拐头向上，这第一次回踩就是经典买点。"
+  }
+ },
+ {
+  "id": "MICD",
+  "cat": "other",
+  "name": {
+   "en": "Momentum Convergence Divergence (MICD)",
+   "zh": "异同离差动力指数（MICD）"
+  },
+  "score": 4,
+  "formula": {
+   "en": "MI = C − C[1],  AMI = SMMA(MI, 3)\nDIF = SMA(AMI[1], 10) − SMA(AMI[1], 20)\nMICD = SMMA(DIF, 10)",
+   "zh": "MI = 收盘 − 昨收，AMI = SMMA(MI, 3)\nDIF = SMA(昨日AMI, 10) − SMA(昨日AMI, 20)\nMICD = SMMA(DIF, 10)"
+  },
+  "principle": {
+   "en": "MACD rebuilt on daily price changes instead of price, with extra smoothing. It is very smooth but turns late, after most other indicators.",
+   "zh": "把MACD改用每日涨跌额来计算，并多次平滑。线条非常平滑，但转向比其他指标都晚。"
+  },
+  "example": {
+   "en": "On a choppy stock MACD gave nine crossovers in a quarter, seven of them false. MICD gave only two, both on real moves, at the cost of entering later.",
+   "zh": "一只来回震荡的股票，一个季度里MACD交叉九次、七次是假信号；MICD只交叉两次且都对应真实行情，代价是入场更晚。"
+  }
+ },
+ {
+  "id": "NINE",
+  "cat": "other",
+  "name": {
+   "en": "TD Sequential 9",
+   "zh": "神奇九转（TD 序列 9）"
+  },
+  "score": 6,
+  "formula": {
+   "en": "Up count: consecutive bars with C > C[4]\nDown count: consecutive bars with C < C[4]\nA run reaching 9 completes the setup; any break resets to 0",
+   "zh": "上涨计数：连续满足 收盘 > 4根前收盘 的K线数\n下跌计数：连续满足 收盘 < 4根前收盘 的K线数\n计到9即完成，中途中断则归零"
+  },
+  "principle": {
+   "en": "Counts how many bars in a row closed above (or below) the close four bars earlier. Nine in a row suggests the move has run out of new buyers or sellers.",
+   "zh": "数一数连续多少根K线收盘高于（或低于）4根之前的收盘。连续数到9，说明这波行情的新买家或卖家快用完了。"
+  },
+  "example": {
+   "en": "An index rallies 11% in three weeks; the count runs 1 to 9 and the ninth bar leaves a long upper wick at last year's high. A good moment to take profits.",
+   "zh": "指数三周涨11%，计数从1走到9，第9根K线在去年高点留下长上影线，是止盈的好时机。"
+  }
+ },
+ {
+  "id": "RC",
+  "cat": "other",
+  "name": {
+   "en": "Rate of Change Ratio (RC)",
+   "zh": "变化率指数（RC）"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "RC = C / C[50]\nARC = SMMA(RC[1], 50)",
+   "zh": "RC = 收盘 / 50根前收盘\nARC = SMMA(昨日RC, 50)"
+  },
+  "principle": {
+   "en": "Price divided by its price 50 bars ago, then heavily smoothed. It looks back about 100 bars, so it works only as a slow bull/bear regime line.",
+   "zh": "当前价除以50根前的价格，再做重度平滑，实际回看约100根K线，只适合当作缓慢的牛熊分界线。"
+  },
+  "example": {
+   "en": "Only buy index constituents when the index's ARC is above 1.00. That filter would have kept you mostly out of the 2008 and 2022 declines.",
+   "zh": "规定只有指数的ARC高于1.00时才做多成分股。这个过滤条件能让你避开2008年和2022年的大部分下跌。"
+  }
+ },
+ {
+  "id": "RCCD",
+  "cat": "other",
+  "name": {
+   "en": "Rate of Change Convergence Divergence (RCCD)",
+   "zh": "异同离差变化率指数（RCCD）"
+  },
+  "score": 3,
+  "formula": {
+   "en": "ARC = SMMA(C / C[59], 59)\nDIF = SMA(ARC[1], 21) − SMA(ARC[1], 28)\nRCCD = SMMA(DIF, 59)",
+   "zh": "ARC = SMMA(收盘 / 59根前收盘, 59)\nDIF = SMA(昨日ARC, 21) − SMA(昨日ARC, 28)\nRCCD = SMMA(DIF, 59)"
+  },
+  "principle": {
+   "en": "A MACD built on the already slow RC line, with five layers of smoothing. It reacts extremely late and says almost nothing about today's market.",
+   "zh": "在本就很慢的RC上再套一层MACD，共五层平滑。反应极其迟缓，几乎反映不了当下行情。"
+  },
+  "example": {
+   "en": "On monthly bars of a broad index, its zero line marks long secular shifts lasting years — like a tide chart, useless for today's waves.",
+   "zh": "在宽基指数的月线上，它的零轴能标出持续数年的长期转折，就像潮汐表——看不了今天的浪。"
+  }
+ },
+ {
+  "id": "SRMI",
+  "cat": "other",
+  "name": {
+   "en": "SRMI Modified Momentum",
+   "zh": "SRMI 修正动量指标"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "If C < C[9]: SRMI = (C − C[9]) / C[9]\nIf C > C[9]: SRMI = (C − C[9]) / C\nRange: −1 to +1",
+   "zh": "若 收盘 < 9根前收盘：SRMI =（收盘 − 9根前收盘）/ 9根前收盘\n若 收盘 > 9根前收盘：SRMI =（收盘 − 9根前收盘）/ 收盘\n取值范围：−1 至 +1"
+  },
+  "principle": {
+   "en": "A 9-bar rate of change that divides falls by the old price and rises by the new price. Equal round-trip moves up and down then look the same size.",
+   "zh": "9根K线的变化率，下跌除以旧价、上涨除以新价，这样同等幅度的一涨一跌在图上大小一致。"
+  },
+  "example": {
+   "en": "A stock goes $8 to $16 and back to $8. Plain ROC shows +100 then −50; SRMI shows +0.5 then −0.5, matching that the moves cancel out.",
+   "zh": "某股从8美元涨到16美元再跌回8美元。普通ROC显示+100和−50，SRMI则显示+0.5和−0.5，正好对应两次波动相互抵消。"
+  }
+ },
+ {
+  "id": "SVSI",
+  "cat": "other",
+  "name": {
+   "en": "Slow Volume Strength Index (SVSI)",
+   "zh": "慢速成交量强弱指数（SVSI）"
+  },
+  "score": 6,
+  "formula": {
+   "en": "UP = WMA(V when C > EMA(C, 6), 14)\nDN = WMA(V when C < EMA(C, 6), 14)\nVSI = 100 × UP / (UP + DN)",
+   "zh": "UP = WMA(收盘 > EMA(收盘, 6) 时的成交量, 14)\nDN = WMA(收盘 < EMA(收盘, 6) 时的成交量, 14)\nVSI = 100 × UP /（UP + DN）"
+  },
+  "principle": {
+   "en": "Like RSI, but built from volume: the share of recent volume traded on strong closes. It tells you whether a rise is backed by participation.",
+   "zh": "类似RSI，但用成交量计算：最近成交量中有多少发生在强势收盘的K线上，用来判断上涨是否有人气支撑。"
+  },
+  "example": {
+   "en": "A stock breaks out of a six-week base on 40% more volume and VSI jumps from 48 to 82. The extra volume came on strong closes — real buying.",
+   "zh": "某股放量40%突破六周平台，VSI从48跳到82，新增成交量都出现在强势收盘日，说明是真实买盘。"
+  }
+ },
+ {
+  "id": "UTBOT",
+  "cat": "other",
+  "name": {
+   "en": "UT Bot Alerts",
+   "zh": "UT Bot 跟踪止损警报"
+  },
+  "score": 6,
+  "formula": {
+   "en": "Loss = K × ATR(10),  K = 1\nAbove the stop: stop = max(prior stop, C − Loss)\nBelow the stop: stop = min(prior stop, C + Loss)\nBuy/sell when the close crosses the stop",
+   "zh": "止损距离 = K × ATR(10)，K = 1\n价格在线上：止损 = max(前止损, 收盘 − 止损距离)\n价格在线下：止损 = min(前止损, 收盘 + 止损距离)\n收盘穿越止损线时发出买卖信号"
+  },
+  "principle": {
+   "en": "An ATR trailing stop that only moves in your favour and flips sides when a close breaks it. It is best used as a mechanical exit.",
+   "zh": "基于ATR的跟踪止损线，只朝有利方向移动，一旦收盘跌破就翻到另一侧。最适合当作机械化的离场规则。"
+  },
+  "example": {
+   "en": "Long at $40 with ATR $1.20, the stop starts at $38.80. Six weeks later price is $58 and the stop has climbed to $54.10, locking in most of the gain.",
+   "zh": "40美元买入、ATR为1.2美元，止损从38.80美元开始。六周后价格到58美元，止损已上移到54.10美元，锁住了大部分利润。"
+  }
+ },
+ {
+  "id": "WF",
+  "cat": "other",
+  "name": {
+   "en": "Williams Fractal",
+   "zh": "威廉分形"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "Up fractal: a high above the 2 bars on each side\nDown fractal: a low below the 2 bars on each side\nConfirmed only 2 bars after the pivot",
+   "zh": "上分形：某根K线的最高价高于左右各2根\n下分形：某根K线的最低价低于左右各2根\n需等枢轴后2根K线才能确认"
+  },
+  "principle": {
+   "en": "An objective definition of a swing high or low: the extreme of a five-bar window. It turns a price chart into clear pivots for trendlines and stops.",
+   "zh": "对波段高低点的客观定义：五根K线窗口里的最高或最低点。它把价格图变成清晰的转折点，方便画趋势线和设止损。"
+  },
+  "example": {
+   "en": "Long at $71, you set the stop just below the latest down fractal at $67.80, and raise it each time a higher down fractal forms.",
+   "zh": "71美元做多，把止损设在最近一个下分形67.80美元下方，每出现一个更高的下分形就上移止损。"
+  }
+ },
+ {
+  "id": "TOTALREVENUE_FQ",
+  "cat": "income_statement",
+  "name": {
+   "en": "Total Revenue (Quarterly)",
+   "zh": "总营收 · 单季"
+  },
+  "score": 8,
+  "formula": {
+   "en": "YoY growth = (Revenue this quarter − same quarter last year) / same quarter last year",
+   "zh": "同比增长 =（本季营收 − 去年同季营收）/ 去年同季营收"
+  },
+  "principle": {
+   "en": "Everything the company sold in one quarter, before any costs. It is the fastest read on the business; compare it year over year to remove seasonality.",
+   "zh": "公司一个季度卖出的全部金额，未扣任何成本，是最快反映生意好坏的数字。要做同比，才能去掉季节性影响。"
+  },
+  "example": {
+   "en": "A software firm's growth slows from 40% to 22% and the stock halves. Then a quarter prints 26% against 21% expected — the first re-acceleration, often the start of a big rally.",
+   "zh": "某软件公司增速从40%放缓到22%，股价腰斩；随后一个季度增速26%、高于预期的21%，首次重新加速，常是大涨的起点。"
+  }
+ },
+ {
+  "id": "NETPROFIT_FQ",
+  "cat": "income_statement",
+  "name": {
+   "en": "Net Profit (Quarterly)",
+   "zh": "净利润 · 单季"
+  },
+  "score": 7,
+  "formula": {
+   "en": "Net Profit = Revenue − all costs, interest, tax and one-offs   (one quarter)",
+   "zh": "净利润 = 营收 − 全部成本、利息、税费和一次性项目（单季）"
+  },
+  "principle": {
+   "en": "What is left for shareholders after every cost in one quarter. Fixed costs amplify it, so small sales changes cause big profit swings.",
+   "zh": "一个季度扣除所有成本后留给股东的钱。固定成本会放大它，销售额小幅变化就会带来利润大幅波动。"
+  },
+  "example": {
+   "en": "A manufacturer near breakeven grows revenue 8% but net profit jumps 45%. Fixed costs are covered, so extra sales flow almost straight to profit.",
+   "zh": "一家接近盈亏平衡的制造商营收增长8%，净利润却跳升45%，因为固定成本已覆盖，新增销售几乎全部变成利润。"
+  }
+ },
+ {
+  "id": "FCF_FY",
+  "cat": "cash_flow",
+  "name": {
+   "en": "Free Cash Flow (Annual)",
+   "zh": "自由现金流 · 年度"
+  },
+  "score": 9,
+  "formula": {
+   "en": "FCF = Operating Cash Flow − Capital Expenditure",
+   "zh": "自由现金流 = 经营现金流 − 资本开支"
+  },
+  "principle": {
+   "en": "The cash left each year after paying to maintain and grow the business. It is hard to fake and is what pays dividends, buybacks and debt reduction.",
+   "zh": "每年扣除维持和扩张业务的投入后剩下的现金。它很难造假，分红、回购和还债都靠它。"
+  },
+  "example": {
+   "en": "A company grows FCF 12% a year and buys back 3% of its shares annually, so FCF per share grows about 15% — like a rental property whose rent rises every year.",
+   "zh": "某公司自由现金流每年增长12%，每年回购3%的股份，每股现金流就增长约15%，就像一套租金年年上涨的房子。"
+  }
+ },
+ {
+  "id": "ROE_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Return on Equity (Annual)",
+   "zh": "净资产收益率 · 年度"
+  },
+  "score": 8.5,
+  "formula": {
+   "en": "ROE = Net Income / Shareholders' Equity\nROE = Net Margin × Asset Turnover × Equity Multiplier",
+   "zh": "ROE = 净利润 / 股东权益\nROE = 净利率 × 资产周转率 × 权益乘数"
+  },
+  "principle": {
+   "en": "Profit earned per dollar of shareholder money. High and steady ROE signals a moat, but check whether it comes from margins or from debt.",
+   "zh": "股东每投入一元能赚多少利润。长期高而稳定的ROE是护城河的标志，但要看它来自高利润率还是高负债。"
+  },
+  "example": {
+   "en": "Screen for ten straight years of ROE above 15% with low debt. The short list that remains is mostly businesses with real pricing power.",
+   "zh": "筛选连续十年ROE高于15%且负债不高的公司，剩下的短名单大多是真正有定价权的企业。"
+  }
+ },
+ {
+  "id": "GROSSMARGIN_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Gross Margin (Annual)",
+   "zh": "毛利率 · 年度"
+  },
+  "score": 8,
+  "formula": {
+   "en": "Gross Margin = (Revenue − Cost of Goods Sold) / Revenue",
+   "zh": "毛利率 =（营收 − 营业成本）/ 营收"
+  },
+  "principle": {
+   "en": "The share of each sales dollar left after the direct cost of the product. It is the clearest sign of pricing power; watch the trend over years.",
+   "zh": "每一元销售额扣除产品直接成本后剩下的比例，是定价权最直接的体现，要看多年趋势。"
+  },
+  "example": {
+   "en": "Two rivals both grow sales 15%. One holds a 60% gross margin; the other slides from 55% to 48% — it is buying growth with price cuts.",
+   "zh": "两家竞争对手营收都增长15%，一家毛利率稳在60%，另一家从55%降到48%，后者是在靠降价换增长。"
+  }
+ },
+ {
+  "id": "CURRENTRATIO_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Current Ratio (Annual)",
+   "zh": "流动比率 · 年度"
+  },
+  "score": 6,
+  "formula": {
+   "en": "Current Ratio = Current Assets / Current Liabilities",
+   "zh": "流动比率 = 流动资产 / 流动负债"
+  },
+  "principle": {
+   "en": "Whether short-term assets like cash, receivables and inventory cover the bills due within a year. It is a safety check, not a measure of how good the business is.",
+   "zh": "现金、应收款、存货等短期资产能否覆盖一年内到期的账单。它是安全检查，而不是衡量公司好坏的指标。"
+  },
+  "example": {
+   "en": "A ratio of 2 means $2 of short-term assets for every $1 due soon. Below 1, the company may need to borrow just to pay its bills.",
+   "zh": "比率为2表示每1元短期欠款有2元短期资产对应；低于1时，公司可能要借钱才能付账。"
+  }
+ },
+ {
+  "id": "TOTALASSETS_FQ",
+  "cat": "balance_sheet",
+  "name": {
+   "en": "Total Assets (Quarterly)",
+   "zh": "总资产 · 单季"
+  },
+  "score": 4,
+  "formula": {
+   "en": "Total Assets = Total Liabilities + Shareholders' Equity",
+   "zh": "总资产 = 总负债 + 股东权益"
+  },
+  "principle": {
+   "en": "Everything the company owns at quarter-end. The size alone means little; it matters as the denominator in ROA and asset turnover.",
+   "zh": "季末公司拥有的全部资产。规模本身意义不大，主要作为ROA和资产周转率的分母。"
+  },
+  "example": {
+   "en": "Total assets jump from $20bn to $28bn in one quarter. That usually means an acquisition or a big capital raise, not organic growth.",
+   "zh": "总资产一个季度从200亿美元跳到280亿美元，通常意味着一次收购或大额融资，而不是内生增长。"
+  }
+ },
+ {
+  "id": "TOTALASSETS_FY",
+  "cat": "balance_sheet",
+  "name": {
+   "en": "Total Assets (Annual)",
+   "zh": "总资产 · 年度"
+  },
+  "score": 5,
+  "formula": {
+   "en": "Total Assets = Total Liabilities + Shareholders' Equity",
+   "zh": "总资产 = 总负债 + 股东权益"
+  },
+  "principle": {
+   "en": "The year-end capital base a business stands on. Compare its growth with revenue and profit growth to see whether the company uses its capital efficiently.",
+   "zh": "公司年末的资本底盘。把它的增长与营收、利润的增长对比，就能看出资本用得是否高效。"
+  },
+  "example": {
+   "en": "Over five years assets double but revenue grows only 30%. The company needs ever more capital per dollar of sales — like a shop that keeps expanding floor space without more customers.",
+   "zh": "五年里资产翻倍、营收只增30%，每赚一元销售要投入越来越多资本，就像店面越开越大却没多少新顾客。"
+  }
+ },
+ {
+  "id": "SH_EQUITY_FQ",
+  "cat": "balance_sheet",
+  "name": {
+   "en": "Shareholders' Equity (Quarterly)",
+   "zh": "股东权益 · 单季"
+  },
+  "score": 5,
+  "formula": {
+   "en": "Equity = Total Assets − Total Liabilities",
+   "zh": "股东权益 = 总资产 − 总负债"
+  },
+  "principle": {
+   "en": "What would be left for owners if every asset were sold at book value and every debt paid. It grows with retained profit and shrinks with losses, dividends and buybacks.",
+   "zh": "如果资产按账面价卖掉、债务全部还清，股东还能剩下的部分。留存利润让它增加，亏损、分红和回购让它减少。"
+  },
+  "example": {
+   "en": "Equity drops from $10bn to $8bn in a quarter with no loss. A $2bn buyback is the likely cause, not a weakening business.",
+   "zh": "某季度股东权益从100亿美元降到80亿美元却没有亏损，很可能是进行了20亿美元的回购，而不是业务变差。"
+  }
+ },
+ {
+  "id": "SH_EQUITY_FY",
+  "cat": "balance_sheet",
+  "name": {
+   "en": "Shareholders' Equity (Annual)",
+   "zh": "股东权益 · 年度"
+  },
+  "score": 6,
+  "formula": {
+   "en": "Equity = Total Assets − Total Liabilities\nBook value per share = Equity / shares outstanding",
+   "zh": "股东权益 = 总资产 − 总负债\n每股净资产 = 股东权益 / 总股本"
+  },
+  "principle": {
+   "en": "The owners' book value at year-end, the base a long-term investment compounds on. Growth from retained profit, not new share issues, is what builds wealth.",
+   "zh": "年末股东的账面净资产，是长期投资复利增长的基础。靠留存利润而非增发带来的增长，才真正创造财富。"
+  },
+  "example": {
+   "en": "A bank grows equity 10% a year from retained earnings and trades at 1× book. Like a savings account that pays 10%, its value tends to rise with it.",
+   "zh": "某银行靠留存利润每年让净资产增长10%，股价约为1倍市净率；就像年息10%的存款，股价往往随之上涨。"
+  }
+ },
+ {
+  "id": "NCA_FQ",
+  "cat": "balance_sheet",
+  "name": {
+   "en": "Total Liabilities (Quarterly)",
+   "zh": "总负债 · 单季"
+  },
+  "score": 4,
+  "formula": {
+   "en": "Total Liabilities = Total Assets − Shareholders' Equity",
+   "zh": "总负债 = 总资产 − 股东权益"
+  },
+  "principle": {
+   "en": "Everything the company owes at quarter-end: loans, bonds, supplier bills, wages, taxes. Compared with equity, it shows how much of the business runs on other people's money.",
+   "zh": "季末公司欠下的全部款项：贷款、债券、应付货款、工资和税费。与股东权益对比，可看出公司多大程度靠别人的钱运转。"
+  },
+  "example": {
+   "en": "Liabilities jump $5bn in one quarter while equity is flat. A bond issue or debt-funded acquisition just made the company more fragile.",
+   "zh": "某季度负债猛增50亿美元而股东权益不变，说明刚发了债或举债收购，公司变得更脆弱。"
+  }
+ },
+ {
+  "id": "NCA_FY",
+  "cat": "balance_sheet",
+  "name": {
+   "en": "Total Liabilities (Annual)",
+   "zh": "总负债 · 年度"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "Total Liabilities = Total Assets − Shareholders' Equity\nLeverage = Total Liabilities / Equity",
+   "zh": "总负债 = 总资产 − 股东权益\n杠杆 = 总负债 / 股东权益"
+  },
+  "principle": {
+   "en": "The year-end total of all debts and obligations. High, rising leverage amplifies both good and bad years, because fixed obligations must be paid regardless.",
+   "zh": "年末全部负债和义务的总额。杠杆高且上升会同时放大好年景和坏年景，因为固定债务无论如何都得偿还。"
+  },
+  "example": {
+   "en": "Two firms each earn $1bn; one owes 3× its equity, the other 0.5×. In a downturn the first may struggle to pay interest — like a family with a huge mortgage losing one income.",
+   "zh": "两家公司都赚10亿，一家负债是净资产的3倍，另一家只有0.5倍。逆境中前者可能付不起利息，就像房贷很重的家庭突然少了一份收入。"
+  }
+ },
+ {
+  "id": "OCF_FQ",
+  "cat": "cash_flow",
+  "name": {
+   "en": "Operating Cash Flow (Quarterly)",
+   "zh": "经营性现金流 · 单季"
+  },
+  "score": 7.2,
+  "formula": {
+   "en": "OCF ≈ Net Profit + Depreciation ± Change in Working Capital",
+   "zh": "经营现金流 ≈ 净利润 + 折旧摊销 ± 营运资本变动"
+  },
+  "principle": {
+   "en": "The cash the core business actually collected in a quarter. Comparing it with net profit shows whether reported earnings turned into real money or just IOUs.",
+   "zh": "核心业务一个季度实际收到的现金。和净利润对比，能看出账面利润是变成了真金白银，还是只是一堆欠条。"
+  },
+  "example": {
+   "en": "A company reports $500m profit but only $50m operating cash flow, because receivables ballooned. Customers have not paid yet — a warning sign.",
+   "zh": "某公司报告净利润5亿美元，经营现金流却只有5000万，因为应收账款大增，客户还没付钱，这是警示信号。"
+  }
+ },
+ {
+  "id": "OCF_FY",
+  "cat": "cash_flow",
+  "name": {
+   "en": "Operating Cash Flow (Annual)",
+   "zh": "经营性现金流 · 年度"
+  },
+  "score": 7.8,
+  "formula": {
+   "en": "OCF ≈ Net Income + Depreciation + non-cash charges ± Change in Working Capital\nCash conversion = OCF / Net Profit",
+   "zh": "经营现金流 ≈ 净利润 + 折旧摊销 + 非现金费用 ± 营运资本变动\n现金转化率 = 经营现金流 / 净利润"
+  },
+  "principle": {
+   "en": "Cash from the core business over a full year, with quarterly timing noise washed out. A quality business converts about $1 or more of cash per $1 of profit, year after year.",
+   "zh": "全年核心业务产生的现金，消除了季度间的时间差。优质公司年复一年地每1元利润能换回1元以上现金。"
+  },
+  "example": {
+   "en": "Over five years a firm reports $10bn profit but only $6bn operating cash. Its business keeps eating cash, so the earnings deserve less trust.",
+   "zh": "某公司五年累计净利润100亿，经营现金流只有60亿，业务一直在吞噬现金，利润的可信度要打折扣。"
+  }
+ },
+ {
+  "id": "FCF_FQ",
+  "cat": "cash_flow",
+  "name": {
+   "en": "Free Cash Flow (Quarterly)",
+   "zh": "自由现金流 · 单季"
+  },
+  "score": 8,
+  "formula": {
+   "en": "FCF = Operating Cash Flow − Capital Expenditure\nTTM FCF = sum of the last 4 quarters",
+   "zh": "自由现金流 = 经营现金流 − 资本开支\n滚动12个月 = 最近4个季度之和"
+  },
+  "principle": {
+   "en": "The surplus cash in one quarter after running costs and investment. Capex and tax payments are lumpy, so read it as a rolling four-quarter sum.",
+   "zh": "一个季度扣除经营和投资支出后剩下的现金。资本开支和税款支付不均匀，所以要看最近四个季度的滚动合计。"
+  },
+  "example": {
+   "en": "A healthy company shows −$200m FCF in the quarter it pays for a new factory. The trailing four-quarter total is still +$1.5bn, so there is no problem.",
+   "zh": "一家健康的公司在支付新工厂款项的那个季度自由现金流为−2亿美元，但最近四个季度合计仍有+15亿，并无问题。"
+  }
+ },
+ {
+  "id": "DILUTEDEPS_FQ",
+  "cat": "income_statement",
+  "name": {
+   "en": "Diluted EPS (Quarterly)",
+   "zh": "稀释每股收益 · 单季"
+  },
+  "score": 7.8,
+  "formula": {
+   "en": "Diluted EPS = Net Income / fully diluted shares\nSurprise % = (Actual − Consensus) / |Consensus|",
+   "zh": "稀释每股收益 = 净利润 / 完全稀释后股数\n超预期幅度 =（实际值 − 一致预期）/ |一致预期|"
+  },
+  "principle": {
+   "en": "One quarter's profit per share, counting options and convertibles that could become shares. It is the exact number the market compares with analyst forecasts on earnings day.",
+   "zh": "单季利润除以股数，股数包括可能转成股票的期权和可转债。财报日市场就拿这个数和分析师预期对比。"
+  },
+  "example": {
+   "en": "Analysts expect $1.00 and the company reports $1.12, a 12% beat. The stock gaps up the next morning, priced straight off that number.",
+   "zh": "分析师预期1.00美元，公司公布1.12美元，超出12%，第二天早上股价直接高开。"
+  }
+ },
+ {
+  "id": "DILUTEDEPS_FY",
+  "cat": "income_statement",
+  "name": {
+   "en": "Diluted EPS (Annual)",
+   "zh": "稀释每股收益 · 年度"
+  },
+  "score": 8.5,
+  "formula": {
+   "en": "Diluted EPS = full-year Net Income / diluted weighted shares\nTrailing P/E = Price / Diluted EPS",
+   "zh": "稀释每股收益 = 全年净利润 / 稀释后加权股数\n市盈率 = 股价 / 稀释每股收益"
+  },
+  "principle": {
+   "en": "A full year of profit per share — what one share actually earns. It is the base of the P/E ratio, and its long-term growth drives long-term returns.",
+   "zh": "全年每股能分到的利润，也就是一股真正赚的钱。它是市盈率的基础，长期增长决定长期回报。"
+  },
+  "example": {
+   "en": "EPS grows from $2 to $4 over seven years, about 10% a year. At a steady P/E of 20, the share price roughly doubles from $40 to $80.",
+   "zh": "每股收益七年从2美元增到4美元，年均约10%。若市盈率稳定在20倍，股价大约从40美元翻倍到80美元。"
+  }
+ },
+ {
+  "id": "GROSSPROFIT_FQ",
+  "cat": "income_statement",
+  "name": {
+   "en": "Gross Profit (Quarterly)",
+   "zh": "毛利润 · 单季"
+  },
+  "score": 4.8,
+  "formula": {
+   "en": "Gross Profit = Revenue − Cost of Goods Sold   (one quarter)",
+   "zh": "毛利润 = 营收 − 营业成本（单季）"
+  },
+  "principle": {
+   "en": "Dollars left in a quarter after the direct cost of what was sold. It is just revenue times gross margin, so it adds little beyond those two.",
+   "zh": "一个季度扣除产品直接成本后剩下的金额。它就是营收乘以毛利率，单独看信息不多。"
+  },
+  "example": {
+   "en": "Revenue $1bn at a 40% margin gives $400m gross profit. If it grows, check whether sales rose or the margin improved — that is the real story.",
+   "zh": "营收10亿、毛利率40%，毛利润就是4亿。如果它增长了，要看是销量增加还是毛利率提升，那才是关键。"
+  }
+ },
+ {
+  "id": "GROSSPROFIT_FY",
+  "cat": "income_statement",
+  "name": {
+   "en": "Gross Profit (Annual)",
+   "zh": "毛利润 · 年度"
+  },
+  "score": 5.8,
+  "formula": {
+   "en": "Gross Profit = Revenue − Cost of Goods Sold = Revenue × Gross Margin",
+   "zh": "毛利润 = 营收 − 营业成本 = 营收 × 毛利率"
+  },
+  "principle": {
+   "en": "Full-year product-level profit before operating costs. It is smoother than the quarterly figure; its multi-year growth rate matters more than its size.",
+   "zh": "全年扣除营业成本、但未扣经营费用的产品层面利润。比单季数据平滑，多年增速比绝对规模更重要。"
+  },
+  "example": {
+   "en": "Gross profit grows from $2bn to $3bn in three years, about 14% a year, while revenue grows 10%. Margin is expanding — a sign of pricing power.",
+   "zh": "毛利润三年从20亿增到30亿，年均约14%，而营收年增10%，说明毛利率在扩张，体现了定价权。"
+  }
+ },
+ {
+  "id": "NETPROFIT_FY",
+  "cat": "income_statement",
+  "name": {
+   "en": "Net Profit (Annual)",
+   "zh": "净利润 · 年度"
+  },
+  "score": 7.3,
+  "formula": {
+   "en": "Net Profit = Revenue − all costs, interest, tax and one-offs   (full year)\nP/E = Market Cap / Net Profit",
+   "zh": "净利润 = 营收 − 全部成本、利息、税费和一次性项目（全年）\n市盈率 = 总市值 / 净利润"
+  },
+  "principle": {
+   "en": "A full year's bottom line for shareholders. It is the E in P/E and the base of most valuations, but watch for large one-off charges distorting a single year.",
+   "zh": "全年留给股东的最终利润，是市盈率中的“盈利”，也是大多数估值的基础；但要留意一次性大额费用扭曲某一年。"
+  },
+  "example": {
+   "en": "Profit falls from $2bn to $0.5bn because of a $1.5bn one-off write-down. Underlying earnings are flat, so the P/E spike is misleading.",
+   "zh": "净利润从20亿降到5亿，原因是一笔15亿的一次性减值。核心盈利其实没变，市盈率的飙升是误导。"
+  }
+ },
+ {
+  "id": "TOTALREVENUE_FY",
+  "cat": "income_statement",
+  "name": {
+   "en": "Total Revenue (Annual)",
+   "zh": "总营收 · 年度"
+  },
+  "score": 8.5,
+  "formula": {
+   "en": "Annual Revenue = Q1 + Q2 + Q3 + Q4\nYoY growth = (This year − Last year) / Last year",
+   "zh": "年度营收 = 一季度 + 二季度 + 三季度 + 四季度\n同比增长 =（今年 − 去年）/ 去年"
+  },
+  "principle": {
+   "en": "Everything sold across a full year. Adding the four quarters cancels seasonality, so companies and years become directly comparable.",
+   "zh": "全年的销售总额。四个季度相加抵消了季节性，不同公司和不同年份可以直接比较。"
+  },
+  "example": {
+   "en": "Revenue grows from $10bn to $13.3bn in three years, about 10% a year. That steady compounding is what price-to-sales valuations are based on.",
+   "zh": "营收三年从100亿增到133亿，年均约10%。这种稳定的复合增长正是市销率估值的依据。"
+  }
+ },
+ {
+  "id": "NIPC_FQ",
+  "cat": "income_statement",
+  "name": {
+   "en": "Net Profit to Parent Shareholders (Quarterly)",
+   "zh": "归母净利润 · 单季"
+  },
+  "score": 7,
+  "formula": {
+   "en": "Net Profit to Parent = Net Profit − Minority Interests",
+   "zh": "归母净利润 = 净利润 − 少数股东损益"
+  },
+  "principle": {
+   "en": "Quarterly profit that belongs to the parent company's own shareholders, after removing the share owned by outside holders of subsidiaries. This, not total profit, drives EPS.",
+   "zh": "一个季度真正属于母公司股东的利润，扣除了子公司外部股东应得的部分。计算每股收益用的是它，而不是净利润总额。"
+  },
+  "example": {
+   "en": "A group owns 60% of a subsidiary earning $100m. All $100m appears in net profit, but only $60m reaches this line — your shares own only that part.",
+   "zh": "集团持有某子公司60%股权，子公司赚1亿。净利润里计入全部1亿，但归母净利润只有6000万，你的股份只拥有这部分。"
+  }
+ },
+ {
+  "id": "NIPC_FY",
+  "cat": "income_statement",
+  "name": {
+   "en": "Net Profit to Parent Shareholders (Annual)",
+   "zh": "归母净利润 · 年度"
+  },
+  "score": 8,
+  "formula": {
+   "en": "Net Profit to Parent = Net Profit − Minority Interests   (full year)\nEPS = Net Profit to Parent / shares",
+   "zh": "归母净利润 = 净利润 − 少数股东损益（全年）\n每股收益 = 归母净利润 / 股数"
+  },
+  "principle": {
+   "en": "Full-year profit belonging to the parent's shareholders. Trailing EPS and the P/E you pay are built on this line, with quarterly noise washed out.",
+   "zh": "全年属于母公司股东的利润。滚动每股收益和你付出的市盈率都建立在这个数字上，季度噪音已被抹平。"
+  },
+  "example": {
+   "en": "Headline profit grows 20% but profit to parent grows only 5%. The growth came from partly owned subsidiaries, so your shares gained much less.",
+   "zh": "净利润增长20%，归母净利润却只增5%，增长主要来自非全资子公司，你的股份实际分到的少得多。"
+  }
+ },
+ {
+  "id": "OPERATINGPROFIT_FQ",
+  "cat": "income_statement",
+  "name": {
+   "en": "Operating Profit (Quarterly)",
+   "zh": "营业利润 · 单季"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "Operating Profit = Revenue − COGS − Operating Expenses\nOperating Margin = Operating Profit / Revenue",
+   "zh": "营业利润 = 营收 − 营业成本 − 经营费用\n营业利润率 = 营业利润 / 营收"
+  },
+  "principle": {
+   "en": "Profit from running the core business in one quarter, before interest and tax. It shows how the operation itself performs, regardless of how it is funded.",
+   "zh": "一个季度经营主业赚到的利润，未扣利息和税。它反映业务本身的表现，与公司如何融资无关。"
+  },
+  "example": {
+   "en": "Revenue rises 10% but operating profit rises 30% because rent and salaries stay fixed. That is operating leverage at work.",
+   "zh": "营收增长10%，营业利润却增长30%，因为房租和工资基本不变，这就是经营杠杆。"
+  }
+ },
+ {
+  "id": "OPERATINGPROFIT_FY",
+  "cat": "income_statement",
+  "name": {
+   "en": "Operating Profit (Annual)",
+   "zh": "营业利润 · 年度"
+  },
+  "score": 7,
+  "formula": {
+   "en": "Operating Profit = Revenue − COGS − Operating Expenses   (full year, ≈ EBIT)\nEV/EBIT = Enterprise Value / Operating Profit",
+   "zh": "营业利润 = 营收 − 营业成本 − 经营费用（全年，约等于EBIT）\nEV/EBIT = 企业价值 / 营业利润"
+  },
+  "principle": {
+   "en": "Full-year profit from core operations before interest and tax. Because it ignores debt and tax differences, it is the fairest way to compare very different companies.",
+   "zh": "全年主营业务在利息和税前的利润。它不受负债和税务差异影响，是比较不同公司最公平的口径。"
+  },
+  "example": {
+   "en": "Two retailers each make $1bn operating profit; one has heavy debt, so its net profit is much lower. On EV/EBIT both are judged on the same footing.",
+   "zh": "两家零售商营业利润都是10亿，其中一家负债很重，净利润低得多。用EV/EBIT衡量，两者就站在同一起跑线上。"
+  }
+ },
+ {
+  "id": "ROA_FQ",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Return on Assets (Quarterly)",
+   "zh": "总资产收益率 · 单季"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "ROA = annualised quarterly Net Income / Total Assets\nROA = Net Margin × Asset Turnover",
+   "zh": "ROA = 年化单季净利润 / 总资产\nROA = 净利率 × 资产周转率"
+  },
+  "principle": {
+   "en": "Profit earned per dollar of all assets, debt-funded or not. Unlike ROE it is not flattered by borrowing, so it shows how well the operation itself runs.",
+   "zh": "每一元资产（无论是否借钱买的）能赚多少利润。它不像ROE那样会被借债抬高，更能看出经营本身的好坏。"
+  },
+  "example": {
+   "en": "A quarter earns $250m on $20bn of assets: annualised, ROA is 5%. Compare it with the same quarter last year, since single quarters are seasonal.",
+   "zh": "某季度用200亿资产赚了2.5亿，年化ROA为5%。单季有季节性，应与去年同季比较。"
+  }
+ },
+ {
+  "id": "ROA_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Return on Assets (Annual)",
+   "zh": "总资产收益率 · 年度"
+  },
+  "score": 7,
+  "formula": {
+   "en": "ROA = Net Income / Total Assets\nROE = ROA × Equity Multiplier",
+   "zh": "ROA = 净利润 / 总资产\nROE = ROA × 权益乘数"
+  },
+  "principle": {
+   "en": "Full-year profit per dollar of assets, with financing removed. Comparing it with ROE shows how much of a high ROE is really just debt.",
+   "zh": "全年每一元资产赚的利润，剔除了融资影响。把它和ROE对比，就知道高ROE里有多少只是靠负债撑起来的。"
+  },
+  "example": {
+   "en": "Two firms both show 20% ROE. One has 10% ROA, the other 2% — the second gets its ROE from 10× leverage, like a gambler on borrowed money.",
+   "zh": "两家公司ROE都是20%，一家ROA为10%，另一家只有2%。后者靠10倍杠杆撑出ROE，像借钱下注的赌徒。"
+  }
+ },
+ {
+  "id": "ROE_FQ",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Return on Equity (Quarterly)",
+   "zh": "净资产收益率 · 单季"
+  },
+  "score": 8,
+  "formula": {
+   "en": "ROE = annualised quarterly Net Income / Shareholders' Equity\nROE = Net Margin × Asset Turnover × Equity Multiplier",
+   "zh": "ROE = 年化单季净利润 / 股东权益\nROE = 净利率 × 资产周转率 × 权益乘数"
+  },
+  "principle": {
+   "en": "Return on shareholders' money measured from one quarter's profit. It is noisy, but it flags a change in ROE a couple of quarters before the annual figure.",
+   "zh": "用单季利润计算的股东回报率。数据较嘈杂，但能比年报早一两个季度发现ROE的变化。"
+  },
+  "example": {
+   "en": "Quarterly ROE climbs from 12% to 16% year over year as margins widen. The annual ROE will likely follow, often before the market notices.",
+   "zh": "随着利润率提升，单季ROE同比从12%升到16%。年度ROE很可能随后跟上，而市场往往还没注意到。"
+  }
+ },
+ {
+  "id": "ROIC_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Return on Invested Capital (Annual)",
+   "zh": "投入资本回报率 · 年度"
+  },
+  "score": 8.5,
+  "formula": {
+   "en": "ROIC = NOPAT / Invested Capital\nNOPAT = Operating Profit × (1 − tax rate)\nInvested Capital = Debt + Equity − Cash",
+   "zh": "ROIC = 税后经营利润 / 投入资本\n税后经营利润 = 营业利润 ×（1 − 税率）\n投入资本 = 有息负债 + 股东权益 − 现金"
+  },
+  "principle": {
+   "en": "After-tax operating profit on all the capital actually put to work, from lenders and owners alike. If ROIC beats the cost of capital, growth creates value; if not, it destroys it.",
+   "zh": "所有实际投入的资本（无论来自债权人还是股东）的税后经营回报。ROIC高于资本成本，增长才创造价值，否则是在毁灭价值。"
+  },
+  "example": {
+   "en": "A company earns 20% ROIC while capital costs 8%. Every dollar it reinvests creates value — like borrowing at 8% to lend at 20%.",
+   "zh": "某公司ROIC为20%，资本成本只有8%，每再投入一元都在创造价值，就像以8%借钱再以20%放贷。"
+  }
+ },
+ {
+  "id": "EBITTOREVENUE_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "EBIT Margin (Annual)",
+   "zh": "息税前利润率 · 年度"
+  },
+  "score": 7,
+  "formula": {
+   "en": "EBIT Margin = EBIT / Revenue\nEBIT = Revenue − COGS − Operating Expenses",
+   "zh": "息税前利润率 = 息税前利润 / 营收\n息税前利润 = 营收 − 营业成本 − 经营费用"
+  },
+  "principle": {
+   "en": "The share of each sales dollar left as operating profit, before interest and tax. It sits between gross and net margin and measures the core business on its own terms.",
+   "zh": "每一元销售额在扣除利息和税之前剩下的经营利润，介于毛利率和净利率之间，衡量主业自身的赚钱能力。"
+  },
+  "example": {
+   "en": "Revenue grows from $5bn to $6bn while EBIT margin widens from 15% to 18%. Fixed costs are spread over more sales — scale is paying off.",
+   "zh": "营收从50亿增至60亿，息税前利润率从15%升到18%，固定成本被更多销售摊薄，规模效应开始显现。"
+  }
+ },
+ {
+  "id": "GROSSMARGIN_FQ",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Gross Margin (Quarterly)",
+   "zh": "毛利率 · 单季"
+  },
+  "score": 8,
+  "formula": {
+   "en": "Gross Margin = (Revenue − COGS) / Revenue   (one quarter)",
+   "zh": "毛利率 =（营收 − 营业成本）/ 营收（单季）"
+  },
+  "principle": {
+   "en": "The share of one quarter's sales left after direct product costs. It is the first place a cost squeeze or a price cut shows up; compare it year over year.",
+   "zh": "一个季度扣除产品直接成本后剩下的比例。原材料涨价或降价促销最先在这里体现，要做同比比较。"
+  },
+  "example": {
+   "en": "A coffee chain's gross margin drops from 58% to 53% when bean prices spike. Profit warnings usually follow a quarter later.",
+   "zh": "咖啡豆涨价后，某咖啡连锁的单季毛利率从58%降到53%，通常一个季度后就会出现利润预警。"
+  }
+ },
+ {
+  "id": "NAPERSHARE_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Book Value per Share (Annual)",
+   "zh": "每股净资产 · 年度"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "BVPS = Shareholders' Equity / Shares Outstanding\nP/B = Price / BVPS",
+   "zh": "每股净资产 = 股东权益 / 总股本\n市净率 = 股价 / 每股净资产"
+  },
+  "principle": {
+   "en": "The accounting net worth behind each share. It anchors the price-to-book ratio and matters most for asset-heavy businesses like banks and insurers.",
+   "zh": "每股对应的账面净资产，是市净率的基础，对银行、保险这类重资产企业最有意义。"
+  },
+  "example": {
+   "en": "A bank has $50 book value per share and trades at $40, a P/B of 0.8. You are buying its net assets at 80 cents on the dollar.",
+   "zh": "某银行每股净资产50元，股价40元，市净率0.8，相当于用八折价格买下它的净资产。"
+  }
+ },
+ {
+  "id": "TAXRATE_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Effective Tax Rate (Annual)",
+   "zh": "实际税率 · 年度"
+  },
+  "score": 4,
+  "formula": {
+   "en": "Effective Tax Rate = Income Tax Expense / Pre-tax Profit",
+   "zh": "实际税率 = 所得税费用 / 税前利润"
+  },
+  "principle": {
+   "en": "The share of pre-tax profit actually paid in tax. Its main use is checking earnings quality: a profit beat built on an unusually low tax rate will not repeat.",
+   "zh": "税前利润中实际交税的比例。主要用来检验盈利质量：靠异常低税率实现的利润超预期不可持续。"
+  },
+  "example": {
+   "en": "A company beats profit forecasts, but its tax rate fell from 25% to 12% thanks to a one-off credit. Operations did not improve; next year's profit will look worse.",
+   "zh": "某公司利润超预期，但税率因一次性抵免从25%降到12%，经营并没有改善，明年利润会显得更差。"
+  }
+ },
+ {
+  "id": "CURRENTRATIO_FQ",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Current Ratio (Quarterly)",
+   "zh": "流动比率 · 单季"
+  },
+  "score": 5,
+  "formula": {
+   "en": "Current Ratio = Current Assets / Current Liabilities   (quarter-end)",
+   "zh": "流动比率 = 流动资产 / 流动负债（季末）"
+  },
+  "principle": {
+   "en": "A quarter-end snapshot of whether short-term assets cover bills due within a year. It swings with the seasons, so the direction across quarters matters most.",
+   "zh": "季末短期资产能否覆盖一年内到期账单的快照。它随季节波动，关键是看几个季度的变化方向。"
+  },
+  "example": {
+   "en": "The ratio slides from 1.8 to 1.5 to 1.2 to 0.9 over four quarters. Cash pressure is building well before the annual report shows it.",
+   "zh": "四个季度里流动比率从1.8降到1.5、1.2、0.9，资金压力在年报体现之前就已逐步积累。"
+  }
+ },
+ {
+  "id": "QUICKRATIO_FQ",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Quick Ratio (Quarterly)",
+   "zh": "速动比率 · 单季"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "Quick Ratio = (Current Assets − Inventory) / Current Liabilities",
+   "zh": "速动比率 =（流动资产 − 存货）/ 流动负债"
+  },
+  "principle": {
+   "en": "A stricter current ratio that leaves out inventory, which may be hard to sell in a downturn. It asks: can the company pay its bills without selling stock?",
+   "zh": "更严格的流动比率，剔除了逆境中可能卖不掉的存货。它问的是：不卖存货，公司能付清账单吗？"
+  },
+  "example": {
+   "en": "A fashion retailer has a current ratio of 1.6 but a quick ratio of 0.5. Most of its liquidity is clothes on shelves that may need deep discounts.",
+   "zh": "某服装零售商流动比率1.6，速动比率却只有0.5，大部分流动性是货架上的衣服，可能要大幅打折才能变现。"
+  }
+ },
+ {
+  "id": "QUICKRATIO_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Quick Ratio (Annual)",
+   "zh": "速动比率 · 年度"
+  },
+  "score": 6,
+  "formula": {
+   "en": "Quick Ratio = (Current Assets − Inventory) / Current Liabilities",
+   "zh": "速动比率 =（流动资产 − 存货）/ 流动负债"
+  },
+  "principle": {
+   "en": "Year-end ability to pay near-term bills with cash, securities and receivables only. Around 1 means liquid assets just cover short-term debts.",
+   "zh": "年末仅用现金、证券和应收款偿还短期账单的能力。约等于1表示速动资产刚好覆盖短期负债。"
+  },
+  "example": {
+   "en": "Like checking whether you could pay this month's bills from your bank account alone, without selling your car. A quick ratio of 1.2 means yes, with room to spare.",
+   "zh": "就像看看不卖车、只靠银行存款能否付清本月账单。速动比率1.2说明可以，而且还有余量。"
+  }
+ },
+ {
+  "id": "FIXEDASSETSTO_FQ",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Fixed Asset Turnover (Quarterly)",
+   "zh": "固定资产周转率 · 单季"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "Fixed Asset Turnover = Quarterly Revenue / Net Fixed Assets",
+   "zh": "固定资产周转率 = 单季营收 / 固定资产净值"
+  },
+  "principle": {
+   "en": "Sales produced per dollar of plant and equipment in one quarter. It shows how hard factories and stores are being used, and swings with seasons and new capacity.",
+   "zh": "一个季度每一元厂房设备带来的销售额，反映工厂和门店的利用程度，会随季节和新产能投产而波动。"
+  },
+  "example": {
+   "en": "A chipmaker opens a new fab and turnover drops from 0.5 to 0.35. The plant is not yet filled; it should recover as orders ramp up.",
+   "zh": "某芯片厂新工厂投产，周转率从0.5降到0.35，新产能尚未满载，随着订单增加应会回升。"
+  }
+ },
+ {
+  "id": "FIXEDASSETSTO_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Fixed Asset Turnover (Annual)",
+   "zh": "固定资产周转率 · 年度"
+  },
+  "score": 4,
+  "formula": {
+   "en": "Fixed Asset Turnover = Annual Revenue / Net Fixed Assets",
+   "zh": "固定资产周转率 = 全年营收 / 固定资产净值"
+  },
+  "principle": {
+   "en": "Sales per dollar of plant and equipment over a full year. It reveals how capital-intensive a business is and whether its assets are used efficiently versus peers.",
+   "zh": "全年每一元厂房设备带来的销售额，反映业务的资本密集程度，以及资产利用效率是否优于同行。"
+  },
+  "example": {
+   "en": "A software firm turns over its fixed assets 10× a year; a steelmaker manages 1×. The steelmaker needs far more capital for each dollar of sales.",
+   "zh": "一家软件公司固定资产周转率每年10次，钢铁厂只有1次，钢铁厂每赚一元销售需要多得多的资本。"
+  }
+ },
+ {
+  "id": "INVENTORYTO_FQ",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Inventory Turnover (Quarterly)",
+   "zh": "存货周转率 · 单季"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "Inventory Turnover = Quarterly COGS / Average Inventory\nDays of inventory ≈ 91 / turnover",
+   "zh": "存货周转率 = 单季营业成本 / 平均存货\n存货周转天数 ≈ 91 / 周转率"
+  },
+  "principle": {
+   "en": "How many times stock is sold and replaced in a quarter. Slowing turnover means goods are piling up, which usually forces discounts a quarter or two later.",
+   "zh": "一个季度存货卖出并补充的次数。周转变慢说明货物在积压，通常一两个季度后就得打折清货。"
+  },
+  "example": {
+   "en": "A retailer's turnover falls from 1.5 to 1.1 versus last year: stock now sits about 83 days instead of 61. Markdowns are likely next quarter.",
+   "zh": "某零售商周转率同比从1.5降到1.1，存货天数从约61天拉长到83天，下季度很可能要降价促销。"
+  }
+ },
+ {
+  "id": "INVENTORYTO_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Inventory Turnover (Annual)",
+   "zh": "存货周转率 · 年度"
+  },
+  "score": 5,
+  "formula": {
+   "en": "Inventory Turnover = Annual COGS / Average Inventory\nDays of inventory = 365 / turnover",
+   "zh": "存货周转率 = 全年营业成本 / 平均存货\n存货周转天数 = 365 / 周转率"
+  },
+  "principle": {
+   "en": "How many times a year the company cycles through its entire inventory. Higher means leaner operations and less cash tied up in stock; compare within an industry.",
+   "zh": "公司一年内把全部存货周转几次。越高说明运营越精简、占用现金越少，要在同行业内比较。"
+  },
+  "example": {
+   "en": "A grocer turns inventory 12 times a year (about 30 days); a furniture maker 4 times (about 90 days). Like a fruit stand versus an antique shop.",
+   "zh": "超市每年周转12次（约30天），家具商只有4次（约90天），就像水果摊和古董店的区别。"
+  }
+ },
+ {
+  "id": "PAYABLETO_FQ",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Payables Turnover (Quarterly)",
+   "zh": "应付账款周转率 · 单季"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "Payables Turnover = Quarterly COGS / Average Accounts Payable\nDays payable ≈ 91 / turnover",
+   "zh": "应付账款周转率 = 单季营业成本 / 平均应付账款\n应付天数 ≈ 91 / 周转率"
+  },
+  "principle": {
+   "en": "How quickly the company pays its suppliers. Paying slower keeps cash longer: smart if the company has bargaining power, a warning sign if it is short of cash.",
+   "zh": "公司向供应商付款的速度。付得越慢，现金留得越久：有议价能力时是精明，缺钱时则是危险信号。"
+  },
+  "example": {
+   "en": "Days payable jump from 45 to 75 in one quarter while sales fall. Suppliers are being made to wait — likely a cash squeeze, not bargaining power.",
+   "zh": "销售下滑的同时，应付天数一个季度从45天拉长到75天，供应商被迫等待，更可能是现金紧张而非议价能力强。"
+  }
+ },
+ {
+  "id": "PAYABLETO_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Payables Turnover (Annual)",
+   "zh": "应付账款周转率 · 年度"
+  },
+  "score": 4,
+  "formula": {
+   "en": "Payables Turnover = Annual COGS / Average Accounts Payable\nDays payable = 365 / turnover\nCash cycle = Days inventory + Days receivable − Days payable",
+   "zh": "应付账款周转率 = 全年营业成本 / 平均应付账款\n应付天数 = 365 / 周转率\n现金周期 = 存货天数 + 应收天数 − 应付天数"
+  },
+  "principle": {
+   "en": "How many times a year the company pays off its suppliers. Days payable is one leg of the cash cycle: the longer you can wait to pay, the less cash you need.",
+   "zh": "公司一年内结清应付账款的次数。应付天数是现金周期的一环：付款能拖得越久，需要的营运资金越少。"
+  },
+  "example": {
+   "en": "A big retailer sells goods in 30 days but pays suppliers in 60. Suppliers effectively fund its inventory — a negative cash cycle.",
+   "zh": "某大型零售商30天就卖掉货物，却60天才付款给供应商，相当于供应商在替它垫资，现金周期为负。"
+  }
+ },
+ {
+  "id": "RECEIVABLETO_FQ",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Receivables Turnover (Quarterly)",
+   "zh": "应收账款周转率 · 单季"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "Receivables Turnover = Quarterly Revenue / Average Accounts Receivable\nDays sales outstanding ≈ 91 / turnover",
+   "zh": "应收账款周转率 = 单季营收 / 平均应收账款\n应收天数 ≈ 91 / 周转率"
+  },
+  "principle": {
+   "en": "How fast credit sales turn into cash in a quarter. If sales hold up but collection slows, customers may be struggling or revenue may be booked too aggressively.",
+   "zh": "一个季度赊销变成现金的速度。如果销售没降但回款变慢，可能是客户出了问题，也可能是收入确认过于激进。"
+  },
+  "example": {
+   "en": "Revenue grows 15% but days to get paid jump from 40 to 65. Sales are being booked faster than cash arrives — a red flag.",
+   "zh": "营收增长15%，回款天数却从40天跳到65天，收入入账比现金到账快得多，这是危险信号。"
+  }
+ },
+ {
+  "id": "RECEIVABLETO_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Receivables Turnover (Annual)",
+   "zh": "应收账款周转率 · 年度"
+  },
+  "score": 5,
+  "formula": {
+   "en": "Receivables Turnover = Annual Revenue / Average Accounts Receivable\nDays sales outstanding = 365 / turnover",
+   "zh": "应收账款周转率 = 全年营收 / 平均应收账款\n应收天数 = 365 / 周转率"
+  },
+  "principle": {
+   "en": "How many times a year the company collects what customers owe. A steady multi-year decline is a serious warning about customer quality or accounting.",
+   "zh": "公司一年内收回客户欠款的次数。连续多年下降，是客户质量或会计处理出问题的严重警告。"
+  },
+  "example": {
+   "en": "Turnover falls from 8 to 5 over three years: customers now take 73 days to pay instead of 46. Growth is increasingly on credit.",
+   "zh": "三年里周转率从8降到5，客户付款时间从46天拉长到73天，增长越来越依赖赊销。"
+  }
+ },
+ {
+  "id": "TOTALASSETRATE_FY",
+  "cat": "key_indicators",
+  "name": {
+   "en": "Total Asset Turnover (Annual)",
+   "zh": "总资产周转率 · 年度"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "Asset Turnover = Annual Revenue / Average Total Assets\nROE = Net Margin × Asset Turnover × Equity Multiplier",
+   "zh": "总资产周转率 = 全年营收 / 平均总资产\nROE = 净利率 × 资产周转率 × 权益乘数"
+  },
+  "principle": {
+   "en": "Revenue generated per dollar of everything the company owns. It is the efficiency part of ROE and shows whether a firm wins on margin or on volume.",
+   "zh": "公司每一元总资产带来的营收，是ROE中的“效率”部分，能看出公司靠高利润率还是靠高周转赚钱。"
+  },
+  "example": {
+   "en": "A discount store turns assets 2.5× at a 3% margin; a luxury brand 0.6× at a 20% margin. Both can earn good returns — one by volume, one by price.",
+   "zh": "折扣超市资产周转2.5次、净利率3%；奢侈品牌周转0.6次、净利率20%。两者都能赚钱，一个靠量，一个靠价。"
+  }
+ }
+]

@@ -1,0 +1,1780 @@
+[
+ {
+  "id": "DELTA",
+  "cat": "greeks",
+  "name": {
+   "en": "Delta",
+   "zh": "Delta（对冲值）"
+  },
+  "score": 9.4,
+  "formula": {
+   "en": "Δ_call = N(d₁)   (0 … +1)\nΔ_put = N(d₁) − 1   (−1 … 0)\nd₁ = [ln(S/K) + (r + σ²/2)·T] / (σ·√T)\nShare-equivalent = Σ qty × Δ × 100",
+   "zh": "Δ_看涨 = N(d₁)   （0 … +1）\nΔ_看跌 = N(d₁) − 1   （−1 … 0）\nd₁ = [ln(S/K) + (r + σ²/2)·T] / (σ·√T)\n等效股数 = Σ 数量 × Δ × 100"
+  },
+  "principle": {
+   "en": "Delta is how much the option price moves for a $1 move in the stock. Times 100, it tells you how many shares the contract behaves like right now, and it roughly approximates the chance of finishing in the money.",
+   "zh": "Delta 表示股价每变动 1 元，期权价格变动多少。乘以 100 就是这张合约此刻相当于多少股，也可粗略看作到期价内的概率。"
+  },
+  "example": {
+   "en": "A call with delta 0.60 gains about $0.60 when the stock rises $1, so one contract acts like holding 60 shares.",
+   "zh": "Delta 为 0.60 的看涨期权，股价涨 1 元，期权约涨 0.60 元，一张合约就像持有 60 股。"
+  }
+ },
+ {
+  "id": "LONG_CALL",
+  "cat": "strat-bullish",
+  "name": {
+   "en": "Long Call",
+   "zh": "买入看涨期权"
+  },
+  "score": 7.2,
+  "formula": {
+   "en": "Max loss = premium paid\nMax profit = unlimited\nBreak-even = K + premium",
+   "zh": "最大亏损 = 支付的权利金\n最大盈利 = 无上限\n盈亏平衡 = K + 权利金"
+  },
+  "principle": {
+   "en": "Buying a call gives you the right to buy the stock at the strike. You pay a fixed premium, so your loss is capped, while the upside above break-even is unlimited. Time decay costs you every day.",
+   "zh": "买入看涨期权，就获得以行权价买股票的权利。你支付固定的权利金，亏损有上限，过了盈亏平衡点后上涨收益无上限，但每天都在损耗时间价值。"
+  },
+  "example": {
+   "en": "Stock at $100. Buy a $100 call for $4. At expiry: stock $115 → profit $11 per share; stock $95 → lose the $4, nothing more.",
+   "zh": "股价 100 元，花 4 元买入行权价 100 元的看涨期权。到期时股价 115 元，每股赚 11 元；股价 95 元，只亏这 4 元。"
+  }
+ },
+ {
+  "id": "GAMMA",
+  "cat": "greeks",
+  "name": {
+   "en": "Gamma",
+   "zh": "Gamma（Delta 变化率）"
+  },
+  "score": 8.7,
+  "formula": {
+   "en": "Γ = n(d₁) / (S·σ·√T)   (same for call and put)\nNew Δ ≈ old Δ + Γ × price move\nCurvature P/L ≈ ½ · Γ · ΔS² × 100",
+   "zh": "Γ = n(d₁) / (S·σ·√T)   （看涨看跌相同）\n新 Δ ≈ 原 Δ + Γ × 股价变动\n凸性盈亏 ≈ ½ · Γ · ΔS² × 100"
+  },
+  "principle": {
+   "en": "Gamma is how fast delta changes as the stock moves. It is highest for at-the-money options near expiry. Option buyers are long gamma, so their delta grows as they win; sellers are the opposite.",
+   "zh": "Gamma 表示股价变动时 Delta 变化有多快。平值且临近到期的期权 Gamma 最大。买方持有正 Gamma，赚钱时仓位越做越大；卖方正好相反。"
+  },
+  "example": {
+   "en": "Delta 0.50, gamma 0.05. The stock rises $2, so delta becomes about 0.60: like a car that speeds up the further you press the pedal.",
+   "zh": "Delta 0.50，Gamma 0.05。股价涨 2 元，Delta 变成约 0.60，就像油门越踩车速提得越快。"
+  }
+ },
+ {
+  "id": "THETA",
+  "cat": "greeks",
+  "name": {
+   "en": "Theta",
+   "zh": "Theta（时间价值衰减）"
+  },
+  "score": 9.2,
+  "formula": {
+   "en": "Θ ≈ daily loss of extrinsic value (per calendar day)\nPer contract per day = Θ × 100\nIntrinsic value never decays",
+   "zh": "Θ ≈ 每个日历日损失的时间价值\n每张合约每天 = Θ × 100\n内在价值不会衰减"
+  },
+  "principle": {
+   "en": "Theta is how much an option loses each day if nothing else changes. It only eats time value, and it speeds up as expiry approaches. Buyers pay it; sellers collect it.",
+   "zh": "Theta 是在其他条件不变时，期权每天损失的价值。它只侵蚀时间价值，越临近到期衰减越快。买方付出，卖方收取。"
+  },
+  "example": {
+   "en": "An option worth $3.00 with theta −0.10 is worth about $2.90 tomorrow if the stock and IV stay put. Like ice melting faster as the cube gets small.",
+   "zh": "价值 3.00 元、Theta 为 −0.10 的期权，若股价和隐含波动率不变，明天约值 2.90 元。就像冰块越小融得越快。"
+  }
+ },
+ {
+  "id": "VEGA",
+  "cat": "greeks",
+  "name": {
+   "en": "Vega",
+   "zh": "Vega（波动率敏感度）"
+  },
+  "score": 8.9,
+  "formula": {
+   "en": "ν = S · n(d₁) · √T / 100   (per 1 vol point)\nP/L ≈ position vega × change in IV (points)",
+   "zh": "ν = S · n(d₁) · √T / 100   （每 1 个波动率点）\n盈亏 ≈ 持仓 Vega × IV 变动（点）"
+  },
+  "principle": {
+   "en": "Vega is how much an option gains when implied volatility rises one point. It prices uncertainty itself, separate from direction, and is largest for at-the-money options with lots of time left.",
+   "zh": "Vega 表示隐含波动率每升 1 个点，期权涨多少。它衡量的是「不确定性」的价格，与方向无关；平值且剩余时间长的期权 Vega 最大。"
+  },
+  "example": {
+   "en": "An option with vega 0.20 gains $0.20 when IV goes from 40% to 41%, even if the stock does not move at all.",
+   "zh": "Vega 为 0.20 的期权，隐含波动率从 40% 升到 41%，即使股价不动也会涨 0.20 元。"
+  }
+ },
+ {
+  "id": "RHO",
+  "cat": "greeks",
+  "name": {
+   "en": "Rho",
+   "zh": "Rho（利率敏感度）"
+  },
+  "score": 3.6,
+  "formula": {
+   "en": "ρ_call = K · T · e^(−rT) · N(d₂) / 100\nρ_put = −K · T · e^(−rT) · N(−d₂) / 100\n(per 1 percentage point of rates)",
+   "zh": "ρ_看涨 = K · T · e^(−rT) · N(d₂) / 100\nρ_看跌 = −K · T · e^(−rT) · N(−d₂) / 100\n（利率每变动 1 个百分点）"
+  },
+  "principle": {
+   "en": "Rho is how much an option changes when interest rates move one percentage point. Higher rates help calls and hurt puts. It barely matters for short-dated options but becomes real for long-dated ones.",
+   "zh": "Rho 表示利率每变动 1 个百分点，期权价格变化多少。加息利好看涨、利空看跌。短期期权几乎可以忽略，长期期权才明显。"
+  },
+  "example": {
+   "en": "A 2-year call with rho 0.50 gains about $0.50 if rates rise from 4% to 5%. A 1-week call would gain about a cent.",
+   "zh": "两年期看涨期权 Rho 为 0.50，利率从 4% 升到 5%，约涨 0.50 元；一周期的看涨期权只涨约一分钱。"
+  }
+ },
+ {
+  "id": "BEP",
+  "cat": "metrics",
+  "name": {
+   "en": "Break-Even Point",
+   "zh": "盈亏平衡点"
+  },
+  "score": 8.2,
+  "formula": {
+   "en": "Long call: BEP = K + premium\nLong put: BEP = K − premium\nShort put: BEP = K − credit",
+   "zh": "买入看涨：平衡点 = K + 权利金\n买入看跌：平衡点 = K − 权利金\n卖出看跌：平衡点 = K − 收到的权利金"
+  },
+  "principle": {
+   "en": "The break-even is the stock price at expiry where you exactly get your money back. It turns a premium into a price level you can compare with a chart or a target. It only applies at expiry.",
+   "zh": "盈亏平衡点是到期时恰好回本的股价。它把权利金换算成一个价格位，方便和图表或目标价比较。它只在到期日成立。"
+  },
+  "example": {
+   "en": "Buy a $100 call for $5. The stock must be above $105 at expiry for you to make money.",
+   "zh": "花 5 元买入行权价 100 元的看涨期权，到期时股价必须高于 105 元才能赚钱。"
+  }
+ },
+ {
+  "id": "POP",
+  "cat": "metrics",
+  "name": {
+   "en": "Probability of Profit",
+   "zh": "获利概率"
+  },
+  "score": 6.4,
+  "formula": {
+   "en": "POP = P( P/L at expiry > 0 )   under the pricing model\nOne break-even: P(S_T beyond BEP)\nTwo break-evens: P(BEP_low < S_T < BEP_high)",
+   "zh": "获利概率 = P( 到期盈亏 > 0 )   依据定价模型\n一个平衡点：P(S_T 越过平衡点)\n两个平衡点：P(下平衡点 < S_T < 上平衡点)"
+  },
+  "principle": {
+   "en": "Probability of profit is the model's estimate of how often the trade ends above zero at expiry. It is useful for comparing trades, but it is not a forecast and says nothing about how much you win or lose.",
+   "zh": "获利概率是模型估算的到期时盈利的可能性。适合用来比较不同策略，但它不是预测，也不说明赚多少或亏多少。"
+  },
+  "example": {
+   "en": "Selling a far out-of-the-money put might show 85% POP. You win small most of the time, but the 15% can wipe out many wins.",
+   "zh": "卖出深度价外看跌期权，获利概率可能显示 85%。大多数时候小赚，但那 15% 的情况可能吃掉很多次盈利。"
+  }
+ },
+ {
+  "id": "MAX_PL",
+  "cat": "metrics",
+  "name": {
+   "en": "Max Profit / Max Loss",
+   "zh": "最大盈亏"
+  },
+  "score": 8.6,
+  "formula": {
+   "en": "Max profit = best P/L over all expiry prices\nMax loss = worst P/L over all expiry prices\nShown as ∞ when unbounded",
+   "zh": "最大盈利 = 所有到期价格下的最佳盈亏\n最大亏损 = 所有到期价格下的最差盈亏\n无上限时显示 ∞"
+  },
+  "principle": {
+   "en": "The best and worst outcomes if you hold to expiry. Max loss is the number to size your position by; max profit is either capped by your strikes or unlimited.",
+   "zh": "持有到期时的最好和最坏结果。最大亏损决定仓位大小；最大盈利要么被行权价封顶，要么无上限。"
+  },
+  "example": {
+   "en": "Buy a $100/$110 call spread for $4. Max profit is $6 per share ($600 a contract); max loss is the $4 paid ($400).",
+   "zh": "花 4 元买入 100/110 看涨价差。最大盈利每股 6 元（每张 600 元），最大亏损是付出的 4 元（400 元）。"
+  }
+ },
+ {
+  "id": "ROR",
+  "cat": "metrics",
+  "name": {
+   "en": "Return on Risk",
+   "zh": "风险回报率"
+  },
+  "score": 7.4,
+  "formula": {
+   "en": "ROR = max profit / max loss   (defined-risk trades)",
+   "zh": "风险回报率 = 最大盈利 / 最大亏损   （风险有限的策略）"
+  },
+  "principle": {
+   "en": "Return on risk compares the best outcome with the worst on a trade whose loss is capped: how many dollars you can make per dollar you can lose. It fits spreads, butterflies and condors.",
+   "zh": "风险回报率比较风险有限的策略中最好与最坏的结果：每冒 1 元风险能赚多少。适用于价差、蝶式和鹰式等策略。"
+  },
+  "example": {
+   "en": "A $10-wide call spread costing $2: max profit $8, max loss $2, so ROR is 400%. That high ratio usually comes with a low chance of hitting it.",
+   "zh": "宽 10 元、成本 2 元的看涨价差：最大盈利 8 元，最大亏损 2 元，风险回报率 400%。但比率高通常意味着达成概率低。"
+  }
+ },
+ {
+  "id": "ROC",
+  "cat": "metrics",
+  "name": {
+   "en": "Return on Collateral",
+   "zh": "保证金回报率"
+  },
+  "score": 6.1,
+  "formula": {
+   "en": "ROC = max profit / collateral required",
+   "zh": "保证金回报率 = 最大盈利 / 所需保证金"
+  },
+  "principle": {
+   "en": "Return on collateral divides max profit by the money your broker locks up. It is used for naked or cash-secured trades, where there is no capped loss to divide by. It measures capital efficiency, not risk.",
+   "zh": "保证金回报率用最大盈利除以券商冻结的资金。用于裸卖或现金担保的交易，因为这类交易没有封顶的亏损可做分母。它衡量资金效率，而非风险。"
+  },
+  "example": {
+   "en": "Sell a $50 put for $1 with cash secured: $5,000 is locked to earn $100, an ROC of 2%. On margin with $1,000 locked, the same trade shows 10%.",
+   "zh": "现金担保卖出行权价 50 元的看跌期权，收 1 元：冻结 5,000 元赚 100 元，回报 2%。用保证金只冻结 1,000 元时，同一笔交易显示 10%。"
+  }
+ },
+ {
+  "id": "IV",
+  "cat": "pricing",
+  "name": {
+   "en": "Implied Volatility",
+   "zh": "隐含波动率"
+  },
+  "score": 9.2,
+  "formula": {
+   "en": "IV = the σ that makes the model price equal the market price\nExpected 1σ move ≈ S × IV × √(days / 365)",
+   "zh": "IV = 使模型价格等于市场价格的 σ\n预期 1σ 波动 ≈ S × IV × √(天数 / 365)"
+  },
+  "principle": {
+   "en": "Implied volatility is the volatility you must plug into the pricing model to match the option's market price. High IV means options are expensive because traders expect big moves.",
+   "zh": "隐含波动率是代入定价模型后能还原期权市价的那个波动率。IV 高说明期权贵，市场预期股价会大幅波动。"
+  },
+  "example": {
+   "en": "Stock $100, IV 40%, 30 days out: expected 1σ move ≈ 100 × 0.40 × √(30/365) ≈ ±$11.",
+   "zh": "股价 100 元，IV 40%，30 天后：预期 1σ 波动 ≈ 100 × 0.40 × √(30/365) ≈ ±11 元。"
+  }
+ },
+ {
+  "id": "HV",
+  "cat": "pricing",
+  "name": {
+   "en": "Historical Volatility",
+   "zh": "历史波动率"
+  },
+  "score": 6.2,
+  "formula": {
+   "en": "Daily return r = ln(P_today / P_yesterday)\nHV = stdev(r over n days) × √252",
+   "zh": "日收益 r = ln(今日价 / 昨日价)\nHV = n 日收益率标准差 × √252"
+  },
+  "principle": {
+   "en": "Historical volatility measures how much the stock actually moved over a past window, annualised. It uses no model, but it only describes the past. Compare it with IV to judge if options are cheap or rich.",
+   "zh": "历史波动率衡量股票过去一段时间的实际波动，并年化。它不依赖模型，但只反映过去。和 IV 对比，可判断期权偏贵还是偏便宜。"
+  },
+  "example": {
+   "en": "30-day HV is 50% while IV is 35%: the stock has been moving more than options are pricing in, so options look cheap.",
+   "zh": "30 日历史波动率 50%，而 IV 只有 35%：股票实际波动比期权定价的更大，期权显得便宜。"
+  }
+ },
+ {
+  "id": "IV_RANK",
+  "cat": "pricing",
+  "name": {
+   "en": "IV Rank",
+   "zh": "IV 排名"
+  },
+  "score": 8.6,
+  "formula": {
+   "en": "IV Rank = (IV now − 1y low) / (1y high − 1y low) × 100",
+   "zh": "IV 排名 = (当前 IV − 一年最低) / (一年最高 − 一年最低) × 100"
+  },
+  "principle": {
+   "en": "IV Rank shows where today's IV sits between its lowest and highest level of the past year, on a 0–100 scale. One extreme spike can distort it for a whole year.",
+   "zh": "IV 排名显示当前 IV 在过去一年最低与最高之间的位置，范围 0–100。一次极端飙升就可能扭曲它整整一年。"
+  },
+  "example": {
+   "en": "Past-year IV ranged 20% to 60%; today it is 40%. IV Rank = (40 − 20) / (60 − 20) × 100 = 50.",
+   "zh": "过去一年 IV 在 20% 到 60% 之间，今天 40%。IV 排名 = (40 − 20) / (60 − 20) × 100 = 50。"
+  }
+ },
+ {
+  "id": "IV_PCTL",
+  "cat": "pricing",
+  "name": {
+   "en": "IV Percentile",
+   "zh": "IV 百分位"
+  },
+  "score": 9,
+  "formula": {
+   "en": "IV Pctl = (days in past year with IV below today) / (trading days) × 100",
+   "zh": "IV 百分位 = (过去一年 IV 低于今日的天数) / (交易日总数) × 100"
+  },
+  "principle": {
+   "en": "IV Percentile is the share of days in the past year when IV was lower than today. Every day counts once, so a single extreme spike cannot distort it the way it distorts IV Rank.",
+   "zh": "IV 百分位是过去一年中 IV 低于今天的天数占比。每天只算一票，一次极端飙升不会像扭曲 IV 排名那样扭曲它。"
+  },
+  "example": {
+   "en": "If IV was below today's level on 189 of 252 trading days, IV Percentile is 75: today is higher than three-quarters of the year.",
+   "zh": "若 252 个交易日中有 189 天 IV 低于今天，IV 百分位就是 75，说明今天高于全年四分之三的日子。"
+  }
+ },
+ {
+  "id": "PREMIUM",
+  "cat": "pricing",
+  "name": {
+   "en": "Premium",
+   "zh": "权利金"
+  },
+  "score": 6.4,
+  "formula": {
+   "en": "Cash premium = option price × 100 × contracts\nPremium % (call) = (K + price − S) / S\nPremium % (put) = (S − K + price) / S",
+   "zh": "权利金 = 期权价格 × 100 × 张数\n溢价率（看涨）= (K + 价格 − S) / S\n溢价率（看跌）= (S − K + 价格) / S"
+  },
+  "principle": {
+   "en": "Premium is the cash the buyer pays and the seller receives for the option. Brokers also show a \"premium %\", which is a different thing: how far the stock must move to break even.",
+   "zh": "权利金是买方付给卖方的期权价格。券商还会显示「溢价率」，那是另一回事：股价还要走多远才能回本。"
+  },
+  "example": {
+   "en": "An option quoted at $2.50 costs $250 per contract. Stock $100, $100 call at $2.50: premium % = 2.5%, so the stock must rise 2.5% to break even.",
+   "zh": "报价 2.50 元的期权，一张要付 250 元。股价 100 元、行权价 100 元的看涨期权报 2.50 元：溢价率 2.5%，股价需涨 2.5% 才回本。"
+  }
+ },
+ {
+  "id": "INTRINSIC",
+  "cat": "pricing",
+  "name": {
+   "en": "Intrinsic Value",
+   "zh": "内在价值"
+  },
+  "score": 6.8,
+  "formula": {
+   "en": "Call intrinsic = max(S − K, 0)\nPut intrinsic = max(K − S, 0)\nPrice = intrinsic + extrinsic",
+   "zh": "看涨内在价值 = max(S − K, 0)\n看跌内在价值 = max(K − S, 0)\n期权价格 = 内在价值 + 时间价值"
+  },
+  "principle": {
+   "en": "Intrinsic value is what the option would be worth if it expired right now: how far it is in the money, never below zero. It needs no model and is the only part of the price that survives to expiry.",
+   "zh": "内在价值是期权此刻立即到期时值多少，即价内的幅度，最低为零。它不需要模型，也是唯一能保留到到期日的价格部分。"
+  },
+  "example": {
+   "en": "Stock $105, $100 call trading at $7. Intrinsic is $5; the other $2 is time value.",
+   "zh": "股价 105 元，行权价 100 元的看涨期权报 7 元。内在价值 5 元，其余 2 元是时间价值。"
+  }
+ },
+ {
+  "id": "EXTRINSIC",
+  "cat": "pricing",
+  "name": {
+   "en": "Extrinsic (Time) Value",
+   "zh": "时间价值"
+  },
+  "score": 8.8,
+  "formula": {
+   "en": "Extrinsic = option price − intrinsic value\nExtrinsic → 0 at expiry, always",
+   "zh": "时间价值 = 期权价格 − 内在价值\n到期时时间价值必然归零"
+  },
+  "principle": {
+   "en": "Extrinsic value is the part of the price above intrinsic: what the market charges for the chance the option becomes worth more. Buyers pay it, sellers collect it, and it always reaches zero at expiry.",
+   "zh": "时间价值是期权价格中超出内在价值的部分，是市场为「将来可能更值钱」收的费用。买方支付、卖方收取，到期时必然归零。"
+  },
+  "example": {
+   "en": "Like a concert ticket's resale markup that vanishes once the show starts. A $3 at-the-money option is all extrinsic and will be worth $0 at expiry if the stock stays put.",
+   "zh": "就像演唱会门票的溢价，开演那一刻就消失。一张 3 元的平值期权全是时间价值，若股价不动，到期时归零。"
+  }
+ },
+ {
+  "id": "MONEYNESS",
+  "cat": "pricing",
+  "name": {
+   "en": "Moneyness (ITM / ATM / OTM)",
+   "zh": "价值状态（价内/平值/价外）"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "Call: ITM if S > K, OTM if S < K\nPut: ITM if S < K, OTM if S > K\nATM when S ≈ K",
+   "zh": "看涨：S > K 为价内，S < K 为价外\n看跌：S < K 为价内，S > K 为价外\nS ≈ K 时为平值"
+  },
+  "principle": {
+   "en": "Moneyness says where the strike sits versus the stock price: in, at or out of the money. It decides what you are really holding, from stock-like deep in the money to a lottery ticket far out.",
+   "zh": "价值状态描述行权价相对股价的位置：价内、平值或价外。它决定你实际持有的是什么，从深度价内的「类股票」到深度价外的「彩票」。"
+  },
+  "example": {
+   "en": "Stock at $50: a $45 call is in the money, a $50 call at the money, a $60 call out of the money. For puts, the labels flip.",
+   "zh": "股价 50 元：行权价 45 元的看涨期权是价内，50 元是平值，60 元是价外。看跌期权则正好相反。"
+  }
+ },
+ {
+  "id": "LEVERAGE",
+  "cat": "pricing",
+  "name": {
+   "en": "Leverage Ratio",
+   "zh": "杠杆比率"
+  },
+  "score": 3.6,
+  "formula": {
+   "en": "Leverage ratio = S / option price   (ignores delta)",
+   "zh": "杠杆比率 = S / 期权价格   （忽略 Delta）"
+  },
+  "principle": {
+   "en": "The leverage ratio divides the stock price by the option price. It overstates real exposure because it assumes the option moves one-for-one with the stock, when it actually moves at delta.",
+   "zh": "杠杆比率是股价除以期权价格。它假设期权与股票一比一同步变动，而实际上期权只按 Delta 变动，因此高估了真实杠杆。"
+  },
+  "example": {
+   "en": "Stock $100, option $4: leverage ratio 25. With delta 0.40, a 1% stock move only moves the option about 10%, not 25%.",
+   "zh": "股价 100 元，期权 4 元：杠杆比率 25 倍。但 Delta 只有 0.40，股价涨 1%，期权只涨约 10%，而不是 25%。"
+  }
+ },
+ {
+  "id": "EFF_GEARING",
+  "cat": "pricing",
+  "name": {
+   "en": "Effective Gearing",
+   "zh": "实际杠杆"
+  },
+  "score": 8.2,
+  "formula": {
+   "en": "Effective gearing = Δ × S / option price\n= Δ × leverage ratio",
+   "zh": "实际杠杆 = Δ × S / 期权价格\n= Δ × 杠杆比率"
+  },
+  "principle": {
+   "en": "Effective gearing is the percentage the option moves for a 1% move in the stock. It corrects the leverage ratio by delta, so it is a real sensitivity you can size with, though only for small moves.",
+   "zh": "实际杠杆表示股价变动 1% 时期权变动的百分比。它用 Delta 修正了杠杆比率，是可用于决定仓位的真实敏感度，但只适用于小幅变动。"
+  },
+  "example": {
+   "en": "Leverage ratio 25 and delta 0.40 give effective gearing of 10: the stock rises 1%, the option rises about 10%.",
+   "zh": "杠杆比率 25 倍、Delta 0.40，实际杠杆就是 10 倍：股价涨 1%，期权约涨 10%。"
+  }
+ },
+ {
+  "id": "MARK_PRICE",
+  "cat": "pricing",
+  "name": {
+   "en": "Mark Price vs Theoretical Price",
+   "zh": "标记价格与理论价格"
+  },
+  "score": 8,
+  "formula": {
+   "en": "Last = most recent trade (may be stale)\nMid = (bid + ask) / 2\nMark = broker's official valuation\nTheoretical = model price",
+   "zh": "最新价 = 最近一笔成交（可能已过时）\n中间价 = (买价 + 卖价) / 2\n标记价格 = 券商的官方估值\n理论价格 = 模型计算价"
+  },
+  "principle": {
+   "en": "The mark price is what your broker uses to value your position, usually near the bid-ask midpoint. The theoretical price is a model output. The last price is just the latest trade, which may be hours old.",
+   "zh": "标记价格是券商为你的持仓估值所用的价格，通常接近买卖中间价。理论价格是模型算出来的。最新价只是最后一笔成交，可能是几小时前的。"
+  },
+  "example": {
+   "en": "Bid $2.90, ask $3.10, last trade $3.40 this morning. Your account marks the option at about $3.00, not $3.40.",
+   "zh": "买价 2.90 元、卖价 3.10 元，早上最后成交 3.40 元。账户按约 3.00 元给期权估值，而不是 3.40 元。"
+  }
+ },
+ {
+  "id": "STRIKE",
+  "cat": "contract",
+  "name": {
+   "en": "Strike Price",
+   "zh": "行权价"
+  },
+  "score": 9,
+  "formula": {
+   "en": "Call intrinsic = max(0, S − K)\nPut intrinsic = max(0, K − S)\nLong call BEP = K + premium · Long put BEP = K − premium",
+   "zh": "看涨内在价值 = max(0, S − K)\n看跌内在价值 = max(0, K − S)\n买看涨平衡点 = K + 权利金 · 买看跌平衡点 = K − 权利金"
+  },
+  "principle": {
+   "en": "The strike is the price at which the option converts into stock. It is the one term you really choose, and it drives intrinsic value, delta, break-even and the whole payoff shape.",
+   "zh": "行权价是期权转换成股票的价格。这是你真正能选择的条款，内在价值、Delta、盈亏平衡点和整个收益形状都由它决定。"
+  },
+  "example": {
+   "en": "With the stock at $100, a $90 call behaves much like stock, while a $120 call is a cheap bet that pays only if the stock jumps over 20%.",
+   "zh": "股价 100 元时，行权价 90 元的看涨期权表现接近股票；120 元的则是便宜的押注，只有股价涨超 20% 才会有回报。"
+  }
+ },
+ {
+  "id": "EXPIRY",
+  "cat": "contract",
+  "name": {
+   "en": "Expiration Date",
+   "zh": "到期日"
+  },
+  "score": 8.2,
+  "principle": {
+   "en": "Expiry is the date the option stops existing. It fixes how much time value you buy or sell and how fast decay and gamma bite near the end. Options in the money by a cent are usually exercised automatically.",
+   "zh": "到期日是期权失效的日子。它决定你买卖多少时间价值，以及临近到期时衰减和 Gamma 有多猛烈。价内哪怕一分钱，通常也会被自动行权。"
+  },
+  "example": {
+   "en": "You hold a $50 call into Friday's close and the stock ends at $50.02. On Monday you own 100 shares worth $5,000 that you never planned to buy.",
+   "zh": "你持有行权价 50 元的看涨期权到周五收盘，股价收在 50.02 元。周一你账户里多了价值 5,000 元、计划外的 100 股。"
+  }
+ },
+ {
+  "id": "DTE",
+  "cat": "contract",
+  "name": {
+   "en": "Days to Expiration",
+   "zh": "剩余到期天数"
+  },
+  "score": 8,
+  "formula": {
+   "en": "DTE = expiry date − today (calendar days)\nT = DTE / 365\nATM time value ∝ √T",
+   "zh": "剩余天数 = 到期日 − 今天（日历日）\nT = 剩余天数 / 365\n平值期权时间价值 ∝ √T"
+  },
+  "principle": {
+   "en": "Days to expiration is the countdown the pricing model uses. Time value shrinks with the square root of time, so the last weeks cost far more per day than the first months.",
+   "zh": "剩余到期天数是定价模型使用的倒计时。时间价值随时间的平方根缩小，所以最后几周每天的损耗远大于最初几个月。"
+  },
+  "example": {
+   "en": "Going from 60 to 30 days left removes only about 29% of an at-the-money option's time value; the remaining 71% melts in the last 30 days.",
+   "zh": "从剩 60 天到剩 30 天，平值期权只损失约 29% 的时间价值；剩下 71% 都在最后 30 天里消失。"
+  }
+ },
+ {
+  "id": "MULTIPLIER",
+  "cat": "contract",
+  "name": {
+   "en": "Multiplier",
+   "zh": "合约乘数"
+  },
+  "score": 8.8,
+  "formula": {
+   "en": "Cash = price × multiplier × contracts\nShare-equivalent = Δ × multiplier",
+   "zh": "金额 = 价格 × 乘数 × 张数\n等效股数 = Δ × 乘数"
+  },
+  "principle": {
+   "en": "The multiplier converts the quoted price into real money. For standard US stock options it is 100, so every quote, greek and P/L figure is per share and must be scaled up.",
+   "zh": "合约乘数把报价换算成真金白银。美股标准期权乘数为 100，因此所有报价、希腊值和盈亏都是每股数字，需要放大。"
+  },
+  "example": {
+   "en": "An option quoted at $3.20 costs $320 per contract. A theta of −0.05 means losing $5 a day per contract.",
+   "zh": "报价 3.20 元的期权，一张要 320 元。Theta 为 −0.05，意味着每张合约每天损失 5 元。"
+  }
+ },
+ {
+  "id": "CONTRACT_SIZE",
+  "cat": "contract",
+  "name": {
+   "en": "Contract Size",
+   "zh": "合约单位"
+  },
+  "score": 6,
+  "principle": {
+   "en": "Contract size is how many shares actually change hands when one contract is exercised, normally 100. It usually equals the multiplier, but after a split or merger the two can differ.",
+   "zh": "合约单位是行权时实际交割的股数，通常为 100 股。一般与乘数相同，但在拆股或合并之后两者可能不同。"
+  },
+  "example": {
+   "en": "After a 3-for-2 split, one contract may deliver 150 shares at a strike of $600 instead of 100 at $900, while the premium still converts at ×100.",
+   "zh": "三拆二之后，一张合约可能变为以 600 元交割 150 股，而不是以 900 元交割 100 股，但权利金仍按 ×100 计算。"
+  }
+ },
+ {
+  "id": "STYLE",
+  "cat": "contract",
+  "name": {
+   "en": "American vs European Style",
+   "zh": "美式与欧式"
+  },
+  "score": 7.8,
+  "principle": {
+   "en": "American options can be exercised any day up to expiry; European options only at expiry. US stock options are American, so the short leg of your spread can be assigned early.",
+   "zh": "美式期权到期前任何一天都可行权；欧式期权只能在到期日行权。美股个股期权是美式的，所以你价差中的卖出腿可能被提前指派。"
+  },
+  "example": {
+   "en": "You are short a deep in-the-money call the day before a $2 dividend. The holder exercises early to collect the dividend, and you deliver 100 shares.",
+   "zh": "派息 2 元的前一天，你卖出的深度价内看涨期权被对方提前行权以获得股息，你需要交出 100 股。"
+  }
+ },
+ {
+  "id": "PREV_CLOSE",
+  "cat": "contract",
+  "name": {
+   "en": "Previous Close & Settlement",
+   "zh": "昨收与结算价"
+  },
+  "score": 5,
+  "formula": {
+   "en": "Change % = (price − previous close) / previous close",
+   "zh": "涨跌幅 = (现价 − 昨收) / 昨收"
+  },
+  "principle": {
+   "en": "Previous close is the last trade of yesterday's session. Settlement is the exchange's official end-of-day value, usually the closing bid-ask midpoint. One drives your % change, the other your margin.",
+   "zh": "昨收是前一交易日的最后一笔成交价。结算价是交易所的官方收盘估值，通常取收盘时买卖价的中点。前者决定涨跌幅，后者决定保证金。"
+  },
+  "example": {
+   "en": "An option last traded at $5.00 a minute before the close, but closed with bid $4.40 and ask $4.60. Settlement is about $4.50, so today's % change may look misleading.",
+   "zh": "某期权收盘前一分钟成交 5.00 元，但收盘时买价 4.40、卖价 4.60 元。结算价约 4.50 元，今天的涨跌幅可能因此显得失真。"
+  }
+ },
+ {
+  "id": "OPEN_INTEREST",
+  "cat": "chain",
+  "name": {
+   "en": "Open Interest",
+   "zh": "未平仓合约数"
+  },
+  "score": 8,
+  "formula": {
+   "en": "Both sides opening → OI +1\nOne opens, one closes → OI unchanged\nBoth sides closing → OI −1",
+   "zh": "双方都开仓 → 未平仓 +1\n一方开仓、一方平仓 → 不变\n双方都平仓 → 未平仓 −1"
+  },
+  "principle": {
+   "en": "Open interest is how many contracts on a strike are still open. It measures commitment rather than activity, and it is updated once a day after the close.",
+   "zh": "未平仓合约数是某个行权价上仍然存续的合约数量。它衡量的是持仓承诺而非交易活跃度，每天收盘后更新一次。"
+  },
+  "example": {
+   "en": "A strike with 20,000 open interest but 50 contracts traded today has a large, quiet book: plenty of positions, little fresh action.",
+   "zh": "某行权价未平仓两万张，今天却只成交 50 张：持仓很多，但几乎没有新动作。"
+  }
+ },
+ {
+  "id": "VOLUME",
+  "cat": "chain",
+  "name": {
+   "en": "Volume",
+   "zh": "成交量"
+  },
+  "score": 8.3,
+  "formula": {
+   "en": "Vol / OI < 0.2   quiet, old positions\nVol / OI > 1   heavy same-day trading",
+   "zh": "成交量 / 未平仓 < 0.2   老仓位，交投清淡\n成交量 / 未平仓 > 1   当日大量进出"
+  },
+  "principle": {
+   "en": "Volume is how many contracts traded today on one line; it resets each morning. It shows where attention is, but not whether those trades stayed open overnight.",
+   "zh": "成交量是某个合约今天成交的张数，每天清零。它显示市场关注点在哪里，但不说明这些交易是否留到了收盘之后。"
+  },
+  "example": {
+   "en": "A same-day call trades 40,000 contracts against 8,000 open interest. Most of that is traders opening and closing within the day, not new positions.",
+   "zh": "某当日到期看涨期权成交四万张，而未平仓只有 8,000 张。大部分是日内进出，而非新建仓位。"
+  }
+ },
+ {
+  "id": "TURNOVER",
+  "cat": "chain",
+  "name": {
+   "en": "Turnover",
+   "zh": "成交额"
+  },
+  "score": 7.9,
+  "formula": {
+   "en": "Turnover = Σ price × size × multiplier\nSession average price = turnover / (volume × 100)",
+   "zh": "成交额 = Σ 价格 × 数量 × 乘数\n当日均价 = 成交额 / (成交量 × 100)"
+  },
+  "principle": {
+   "en": "Turnover is the dollar value of premium traded on a line. Contract counts can mislead, since thousands of cheap options may be worth little; turnover shows where real money went.",
+   "zh": "成交额是某个合约当天成交的权利金总金额。成交张数可能误导，成千上万张便宜期权未必值多少钱；成交额才显示真金白银流向何处。"
+  },
+  "example": {
+   "en": "26,000 puts at $0.14 is about $364,000 of turnover. 2,000 calls at $30 is $6 million: fewer contracts, far more money.",
+   "zh": "两万六千张、每张 0.14 元的看跌期权，成交额约 36.4 万元；两千张、每张 30 元的看涨期权，成交额 600 万元：张数少，钱却多得多。"
+  }
+ },
+ {
+  "id": "PCR_VOL",
+  "cat": "chain",
+  "name": {
+   "en": "Put/Call Ratio (Volume)",
+   "zh": "看跌看涨比（成交量）"
+  },
+  "score": 5,
+  "formula": {
+   "en": "PCR (volume) = put volume / call volume",
+   "zh": "看跌看涨比（成交量）= 看跌成交量 / 看涨成交量"
+  },
+  "principle": {
+   "en": "Today's put contracts divided by call contracts. It is often read as a contrarian mood gauge, but it mixes hedging, speculation and income trades, and changes a lot with the scope you pick.",
+   "zh": "当日看跌成交张数除以看涨成交张数。常被当作反向情绪指标，但其中混杂了对冲、投机和收租交易，而且随统计范围不同变化很大。"
+  },
+  "example": {
+   "en": "The whole chain shows 0.84, but the same-day expiry alone shows 0.24. Same stock, same day, very different readings.",
+   "zh": "整条期权链显示 0.84，单看当日到期合约只有 0.24。同一只股票、同一天，读数差别很大。"
+  }
+ },
+ {
+  "id": "PCR_OI",
+  "cat": "chain",
+  "name": {
+   "en": "Put/Call OI Ratio",
+   "zh": "看跌看涨比（未平仓）"
+  },
+  "score": 6.3,
+  "formula": {
+   "en": "PCR (OI) = put open interest / call open interest",
+   "zh": "看跌看涨比（未平仓）= 看跌未平仓 / 看涨未平仓"
+  },
+  "principle": {
+   "en": "Outstanding puts divided by outstanding calls. Unlike the volume ratio, it shows what traders still hold rather than what they did today, so it is slower and less noisy.",
+   "zh": "未平仓看跌合约除以未平仓看涨合约。与成交量版本不同，它反映交易者仍持有什么，而非今天做了什么，因此更慢、噪音更少。"
+  },
+  "example": {
+   "en": "Volume PCR 0.24 but OI PCR 0.45: today's flow leaned to calls, while the existing book still holds a fair amount of puts.",
+   "zh": "成交量比 0.24，未平仓比 0.45：今天的资金偏向看涨，但存量持仓中仍有不少看跌期权。"
+  }
+ },
+ {
+  "id": "OI_CHANGE",
+  "cat": "chain",
+  "name": {
+   "en": "OI Rise / OI Fall",
+   "zh": "未平仓增减"
+  },
+  "score": 7.6,
+  "formula": {
+   "en": "ΔOI = OI today − OI yesterday\nStick rate = ΔOI / volume",
+   "zh": "未平仓变化 = 今日未平仓 − 昨日未平仓\n留存率 = 未平仓变化 / 成交量"
+  },
+  "principle": {
+   "en": "The daily change in open interest shows how many contracts were newly opened or closed. Compared with volume, it separates real position-building from same-day trading.",
+   "zh": "未平仓的日变化显示新开或平掉了多少合约。与成交量对比，可以区分真正建仓和日内进出。"
+  },
+  "example": {
+   "en": "A put trades 26,000 contracts and OI rises 5,000. About one in five trades became a lasting position; the rest was churn.",
+   "zh": "某看跌期权成交两万六千张，未平仓增加 5,000 张。约五分之一成交留了下来，其余只是来回倒手。"
+  }
+ },
+ {
+  "id": "MAX_PAIN",
+  "cat": "chain",
+  "name": {
+   "en": "Max Pain",
+   "zh": "最大痛点"
+  },
+  "score": 4.5,
+  "formula": {
+   "en": "Pain(K*) = Σ [max(0, K* − K) × call OI + max(0, K − K*) × put OI]\nMax pain = strike K* with the lowest Pain",
+   "zh": "痛点值(K*) = Σ [max(0, K* − K) × 看涨未平仓 + max(0, K − K*) × 看跌未平仓]\n最大痛点 = 痛点值最小的行权价 K*"
+  },
+  "principle": {
+   "en": "Max pain is the strike where option holders would collectively collect the least if the stock settled there. The maths is simple; the idea that prices get pulled there is weakly supported.",
+   "zh": "最大痛点是股价收在该处时，期权持有人整体获得赔付最少的行权价。计算很简单，但「股价会被拉向那里」的说法证据不足。"
+  },
+  "example": {
+   "en": "With large call OI at $110 and large put OI at $90, max pain may land near $100, where both groups get paid the least.",
+   "zh": "若 110 元有大量看涨未平仓、90 元有大量看跌未平仓，最大痛点可能落在 100 元附近，那里两边拿到的赔付都最少。"
+  }
+ },
+ {
+  "id": "VOL_OI_BY_STRIKE",
+  "cat": "chain",
+  "name": {
+   "en": "Volume & OI by Strike",
+   "zh": "按行权价分布"
+  },
+  "score": 7,
+  "principle": {
+   "en": "Two bar charts across strikes: today's volume and open interest, calls above the line and puts below. Together they show where trading is happening and where positions are piled up.",
+   "zh": "按行权价排列的两张柱状图：当日成交量和未平仓量，看涨在上、看跌在下。合起来看能发现交易集中在哪里、仓位堆积在哪里。"
+  },
+  "example": {
+   "en": "A huge OI bar at the $100 call with little volume today is an old position sitting still; a big volume bar at $105 with small OI is fresh, new interest.",
+   "zh": "100 元看涨期权的未平仓柱很高但今天成交少，是一笔静止的老仓位；105 元成交柱大而未平仓小，则是新进场的关注。"
+  }
+ },
+ {
+  "id": "GEX",
+  "cat": "analysis",
+  "name": {
+   "en": "Gamma Exposure (GEX)",
+   "zh": "伽马敞口 (GEX)"
+  },
+  "score": 8,
+  "formula": {
+   "en": "GEX(K) = Γ × OI × 100 × S² × 0.01\nCalls counted +, puts − (dealer-position assumption)",
+   "zh": "GEX(K) = Γ × 未平仓 × 100 × S² × 0.01\n看涨记为正、看跌记为负（假设做市商持仓方向）"
+  },
+  "principle": {
+   "en": "Gamma exposure estimates how much stock market makers must buy or sell to stay hedged if the price moves 1%. Positive GEX tends to dampen moves; negative GEX tends to amplify them.",
+   "zh": "伽马敞口估算股价变动 1% 时，做市商为保持对冲需要买卖多少股票。正 GEX 往往抑制波动，负 GEX 往往放大波动。"
+  },
+  "example": {
+   "en": "GEX of +$500M means a 1% rise would make dealers sell about $500M of stock, which acts like a brake on the move.",
+   "zh": "GEX 为 +5 亿美元，意味着股价上涨 1% 时，做市商约需卖出 5 亿美元股票，起到刹车作用。"
+  }
+ },
+ {
+  "id": "CALL_GEX",
+  "cat": "analysis",
+  "name": {
+   "en": "Call GEX (Call-Side Gamma Exposure)",
+   "zh": "看涨伽马敞口"
+  },
+  "score": 6.8,
+  "formula": {
+   "en": "Call GEX(K) = + Γ_call × call OI × 100 × S² × 0.01",
+   "zh": "看涨 GEX(K) = + Γ_看涨 × 看涨未平仓 × 100 × S² × 0.01"
+  },
+  "principle": {
+   "en": "The call side of the GEX chart shown on its own. It is always positive under the usual assumption, so it cannot tell you the regime by itself, but it shows where call hedging is concentrated.",
+   "zh": "单独显示 GEX 图中的看涨部分。在常用假设下它总是正值，单看无法判断市场状态，但能显示看涨对冲集中在哪些行权价。"
+  },
+  "example": {
+   "en": "A tall call GEX bar at $120 means heavy dealer hedging there; rallies toward $120 often slow as dealers sell into them.",
+   "zh": "120 元处看涨 GEX 柱很高，说明那里对冲量大；股价涨向 120 元时，做市商卖出，涨势常会放缓。"
+  }
+ },
+ {
+  "id": "PUT_GEX",
+  "cat": "analysis",
+  "name": {
+   "en": "Put GEX (Put-Side Gamma Exposure)",
+   "zh": "看跌伽马敞口"
+  },
+  "score": 6.6,
+  "formula": {
+   "en": "Put GEX(K) = − Γ_put × put OI × 100 × S² × 0.01\nNet GEX(K) = Γ × (call OI − put OI) × 100 × S² × 0.01",
+   "zh": "看跌 GEX(K) = − Γ_看跌 × 看跌未平仓 × 100 × S² × 0.01\n净 GEX(K) = Γ × (看涨未平仓 − 看跌未平仓) × 100 × S² × 0.01"
+  },
+  "principle": {
+   "en": "The put side of the GEX chart, negative at every strike because dealers are assumed short the protective puts customers buy. Big put GEX below the price marks where selling could accelerate.",
+   "zh": "GEX 图的看跌部分，每个行权价都为负，因为假设做市商卖出了客户买来保护的看跌期权。股价下方较大的看跌 GEX 标出了下跌可能加速的位置。"
+  },
+  "example": {
+   "en": "Large put GEX at $90: if the stock falls toward $90, dealers must sell more stock to hedge, which can push it down faster.",
+   "zh": "90 元处看跌 GEX 很大：股价跌向 90 元时，做市商需卖出更多股票对冲，可能让下跌更快。"
+  }
+ },
+ {
+  "id": "AGG_GEX",
+  "cat": "analysis",
+  "name": {
+   "en": "Aggregate GEX Curve",
+   "zh": "聚合伽马曲线"
+  },
+  "score": 8.2,
+  "formula": {
+   "en": "AggGEX(S*) = Σ all strikes and expiries of GEX re-evaluated at price S*\nCurve = AggGEX across a range of S*",
+   "zh": "AggGEX(S*) = 在假设价格 S* 下重新计算并加总所有行权价和到期日的 GEX\n曲线 = 一系列 S* 对应的 AggGEX"
+  },
+  "principle": {
+   "en": "The aggregate GEX curve shows what total dealer gamma would be if the stock were at each price on the chart. Every point recomputes every option, so it shows how the regime changes as price moves.",
+   "zh": "聚合伽马曲线显示：如果股价处在图上各个价位，做市商总伽马会是多少。每个点都重新计算全部期权，因此能看出价格变动时市场状态如何改变。"
+  },
+  "example": {
+   "en": "The curve is +$400M at $100 but turns negative below $92, so a drop under $92 moves the stock into a more volatile zone.",
+   "zh": "曲线在 100 元处为 +4 亿美元，跌破 92 元后转负；股价跌破 92 元就进入波动更大的区域。"
+  }
+ },
+ {
+  "id": "GAMMA_FLIP",
+  "cat": "analysis",
+  "name": {
+   "en": "Gamma Flip / Zero Gamma Level",
+   "zh": "伽马翻转位（零伽马线）"
+  },
+  "score": 8.4,
+  "formula": {
+   "en": "S_flip solves AggGEX(S_flip) = 0\nAbove: dealers dampen moves · Below: dealers amplify moves",
+   "zh": "零伽马位满足 AggGEX(S_flip) = 0\n上方：做市商抑制波动 · 下方：做市商放大波动"
+  },
+  "principle": {
+   "en": "The gamma flip is the price where aggregate GEX crosses zero. Above it, dealer hedging tends to calm the market; below it, hedging tends to push moves further.",
+   "zh": "伽马翻转位是聚合 GEX 穿越零的价格。在其上方，做市商对冲倾向于平抑市场；在其下方，对冲倾向于推动行情走得更远。"
+  },
+  "example": {
+   "en": "Like the edge of a shock absorber's range: above a $95 flip the ride is smooth; break below $95 and every bump feels bigger.",
+   "zh": "像减震器的工作边界：在 95 元翻转位上方行情平稳；一旦跌破 95 元，每次颠簸都会被放大。"
+  }
+ },
+ {
+  "id": "CALL_WALL",
+  "cat": "analysis",
+  "name": {
+   "en": "Call Wall",
+   "zh": "看涨墙"
+  },
+  "score": 5.4,
+  "formula": {
+   "en": "Call wall = strike with the largest call GEX\n(not simply the largest call OI)",
+   "zh": "看涨墙 = 看涨 GEX 最大的行权价\n（不只是看涨未平仓最大）"
+  },
+  "principle": {
+   "en": "The call wall is the strike with the most call-side gamma exposure. It is often read as resistance, because dealers hedging those calls sell stock as price rises toward it. It is a tendency, not a ceiling.",
+   "zh": "看涨墙是看涨伽马敞口最大的行权价。常被视为阻力位，因为做市商在股价上涨接近时要卖出股票对冲。它只是一种倾向，并非天花板。"
+  },
+  "example": {
+   "en": "Call wall at $110 with the stock at $104: rallies may stall near $110, but strong news can blow right through it.",
+   "zh": "股价 104 元，看涨墙在 110 元：上涨可能在 110 元附近受阻，但重大利好照样能冲过去。"
+  }
+ },
+ {
+  "id": "PUT_WALL",
+  "cat": "analysis",
+  "name": {
+   "en": "Put Wall",
+   "zh": "看跌墙"
+  },
+  "score": 5,
+  "formula": {
+   "en": "Put wall = strike with the largest |put GEX|\nSupport only if the wall is above the gamma flip",
+   "zh": "看跌墙 = |看跌 GEX| 最大的行权价\n只有在伽马翻转位之上才可能构成支撑"
+  },
+  "principle": {
+   "en": "The put wall is the strike with the most put-side gamma exposure, often read as support. That only holds while price is in positive-gamma territory; below the gamma flip it can speed up a fall instead.",
+   "zh": "看跌墙是看跌伽马敞口最大的行权价，常被视为支撑。但只有在正伽马区域才成立；跌破伽马翻转位后，它反而可能加速下跌。"
+  },
+  "example": {
+   "en": "Put wall $95, gamma flip $90: a dip to $95 may find buyers. If the flip were $98 instead, $95 would sit in the danger zone.",
+   "zh": "看跌墙 95 元、翻转位 90 元：回落到 95 元可能有承接。若翻转位在 98 元，95 元就处在危险区。"
+  }
+ },
+ {
+  "id": "VOL_SMILE",
+  "cat": "analysis",
+  "name": {
+   "en": "Volatility Smile / Skew",
+   "zh": "波动率微笑与偏斜"
+  },
+  "score": 8.6,
+  "formula": {
+   "en": "Plot IV(K) against strike K\nm = ln(K / S)\nSkew: downside strikes carry higher IV",
+   "zh": "按行权价 K 绘制 IV(K)\nm = ln(K / S)\n偏斜：下方行权价的 IV 更高"
+  },
+  "principle": {
+   "en": "If the pricing model were perfect, every strike would have the same IV. Instead, IV curves up at the edges, and usually more on the downside, because traders pay extra for crash protection.",
+   "zh": "如果定价模型完美，所有行权价的 IV 应该相同。实际上 IV 在两端翘起，且下方通常更高，因为交易者愿为防范暴跌多付钱。"
+  },
+  "example": {
+   "en": "Stock at $100: the $100 option shows 30% IV, the $80 put 42%, the $120 call 33%. That lopsided curve is the skew.",
+   "zh": "股价 100 元：100 元期权 IV 30%，80 元看跌期权 42%，120 元看涨期权 33%。这条一边高的曲线就是偏斜。"
+  }
+ },
+ {
+  "id": "VOL_TERM",
+  "cat": "analysis",
+  "name": {
+   "en": "Volatility Term Structure",
+   "zh": "波动率期限结构"
+  },
+  "score": 8.3,
+  "formula": {
+   "en": "Contango: near IV < far IV (normal)\nBackwardation: near IV > far IV (stress or event)\nVariance adds over time: σ²T = σ_base²T + event variance",
+   "zh": "正向结构：近月 IV < 远月 IV（常态）\n倒挂：近月 IV > 远月 IV（恐慌或事件）\n方差随时间相加：σ²T = σ_基础²T + 事件方差"
+  },
+  "principle": {
+   "en": "The term structure plots IV across expiries. Normally it slopes up, since more time means more uncertainty. When the front month is higher, the market expects a near-term event or is stressed.",
+   "zh": "期限结构是不同到期日 IV 的连线。通常向上倾斜，因为时间越长不确定性越大。若近月更高，说明市场预期近期有事件或处于紧张状态。"
+  },
+  "example": {
+   "en": "Earnings are this week: the weekly option shows 80% IV while next month shows 45%. Once results are out, the weekly IV drops sharply.",
+   "zh": "本周发财报：周度期权 IV 80%，下月只有 45%。财报公布后，周度期权的 IV 会大幅回落。"
+  }
+ },
+ {
+  "id": "ZERO_DTE",
+  "cat": "concepts",
+  "name": {
+   "en": "Zero Days to Expiration (0DTE)",
+   "zh": "零日期权（当日到期期权）"
+  },
+  "score": 7.6,
+  "formula": {
+   "en": "T = minutes left / (390 × 252)\nAt the money: Γ and Θ grow like 1/√T",
+   "zh": "T = 剩余分钟数 / (390 × 252)\n平值时 Γ 和 Θ 按 1/√T 放大"
+  },
+  "principle": {
+   "en": "A 0DTE option expires at today's close, so its whole price is time value with hours to live. Gamma and decay are at their most extreme, so tiny stock moves swing the option wildly.",
+   "zh": "零日期权今天收盘就到期，全部价格都是只剩几小时的时间价值。Gamma 和衰减都处于极端，股价小幅波动就会让期权剧烈涨跌。"
+  },
+  "example": {
+   "en": "At noon a 0DTE at-the-money call costs $1.50. A 0.5% stock move can double it or cut it in half within minutes.",
+   "zh": "中午一张平值零日看涨期权 1.50 元。股价变动 0.5%，几分钟内它就可能翻倍或腰斩。"
+  }
+ },
+ {
+  "id": "IV_CRUSH",
+  "cat": "concepts",
+  "name": {
+   "en": "IV Crush",
+   "zh": "波动率崩塌（IV 崩塌）"
+  },
+  "score": 9.1,
+  "formula": {
+   "en": "Event variance = (σ_front² − σ_base²) × T_front\nImplied event move ≈ √(event variance)",
+   "zh": "事件方差 = (σ_近月² − σ_基础²) × T_近月\n隐含事件波动 ≈ √(事件方差)"
+  },
+  "principle": {
+   "en": "IV crush is the sudden drop in implied volatility once a known event, like earnings, is over. The extra uncertainty priced in before the event disappears at once, and option prices fall with it.",
+   "zh": "IV 崩塌是财报等已知事件结束后，隐含波动率突然大跌。事件前额外计入的不确定性瞬间消失，期权价格随之下跌。"
+  },
+  "example": {
+   "en": "You buy a call for $8 before earnings at 90% IV. The stock rises 3%, but IV drops to 45%, and your call is now worth $5.",
+   "zh": "财报前以 8 元、IV 90% 买入看涨期权。股价涨了 3%，但 IV 跌到 45%，期权只剩 5 元。"
+  }
+ },
+ {
+  "id": "UNUSUAL_ACTIVITY",
+  "cat": "concepts",
+  "name": {
+   "en": "Unusual Options Activity",
+   "zh": "期权异动大单"
+  },
+  "score": 4.6,
+  "formula": {
+   "en": "Side = ASK if price ≥ ask (aggressive buyer)\nSide = BID if price ≤ bid (aggressive seller)",
+   "zh": "成交价 ≥ 卖价 → 主动买入\n成交价 ≤ 买价 → 主动卖出"
+  },
+  "principle": {
+   "en": "The unusual activity feed lists large option trades above a size or premium threshold. The trades are real, but the bullish or bearish labels are guesses: a big call buy may just hedge a short stock position.",
+   "zh": "期权异动列出超过规模或金额门槛的大额交易。交易本身是真实的，但看涨或看跌的标签只是猜测：大笔买入看涨期权可能只是为空头股票做对冲。"
+  },
+  "example": {
+   "en": "A $2M block of calls prints at the ask and is tagged \"bullish\". It could be a fund closing a short call it sold last month.",
+   "zh": "一笔 200 万美元的看涨期权按卖价成交，被标为「看涨」。实际上可能是某基金在买回上个月卖出的看涨期权平仓。"
+  }
+ },
+ {
+  "id": "TOP_OPTIONS",
+  "cat": "concepts",
+  "name": {
+   "en": "Top Options Screens",
+   "zh": "期权榜单"
+  },
+  "score": 5.3,
+  "principle": {
+   "en": "Top Options screens sort the whole market's options by one column at a time: volume, turnover, open interest or its change. Each list answers a different question, so pick the one that matches yours.",
+   "zh": "期权榜单按某一列给全市场期权排序：成交量、成交额、未平仓或其变化。每个榜单回答不同问题，要选与你问题对应的那个。"
+  },
+  "example": {
+   "en": "Want where money went? Sort by turnover. Want new positions? Sort by OI rise. Sorting by volume alone may surface thousands of cheap lottery tickets.",
+   "zh": "想知道资金流向就按成交额排，想看新建仓位就按未平仓增加排。只按成交量排，可能满屏都是便宜的彩票型期权。"
+  }
+ },
+ {
+  "id": "ASSIGNMENT",
+  "cat": "concepts",
+  "name": {
+   "en": "Assignment & Exercise",
+   "zh": "行权与被指派"
+  },
+  "score": 7.9,
+  "formula": {
+   "en": "Short call assigned: −100 shares, +K × 100 cash\nShort put assigned: +100 shares, −K × 100 cash",
+   "zh": "卖出看涨被指派：−100 股，+K × 100 现金\n卖出看跌被指派：+100 股，−K × 100 现金"
+  },
+  "principle": {
+   "en": "Exercise is when the option holder turns it into stock; assignment is what happens to the seller on the other side. The holder chooses; the seller is picked at random and must deliver.",
+   "zh": "行权是期权持有人把期权换成股票；被指派是另一边的卖方承受的结果。持有人主动选择，卖方被随机抽中并必须履约。"
+  },
+  "example": {
+   "en": "You sold a $50 put. The stock closes at $45 on expiry, you are assigned, and you buy 100 shares for $5,000.",
+   "zh": "你卖出行权价 50 元的看跌期权。到期日股价收在 45 元，你被指派，以 5,000 元买入 100 股。"
+  }
+ },
+ {
+  "id": "PIN_RISK",
+  "cat": "concepts",
+  "name": {
+   "en": "Pin Risk",
+   "zh": "钉扎风险"
+  },
+  "score": 6.2,
+  "principle": {
+   "en": "Pin risk is being short an option that closes within cents of its strike at expiry. You will not know until the weekend whether you were assigned, so you may wake up Monday with an unexpected stock position.",
+   "zh": "钉扎风险是指你卖出的期权到期时收盘价离行权价只有几分钱。要到周末才知道是否被指派，周一可能突然多出一笔意外的股票仓位。"
+  },
+  "example": {
+   "en": "Short a $100 call, the stock closes at $100.03. Some holders exercise, some do not. On Monday you may be short 100 shares while the stock gaps up to $104.",
+   "zh": "卖出 100 元看涨期权，股价收在 100.03 元。有人行权有人不行权。周一你可能空着 100 股，而股价跳空高开到 104 元。"
+  }
+ },
+ {
+  "id": "LIQUIDITY",
+  "cat": "concepts",
+  "name": {
+   "en": "Liquidity & Bid-Ask Spread",
+   "zh": "流动性与买卖价差"
+  },
+  "score": 9,
+  "formula": {
+   "en": "Spread = ask − bid\nSpread % = spread / mid × 100\nRound-trip cost ≈ spread × 100 × contracts",
+   "zh": "价差 = 卖价 − 买价\n价差率 = 价差 / 中间价 × 100\n来回成本 ≈ 价差 × 100 × 张数"
+  },
+  "principle": {
+   "en": "In options, liquidity is a cost you pay twice: the bid-ask spread on the way in and again on the way out. Wide spreads eat profits before the trade has a chance to work.",
+   "zh": "期权的流动性是你要付两次的成本：进场付一次买卖价差，出场再付一次。价差太宽，交易还没开始见效利润就被吃掉了。"
+  },
+  "example": {
+   "en": "Bid $1.00, ask $1.30: buying and selling right away loses $30 per contract, a 26% hit on a $1.15 option before anything happens.",
+   "zh": "买价 1.00 元、卖价 1.30 元：买入后立刻卖出，每张亏 30 元，对一张 1.15 元的期权来说，什么都没发生就亏了 26%。"
+  }
+ },
+ {
+  "id": "PROB_ANALYSIS",
+  "cat": "concepts",
+  "name": {
+   "en": "Probability Analysis",
+   "zh": "概率分析"
+  },
+  "score": 7.4,
+  "formula": {
+   "en": "P(S_T > K) = 1 − Φ(z)\nz = [ln(K/S) − (r − σ²/2)·T] / (σ·√T)",
+   "zh": "P(S_T > K) = 1 − Φ(z)\nz = [ln(K/S) − (r − σ²/2)·T] / (σ·√T)"
+  },
+  "principle": {
+   "en": "The probability panel uses the IV already in option prices to estimate the chance the stock ends above, below or between levels you choose. It assumes smooth moves with no jumps, so it understates tail risk.",
+   "zh": "概率分析用期权价格中的 IV，估算股价到期时高于、低于或处于你所选区间的可能性。它假设走势平滑无跳空，因此低估了极端风险。"
+  },
+  "example": {
+   "en": "Stock $100, IV 30%, 30 days: the panel might give about a 70% chance of finishing between $92 and $108.",
+   "zh": "股价 100 元、IV 30%、30 天：面板可能显示到期落在 92 至 108 元之间的概率约为 70%。"
+  }
+ },
+ {
+  "id": "EXPECTED_MOVE",
+  "cat": "concepts",
+  "name": {
+   "en": "Expected Move",
+   "zh": "预期波动幅度"
+  },
+  "score": 8.7,
+  "formula": {
+   "en": "EM ≈ ATM call + ATM put   (the straddle price)\nEM ≈ 0.8 × S × IV × √T",
+   "zh": "预期波动 ≈ 平值看涨 + 平值看跌   （跨式价格）\n预期波动 ≈ 0.8 × S × IV × √T"
+  },
+  "principle": {
+   "en": "The expected move is how far, on average, the market is pricing the stock to travel by a given expiry. It turns IV into a dollar figure you can put next to your break-even.",
+   "zh": "预期波动幅度是市场定价中股价到某个到期日平均会走多远。它把 IV 换算成金额，方便和你的盈亏平衡点对比。"
+  },
+  "example": {
+   "en": "Stock $100; the at-the-money call and put cost $4 each. The expected move is about ±$8, so a call needing $112 to break even is a long shot.",
+   "zh": "股价 100 元，平值看涨和看跌各 4 元，预期波动约 ±8 元。一张要涨到 112 元才回本的看涨期权就希望不大。"
+  }
+ },
+ {
+  "id": "TA_ON_OPTIONS",
+  "cat": "concepts",
+  "name": {
+   "en": "Do Stock Indicators Transfer to Options?",
+   "zh": "股票指标在期权上通用吗"
+  },
+  "score": 9.3,
+  "principle": {
+   "en": "Indicators on the stock's own chart work fine: forecast the stock, then pick an option. Indicators on an option's price chart mostly fail, because that price also moves with time decay and IV.",
+   "zh": "在股票自身图表上用指标完全可行：先预测股价，再选期权。直接在期权价格图上用指标大多失效，因为期权价格还受时间衰减和 IV 影响。"
+  },
+  "example": {
+   "en": "An RSI on a call's chart can show \"oversold\" simply because theta ate 30% of its value over a quiet week, not because buyers will return.",
+   "zh": "看涨期权价格图上的 RSI 显示「超卖」，可能只是平静的一周里 Theta 吃掉了三成价值，而不是买家会回来。"
+  }
+ },
+ {
+  "id": "SHORT_PUT",
+  "cat": "strat-bullish",
+  "name": {
+   "en": "Short Put",
+   "zh": "卖出看跌期权"
+  },
+  "score": 5.5,
+  "formula": {
+   "en": "Max profit = premium received\nMax loss = (K − premium) × 100\nBreak-even = K − premium",
+   "zh": "最大盈利 = 收到的权利金\n最大亏损 = (K − 权利金) × 100\n盈亏平衡 = K − 权利金"
+  },
+  "principle": {
+   "en": "Selling a put is like selling insurance: you collect a premium now and promise to buy 100 shares at the strike if the stock falls below it. Small, likely gains; rare, large losses.",
+   "zh": "卖出看跌期权就像卖保险：现在收权利金，承诺在股价跌破行权价时以行权价买入 100 股。收益小而常见，亏损少见但很大。"
+  },
+  "example": {
+   "en": "Stock $100. Sell a $95 put for $2. Above $95 at expiry you keep $200; at $80 you buy shares at $95 and are down $1,300.",
+   "zh": "股价 100 元，以 2 元卖出行权价 95 元的看跌期权。到期高于 95 元，你赚 200 元；若跌到 80 元，你以 95 元接股，亏 1,300 元。"
+  }
+ },
+ {
+  "id": "CASH_SECURED_PUT",
+  "cat": "strat-bullish",
+  "name": {
+   "en": "Cash-Secured Put",
+   "zh": "现金担保看跌"
+  },
+  "score": 6.8,
+  "formula": {
+   "en": "Cash set aside = K × 100\nEffective buy price = K − premium",
+   "zh": "预留现金 = K × 100\n实际买入成本 = K − 权利金"
+  },
+  "principle": {
+   "en": "A short put with the full cost of buying the shares held in cash. No leverage and no margin calls; it is a way to get paid while waiting to buy a stock you want at a lower price.",
+   "zh": "卖出看跌期权，同时预留足够接股的全部现金。没有杠杆、不会追加保证金；相当于一边等待以更低价格买入心仪股票，一边收钱。"
+  },
+  "example": {
+   "en": "You would happily own a $52 stock at $50. Sell a $50 put for $1.50 and set aside $5,000. If assigned, your real cost is $48.50 a share.",
+   "zh": "你愿意以 50 元买入一只 52 元的股票。以 1.50 元卖出行权价 50 元的看跌期权，预留 5,000 元。若被指派，实际成本是每股 48.50 元。"
+  }
+ },
+ {
+  "id": "COVERED_CALL",
+  "cat": "strat-bullish",
+  "name": {
+   "en": "Long Covered Call",
+   "zh": "备兑看涨"
+  },
+  "score": 6.5,
+  "formula": {
+   "en": "Max profit = (K − S₀ + premium) × 100\nMax loss = (S₀ − premium) × 100\nBreak-even = S₀ − premium",
+   "zh": "最大盈利 = (K − S₀ + 权利金) × 100\n最大亏损 = (S₀ − 权利金) × 100\n盈亏平衡 = S₀ − 权利金"
+  },
+  "principle": {
+   "en": "You own 100 shares and sell a call above the price. The premium lowers your cost a little, but you give up gains above the strike. It is not a hedge: you still carry nearly all the downside.",
+   "zh": "持有 100 股，同时卖出高于现价的看涨期权。权利金略微降低成本，但放弃了行权价以上的涨幅。这不是对冲：下跌风险几乎全部还在。"
+  },
+  "example": {
+   "en": "Own stock at $100, sell a $110 call for $2. Above $110 you earn $12 a share and stop there; if it falls to $80, you lose $18 a share.",
+   "zh": "持股成本 100 元，以 2 元卖出 110 元看涨期权。高于 110 元时每股最多赚 12 元；若跌到 80 元，每股亏 18 元。"
+  }
+ },
+ {
+  "id": "LONG_CALL_SPREAD",
+  "cat": "strat-bullish",
+  "name": {
+   "en": "Long Call Spread (Bull Call Spread)",
+   "zh": "看涨牛市价差"
+  },
+  "score": 8.2,
+  "formula": {
+   "en": "Max loss = net debit\nMax profit = (K₂ − K₁) − debit\nBreak-even = K₁ + debit",
+   "zh": "最大亏损 = 净支出\n最大盈利 = (K₂ − K₁) − 净支出\n盈亏平衡 = K₁ + 净支出"
+  },
+  "principle": {
+   "en": "Buy a call and sell a higher-strike call. The sale cuts your cost and much of your exposure to IV, but caps your profit at the upper strike. You pay only for the move you actually expect.",
+   "zh": "买入一张看涨期权，同时卖出更高行权价的看涨期权。卖出部分降低了成本和对 IV 的敏感度，但把盈利封顶在上方行权价。只为你真正预期的涨幅付钱。"
+  },
+  "example": {
+   "en": "Stock $100. Buy the $100 call for $5, sell the $110 call for $2. Cost $3; max profit $7 if the stock is above $110 at expiry.",
+   "zh": "股价 100 元。以 5 元买入 100 元看涨，以 2 元卖出 110 元看涨。成本 3 元；到期高于 110 元时最多赚 7 元。"
+  }
+ },
+ {
+  "id": "SHORT_PUT_SPREAD",
+  "cat": "strat-bullish",
+  "name": {
+   "en": "Short Put Spread (Bull Put Spread)",
+   "zh": "看跌牛市价差"
+  },
+  "score": 7.6,
+  "formula": {
+   "en": "Max profit = net credit\nMax loss = (K₂ − K₁) − credit\nBreak-even = K₂ − credit",
+   "zh": "最大盈利 = 净收入\n最大亏损 = (K₂ − K₁) − 净收入\n盈亏平衡 = K₂ − 净收入"
+  },
+  "principle": {
+   "en": "Sell a put and buy a cheaper, lower put. You collect a credit and win if the stock stays above the sold strike. The bought put caps your loss.",
+   "zh": "卖出一张看跌期权，同时买入更低行权价、更便宜的看跌期权。收取净权利金，只要股价守在卖出行权价之上就赚钱；买入的看跌期权封住了亏损。"
+  },
+  "example": {
+   "en": "Stock $100. Sell the $95 put for $2.50, buy the $90 put for $1. Credit $1.50; max loss $3.50 if the stock ends below $90.",
+   "zh": "股价 100 元。以 2.50 元卖出 95 元看跌，以 1 元买入 90 元看跌。净收 1.50 元；若到期跌破 90 元，最多亏 3.50 元。"
+  }
+ },
+ {
+  "id": "SYNTHETIC_LONG",
+  "cat": "strat-bullish",
+  "name": {
+   "en": "Synthetic Long Stock",
+   "zh": "合成多头"
+  },
+  "score": 8.6,
+  "formula": {
+   "en": "+1 call(K) − 1 put(K), same expiry\nC − P = S − K·e^(−rT)   (put-call parity)",
+   "zh": "+1 看涨(K) − 1 看跌(K)，同一到期日\nC − P = S − K·e^(−rT)   （看涨看跌平价）"
+  },
+  "principle": {
+   "en": "Buying a call and selling a put at the same strike and expiry gives exactly the same payoff as owning 100 shares. Put-call parity guarantees it; the only difference is interest cost.",
+   "zh": "在同一行权价、同一到期日买入看涨并卖出看跌，收益与持有 100 股完全相同。看涨看跌平价保证了这一点，差别只在利息成本。"
+  },
+  "example": {
+   "en": "Stock $100. Buy the $100 call, sell the $100 put. If the stock goes to $110 you make $10 a share; at $90 you lose $10, just like holding the stock.",
+   "zh": "股价 100 元。买入 100 元看涨、卖出 100 元看跌。股价涨到 110 元每股赚 10 元，跌到 90 元亏 10 元，与直接持股一样。"
+  }
+ },
+ {
+  "id": "IRON_CONDOR",
+  "cat": "strat-basics",
+  "name": {
+   "en": "Iron Condor",
+   "zh": "铁鹰式"
+  },
+  "score": 8,
+  "formula": {
+   "en": "Legs: +put K₁, −put K₂, −call K₃, +call K₄\nMax profit = net credit\nMax loss = wing width − credit",
+   "zh": "组合：+看跌 K₁，−看跌 K₂，−看涨 K₃，+看涨 K₄\n最大盈利 = 净收入\n最大亏损 = 翼宽 − 净收入"
+  },
+  "principle": {
+   "en": "Sell an out-of-the-money put and call, and buy further-out ones on each side. You win if the stock stays in the range between the sold strikes; the bought wings cap the loss.",
+   "zh": "卖出价外看跌和价外看涨，同时在两侧买入更远的期权。股价留在两个卖出行权价之间就赚钱，买入的两翼封住亏损。"
+  },
+  "example": {
+   "en": "Stock $100: sell the $90 put and $110 call, buy the $85 put and $115 call, for a $1.50 credit. Between $90 and $110 you keep it; max loss $3.50.",
+   "zh": "股价 100 元：卖出 90 元看跌和 110 元看涨，买入 85 元看跌和 115 元看涨，净收 1.50 元。到期在 90 至 110 元间全赚，最多亏 3.50 元。"
+  }
+ },
+ {
+  "id": "IRON_BUTTERFLY",
+  "cat": "strat-basics",
+  "name": {
+   "en": "Iron Butterfly",
+   "zh": "铁蝶式"
+  },
+  "score": 7.4,
+  "formula": {
+   "en": "Legs: +put K₁, −put K₂, −call K₂, +call K₃\nMax profit = net credit (at K₂)\nMax loss = wing width − credit",
+   "zh": "组合：+看跌 K₁，−看跌 K₂，−看涨 K₂，+看涨 K₃\n最大盈利 = 净收入（在 K₂ 处）\n最大亏损 = 翼宽 − 净收入"
+  },
+  "principle": {
+   "en": "An iron condor with both sold strikes at the same at-the-money price. It collects much more premium, but the profit zone is narrow and peaks only if the stock ends right at that strike.",
+   "zh": "把铁鹰式的两个卖出行权价合并到同一个平值价格。收的权利金多得多，但盈利区间很窄，只有股价正好收在该行权价时才赚最多。"
+  },
+  "example": {
+   "en": "Stock $100: sell the $100 put and call, buy the $90 put and $110 call, for a $6 credit. At $100 you keep $6; break-evens are $94 and $106.",
+   "zh": "股价 100 元：卖出 100 元看跌和看涨，买入 90 元看跌和 110 元看涨，净收 6 元。收在 100 元赚 6 元，盈亏平衡点为 94 和 106 元。"
+  }
+ },
+ {
+  "id": "SYNTHETIC_PUT",
+  "cat": "strat-basics",
+  "name": {
+   "en": "Synthetic Put (Short Stock + Long Call)",
+   "zh": "合成看跌"
+  },
+  "score": 6.2,
+  "formula": {
+   "en": "−100 shares + 1 call(K)\nPayoff = max(K − S_T, 0) − K + S₀ − call premium",
+   "zh": "−100 股 + 1 看涨(K)\n收益 = max(K − S_T, 0) − K + S₀ − 看涨权利金"
+  },
+  "principle": {
+   "en": "Short stock plus a long call has the same payoff as a long put. You rarely build it from scratch; it is how you cap the risk on a short position you already hold.",
+   "zh": "做空股票加买入看涨期权，收益形状与买入看跌期权相同。很少从零构建，通常用来给已有的空头仓位封顶风险。"
+  },
+  "example": {
+   "en": "You shorted at $100 and buy a $100 call for $4. If the stock spikes to $150, your loss stops at $4 a share instead of $50.",
+   "zh": "你在 100 元做空，又以 4 元买入 100 元看涨期权。若股价飙到 150 元，每股最多亏 4 元，而不是 50 元。"
+  }
+ },
+ {
+  "id": "PROTECTIVE_PUT",
+  "cat": "strat-basics",
+  "name": {
+   "en": "Protective Put",
+   "zh": "保护性看跌"
+  },
+  "score": 7,
+  "formula": {
+   "en": "Max loss = (S₀ − K + premium) × 100\nMax profit = unlimited\nBreak-even = S₀ + premium",
+   "zh": "最大亏损 = (S₀ − K + 权利金) × 100\n最大盈利 = 无上限\n盈亏平衡 = S₀ + 权利金"
+  },
+  "principle": {
+   "en": "Own the shares and buy a put below the price. It is real insurance: you keep the upside, and losses below the strike are covered. The premium is what the insurance costs.",
+   "zh": "持有股票，同时买入低于现价的看跌期权。这是真正的保险：保留上涨空间，跌破行权价的损失由看跌期权承担。权利金就是保费。"
+  },
+  "example": {
+   "en": "Own stock at $100, buy a $90 put for $2. If it crashes to $60, your loss stops at $12 a share; if it rises to $130, you still gain $28.",
+   "zh": "持股成本 100 元，以 2 元买入 90 元看跌期权。若暴跌到 60 元，每股最多亏 12 元；若涨到 130 元，仍赚 28 元。"
+  }
+ },
+ {
+  "id": "SHORT_STRADDLE",
+  "cat": "strat-neutral",
+  "name": {
+   "en": "Short Straddle",
+   "zh": "卖出跨式"
+  },
+  "score": 4.8,
+  "formula": {
+   "en": "Max profit = call + put premium (at K)\nMax loss = unlimited\nBreak-evens = K ± total credit",
+   "zh": "最大盈利 = 看涨 + 看跌权利金（在 K 处）\n最大亏损 = 无上限\n盈亏平衡 = K ± 总收入"
+  },
+  "principle": {
+   "en": "Sell an at-the-money call and put at the same strike. You collect the most premium possible, but lose on any big move in either direction, with no cap on the loss.",
+   "zh": "在同一平值行权价同时卖出看涨和看跌期权。收取的权利金最多，但无论哪个方向大幅波动都会亏损，而且亏损没有上限。"
+  },
+  "example": {
+   "en": "Stock $100. Sell the $100 call and put for $8 total. Between $92 and $108 at expiry you profit; at $130 you lose $22 a share.",
+   "zh": "股价 100 元，卖出 100 元看涨和看跌，共收 8 元。到期在 92 至 108 元之间盈利；若到 130 元，每股亏 22 元。"
+  }
+ },
+ {
+  "id": "SHORT_STRANGLE",
+  "cat": "strat-neutral",
+  "name": {
+   "en": "Short Strangle",
+   "zh": "卖出宽跨式"
+  },
+  "score": 5.9,
+  "formula": {
+   "en": "Max profit = put + call premium (between K₁ and K₂)\nMax loss = unlimited\nBreak-evens = K₁ − credit, K₂ + credit",
+   "zh": "最大盈利 = 看跌 + 看涨权利金（在 K₁ 与 K₂ 之间）\n最大亏损 = 无上限\n盈亏平衡 = K₁ − 收入，K₂ + 收入"
+  },
+  "principle": {
+   "en": "Sell an out-of-the-money put and call. You keep the full credit anywhere between the two strikes. It wins more often than a straddle but collects less, and losses are still unlimited.",
+   "zh": "卖出价外看跌和价外看涨期权。股价在两个行权价之间就能赚走全部权利金。胜率高于跨式但收入更少，亏损同样没有上限。"
+  },
+  "example": {
+   "en": "Stock $100. Sell the $90 put and $110 call for $3 total. Anywhere from $90 to $110 you keep $300; break-evens are $87 and $113.",
+   "zh": "股价 100 元，卖出 90 元看跌和 110 元看涨，共收 3 元。到期在 90 至 110 元之间赚 300 元，盈亏平衡点为 87 和 113 元。"
+  }
+ },
+ {
+  "id": "LONG_CALL_BFLY",
+  "cat": "strat-neutral",
+  "name": {
+   "en": "Long Call Butterfly",
+   "zh": "买入看涨蝶式"
+  },
+  "score": 6.4,
+  "formula": {
+   "en": "+1 call K₁, −2 calls K₂, +1 call K₃\nMax profit = (K₂ − K₁) − debit, at K₂\nMax loss = net debit",
+   "zh": "+1 看涨 K₁，−2 看涨 K₂，+1 看涨 K₃\n最大盈利 = (K₂ − K₁) − 净支出，在 K₂ 处\n最大亏损 = 净支出"
+  },
+  "principle": {
+   "en": "Buy one lower call, sell two middle calls, buy one higher call. The payoff is a tent that peaks at the middle strike. It is a cheap bet that the stock ends near one price.",
+   "zh": "买一张低行权价看涨、卖两张中间行权价看涨、再买一张高行权价看涨。收益像帐篷，在中间行权价达到顶峰，是押股价收在某个价位附近的低成本赌注。"
+  },
+  "example": {
+   "en": "Stock $100: buy the $95 call, sell two $100 calls, buy the $105 call for $1. Close at $100 and you make $4; outside $95–$105 you lose the $1.",
+   "zh": "股价 100 元：买 95 元看涨、卖两张 100 元看涨、买 105 元看涨，成本 1 元。收在 100 元赚 4 元；在 95 至 105 元之外亏 1 元。"
+  }
+ },
+ {
+  "id": "LONG_PUT_BFLY",
+  "cat": "strat-neutral",
+  "name": {
+   "en": "Long Put Butterfly",
+   "zh": "买入看跌蝶式"
+  },
+  "score": 6,
+  "formula": {
+   "en": "+1 put K₁, −2 puts K₂, +1 put K₃\nMax profit = (K₂ − K₁) − debit, at K₂\nMax loss = net debit",
+   "zh": "+1 看跌 K₁，−2 看跌 K₂，+1 看跌 K₃\n最大盈利 = (K₂ − K₁) − 净支出，在 K₂ 处\n最大亏损 = 净支出"
+  },
+  "principle": {
+   "en": "The same tent-shaped payoff as the call butterfly, built from puts. By put-call parity, the two cost about the same at the same strikes; choose whichever has tighter spreads.",
+   "zh": "与看涨蝶式收益形状相同，只是用看跌期权搭建。根据看涨看跌平价，相同行权价下两者成本相近；哪个买卖价差更窄就用哪个。"
+  },
+  "example": {
+   "en": "Stock $100: buy the $95 put, sell two $100 puts, buy the $105 put for about $1. It pays most, about $4, if the stock ends at $100.",
+   "zh": "股价 100 元：买 95 元看跌、卖两张 100 元看跌、买 105 元看跌，约花 1 元。收在 100 元时赚得最多，约 4 元。"
+  }
+ },
+ {
+  "id": "SHORT_IRON_BFLY",
+  "cat": "strat-neutral",
+  "name": {
+   "en": "Short Iron Butterfly",
+   "zh": "卖出铁蝶式"
+  },
+  "score": 7.2,
+  "formula": {
+   "en": "Legs: +put K₁, −put K₂, −call K₂, +call K₃\nMax profit = net credit (at K₂)\nMax loss = wing width − credit",
+   "zh": "组合：+看跌 K₁，−看跌 K₂，−看涨 K₂，+看涨 K₃\n最大盈利 = 净收入（在 K₂ 处）\n最大亏损 = 翼宽 − 净收入"
+  },
+  "principle": {
+   "en": "A short straddle with protective wings bought on each side. You still bet the stock stays near the middle strike, but the wings turn the unlimited loss into a known maximum.",
+   "zh": "卖出跨式，再在两侧买入保护翼。依然押股价停在中间行权价附近，但两翼把无限亏损变成了已知的最大亏损。"
+  },
+  "example": {
+   "en": "Stock $100: sell the $100 straddle for $8, buy the $90 put and $110 call for $2. Net $6 credit; the worst case is a $4 loss.",
+   "zh": "股价 100 元：以 8 元卖出 100 元跨式，花 2 元买入 90 元看跌和 110 元看涨。净收 6 元，最坏亏 4 元。"
+  }
+ },
+ {
+  "id": "SHORT_IRON_CONDOR",
+  "cat": "strat-neutral",
+  "name": {
+   "en": "Short Iron Condor",
+   "zh": "卖出铁鹰式"
+  },
+  "score": 7.8,
+  "formula": {
+   "en": "Legs: +put K₁, −put K₂, −call K₃, +call K₄\nMax profit = net credit (between K₂ and K₃)\nMax loss = wing width − credit",
+   "zh": "组合：+看跌 K₁，−看跌 K₂，−看涨 K₃，+看涨 K₄\n最大盈利 = 净收入（在 K₂ 与 K₃ 之间）\n最大亏损 = 翼宽 − 净收入"
+  },
+  "principle": {
+   "en": "Sell a put spread below the market and a call spread above it. You keep the whole credit if the stock stays between the short strikes, and the loss on either side is capped.",
+   "zh": "在现价下方卖出看跌价差，上方卖出看涨价差。股价停留在两个卖出行权价之间就能赚走全部权利金，两侧亏损都有上限。"
+  },
+  "example": {
+   "en": "Like renting out a room for a month: you collect rent up front and hope nothing breaks. Range $90–$110 for a $1.50 credit, $5-wide wings, max loss $3.50.",
+   "zh": "像把房间租出一个月：先收租金，盼着别出事。区间 90 至 110 元，净收 1.50 元，翼宽 5 元，最多亏 3.50 元。"
+  }
+ },
+ {
+  "id": "LONG_STRADDLE",
+  "cat": "strat-directional",
+  "name": {
+   "en": "Long Straddle",
+   "zh": "买入跨式"
+  },
+  "score": 6.6,
+  "formula": {
+   "en": "Max loss = call + put premium\nMax profit = unlimited\nBreak-evens = K ± total debit",
+   "zh": "最大亏损 = 看涨 + 看跌权利金\n最大盈利 = 无上限\n盈亏平衡 = K ± 总支出"
+  },
+  "principle": {
+   "en": "Buy an at-the-money call and put at the same strike. You do not care about direction, only size: the stock must move further than the total premium before expiry, and fast enough to beat decay.",
+   "zh": "在同一平值行权价同时买入看涨和看跌期权。不在乎方向，只在乎幅度：到期前股价波动必须超过总权利金，而且要快到能跑赢时间衰减。"
+  },
+  "example": {
+   "en": "Stock $100. Buy the $100 call and put for $8 total. You profit below $92 or above $108; at $100 you lose all $8.",
+   "zh": "股价 100 元，买入 100 元看涨和看跌，共 8 元。跌破 92 元或涨过 108 元才盈利；收在 100 元则亏掉全部 8 元。"
+  }
+ },
+ {
+  "id": "LONG_STRANGLE",
+  "cat": "strat-directional",
+  "name": {
+   "en": "Long Strangle",
+   "zh": "买入宽跨式"
+  },
+  "score": 6.9,
+  "formula": {
+   "en": "Max loss = put + call premium\nMax profit = unlimited\nBreak-evens = K₁ − debit, K₂ + debit",
+   "zh": "最大亏损 = 看跌 + 看涨权利金\n最大盈利 = 无上限\n盈亏平衡 = K₁ − 支出，K₂ + 支出"
+  },
+  "principle": {
+   "en": "Buy an out-of-the-money put and call. It costs less than a straddle but needs a bigger move before either side pays. It is a bet on a large move in either direction.",
+   "zh": "买入价外看跌和价外看涨期权。比跨式便宜，但需要更大的波动才能让任一边赚钱。押的是任意方向的大行情。"
+  },
+  "example": {
+   "en": "Stock $100. Buy the $90 put and $110 call for $3 total. You need the stock below $87 or above $113 at expiry to profit.",
+   "zh": "股价 100 元，买入 90 元看跌和 110 元看涨，共 3 元。到期需跌破 87 元或涨过 113 元才能盈利。"
+  }
+ },
+ {
+  "id": "SHORT_CALL_BFLY",
+  "cat": "strat-directional",
+  "name": {
+   "en": "Short Call Butterfly",
+   "zh": "卖出看涨蝶式"
+  },
+  "score": 3.8,
+  "formula": {
+   "en": "−1 call K₁, +2 calls K₂, −1 call K₃\nMax profit = net credit (outside K₁–K₃)\nMax loss = (K₂ − K₁) − credit, at K₂",
+   "zh": "−1 看涨 K₁，+2 看涨 K₂，−1 看涨 K₃\n最大盈利 = 净收入（在 K₁–K₃ 之外）\n最大亏损 = (K₂ − K₁) − 净收入，在 K₂ 处"
+  },
+  "principle": {
+   "en": "The long butterfly flipped: sell the outer calls, buy two middle calls, and take a small credit. You win a little if the stock moves well away from the middle, and lose most if it ends right there.",
+   "zh": "把买入蝶式反过来：卖出两侧看涨、买入两张中间看涨，收一点权利金。股价远离中间就小赚，正好收在中间则亏得最多。"
+  },
+  "example": {
+   "en": "Stock $100: sell the $95 and $105 calls, buy two $100 calls, for a $1 credit. Outside $95–$105 you keep $1; at $100 you lose $4.",
+   "zh": "股价 100 元：卖出 95 元和 105 元看涨、买入两张 100 元看涨，净收 1 元。到期在 95 至 105 元之外赚 1 元；收在 100 元亏 4 元。"
+  }
+ },
+ {
+  "id": "SHORT_PUT_BFLY",
+  "cat": "strat-directional",
+  "name": {
+   "en": "Short Put Butterfly",
+   "zh": "卖出看跌蝶式"
+  },
+  "score": 3.5,
+  "formula": {
+   "en": "−1 put K₁, +2 puts K₂, −1 put K₃\nMax profit = net credit (outside K₁–K₃)\nMax loss = (K₂ − K₁) − credit, at K₂",
+   "zh": "−1 看跌 K₁，+2 看跌 K₂，−1 看跌 K₃\n最大盈利 = 净收入（在 K₁–K₃ 之外）\n最大亏损 = (K₂ − K₁) − 净收入，在 K₂ 处"
+  },
+  "principle": {
+   "en": "The same position as the short call butterfly, built from puts. You collect a small credit and need the stock to move away from the middle strike; staying put is the worst case.",
+   "zh": "与卖出看涨蝶式是同一个仓位，只是用看跌期权搭建。收一点权利金，需要股价离开中间行权价；原地不动是最坏情况。"
+  },
+  "example": {
+   "en": "Stock $100: sell the $95 and $105 puts, buy two $100 puts, for about $1. A move to $90 or $110 keeps the $1; a close at $100 loses about $4.",
+   "zh": "股价 100 元：卖出 95 元和 105 元看跌、买入两张 100 元看跌，约收 1 元。走到 90 或 110 元赚 1 元；收在 100 元约亏 4 元。"
+  }
+ },
+ {
+  "id": "LONG_IRON_BFLY",
+  "cat": "strat-directional",
+  "name": {
+   "en": "Long Iron Butterfly",
+   "zh": "买入铁蝶式"
+  },
+  "score": 4.9,
+  "formula": {
+   "en": "Legs: −put K₁, +put K₂, +call K₂, −call K₃\nMax loss = net debit (at K₂)\nMax profit = wing width − debit",
+   "zh": "组合：−看跌 K₁，+看跌 K₂，+看涨 K₂，−看涨 K₃\n最大亏损 = 净支出（在 K₂ 处）\n最大盈利 = 翼宽 − 净支出"
+  },
+  "principle": {
+   "en": "Buy the at-the-money straddle and sell a wing on each side to pay for part of it. It is a cheaper bet on a big move, but the profit stops growing past the wings.",
+   "zh": "买入平值跨式，同时在两侧各卖出一翼来抵消部分成本。是押大行情的更便宜方式，但超过两翼后盈利不再增加。"
+  },
+  "example": {
+   "en": "Stock $100: buy the $100 straddle for $8, sell the $90 put and $110 call for $2. Cost $6; max profit $4 if it ends beyond $90 or $110.",
+   "zh": "股价 100 元：以 8 元买入 100 元跨式，卖出 90 元看跌和 110 元看涨收 2 元。成本 6 元；到期超出 90 或 110 元时最多赚 4 元。"
+  }
+ },
+ {
+  "id": "LONG_IRON_CONDOR",
+  "cat": "strat-directional",
+  "name": {
+   "en": "Long Iron Condor",
+   "zh": "买入铁鹰式"
+  },
+  "score": 3.6,
+  "formula": {
+   "en": "Legs: −put K₁, +put K₂, +call K₃, −call K₄\nMax loss = net debit (between K₂ and K₃)\nMax profit = wing width − debit",
+   "zh": "组合：−看跌 K₁，+看跌 K₂，+看涨 K₃，−看涨 K₄\n最大亏损 = 净支出（在 K₂ 与 K₃ 之间）\n最大盈利 = 翼宽 − 净支出"
+  },
+  "principle": {
+   "en": "Buy a strangle just off the money and sell a wider one outside it. You pay a debit and profit from a move in either direction, but gains are capped at both ends.",
+   "zh": "买入略微价外的宽跨式，同时卖出更外侧的宽跨式。支付净权利金，任意方向的波动都能获利，但两端收益都有上限。"
+  },
+  "example": {
+   "en": "Stock $100: buy the $95 put and $105 call, sell the $90 put and $110 call, for $3.50. Max profit $1.50 beyond $90 or $110; max loss $3.50 near $100.",
+   "zh": "股价 100 元：买入 95 元看跌和 105 元看涨，卖出 90 元看跌和 110 元看涨，成本 3.50 元。超出 90 或 110 元最多赚 1.50 元，收在 100 元附近亏 3.50 元。"
+  }
+ },
+ {
+  "id": "LONG_PUT",
+  "cat": "strat-bearish",
+  "name": {
+   "en": "Long Put",
+   "zh": "买入看跌期权"
+  },
+  "score": 7.4,
+  "formula": {
+   "en": "Max loss = premium paid\nMax profit = (K − premium) × 100\nBreak-even = K − premium",
+   "zh": "最大亏损 = 支付的权利金\n最大盈利 = (K − 权利金) × 100\n盈亏平衡 = K − 权利金"
+  },
+  "principle": {
+   "en": "Buying a put gives you the right to sell the stock at the strike. You profit when the stock falls below break-even, your loss is limited to the premium, and time decay works against you.",
+   "zh": "买入看跌期权，获得以行权价卖出股票的权利。股价跌破盈亏平衡点就赚钱，亏损仅限于权利金，但时间衰减对你不利。"
+  },
+  "example": {
+   "en": "Stock $100. Buy a $100 put for $4. At $85 at expiry you make $11 a share; at $105 you lose the $4.",
+   "zh": "股价 100 元，以 4 元买入 100 元看跌期权。到期跌到 85 元，每股赚 11 元；涨到 105 元则亏 4 元。"
+  }
+ },
+ {
+  "id": "SHORT_CALL",
+  "cat": "strat-bearish",
+  "name": {
+   "en": "Short Call (Naked / Uncovered)",
+   "zh": "卖出看涨期权（裸卖）"
+  },
+  "score": 2.8,
+  "formula": {
+   "en": "Max profit = premium received\nMax loss = unlimited\nBreak-even = K + premium",
+   "zh": "最大盈利 = 收到的权利金\n最大亏损 = 无上限\n盈亏平衡 = K + 权利金"
+  },
+  "principle": {
+   "en": "Selling a call without owning the shares. You collect a fixed premium but must deliver shares at the strike however high the stock goes, so the loss has no limit.",
+   "zh": "在不持有股票的情况下卖出看涨期权。收取固定权利金，但无论股价涨多高都必须以行权价交股，因此亏损没有上限。"
+  },
+  "example": {
+   "en": "Stock $100. Sell a $110 call for $2. If a takeover sends it to $160, you lose $48 a share, $4,800 per contract, for a $200 premium.",
+   "zh": "股价 100 元，以 2 元卖出 110 元看涨期权。若收购消息把股价推到 160 元，每股亏 48 元，每张亏 4,800 元，只为了 200 元权利金。"
+  }
+ },
+ {
+  "id": "SHORT_CALL_SPREAD",
+  "cat": "strat-bearish",
+  "name": {
+   "en": "Short Call Spread (Bear Call Spread)",
+   "zh": "看涨熊市价差"
+  },
+  "score": 8,
+  "formula": {
+   "en": "Max profit = net credit\nMax loss = (K₂ − K₁) − credit\nBreak-even = K₁ + credit",
+   "zh": "最大盈利 = 净收入\n最大亏损 = (K₂ − K₁) − 净收入\n盈亏平衡 = K₁ + 净收入"
+  },
+  "principle": {
+   "en": "Sell a call and buy a higher one. You keep the credit if the stock simply fails to rise past the sold strike. The bought call caps the loss.",
+   "zh": "卖出一张看涨期权，同时买入更高行权价的看涨期权。只要股价没涨过卖出的行权价，就能留下权利金；买入的看涨期权封住亏损。"
+  },
+  "example": {
+   "en": "Stock $100. Sell the $105 call for $2.50, buy the $110 call for $1. Credit $1.50; max loss $3.50 if the stock ends above $110.",
+   "zh": "股价 100 元。以 2.50 元卖出 105 元看涨，以 1 元买入 110 元看涨。净收 1.50 元；到期高于 110 元时最多亏 3.50 元。"
+  }
+ },
+ {
+  "id": "LONG_PUT_SPREAD",
+  "cat": "strat-bearish",
+  "name": {
+   "en": "Long Put Spread (Bear Put Spread)",
+   "zh": "看跌熊市价差"
+  },
+  "score": 8.3,
+  "formula": {
+   "en": "Max loss = net debit\nMax profit = (K₁ − K₂) − debit\nBreak-even = K₁ − debit",
+   "zh": "最大亏损 = 净支出\n最大盈利 = (K₁ − K₂) − 净支出\n盈亏平衡 = K₁ − 净支出"
+  },
+  "principle": {
+   "en": "Buy a put and sell a lower one. The sale pays for part of the trade and reduces exposure to IV, but caps the profit once the stock falls to the lower strike.",
+   "zh": "买入一张看跌期权，同时卖出更低行权价的看跌期权。卖出部分抵消一部分成本、降低对 IV 的敏感度，但股价跌到下方行权价后盈利就封顶了。"
+  },
+  "example": {
+   "en": "Stock $100. Buy the $100 put for $5, sell the $90 put for $2. Cost $3; max profit $7 if the stock ends below $90.",
+   "zh": "股价 100 元。以 5 元买入 100 元看跌，以 2 元卖出 90 元看跌。成本 3 元；到期低于 90 元时最多赚 7 元。"
+  }
+ },
+ {
+  "id": "SYNTHETIC_SHORT",
+  "cat": "strat-bearish",
+  "name": {
+   "en": "Synthetic Short Stock",
+   "zh": "合成空头"
+  },
+  "score": 6.8,
+  "formula": {
+   "en": "+1 put(K) − 1 call(K), same expiry\nP − C = K·e^(−rT) − S",
+   "zh": "+1 看跌(K) − 1 看涨(K)，同一到期日\nP − C = K·e^(−rT) − S"
+  },
+  "principle": {
+   "en": "Buying a put and selling a call at the same strike and expiry behaves exactly like being short 100 shares. It is useful when shares are hard or costly to borrow.",
+   "zh": "在同一行权价、同一到期日买入看跌并卖出看涨，表现与做空 100 股完全一样。适用于股票难借或借券成本高的情况。"
+  },
+  "example": {
+   "en": "Stock $100. Buy the $100 put, sell the $100 call. At $90 you gain $10 a share; at $115 you lose $15, just like a short sale.",
+   "zh": "股价 100 元。买入 100 元看跌、卖出 100 元看涨。跌到 90 元每股赚 10 元，涨到 115 元亏 15 元，与卖空股票一样。"
+  }
+ },
+ {
+  "id": "COLLAR",
+  "cat": "strat-advanced",
+  "name": {
+   "en": "Collar",
+   "zh": "领口"
+  },
+  "score": 7.6,
+  "formula": {
+   "en": "+100 shares, +1 put K_p (floor), −1 call K_c (ceiling)\nMax loss = (S₀ − K_p + net cost) × 100\nMax profit = (K_c − S₀ − net cost) × 100",
+   "zh": "+100 股，+1 看跌 K_p（底），−1 看涨 K_c（顶）\n最大亏损 = (S₀ − K_p + 净成本) × 100\n最大盈利 = (K_c − S₀ − 净成本) × 100"
+  },
+  "principle": {
+   "en": "Own shares, buy a put for a floor, and sell a call to pay for it. You give up gains above the call strike in exchange for cheap or free protection below the put strike.",
+   "zh": "持有股票，买入看跌期权做保底，再卖出看涨期权来支付保费。放弃看涨行权价以上的收益，换来看跌行权价以下近乎免费的保护。"
+  },
+  "example": {
+   "en": "Own stock at $100. Buy the $90 put for $2 and sell the $110 call for $2: zero cost. Your result is locked between −$10 and +$10 a share.",
+   "zh": "持股成本 100 元。以 2 元买入 90 元看跌、以 2 元卖出 110 元看涨，零成本。每股结果被锁定在 −10 元到 +10 元之间。"
+  }
+ },
+ {
+  "id": "CALENDAR_SPREAD",
+  "cat": "strat-advanced",
+  "name": {
+   "en": "Calendar Spread (Long Call Calendar)",
+   "zh": "日历价差"
+  },
+  "score": 6.6,
+  "formula": {
+   "en": "−1 call (K, near expiry) + 1 call (K, far expiry)\nMax loss ≈ net debit\nBest case: stock near K when the near leg expires",
+   "zh": "−1 看涨（K，近月）+ 1 看涨（K，远月）\n最大亏损 ≈ 净支出\n最佳情况：近月到期时股价接近 K"
+  },
+  "principle": {
+   "en": "Sell a near-term option and buy the same strike further out. The near one decays faster, so you profit if the stock stays near the strike. It is also a bet that longer-dated IV holds up.",
+   "zh": "卖出近月期权，同时买入相同行权价的远月期权。近月衰减更快，股价停在行权价附近就能获利。同时也是押远月 IV 保持稳定。"
+  },
+  "example": {
+   "en": "Stock $100. Sell the 1-month $100 call for $3, buy the 3-month $100 call for $5. If the stock sits at $100 for a month, the near call expires worthless and you still own the longer one.",
+   "zh": "股价 100 元。以 3 元卖出一个月 100 元看涨，以 5 元买入三个月 100 元看涨。若一个月后仍在 100 元，近月归零，远月仍在手。"
+  }
+ },
+ {
+  "id": "DIAGONAL_SPREAD",
+  "cat": "strat-advanced",
+  "name": {
+   "en": "Diagonal Spread (Poor Man's Covered Call)",
+   "zh": "对角价差"
+  },
+  "score": 7.5,
+  "formula": {
+   "en": "+1 call (lower K, far expiry) − 1 call (higher K, near expiry)\nMax loss ≈ net debit",
+   "zh": "+1 看涨（较低 K，远月）− 1 看涨（较高 K，近月）\n最大亏损 ≈ 净支出"
+  },
+  "principle": {
+   "en": "A calendar spread with different strikes. Buying a deep in-the-money, long-dated call and selling short-dated calls above the price works like a covered call that needs far less cash.",
+   "zh": "行权价不同的日历价差。买入深度价内的远月看涨期权，再卖出高于现价的近月看涨期权，效果类似备兑看涨，但所需资金少得多。"
+  },
+  "example": {
+   "en": "Stock $100. Buy a 1-year $80 call for $25 instead of shares for $100, then sell a 1-month $105 call for $2 each month.",
+   "zh": "股价 100 元。不花 100 元买股，而以 25 元买入一年期 80 元看涨，再每月以 2 元卖出一个月期 105 元看涨。"
+  }
+ }
+]

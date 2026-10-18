@@ -1,0 +1,306 @@
+{
+ "inflation": {
+  "high": [
+   {
+    "en": "More price pressure and weaker purchasing power; easing may be delayed.",
+    "zh": "通胀压力更强，实际购买力受压；可能延后宽松。"
+   },
+   {
+    "en": "Higher discount rates often weigh on valuations, especially long-duration growth stocks.",
+    "zh": "折现率上行通常压制估值，长久期成长股较敏感。"
+   },
+   {
+    "en": "Nominal Treasury yields tend to rise and prices fall; maturity and policy response matter.",
+    "zh": "名义国债收益率倾向上升、价格下降；期限与政策反应会改变幅度。"
+   },
+   {
+    "en": "Demand-led inflation can support oil; supply shocks can lift both oil and inflation, while tightening and a stronger dollar can weigh.",
+    "zh": "需求推动通胀可能支持油价；供应冲击可同时推高油价和通胀，紧缩与美元走强则压制油价。"
+   }
+  ],
+  "low": [
+   {
+    "en": "Price pressure eases and real income benefits; weak demand is an alternative explanation.",
+    "zh": "价格压力缓和、实际收入受益；也可能反映需求疲弱。"
+   },
+   {
+    "en": "If growth holds, lower rate pressure supports valuations; recession-driven earnings cuts can offset this.",
+    "zh": "若增长稳定，利率压力下降利好估值；若因衰退，盈利下修可抵消。"
+   },
+   {
+    "en": "Yields tend to fall and prices rise; supply and term premia can offset.",
+    "zh": "收益率倾向下降、价格上升；供给与期限溢价可能抵消。"
+   },
+   {
+    "en": "Demand-driven disinflation is often bearish for oil; better supply can lower oil while improving real growth.",
+    "zh": "需求衰退导致的低通胀偏空原油；供应改善则可能降低油价并改善实际增长。"
+   }
+  ]
+ },
+ "growth": {
+  "high": [
+   {
+    "en": "Activity or labor demand is stronger than expected; check wage and price pressure.",
+    "zh": "增长 / 劳动力需求强于预期；看是否伴随工资与价格压力。"
+   },
+   {
+    "en": "Under growth concerns, better earnings prospects often help; under inflation concerns, rate repricing may depress stocks.",
+    "zh": "增长担忧主导时，盈利预期改善通常利好；通胀担忧主导时，利率重估可能压低股价。"
+   },
+   {
+    "en": "Yields often rise and prices fall, especially if markets price fewer cuts.",
+    "zh": "收益率通常上行、价格下行，尤其当市场减少降息定价。"
+   },
+   {
+    "en": "Better expected demand often supports oil and energy revenue; a stronger dollar or more supply can offset.",
+    "zh": "需求预期改善通常支持油价与能源收入；美元走强或供应增加可抵消。"
+   }
+  ],
+  "low": [
+   {
+    "en": "Activity or hiring slows; one surprise does not establish a recession.",
+    "zh": "增长 / 招聘放缓；单次波动不等于衰退。"
+   },
+   {
+    "en": "Recession concerns hurt earnings; modest cooling may support valuations through expected easing.",
+    "zh": "衰退担忧主导时偏空盈利；若只是温和降温，降息预期可能支撑估值。"
+   },
+   {
+    "en": "Treasury yields often fall and prices rise; credit bonds can fall as spreads widen.",
+    "zh": "收益率通常下行、价格上行；信用债可能因信用利差扩大而下跌。"
+   },
+   {
+    "en": "Weaker expected demand often weighs on oil; supply cuts and geopolitical risks can offset.",
+    "zh": "需求预期走弱通常压低油价；减产与地缘风险可抵消。"
+   }
+  ]
+ },
+ "claims": {
+  "high": [
+   {
+    "en": "Higher-than-expected claims usually indicate more layoffs or re-employment difficulty.",
+    "zh": "申领高于预期通常代表裁员或再就业压力增加。"
+   },
+   {
+    "en": "Often negative under recession concerns; modest cooling may increase easing expectations.",
+    "zh": "衰退情境下偏空；温和降温也可能增加宽松预期。"
+   },
+   {
+    "en": "Yields tend to fall and Treasury prices rise; credit risk can increase.",
+    "zh": "收益率倾向下降、国债价格上升；信用风险可能上升。"
+   },
+   {
+    "en": "Employment and demand concerns can weigh on oil; one weekly report may have little effect.",
+    "zh": "就业和需求担忧通常压制原油；单周申领影响可能很小。"
+   }
+  ],
+  "low": [
+   {
+    "en": "Lower-than-expected claims usually indicate a firmer labor market.",
+    "zh": "申领低于预期通常表明就业较稳。"
+   },
+   {
+    "en": "Positive through growth; higher-for-longer rates may weigh on growth stocks.",
+    "zh": "增长视角偏正面；利率维持高位的预期可能压制成长股。"
+   },
+   {
+    "en": "Yields tend to rise and Treasury prices fall.",
+    "zh": "收益率倾向上升、国债价格下降。"
+   },
+   {
+    "en": "Resilient demand can support oil, usually indirectly and modestly.",
+    "zh": "需求韧性可支持油价，通常是间接和较弱的影响。"
+   }
+  ]
+ },
+ "policy": {
+  "high": [
+   {
+    "en": "A hawkish path tightens financing and usually restrains subsequent demand.",
+    "zh": "政策路径偏鹰：融资条件收紧，通常抑制后续需求。"
+   },
+   {
+    "en": "Higher discount and funding rates are usually negative; stronger growth information can change the reaction.",
+    "zh": "折现率与融资成本提高通常偏空；若透露更强增长信息，反应可能不同。"
+   },
+   {
+    "en": "Short yields often rise and prices fall; long yields depend on inflation credibility and growth expectations.",
+    "zh": "短端收益率常上升、价格下降；长端取决于通胀信誉与增长预期。"
+   },
+   {
+    "en": "Weaker demand expectations and a stronger dollar often weigh on oil; supply news may dominate.",
+    "zh": "需求预期下调和美元走强通常偏空油价；供应新闻可能占主导。"
+   }
+  ],
+  "low": [
+   {
+    "en": "A dovish path eases financing; emergency easing may also reveal economic risk.",
+    "zh": "政策路径偏鸽：融资条件趋松；紧急宽松也可能暴露经济风险。"
+   },
+   {
+    "en": "Easing often supports valuations; stocks can still fall if it signals a deteriorating economy.",
+    "zh": "宽松通常支持估值；若是经济恶化的信号，股市仍可能下跌。"
+   },
+   {
+    "en": "Short yields often fall and prices rise; long yields may move oppositely on inflation expectations.",
+    "zh": "短端收益率常下降、价格上升；长端可能因通胀预期而反向。"
+   },
+   {
+    "en": "Easing and a weaker dollar can support oil; recession-driven cuts can coincide with falling oil.",
+    "zh": "宽松与弱美元可能支持油价；衰退驱动的降息可能伴随油价下跌。"
+   }
+  ]
+ },
+ "housing": {
+  "high": [
+   {
+    "en": "Housing demand or construction is stronger; higher house prices can also hurt affordability.",
+    "zh": "住房需求 / 建设强于预期；房价上涨也会损害可负担性。"
+   },
+   {
+    "en": "Often supports builders and home-related sectors; broad valuations still depend on rates.",
+    "zh": "通常支持建筑、家居等板块；广泛估值仍受利率影响。"
+   },
+   {
+    "en": "If growth or inflation expectations rise, yields rise and prices fall; usually smaller than CPI/payroll effects.",
+    "zh": "若上调增长或通胀预期，收益率上升、价格下降；影响通常小于 CPI/NFP。"
+   },
+   {
+    "en": "Construction and durable demand may indirectly support energy; one housing release rarely dominates oil.",
+    "zh": "建设及耐用品需求可间接支持能源，但单项地产数据通常不是油价主导因素。"
+   }
+  ],
+  "low": [
+   {
+    "en": "Housing activity weakens; distinguish high rates, limited supply and weather.",
+    "zh": "住房活动走弱；先区分高利率、供给不足或天气因素。"
+   },
+   {
+    "en": "Housing-related earnings face pressure; easing expectations may help other sectors.",
+    "zh": "地产链盈利承压；宽松预期可能支撑其他板块。"
+   },
+   {
+    "en": "If growth expectations fall, yields fall and prices rise; noisy data may elicit little response.",
+    "zh": "若增长预期下调，收益率下降、价格上升；噪声可能使反应有限。"
+   },
+   {
+    "en": "Modestly negative through demand; broader growth evidence is needed.",
+    "zh": "需求渠道轻微偏空，需更广泛增长证据确认。"
+   }
+  ]
+ },
+ "sentiment": {
+  "high": [
+   {
+    "en": "Stronger confidence may support spending intentions, but is not actual spending.",
+    "zh": "信心更强可能支持支出意愿，但不是实际消费。"
+   },
+   {
+    "en": "Risk appetite and consumer stocks may benefit; surveys can diverge from behavior.",
+    "zh": "风险偏好与消费股可能受益；调查和实际行为可背离。"
+   },
+   {
+    "en": "If growth expectations strengthen, yields may rise and prices fall slightly; reaction may be limited.",
+    "zh": "若强化增长预期，收益率略升、价格略降；反应不一定显著。"
+   },
+   {
+    "en": "Slightly positive demand sentiment; supply and global demand usually matter more.",
+    "zh": "需求情绪轻微正面，供应与全球需求通常更重要。"
+   }
+  ],
+  "low": [
+   {
+    "en": "Weaker confidence may precede slower spending; verify with actual data.",
+    "zh": "信心偏弱，可能预示支出放缓；需实际数据验证。"
+   },
+   {
+    "en": "Consumer earnings expectations and risk appetite may weaken; not a deterministic trade signal.",
+    "zh": "消费盈利与风险偏好可能承压；非确定性交易信号。"
+   },
+   {
+    "en": "If safe-haven demand rises, yields fall and prices rise; one survey usually has limited impact.",
+    "zh": "若引发避险，收益率下降、价格上升；单项调查影响通常有限。"
+   },
+   {
+    "en": "Negative demand sentiment, but no specific oil-price forecast follows.",
+    "zh": "需求情绪偏空，但不能据此预测具体油价。"
+   }
+  ]
+ },
+ "industry": {
+  "high": [
+   {
+    "en": "Company or sector revenue/profit beats expectations; this does not mean economy-wide acceleration.",
+    "zh": "相关企业 / 行业收入或利润强于预期，不等于整个经济同步加速。"
+   },
+   {
+    "en": "Often supports the stock/sector; weak guidance, high valuation or prior pricing can reverse this.",
+    "zh": "通常支持相关个股 / 板块；指引下调、过高估值或已被定价可导致反向。"
+   },
+   {
+    "en": "Usually little direct Treasury effect; better corporate credit may tighten that issuer’s spread.",
+    "zh": "对国债直接影响通常有限；公司信用改善可能压缩其信用利差。"
+   },
+   {
+    "en": "Usually no stable direct direction; energy producers, chip firms and downstream users have different exposures.",
+    "zh": "通常无稳定直接方向；能源生产商、芯片厂与下游用户对价格的暴露不同。"
+   }
+  ],
+  "low": [
+   {
+    "en": "Company/sector activity disappoints; distinguish pricing, volume and FX.",
+    "zh": "相关企业 / 行业活动弱于预期；需要区分价格、销量和汇率。"
+   },
+   {
+    "en": "Often weighs on the stock/sector; better guidance or prior pricing can still produce gains.",
+    "zh": "通常压制相关个股 / 板块；若指引改善或坏消息已定价也可上涨。"
+   },
+   {
+    "en": "Limited direct Treasury effect; corporate spreads may widen and credit prices weaken.",
+    "zh": "国债直接影响有限；公司信用利差可能扩大、信用债价格承压。"
+   },
+   {
+    "en": "Usually no stable direct effect; semiconductor revenue does not set a fixed direction for oil.",
+    "zh": "通常无稳定直接影响，不能用半导体营收给油价设置固定方向。"
+   }
+  ]
+ },
+ "inventory": {
+  "high": [
+   {
+    "en": "More build or less draw than expected may mean weaker demand, or changes in imports/refinery runs.",
+    "zh": "相对预期更多累库 / 更少去库，可能是需求较弱，也可能是进口或炼厂变化。"
+   },
+   {
+    "en": "Falling oil can hurt upstream energy stocks and help fuel-consuming firms.",
+    "zh": "油价下行时上游能源股承压，下游耗油企业可能受益。"
+   },
+   {
+    "en": "If inflation expectations fall, yields may fall and prices rise; direct effects are usually limited.",
+    "zh": "若降低通胀预期，收益率可能下行、价格上行；直接影响通常有限。"
+   },
+   {
+    "en": "All else equal, often bearish for crude; consider products, seasonality and production.",
+    "zh": "其他条件相同通常压低原油；需结合成品油库存、季节性和产量。"
+   }
+  ],
+  "low": [
+   {
+    "en": "More draw or less build than expected can mean stronger demand or reduced supply.",
+    "zh": "相对预期更多去库 / 更少累库，可能需求较强或供应减少。"
+   },
+   {
+    "en": "Higher oil may help upstream stocks and hurt downstream margins.",
+    "zh": "油价上行时上游能源股可能受益，下游利润率可能受压。"
+   },
+   {
+    "en": "If inflation expectations rise, yields may rise and prices fall.",
+    "zh": "若推高通胀预期，收益率可能上行、价格下行。"
+   },
+   {
+    "en": "All else equal, often supports crude; import timing, SPR and refinery changes can distort the signal.",
+    "zh": "其他条件相同通常支持原油；进口时点、SPR 与炼厂变化可使信号失真。"
+   }
+  ]
+ }
+}
