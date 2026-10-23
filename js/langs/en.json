@@ -2,7 +2,7 @@
   "contactInfo": {
     "name": "Jingtong (Jensen Arcueid) Peng",
     "position": "Software Engineer",
-    "profilePicture": "icons/profile.png",
+    "profilePicture": "icons/avatar.jpg",
     "websites": [
       { "name": "Portfolio", "url": "https://www.arcueidshiki.uk/" },
       {
@@ -11,11 +11,11 @@
       }
     ],
     "phone": ["+61 413993029", "+86 15776692817"],
-    "email": ["24323312@student.uwa.edu.au", "pengjingtong@pku.edu.cn"],
+    "email": ["pjtpengjingtong@gmail.com"],
     "socialLinks": [
       {
         "icon": "icons/email.png",
-        "url": "mailto:24323312@student.uwa.edu.au"
+        "url": "mailto:pjtpengjingtong@gmail.com"
       },
       {
         "icon": "icons/linkedin.svg",
